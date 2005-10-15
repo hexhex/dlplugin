@@ -22,7 +22,8 @@
 #include "RacerError.h"
 #include "RacerQuery.h"
 
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief Base Builder for building RACER commands.
@@ -261,6 +262,7 @@ namespace dlvex_racer {
     { }
   };
 
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 #endif /* _RACERBUILDER_H */

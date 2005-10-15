@@ -13,7 +13,8 @@
 #ifndef _RACERDIRECTOR_TCC
 #define _RACERDIRECTOR_TCC
 
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   template <class Builder, class Parser>
   RacerDirector<Builder, Parser>::RacerDirector(std::iostream& s, DirectorPtr d)
@@ -41,8 +42,8 @@ namespace dlvex_racer {
     return qctx;
   }
 
-
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 
 #endif /* _RACERDIRECTOR_TCC */

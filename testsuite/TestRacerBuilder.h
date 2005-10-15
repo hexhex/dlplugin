@@ -13,9 +13,9 @@
 
 #include "RacerBuilder.h"
 
-using namespace std;
 
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
 
   /**
@@ -28,7 +28,7 @@ namespace dlvex_racer {
   public: 
     void runRacerPosIndBuilderTest()
     {
-      stringstream sst;
+      std::stringstream sst;
       
       GAtomSet pc;
       pc.insert(GAtom("plusC(\"Part\",\"nic\")"));
@@ -41,14 +41,14 @@ namespace dlvex_racer {
       RacerStateBuilder pib(sst);
       pib.buildCommand(q);
       
-      string s = sst.str();
+      std::string s = sst.str();
 
       CPPUNIT_ASSERT(s == "(state (instance |file:shop#nic| |file:shop#Part|))\n");
     }
     
     void runRacerNegIndBuilderTest()
     {
-      stringstream sst;
+      std::stringstream sst;
       
       GAtomSet mc;
       mc.insert(GAtom("minusC(\"Part\",\"nic\")"));
@@ -61,14 +61,14 @@ namespace dlvex_racer {
       RacerStateBuilder pib(sst);
       pib.buildCommand(q);
       
-      string s = sst.str();
+      std::string s = sst.str();
 
       CPPUNIT_ASSERT(s == "(state (instance |file:shop#nic| (not |file:shop#Part|)))\n");
     }
     
     void runRacerPosPairBuilderTest()
     {
-      stringstream sst;
+      std::stringstream sst;
 
       GAtomSet pr;
       pr.insert(GAtom("plusR(\"Part\",\"nic\",\"sic\")"));
@@ -81,7 +81,7 @@ namespace dlvex_racer {
       RacerStateBuilder pib(sst);
       pib.buildCommand(q);
       
-      string s = sst.str();
+      std::string s = sst.str();
 
       CPPUNIT_ASSERT(s == "(state (related |file:shop#nic| |file:shop#sic| |file:shop#Part|))\n");
     }
@@ -116,6 +116,7 @@ namespace dlvex_racer {
     
   };
 
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 #endif /* _TESTRACERBUILDER_H */

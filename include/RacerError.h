@@ -15,7 +15,8 @@
 
 #include <stdexcept>
 
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief Base Exception for RACER errors.
@@ -55,7 +56,7 @@ namespace dlvex_racer {
     { }
   };
 
-
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 #endif /* _RACERERROR_H */

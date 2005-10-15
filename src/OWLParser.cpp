@@ -23,7 +23,7 @@
 
 #include <raptor.h>
 
-using namespace dlvex_racer;
+using namespace dlvhex::racer;
 
 
 const std::string OWLParser::owlThing = "http://www.w3.org/2002/07/owl#Thing";

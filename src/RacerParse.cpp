@@ -17,7 +17,7 @@
 #include <iostream>
 #include <sstream>
 
-using namespace dlvex_racer;
+using namespace dlvhex::racer;
 
 
 

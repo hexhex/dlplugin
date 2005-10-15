@@ -12,9 +12,8 @@
 
 #include "TCPStream.h"
 
-using namespace std;
-
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief TestCases for TCPIOStream and TCPStreamBuf
@@ -61,14 +60,14 @@ namespace dlvex_racer {
       TCPIOStream rsIO;
       rsIO.open("localhost", 8088);
       
-      rsIO << "(all-individuals)" << endl;
+      rsIO << "(all-individuals)" << std::endl;
       
       CPPUNIT_ASSERT(! rsIO.fail());
       
       char answer[BUFSIZ];
       rsIO.getline(answer, BUFSIZ);
       
-      string answ(answer);
+      std::string answ(answer);
       
       CPPUNIT_ASSERT(answ.find("answer") != std::string::npos);
       
@@ -98,6 +97,7 @@ namespace dlvex_racer {
     
   };
 
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 #endif /* _TESTRACERSTREAM_H */

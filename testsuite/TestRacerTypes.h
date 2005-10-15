@@ -13,9 +13,8 @@
 
 #include <dlvhex/Atom.h>
 
-using namespace std;
-
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief TestCase for some types.
@@ -61,6 +60,7 @@ namespace dlvex_racer {
     
   };
 
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 #endif /* _TESTRACERRUNNER_H */

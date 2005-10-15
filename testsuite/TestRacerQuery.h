@@ -14,10 +14,8 @@
 
 #include "RacerQuery.h"
 
-using namespace std;
-
-
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief TestCases for Query.
@@ -137,8 +135,8 @@ namespace dlvex_racer {
     
   };
 
-
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 
 #endif /* _TESTRACERQUERY_H */

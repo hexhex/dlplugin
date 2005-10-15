@@ -14,9 +14,8 @@
 
 #include "RacerParse.h"
 
-using namespace std;
-
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief TestCases for RacerParse and its children.
@@ -29,7 +28,7 @@ namespace dlvex_racer {
   public: 
     void runRacerSimpleAnswerTest()
     {
-      stringstream ss;
+      std::stringstream ss;
       ss << ":answer 1 \"NIL\" \"\"";
 
       RacerSimpleAnswer sa(ss);
@@ -40,7 +39,7 @@ namespace dlvex_racer {
     
     void runRacerAnswerListTest()
     {
-      stringstream ss;
+      std::stringstream ss;
       ss << ":answer 1 \"(|file:foobar#myfoo1| |file:foobar#myfoo2|)\" \"\"";
 
       RacerAnswerList al(ss);
@@ -75,7 +74,8 @@ namespace dlvex_racer {
     
   };
 
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 
 #endif /* _TESTRACERPARSE_H */

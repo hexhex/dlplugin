@@ -18,7 +18,7 @@
 
 #include <assert.h>
 
-using namespace dlvex_racer;
+using namespace dlvhex::racer;
 
 
 Query::Query()

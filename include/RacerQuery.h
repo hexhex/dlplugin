@@ -20,7 +20,8 @@
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
 
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief A RACER Query.
@@ -209,6 +210,7 @@ namespace dlvex_racer {
 
   };
 
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 #endif /* _RACERQUERY_H */

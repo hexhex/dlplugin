@@ -22,7 +22,7 @@
 #include <string>
 #include <functional>
 
-using namespace dlvex_racer;
+using namespace dlvhex::racer;
 
 
 RacerBuilder::RacerBuilder(std::ostream& s)

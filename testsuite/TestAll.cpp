@@ -9,7 +9,7 @@
 #include "TestRacerQuery.h"
 #include "TestOWLParser.h"
 
-using namespace dlvex_racer;
+using namespace dlvhex::racer;
 
 int main(int, char**)
 {

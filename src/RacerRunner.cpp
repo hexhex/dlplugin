@@ -23,7 +23,7 @@
 #include <ace/Process_Manager.h>
 #include <ace/Signal.h>
 
-using namespace dlvex_racer;
+using namespace dlvhex::racer;
 
 
 RacerRunner::RacerRunner()

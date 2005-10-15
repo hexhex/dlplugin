@@ -17,7 +17,7 @@
 
 #include <memory>
 
-using namespace dlvex_racer;
+using namespace dlvhex::racer;
 
 
 RacerCachingDirector::RacerCachingDirector(RacerCache& c, DirectorPtr d)

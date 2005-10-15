@@ -21,7 +21,8 @@
 #include "RacerQuery.h"
 #include "RacerError.h"
 
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief Base class for the parsers.
@@ -171,6 +172,7 @@ namespace dlvex_racer {
     { }
   };
 
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 #endif /* _RACERPARSE_H */

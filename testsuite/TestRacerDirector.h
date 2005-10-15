@@ -14,10 +14,9 @@
 
 #include "RacerDirector.h"
 
-using namespace std;
 
-
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief TestCases for RacerDirector.
@@ -106,8 +105,8 @@ namespace dlvex_racer {
     
   };
 
-
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 
 #endif /* _TESTRACERDIRECTOR_H */

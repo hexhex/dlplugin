@@ -23,7 +23,8 @@
 
 
 
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief Parse individuals and default namespace of an OWL KB.
@@ -74,7 +75,7 @@ namespace dlvex_racer {
     parseNamespace(Query&);
   };
 
-
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 #endif /* _OWLPARSER_H */

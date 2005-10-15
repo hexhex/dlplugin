@@ -20,7 +20,7 @@
 #include <ace/SOCK_Stream.h>
 #include <ace/INET_Addr.h>
 
-using namespace dlvex_racer;
+using namespace dlvhex::racer;
 
 
 

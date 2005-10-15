@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Mon Sep  5 13:37:11 2005
  * 
- * @brief  External atoms for dlvex.
+ * @brief  External atoms for dlvhex.
  * 
  * 
  */
@@ -23,7 +23,7 @@
 #include <assert.h>
 
 
-using namespace dlvex_racer;
+using namespace dlvhex::racer;
 
 
 RacerExtAtom::RacerExtAtom(std::iostream& s, RacerCachingDirector::RacerCache& c)

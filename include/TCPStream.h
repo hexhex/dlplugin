@@ -20,7 +20,8 @@
 #include <ace/SOCK_Stream.h>
 #include <ace/SOCK_Connector.h>
 
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief provides input/output buffering for the network connection.
@@ -148,7 +149,8 @@ namespace dlvex_racer {
     }
   };
 
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 
 

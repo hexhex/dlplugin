@@ -25,7 +25,8 @@
 #include "RacerParse.h"
 #include "RacerBuilder.h"
 
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief Base class for the director classes.
@@ -167,7 +168,8 @@ namespace dlvex_racer {
   typedef RacerDirector<RacerIsConceptMemberBuilder, RacerBooleanAnswer> RacerIsConceptQuery;
   typedef RacerDirector<RacerIsRoleMemberBuilder, RacerBooleanAnswer> RacerIsRoleQuery;
 
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 
 // include the implemantation of the templates

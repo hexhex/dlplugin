@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Mon Sep  5 11:07:28 2005
  * 
- * @brief  External atoms for dlvex.
+ * @brief  External atoms for dlvhex.
  * 
  * 
  */
@@ -23,7 +23,8 @@
 #include "RacerQuery.h"
 #include "RacerDirector.h"
 
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief Base class for RACER external atoms.
@@ -110,7 +111,7 @@ namespace dlvex_racer {
     ~RacerRole();
   };
 
-
-} // namespace dlvex_racer
+} // namespace racer
+} // namespace dlvhex
 
 #endif /* _RACEREXTATOM_H */

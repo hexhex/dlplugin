@@ -18,7 +18,8 @@
 #include <ace/Event_Handler.h>
 #include <ace/Signal.h>
 
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief Starts RACER in another process.
@@ -57,7 +58,7 @@ namespace dlvex_racer {
     stop();
   };
 
-
-} /* namespace dlvex_racer */
+} // namespace racer
+} // namespace dlvhex
 
 #endif /* _RACERERROR_H */

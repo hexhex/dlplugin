@@ -21,7 +21,8 @@
 #include "RacerDirector.h"
 #include "TCPStream.h"
 
-namespace dlvex_racer {
+namespace dlvhex {
+namespace racer {
 
   /**
    * @brief Concrete factory for the Plugin infrastructure.
@@ -49,8 +50,8 @@ namespace dlvex_racer {
     getAtoms(AtomFunctionMap&);
   };
 
-
-} // namespace dlvex_racer
+} // namespace racer
+} // namespace dlvhex
 
 
 /**
