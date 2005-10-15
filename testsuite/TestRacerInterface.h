@@ -27,6 +27,7 @@ namespace racer {
   {
   private:
     std::string shop;
+    std::string shopuri;
 
   public: 
     virtual void setUp()
@@ -38,10 +39,12 @@ namespace racer {
 	    std::string("kb(\"") +
 	    std::string(ex) +
 	    std::string("/shop.owl\")");
+	  shopuri = "file:" + std::string(ex) + "/shop.owl";
 	}
       else
 	{
 	  shop = std::string("kb(\"./shop.owl\")");
+	  shopuri = std::string("file:shop.owl");
 	}
     }
 
@@ -199,6 +202,20 @@ namespace racer {
       std::cout << "Got: " << ret << std::endl;
     }
 
+    void runGetUniverseTest()
+    {
+      PluginInterface* pi = PLUGINIMPORTFUNCTION();
+
+      std::list<Term> lterm;
+
+      pi->getUniverse(shopuri, lterm);
+
+      std::cout << "(";
+      std::copy(lterm.begin(), lterm.end(),
+		std::ostream_iterator<Term>(std::cout, ") ("));
+      std::cout << ")" << std::endl;
+    }
+
     static CppUnit::Test *suite()
     {
       CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestRacerInterface");
@@ -221,6 +238,13 @@ namespace racer {
 			    ( 
 			     "RacerIsConcept", 
 			     &TestRacerInterface::runRacerIsConceptTest
+			     )
+			    );
+
+      suiteOfTests->addTest(new CppUnit::TestCaller<TestRacerInterface>
+			    ( 
+			     "GetUniverse", 
+			     &TestRacerInterface::runGetUniverseTest
 			     )
 			    );
 

@@ -65,11 +65,9 @@ RacerInterface::createRewriter(std::istream&, std::ostream&)
 }
 
 void
-RacerInterface::getUniverse(std::list<Term>& uni)
+RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
 {
-  ///@todo how do we get the document uri for the OWL KB?
-
-  OWLParser p("file:///path/to/owl");
+  OWLParser p(uri);
   Answer a;
   p.parseIndividuals(a);
 

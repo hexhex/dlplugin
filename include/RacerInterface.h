@@ -44,7 +44,7 @@ namespace racer {
     createRewriter(std::istream&, std::ostream&);
 
     virtual void
-    getUniverse(std::list<Term>&);
+    getUniverse(std::string&, std::list<Term>&);
 
     virtual void
     getAtoms(AtomFunctionMap&);
