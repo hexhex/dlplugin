@@ -30,4 +30,4 @@ TestAll_CXXFLAGS = $(CPPUNIT_CFLAGS)
 
 TestAll_LDFLAGS = $(CPPUNIT_LIBS) $(DLVHEX_LIBS)
 
-TestAll_LDADD = $(top_builddir)/src/libdlvexracer.la
+TestAll_LDADD = $(top_builddir)/src/libdlvhexracer.la

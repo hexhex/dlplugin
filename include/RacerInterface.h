@@ -31,7 +31,6 @@ namespace racer {
   {
   private:
     TCPIOStream stream;
-    RacerRunner racer;
     RacerCachingDirector::RacerCache cache;
 
   public:

@@ -11,6 +11,7 @@
 #include <cppunit/TestCaller.h>
 
 #include "TCPStream.h"
+#include "RacerRunner.h"
 
 namespace dlvhex {
 namespace racer {
@@ -21,12 +22,15 @@ namespace racer {
    * @test Sends the (all-individual) command to RACER with help of
    * TCPIOStream and TCPStreamBuf and checks whether we receive an
    * answer.
-   *
-   * @attention RACER must be running.
    */
   class TestRacerStream : public CppUnit::TestCase
   { 
-  public: 
+  public:
+    virtual void setUp()
+    {
+      RacerRunner::instance()->run();
+    }
+
     void runRacerStreamBufTest()
     {
       ACE_SOCK_Stream rs;

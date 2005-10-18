@@ -25,6 +25,9 @@
 
 using namespace dlvhex::racer;
 
+#define PIDFILE "racer.pid"
+
+RacerRunner* RacerRunner::runner = 0;
 
 RacerRunner::RacerRunner()
   : command(RACERPATH),
@@ -37,18 +40,16 @@ RacerRunner::~RacerRunner()
   stop();
 }
 
-RacerRunner::RacerRunner(const RacerRunner& r)
-  : ACE_Event_Handler(r),
-    command(r.command),
-    kb(r.kb),
-    racer(r.racer)
-{ }
+RacerRunner*
+RacerRunner::instance()
+{
+  if (RacerRunner::runner == 0)
+    {
+      RacerRunner::runner = new RacerRunner;
+    }
 
-RacerRunner::RacerRunner(const std::string& cmd)
-  : command(cmd),
-    kb(""),
-    racer(ACE_INVALID_PID)
-{ }
+  return RacerRunner::runner;
+}
 
 void
 RacerRunner::setKB(const std::string& kb)
@@ -57,10 +58,39 @@ RacerRunner::setKB(const std::string& kb)
 }
 
 void
+RacerRunner::cleanup()
+{
+  std::fstream s;
+
+  dir.open(s, PIDFILE);
+
+  if (s.is_open())
+    {
+      s >> racer;
+      s.close();
+
+      // Found stale RACER process -> try to kill it
+      stop();
+    }
+}
+
+void
+RacerRunner::savePID()
+{
+  std::fstream s;
+  dir.create(PIDFILE);
+  dir.open(s, PIDFILE);
+  s << racer;
+  s.close();
+}
+
+void
 RacerRunner::run()
 {
   if (racer == ACE_INVALID_PID)
     {
+      cleanup();
+
       // register all "fatal" signals s.t. RACER will always be killed
       sighandler.register_handler(SIGSEGV, this);
       sighandler.register_handler(SIGINT, this);
@@ -80,14 +110,20 @@ RacerRunner::run()
       ACE_Process_Options opt;
       opt.command_line(cmdline.c_str());
 
+      // redirect RACERs std{in,out,err} to /dev/null
       ACE_HANDLE h = ACE_OS::open("/dev/null", O_RDWR);
       opt.set_handles(h, h, h);
 
+      // start RACER process
       racer = ACE_Process_Manager::instance()->spawn(opt);
 
       if (racer == ACE_INVALID_PID)
 	{
 	  // throw exception?
+	}
+      else
+	{
+	  savePID();
 	}
     }
 }
@@ -113,5 +149,6 @@ RacerRunner::stop()
       ACE_Process_Manager::instance()->terminate(racer, SIGINT);
       ACE_Process_Manager::instance()->wait(racer);
       racer = ACE_INVALID_PID;
+      dir.remove(PIDFILE);
     }
 }

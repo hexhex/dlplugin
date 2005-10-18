@@ -24,7 +24,7 @@ using namespace dlvhex::racer;
 
 RacerInterface::RacerInterface()
 {
-  racer.run();
+  RacerRunner::instance()->run();
 
   ACE_Time_Value tv(0, 300000);
 
@@ -47,7 +47,7 @@ RacerInterface::RacerInterface()
 RacerInterface::~RacerInterface()
 {
   stream.close();
-  racer.stop();
+  RacerRunner::instance()->stop();
 
   // delete all cached QueryCtx's
   for (RacerCachingDirector::RacerCache::const_iterator it = cache.begin();

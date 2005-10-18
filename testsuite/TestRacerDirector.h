@@ -13,7 +13,7 @@
 #include <cppunit/TestCaller.h>
 
 #include "RacerDirector.h"
-
+#include "RacerRunner.h"
 
 namespace dlvhex {
 namespace racer {
@@ -23,8 +23,6 @@ namespace racer {
    *
    * @test Opens a connection to RACER with TCPIOStream, sends some
    * commands and performs some sanity checks on the result.
-   *
-   * @attention RACER must be running with shop.owl.
    */
   class TestRacerDirector : public CppUnit::TestCase
   {
@@ -46,6 +44,11 @@ namespace racer {
     }
 
   public:
+    virtual void setUp()
+    {
+      RacerRunner::instance()->run();
+    }
+
     void runRacerPlusConceptTest()
     {
       TCPIOStream rsIO;

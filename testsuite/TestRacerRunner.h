@@ -25,9 +25,8 @@ namespace racer {
   public: 
     void runRacerRunnerTest()
     {
-      RacerRunner r;
-      r.run();
-      r.stop();
+      CPPUNIT_ASSERT(RacerRunner::instance() != 0);
+      RacerRunner::instance()->run();
     }
 
     static CppUnit::Test *suite()

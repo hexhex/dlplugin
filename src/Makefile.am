@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = foreign
 
-dlvhexlib_LTLIBRARIES = libdlvexracer.la
-libdlvexracer_la_SOURCES = \
+dlvhexlib_LTLIBRARIES = libdlvhexracer.la
+libdlvhexracer_la_SOURCES = \
 OWLParser.cpp \
 RacerBuilder.cpp \
 RacerDirector.cpp \
@@ -10,7 +10,8 @@ RacerInterface.cpp \
 RacerParse.cpp \
 RacerRunner.cpp \
 RacerQuery.cpp \
-TCPStream.cpp
+TCPStream.cpp \
+UserDir.cpp
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
@@ -18,4 +19,4 @@ AM_CPPFLAGS = \
 	$(RAPTOR_CFLAGS) \
 	$(DLVHEX_CFLAGS)
 
-libdlvexracer_la_LDFLAGS = $(ACE_LIBS) $(RAPTOR_LIBS) $(DLVHEX_LIBS)
+libdlvhexracer_la_LDFLAGS = $(ACE_LIBS) $(RAPTOR_LIBS) $(DLVHEX_LIBS)

@@ -12,4 +12,5 @@ noinst_HEADERS = \
                  RacerParse.h \
                  RacerQuery.h \
                  RacerRunner.h \
-                 TCPStream.h
+                 TCPStream.h \
+                 UserDir.h
