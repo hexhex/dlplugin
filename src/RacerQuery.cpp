@@ -52,15 +52,27 @@ Query::getOntology() const
 }
 
 void
-Query::setQuery(const GAtom& query)
+Query::setQuery(const Term& query)
 {
   this->query = query;
 }
 
-const GAtom&
+const Term&
 Query::getQuery() const
 {
   return this->query;
+}
+
+void
+Query::setIndividuals(const Tuple& indv)
+{
+  this->indv = indv;
+}
+
+const Tuple&
+Query::getIndividuals() const
+{
+  return this->indv;
 }
 
 void
@@ -204,7 +216,7 @@ Answer::getErrorMessage() const
 }
 
 void
-Answer::setTuples(const PluginAtom::TUPLEVECTOR& tuples)
+Answer::setTuples(const std::vector<Tuple>& tuples)
 {
   this->tuples = tuples;
 }
@@ -215,7 +227,7 @@ Answer::addTuple(const Tuple& tuple)
   this->tuples.push_back(tuple);
 }
 
-const PluginAtom::TUPLEVECTOR&
+const std::vector<Tuple>&
 Answer::getTuples() const
 {
   return this->tuples;

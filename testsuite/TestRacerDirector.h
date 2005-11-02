@@ -27,10 +27,10 @@ namespace racer {
   class TestRacerDirector : public CppUnit::TestCase
   {
   protected:
-    void output(const PluginAtom::TUPLEVECTOR& tv)
+    void output(const std::vector<Tuple>& tv)
     {
       std::cout << std::endl;
-      for(PluginAtom::TUPLEVECTOR::const_iterator it = tv.begin();
+      for(std::vector<Tuple>::const_iterator it = tv.begin();
 	  it != tv.end();
 	  it++)
 	{
@@ -81,7 +81,7 @@ namespace racer {
       
       rsIO.close();
 
-      PluginAtom::TUPLEVECTOR tv = q->getAnswer().getTuples();
+      std::vector<Tuple> tv = q->getAnswer().getTuples();
       output(tv);
     }
     

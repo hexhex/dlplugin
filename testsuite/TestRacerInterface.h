@@ -36,22 +36,21 @@ namespace racer {
       if (ex)
 	{
 	  shop =
-	    std::string("kb(\"") +
 	    std::string(ex) +
-	    std::string("/shop.owl\")");
+	    std::string("/shop.owl");
 	  shopuri = "file:" + std::string(ex) + "/shop.owl";
 	}
       else
 	{
-	  shop = std::string("kb(\"./shop.owl\")");
+	  shop = std::string("./shop.owl");
 	  shopuri = std::string("file:shop.owl");
 	}
     }
 
-    void output(const PluginAtom::TUPLEVECTOR& tv)
+    void output(const std::vector<Tuple>& tv)
     {
       std::cout << std::endl;
-      for(PluginAtom::TUPLEVECTOR::const_iterator it = tv.begin();
+      for(std::vector<Tuple>::const_iterator it = tv.begin();
 	  it != tv.end();
 	  it++)
 	{
@@ -71,40 +70,40 @@ namespace racer {
       PluginInterface::AtomFunctionMap m;
       pi->getAtoms(m);
 
-      GAtomSet a0,a1,a2,a3,a4,a5;
+      GAtomSet a1,a2,a3,a4;
 
-      GAtom kb0(shop);
-      a0.insert(kb0);
-
-      GAtom pc0("plusC(\"Part\",\"moo1\")");
-      GAtom pc1("plusC(\"Part\",\"moo2\")");
-      GAtom pc2("plusC(\"Part\",\"moo3\")");
-      GAtom pc3("plusC(\"Part\",\"moo4\")");
+      GAtom pc0("\"plusC\"(\"Part\",\"moo1\")");
+      GAtom pc1("\"plusC\"(\"Part\",\"moo2\")");
+      GAtom pc2("\"plusC\"(\"Part\",\"moo3\")");
+      GAtom pc3("\"plusC\"(\"Part\",\"moo4\")");
       a1.insert(pc0);
       a1.insert(pc1);
       a1.insert(pc2);
       a1.insert(pc3);
 
-      GAtom mc0("minusC(\"Part\",\"moo5\")");
+      GAtom mc0("\"minusC\"(\"Part\",\"moo5\")");
       a2.insert(mc0);
 
-      GAtom pr0("plusR(\"provides\",\"s1\",\"moo4\")");
+      GAtom pr0("\"plusR\"(\"provides\",\"s1\",\"moo4\")");
       a3.insert(pr0);
 
-      GAtom q0("retrieve(\"Part\")");
-      a5.insert(q0);
+      Interpretation in;
+      in.add(a1);
+      in.add(a2);
+      in.add(a3);
+      in.add(a4);
 
-      PluginAtom::FACTSETVECTOR in;
-      in.push_back(a0);
-      in.push_back(a1);
-      in.push_back(a2);
-      in.push_back(a3);
-      in.push_back(a4);
-      in.push_back(a5);
+      Tuple parms;
+      parms.push_back(Term(shop));
+      parms.push_back(Term("\"plusC\""));
+      parms.push_back(Term("\"minusC\""));
+      parms.push_back(Term("\"plusR\""));
+      parms.push_back(Term());
+      parms.push_back(Term("\"Part\""));
 
-      PluginAtom::TUPLEVECTOR out;
+      std::vector<Tuple> out;
 
-      CPPUNIT_ASSERT_NO_THROW( m["racerC"]->retrieve(in, out) );
+      CPPUNIT_ASSERT_NO_THROW( m["racerC"]->retrieve(in, parms, out) );
 
       output(out);
     }
@@ -116,40 +115,40 @@ namespace racer {
       PluginInterface::AtomFunctionMap m;
       pi->getAtoms(m);
 
-      GAtomSet a0,a1,a2,a3,a4,a5;
+      GAtomSet a1,a2,a3,a4;
 
-      GAtom kb0(shop);
-      a0.insert(kb0);
-
-      GAtom pc0("plusC(\"Part\",\"moo1\")");
-      GAtom pc1("plusC(\"Part\",\"moo2\")");
-      GAtom pc2("plusC(\"Part\",\"moo3\")");
-      GAtom pc3("plusC(\"Part\",\"moo4\")");
+      GAtom pc0("\"plusC\"(\"Part\",\"moo1\")");
+      GAtom pc1("\"plusC\"(\"Part\",\"moo2\")");
+      GAtom pc2("\"plusC\"(\"Part\",\"moo3\")");
+      GAtom pc3("\"plusC\"(\"Part\",\"moo4\")");
       a1.insert(pc0);
       a1.insert(pc1);
       a1.insert(pc2);
       a1.insert(pc3);
 
-      GAtom mc0("minusC(\"Part\",\"moo5\")");
+      GAtom mc0("\"minusC\"(\"Part\",\"moo5\")");
       a2.insert(mc0);
 
-      GAtom pr0("plusR(\"provides\",\"s1\",\"moo4\")");
+      GAtom pr0("\"plusR\"(\"provides\",\"s1\",\"moo4\")");
       a3.insert(pr0);
 
-      GAtom q0("retrieve(\"provides\")");
-      a5.insert(q0);
+      Interpretation in;
+      in.add(a1);
+      in.add(a2);
+      in.add(a3);
+      in.add(a4);
 
-      PluginAtom::FACTSETVECTOR in;
-      in.push_back(a0);
-      in.push_back(a1);
-      in.push_back(a2);
-      in.push_back(a3);
-      in.push_back(a4);
-      in.push_back(a5);
+      Tuple parms;
+      parms.push_back(Term(shop));
+      parms.push_back(Term("\"plusC\""));
+      parms.push_back(Term("\"minusC\""));
+      parms.push_back(Term("\"plusR\""));
+      parms.push_back(Term());
+      parms.push_back(Term("\"provides\""));
 
-      PluginAtom::TUPLEVECTOR out;
+      std::vector<Tuple> out;
 
-      CPPUNIT_ASSERT_NO_THROW( m["racerR"]->retrieve(in, out) );
+      CPPUNIT_ASSERT_NO_THROW( m["racerR"]->retrieve(in, parms, out) );
 
       output(out);
     }
@@ -161,46 +160,100 @@ namespace racer {
       PluginInterface::AtomFunctionMap m;
       pi->getAtoms(m);
 
-      GAtomSet a0,a1,a2,a3,a4,a5;
+      GAtomSet a1,a2,a3,a4;
 
-      GAtom kb0(shop);
-      a0.insert(kb0);
-
-      GAtom pc0("plusC(\"Part\",\"moo1\")");
-      GAtom pc1("plusC(\"Part\",\"moo2\")");
-      GAtom pc2("plusC(\"Part\",\"moo3\")");
-      GAtom pc3("plusC(\"Part\",\"moo4\")");
+      GAtom pc0("\"plusC\"(\"Part\",\"moo1\")");
+      GAtom pc1("\"plusC\"(\"Part\",\"moo2\")");
+      GAtom pc2("\"plusC\"(\"Part\",\"moo3\")");
+      GAtom pc3("\"plusC\"(\"Part\",\"moo4\")");
       a1.insert(pc0);
       a1.insert(pc1);
       a1.insert(pc2);
       a1.insert(pc3);
 
-      GAtom mc0("minusC(\"Part\",\"moo5\")");
+      GAtom mc0("\"minusC\"(\"Part\",\"moo5\")");
       a2.insert(mc0);
 
-      GAtom pr0("plusR(\"provides\",\"s1\",\"moo4\")");
+      GAtom pr0("\"plusR\"(\"provides\",\"s1\",\"moo4\")");
       a3.insert(pr0);
 
-      GAtom q0("query(\"Part\",\"cpu\")");
-      a5.insert(q0);
+      Interpretation in;
+      in.add(a1);
+      in.add(a2);
+      in.add(a3);
+      in.add(a4);
 
-      PluginAtom::FACTSETVECTOR in;
-      in.push_back(a0);
-      in.push_back(a1);
-      in.push_back(a2);
-      in.push_back(a3);
-      in.push_back(a4);
-      in.push_back(a5);
+      Tuple parms;
+      parms.push_back(Term(shop));
+      parms.push_back(Term("\"plusC\""));
+      parms.push_back(Term("\"minusC\""));
+      parms.push_back(Term("\"plusR\""));
+      parms.push_back(Term());
+      parms.push_back(Term("\"Part\""));
 
-      Tuple out;
+      Tuple indv;
+      indv.push_back(Term("\"cpu\""));
+
       bool ret;
 
-      CPPUNIT_ASSERT_NO_THROW( ret = m["racerC"]->query(in, out) );
+      CPPUNIT_ASSERT_NO_THROW( ret = m["racerC"]->query(in, parms, indv) );
       std::cout << "Got: " << ret << std::endl;
 
-      CPPUNIT_ASSERT_NO_THROW( ret = m["racerC"]->query(in, out) );
+      CPPUNIT_ASSERT_NO_THROW( ret = m["racerC"]->query(in, parms, indv) );
       std::cout << "Got: " << ret << std::endl;
     }
+
+    void runRacerIsRoleTest()
+    {
+      PluginInterface* pi = PLUGINIMPORTFUNCTION();
+
+      PluginInterface::AtomFunctionMap m;
+      pi->getAtoms(m);
+
+      GAtomSet a1,a2,a3,a4;
+
+      GAtom pc0("\"plusC\"(\"Part\",\"moo1\")");
+      GAtom pc1("\"plusC\"(\"Part\",\"moo2\")");
+      GAtom pc2("\"plusC\"(\"Part\",\"moo3\")");
+      GAtom pc3("\"plusC\"(\"Part\",\"moo4\")");
+      a1.insert(pc0);
+      a1.insert(pc1);
+      a1.insert(pc2);
+      a1.insert(pc3);
+
+      GAtom mc0("\"minusC\"(\"Part\",\"moo5\")");
+      a2.insert(mc0);
+
+      GAtom pr0("\"plusR\"(\"provides\",\"s1\",\"moo4\")");
+      a3.insert(pr0);
+
+      Interpretation in;
+      in.add(a1);
+      in.add(a2);
+      in.add(a3);
+      in.add(a4);
+
+      Tuple parms;
+      parms.push_back(Term(shop));
+      parms.push_back(Term("\"plusC\""));
+      parms.push_back(Term("\"minusC\""));
+      parms.push_back(Term("\"plusR\""));
+      parms.push_back(Term());
+      parms.push_back(Term("\"provides\""));
+
+      Tuple indv;
+      indv.push_back(Term("\"s1\""));
+      indv.push_back(Term("\"moo4\""));
+
+      bool ret;
+
+      CPPUNIT_ASSERT_NO_THROW( ret = m["racerR"]->query(in, parms, indv) );
+      std::cout << "Got: " << ret << std::endl;
+
+      CPPUNIT_ASSERT_NO_THROW( ret = m["racerR"]->query(in, parms, indv) );
+      std::cout << "Got: " << ret << std::endl;
+    }
+
 
     void runGetUniverseTest()
     {
@@ -238,6 +291,13 @@ namespace racer {
 			    ( 
 			     "RacerIsConcept", 
 			     &TestRacerInterface::runRacerIsConceptTest
+			     )
+			    );
+
+      suiteOfTests->addTest(new CppUnit::TestCaller<TestRacerInterface>
+			    ( 
+			     "RacerIsRole", 
+			     &TestRacerInterface::runRacerIsRoleTest
 			     )
 			    );
 

@@ -41,7 +41,7 @@ namespace racer {
       is2.insert(GAtom("p(a)"));
       is2.insert(GAtom("q(c)"));
 
-      GAtom pa("p(a)");
+      Term pa("p(a)");
 
       q1.setQuery(pa);
       q2.setQuery(pa);
@@ -67,7 +67,7 @@ namespace racer {
       is2.insert(GAtom("p(b)"));
       is2.insert(GAtom("q(c)"));
 
-      GAtom pa("p(a)");
+      Term pa("p(a)");
 
       q1.setQuery(pa);
       q2.setQuery(pa);
@@ -93,7 +93,7 @@ namespace racer {
       is2.insert(GAtom("p(b)"));
       is2.insert(GAtom("q(c)"));
       
-      GAtom pa("p(a)");
+      Term pa("p(a)");
 
       q1.setQuery(pa);
       q2.setQuery(pa);

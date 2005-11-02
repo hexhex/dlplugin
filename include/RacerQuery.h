@@ -15,6 +15,7 @@
 
 #include <string>
 #include <functional>
+#include <vector>
 
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Atom.h>
@@ -32,7 +33,8 @@ namespace racer {
     std::string nspace;
     std::string ontology;
 
-    GAtom query;
+    Term query;
+    Tuple indv;
     GAtomSet plusConcept;
     GAtomSet minusConcept;
     GAtomSet plusRole;
@@ -56,10 +58,16 @@ namespace racer {
     getOntology() const;
 
     virtual void
-    setQuery(const GAtom& query);
+    setQuery(const Term& query);
 
-    virtual const GAtom&
+    virtual const Term&
     getQuery() const;
+
+    virtual void
+    setIndividuals(const Tuple& indv);
+
+    virtual const Tuple&
+    getIndividuals() const;
 
     virtual void
     setPlusConcept(const GAtomSet& plusConcept);
@@ -107,6 +115,7 @@ namespace racer {
   operator== (const Query& q1, const Query& q2)
   {
     if (q1.getQuery() == q2.getQuery() &&
+	q1.getIndividuals() == q2.getIndividuals() &&
 	q1.getNamespace() == q2.getNamespace()&&
 	q1.getOntology() == q2.getOntology() &&
 	q1.getPlusConcept() == q2.getPlusConcept() &&
@@ -140,7 +149,7 @@ namespace racer {
     bool isIncoherent;
 
     bool answer;
-    PluginAtom::TUPLEVECTOR tuples;
+    std::vector<Tuple> tuples;
 
   public:
     Answer();
@@ -161,12 +170,12 @@ namespace racer {
     getErrorMessage() const;
 
     virtual void
-    setTuples(const PluginAtom::TUPLEVECTOR& tuples);
+    setTuples(const std::vector<Tuple>& tuples);
 
     virtual void
     addTuple(const Tuple& tuple);
 
-    virtual const PluginAtom::TUPLEVECTOR&
+    virtual const std::vector<Tuple>&
     getTuples() const;
 
     virtual void

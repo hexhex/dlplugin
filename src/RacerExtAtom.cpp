@@ -19,9 +19,12 @@
 #include <dlvhex/errorHandling.h>
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
+#include <dlvhex/Interpretation.h>
 
 #include <assert.h>
 
+#include <iterator>
+#include <iostream>
 
 using namespace dlvhex::racer;
 
@@ -36,16 +39,33 @@ RacerExtAtom::~RacerExtAtom()
 
 
 RacerBaseDirector::QueryCtxPtr
-RacerExtAtom::setupQuery(const FACTSETVECTOR& in) const
+RacerExtAtom::setupQuery(const Interpretation& in,
+			 const Tuple& parms,
+			 const Tuple& indv) const
 {
   RacerBaseDirector::QueryCtxPtr qctx(new QueryCtx);
 
   Query& q = qctx->getQuery();
 
-  // in[0] contains the KB predicate
-  GAtom onto = *in[0].begin();
-  std::string ontostr = onto.getArgument(1).getUnquotedString();
+  const GAtomSet& ints = in.getAtomSet();
+
+//   std::cout << std::endl << "Parms: ";
+//   std::copy(parms.begin(), parms.end(), std::ostream_iterator<Term>(std::cout, " "));
+//   std::cout << std::endl << "Indvs: ";
+//   std::copy(indv.begin(), indv.end(), std::ostream_iterator<Term>(std::cout, " "));
+//   std::cout << std::endl << "Ints: ";
+//   std::copy(ints.begin(), ints.end(), std::ostream_iterator<GAtom>(std::cout, " % "));
+//   std::cout << std::endl;
+
+  // parms[0] contains the KB URI constant
+  std::string ontostr = parms[0].getUnquotedString();
   q.setOntology(ontostr);
+
+  // parms[5] contains the query constant
+  q.setQuery(parms[5]);
+
+  // query individuals
+  q.setIndividuals(indv);
 
   ///@todo read nspace from owl document
 #if 1
@@ -56,11 +76,48 @@ RacerExtAtom::setupQuery(const FACTSETVECTOR& in) const
   p.parseNamespace(q);
 #endif // "1"
 
-  q.setQuery(*in[5].begin());
-  q.setPlusConcept(in[1]);
-  q.setMinusConcept(in[2]);
-  q.setPlusRole(in[3]);
-  //   q.setMinusRole(in[4]);
+  //
+  // spread interpretation into the appropriate GAtomSet
+  //
+
+  GAtomSet pc;
+  GAtomSet mc;
+  GAtomSet pr;
+  GAtomSet mr;
+
+  for (GAtomSet::const_iterator it = ints.begin();
+       it != ints.end(); it++)
+    {
+      const GAtom& a = *it;
+      const Term pred = a.getArgument(0);
+
+      if (pred == parms[1]) // plusC
+	{
+	  pc.insert(a);
+	}
+      else if (pred == parms[2]) // minusC
+	{
+	  mc.insert(a);
+	}
+      else if (pred == parms[3]) // plusR
+	{
+	  pr.insert(a);
+	}
+      else if (pred == parms[4]) // minusR
+	{
+	  mr.insert(a);
+	}
+      else
+	{
+	  // just ignore unknown stuff...
+	  // std::cerr << "WTF?" << std::endl;
+	}
+    }
+
+  q.setPlusConcept(pc);
+  q.setMinusConcept(mc);
+  q.setPlusRole(pr);
+  //q.setMinusRole(mr); ///@todo minusR not implemented yet
 
   return qctx;
 }
@@ -81,21 +138,15 @@ RacerExtAtom::getDirectors() const
 }
 
 void
-RacerExtAtom::retrieve(FACTSETVECTOR& in, TUPLEVECTOR& out) throw(PluginError)
+RacerExtAtom::retrieve(const Interpretation& in,
+		       const Tuple& parms,
+		       std::vector<Tuple>& out) throw(PluginError)
 {
-  assert(in.size() == 6);
-
-  if (in[5].empty())
-    {
-      // is query empty? -> ignore request
-      return;
-    }
-
   try
     {
       RacerBaseDirector::DirectorPtr dirs = getRetrievalDirectors();
 
-      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(in);
+      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(in, parms, Tuple());
 
       qctx = dirs->query(qctx);
 
@@ -111,21 +162,15 @@ RacerExtAtom::retrieve(FACTSETVECTOR& in, TUPLEVECTOR& out) throw(PluginError)
 }
 
 bool
-RacerExtAtom::query(FACTSETVECTOR& in, Tuple&) throw(PluginError)
+RacerExtAtom::query(const Interpretation& in,
+		    const Tuple& parms,
+		    Tuple& indv) throw(PluginError)
 {
-  assert(in.size() == 6);
-
-  if (in[5].empty())
-    {
-      ///@todo is query empty? -> return??
-      return false;
-    }
-
   try
     {
       RacerBaseDirector::DirectorPtr dirs = getQueryDirectors();
 
-      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(in);
+      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(in, parms, indv);
 
       qctx = dirs->query(qctx);
 
@@ -148,7 +193,20 @@ RacerExtAtom::query(FACTSETVECTOR& in, Tuple&) throw(PluginError)
 
 RacerConcept::RacerConcept(std::iostream& s, RacerCachingDirector::RacerCache& c)
   : RacerExtAtom(s, c)
-{ }
+{
+  //
+  // &racerC[kb,plusC,minusC,plusR,minusR,query](X)
+  //
+
+  setOutputArity(1);
+
+  addInputConstant();  // query
+  addInputPredicate(); // minusR
+  addInputPredicate(); // plusR
+  addInputPredicate(); // minusC
+  addInputPredicate(); // plusC
+  addInputConstant();  // kb URI
+}
 
 RacerConcept::~RacerConcept()
 { }
@@ -168,7 +226,20 @@ RacerConcept::getQueryDirectors() const
 
 RacerRole::RacerRole(std::iostream& s, RacerCachingDirector::RacerCache& c)
   : RacerExtAtom(s, c)
-{ }
+{
+  //
+  // &racerR[kb,plusC,minusC,plusR,minusR,query](X,Y)
+  //
+
+  setOutputArity(2);
+
+  addInputConstant();  // query
+  addInputPredicate(); // minusR
+  addInputPredicate(); // plusR
+  addInputPredicate(); // minusC
+  addInputPredicate(); // plusC
+  addInputConstant();  // kb URI
+}
 
 RacerRole::~RacerRole()
 { }

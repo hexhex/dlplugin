@@ -19,6 +19,7 @@
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
+#include <dlvhex/Interpretation.h>
 
 #include "RacerQuery.h"
 #include "RacerDirector.h"
@@ -44,10 +45,14 @@ namespace racer {
      * @brief Setup QueryCtx object.
      *
      * @param in
+     * @param parms
+     * @param indv
      * @return a new managed QueryCtx pointer
      */
     virtual RacerBaseDirector::QueryCtxPtr
-    setupQuery(const FACTSETVECTOR& in) const;
+    setupQuery(const Interpretation& in,
+	       const Tuple& parms,
+	       const Tuple& indv) const;
 
     /// a template based method which creates nested RacerBaseDirector
     /// objects
@@ -65,10 +70,14 @@ namespace racer {
 
   public:
     virtual void
-    retrieve(FACTSETVECTOR&, TUPLEVECTOR&) throw(PluginError);
+    retrieve(const Interpretation& in,
+	     const Tuple& parms,
+	     std::vector<Tuple>& out) throw(PluginError);
 
     virtual bool
-    query(FACTSETVECTOR&, Tuple&) throw(PluginError);
+    query(const Interpretation& in,
+	  const Tuple& parms,
+	  Tuple& indv) throw(PluginError);
   };
 
 

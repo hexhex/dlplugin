@@ -72,10 +72,10 @@ RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
   p.parseIndividuals(a);
 
   ///@todo this is crap. we need a more flexible query container class
-  const PluginAtom::TUPLEVECTOR& tv = a.getTuples();
+  const std::vector<Tuple>& tv = a.getTuples();
   std::insert_iterator<std::list<Term> > ins = std::inserter(uni, uni.begin());
 
-  for (PluginAtom::TUPLEVECTOR::const_iterator it = tv.begin();
+  for (std::vector<Tuple>::const_iterator it = tv.begin();
        it != tv.end();
        it++)
     {
@@ -87,10 +87,7 @@ void
 RacerInterface::getAtoms(AtomFunctionMap& m)
 {
   m["racerC"] = new RacerConcept(stream, cache);
-  (*m["racerC"]).setArities(6,1);
-
   m["racerR"] = new RacerRole(stream, cache);
-  (*m["racerR"]).setArities(6,2);
 }
 
 

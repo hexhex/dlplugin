@@ -34,7 +34,7 @@ RacerCachingDirector::query(QueryCtxPtr qctx) throw(RacerError)
   if (director.get() != 0)
     {
       Query& query = qctx->getQuery();
-      const GAtom& q = query.getQuery();
+      const Term& q = query.getQuery();
       
       // is query cached?
       RacerCache::iterator it = cache.find(q);

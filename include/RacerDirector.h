@@ -97,8 +97,8 @@ namespace racer {
   class RacerCachingDirector : public RacerBaseDirector
   {
   public:
-    /// maps GAtom -> QueryCtx*
-    typedef std::map<GAtom, QueryCtx*> RacerCache;
+    /// maps Term -> QueryCtx*
+    typedef std::map<Term, QueryCtx*> RacerCache;
 
   protected:
     RacerCache& cache;

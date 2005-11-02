@@ -47,7 +47,7 @@ RacerStateBuilder::buildPosInstance(const GAtom& atom,
 {
   if (atom.getArity() != 3)
     {
-      throw RacerBuildingError("Atom has wrong arity.");
+      throw RacerBuildingError("buildPosInstance: Atom has wrong arity.");
     }
 
   stream << "(instance |"
@@ -65,7 +65,7 @@ RacerStateBuilder::buildNegInstance(const GAtom& atom,
 {
   if (atom.getArity() != 3)
     {
-      throw RacerBuildingError("Atom has wrong arity.");
+      throw RacerBuildingError("buildNegInstance: Atom has wrong arity.");
     }
 
   stream << "(instance |"
@@ -83,7 +83,7 @@ RacerStateBuilder::buildPosRelated(const GAtom& atom,
 {
   if (atom.getArity() != 4)
     {
-      throw RacerBuildingError("Atom has wrong arity.");
+      throw RacerBuildingError("buildPosRelated: Atom has wrong arity.");
     }
 
   stream << "(related |"
@@ -129,32 +129,29 @@ RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
   const GAtomSet& mc = query.getMinusConcept();
   const GAtomSet& pr = query.getPlusRole();
 
-  if (!pc.empty() || !mc.empty() || !pr.empty())
+  //
+  // create the state list. If there is no individual or pair a plain
+  // "(state )" command is not an error.
+  //
+
+  stream << "(state ";
+
+  for (GAtomSet::const_iterator it = pc.begin(); it != pc.end(); it++)
     {
-      stream << "(state ";
-
-      for (GAtomSet::const_iterator it = pc.begin(); it != pc.end(); it++)
-	{
-	  buildPosInstance(*it, nspace);
-	}
-
-      for (GAtomSet::const_iterator it = mc.begin(); it != mc.end(); it++)
-	{
-	  buildNegInstance(*it, nspace);
-	}
-
-      for (GAtomSet::const_iterator it = pr.begin(); it != pr.end(); it++)
-	{
-	  buildPosRelated(*it, nspace);
-	}
-
-      stream << ")" << std::endl;
+      buildPosInstance(*it, nspace);
     }
-  else
+  
+  for (GAtomSet::const_iterator it = mc.begin(); it != mc.end(); it++)
     {
-      ///@todo what should we do when all ints are empty?  stream is
-      ///in a wrecked state...
+      buildNegInstance(*it, nspace);
     }
+
+  for (GAtomSet::const_iterator it = pr.begin(); it != pr.end(); it++)
+    {
+      buildPosRelated(*it, nspace);
+    }
+
+  stream << ")" << std::endl;
 }
 
 
@@ -172,19 +169,20 @@ void
 RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
   std::string nspace = query.getNamespace();
-  const GAtom& atom = query.getQuery();
+  const Term& q = query.getQuery();
+  const Tuple& indv = query.getIndividuals();
 
-  if (atom.getArity() != 3)
+  if (indv.size() != 1)
     {
-      throw RacerBuildingError("Atom has wrong arity.");
+      throw RacerBuildingError("Exactly one individual needed.");
     }
 
   stream << "(individual-instance? |"
 	 << nspace
-	 << atom.getArgument(2).getUnquotedString()
+	 << indv[0].getUnquotedString()
 	 << "| |"
 	 << nspace
-	 << atom.getArgument(1).getUnquotedString()
+	 << q.getUnquotedString()
 	 << "|)"
 	 << std::endl;
 }
@@ -203,22 +201,23 @@ void
 RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
   std::string nspace = query.getNamespace();
-  const GAtom& atom = query.getQuery();
+  const Term& q = query.getQuery();
+  const Tuple& indv = query.getIndividuals();
 
-  if (atom.getArity() != 4)
+  if (indv.size() != 2)
     {
-      throw RacerBuildingError("Atom has wrong arity.");
+      throw RacerBuildingError("Exactly two individuals needed.");
     }
 
-  stream << "(related-individuals? |"
+  stream << "(individuals-related? |"
 	 << nspace
-	 << atom.getArgument(2).getUnquotedString()
+	 << indv[0].getUnquotedString()
 	 << "| |"
 	 << nspace
-	 << atom.getArgument(3).getUnquotedString()
+	 << indv[1].getUnquotedString()
 	 << "| |"
 	 << nspace
-	 << atom.getArgument(1).getUnquotedString()
+	 << q.getUnquotedString()
 	 << "|)"
 	 << std::endl;
 }
@@ -238,14 +237,8 @@ void
 RacerConceptInstancesBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
   std::string nspace = query.getNamespace();
-  const GAtom& atom = query.getQuery();
-
-  if (atom.getArity() != 2)
-    {
-      throw RacerBuildingError("Atom has wrong arity.");
-    }
-
-  std::string concept = atom.getArgument(1).getUnquotedString();
+  const Term& q = query.getQuery();
+  std::string concept = q.getUnquotedString();
 
   if (concept[0] != '-')
     {
@@ -281,16 +274,11 @@ void
 RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
   std::string nspace = query.getNamespace();
-  const GAtom& atom = query.getQuery();
-
-  if (atom.getArity() != 2)
-    {
-      throw RacerBuildingError("Atom has wrong arity.");
-    }
+  const Term& q = query.getQuery();
 
   stream << "(retrieve-related-individuals |"
 	 << nspace
-	 << atom.getArgument(1).getUnquotedString()
+	 << q.getUnquotedString()
 	 << "|)"
 	 << std::endl;
 }

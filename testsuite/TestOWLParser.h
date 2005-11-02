@@ -28,10 +28,10 @@ namespace racer {
   private:
     std::string shop;
 
-    void output(const PluginAtom::TUPLEVECTOR& tv)
+    void output(const std::vector<Tuple>& tv)
     {
       std::cout << std::endl;
-      for(PluginAtom::TUPLEVECTOR::const_iterator it = tv.begin();
+      for(std::vector<Tuple>::const_iterator it = tv.begin();
 	  it != tv.end();
 	  it++)
 	{
