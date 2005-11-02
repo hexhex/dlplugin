@@ -161,8 +161,11 @@ namespace racer {
   typedef RacerDirector<RacerUNABuilder, RacerIgnoreAnswer> RacerUNA;
   typedef RacerDirector<RacerTempABoxBuilder, RacerSimpleAnswer> RacerTempABox;
   typedef RacerDirector<RacerOpenOWLBuilder, RacerSimpleAnswer> RacerOpenOWL;
+  typedef RacerDirector<RacerABoxConsistentBuilder, RacerBooleanAnswer> RacerABoxConsistent;
+  typedef RacerDirector<RacerCheckABoxConsistencyOffBuilder, RacerIgnoreAnswer> RacerABoxConsistencyOff;
 
-  typedef RacerDirector<RacerStateBuilder, RacerSimpleAnswer> RacerConceptRolePM;
+  //typedef RacerDirector<RacerStateBuilder, RacerSimpleAnswer> RacerConceptRolePM;
+  typedef RacerDirector<RacerStateBuilder, RacerIgnoreAnswer> RacerConceptRolePM;
   typedef RacerDirector<RacerConceptInstancesBuilder, RacerAnswerList> RacerConceptQuery;
   typedef RacerDirector<RacerRoleIndividualsBuilder, RacerAnswerPairList> RacerRoleQuery;
   typedef RacerDirector<RacerIsConceptMemberBuilder, RacerBooleanAnswer> RacerIsConceptQuery;

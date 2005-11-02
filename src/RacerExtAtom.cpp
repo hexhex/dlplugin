@@ -255,3 +255,163 @@ RacerRole::getQueryDirectors() const
 {
   return getDirectors<RacerIsRoleQuery, RacerBooleanCache>();
 }
+
+
+
+
+
+RacerConsistent::RacerConsistent(std::iostream& s)
+  : stream(s)
+{
+  //
+  // &racerConsistent[kb,plusC,minusC,plusR,minusR]()
+  //
+
+  setOutputArity(0);
+
+  addInputPredicate(); // minusR
+  addInputPredicate(); // plusR
+  addInputPredicate(); // minusC
+  addInputPredicate(); // plusC
+  addInputConstant();  // kb URI
+}
+
+RacerConsistent::~RacerConsistent()
+{ }
+
+
+RacerBaseDirector::QueryCtxPtr
+RacerConsistent::setupQuery(const Interpretation& in,
+			    const Tuple& parms) const
+{
+  RacerBaseDirector::QueryCtxPtr qctx(new QueryCtx);
+
+  Query& q = qctx->getQuery();
+
+  const GAtomSet& ints = in.getAtomSet();
+
+//   std::cout << std::endl << "Parms: ";
+//   std::copy(parms.begin(), parms.end(), std::ostream_iterator<Term>(std::cout, " "));
+//   std::cout << std::endl << "Indvs: ";
+//   std::copy(indv.begin(), indv.end(), std::ostream_iterator<Term>(std::cout, " "));
+//   std::cout << std::endl << "Ints: ";
+//   std::copy(ints.begin(), ints.end(), std::ostream_iterator<GAtom>(std::cout, " % "));
+//   std::cout << std::endl;
+
+  // parms[0] contains the KB URI constant
+  std::string ontostr = parms[0].getUnquotedString();
+  q.setOntology(ontostr);
+
+  ///@todo read nspace from owl document
+#if 1
+  q.setNamespace("http://www.kr.tuwien.ac.at/staff/roman/shop#");
+#else
+  // get namespace from owl document
+  OWLParser p("file:" + ontostr);
+  p.parseNamespace(q);
+#endif // "1"
+
+  //
+  // spread interpretation into the appropriate GAtomSet
+  //
+
+  GAtomSet pc;
+  GAtomSet mc;
+  GAtomSet pr;
+  GAtomSet mr;
+
+  for (GAtomSet::const_iterator it = ints.begin();
+       it != ints.end(); it++)
+    {
+      const GAtom& a = *it;
+      const Term pred = a.getArgument(0);
+
+      if (pred == parms[1]) // plusC
+	{
+	  pc.insert(a);
+	}
+      else if (pred == parms[2]) // minusC
+	{
+	  mc.insert(a);
+	}
+      else if (pred == parms[3]) // plusR
+	{
+	  pr.insert(a);
+	}
+      else if (pred == parms[4]) // minusR
+	{
+	  mr.insert(a);
+	}
+      else
+	{
+	  // just ignore unknown stuff...
+	  // std::cerr << "WTF?" << std::endl;
+	}
+    }
+
+  q.setPlusConcept(pc);
+  q.setMinusConcept(mc);
+  q.setPlusRole(pr);
+  //q.setMinusRole(mr); ///@todo minusR not implemented yet
+
+  return qctx;
+}
+
+RacerBaseDirector::DirectorPtr
+RacerConsistent::getDirectors() const
+{
+  RacerBaseDirector::DirectorPtr una   (new RacerUNA(stream));
+  //RacerBaseDirector::DirectorPtr con   (new RacerABoxConsistencyOff(stream, una));
+  RacerBaseDirector::DirectorPtr owl   (new RacerOpenOWL(stream, una));
+  RacerBaseDirector::DirectorPtr tmp   (new RacerTempABox(stream, owl));
+  RacerBaseDirector::DirectorPtr crpm  (new RacerConceptRolePM(stream, tmp));
+
+  RacerBaseDirector::DirectorPtr consistent (new RacerABoxConsistent(stream, crpm));
+
+  return consistent;
+}
+
+void
+RacerConsistent::retrieve(const Interpretation& in,
+			  const Tuple& parms,
+			  std::vector<Tuple>& out) throw(PluginError)
+{
+  try
+    {
+      RacerBaseDirector::DirectorPtr dirs = getDirectors();
+
+      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(in, parms);
+
+      qctx = dirs->query(qctx);
+
+      if (!qctx->getAnswer().getAnswer()) // check if ABox is not consistent
+	{
+	  out.push_back(Tuple());
+	}
+    }
+  catch (RacerError& e)
+    {
+      throw PluginError(e.what());
+    }
+}
+
+bool
+RacerConsistent::query(const Interpretation& in,
+		       const Tuple& parms,
+		       Tuple&) throw(PluginError)
+{
+  try
+    {
+      RacerBaseDirector::DirectorPtr dirs = getDirectors();
+
+      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(in, parms);
+
+      qctx = dirs->query(qctx);
+
+      return qctx->getAnswer().getAnswer();
+    }
+  catch (RacerError& e)
+    {
+      throw PluginError(e.what());
+    }
+}

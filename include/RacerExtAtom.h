@@ -120,6 +120,50 @@ namespace racer {
     ~RacerRole();
   };
 
+
+
+  /**
+   * @brief Consitency external atom for RACER.
+   */
+  class RacerConsistent : public PluginAtom
+  {
+  private:
+    std::iostream& stream;
+
+  protected:
+    /**
+     * @brief Setup QueryCtx object.
+     *
+     * @param in
+     * @param parms
+     * @return a new managed QueryCtx pointer
+     */
+    virtual RacerBaseDirector::QueryCtxPtr
+    setupQuery(const Interpretation& in,
+	       const Tuple& parms) const;
+
+    /// creates nested RacerBaseDirector objects
+    RacerBaseDirector::DirectorPtr
+    getDirectors() const;
+
+  public:
+    RacerConsistent(std::iostream&);
+
+    virtual
+    ~RacerConsistent();
+
+    virtual void
+    retrieve(const Interpretation& in,
+	     const Tuple& parms,
+	     std::vector<Tuple>& out) throw(PluginError);
+
+    virtual bool
+    query(const Interpretation& in,
+	  const Tuple& parms,
+	  Tuple& indv) throw(PluginError);
+  };
+
+
 } // namespace racer
 } // namespace dlvhex
 

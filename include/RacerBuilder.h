@@ -262,6 +262,31 @@ namespace racer {
     { }
   };
 
+  /**
+   * @brief Checks ABox consistency.
+   */
+  class RacerABoxConsistentBuilder : public RacerSimpleCommandBuilder
+  {
+  public:
+    explicit
+    RacerABoxConsistentBuilder(std::ostream& s)
+      : RacerSimpleCommandBuilder(s, "(abox-consistent?)")
+    { }
+  };
+
+  /**
+   * @brief Don't check ABox consistency.
+   */
+  class RacerCheckABoxConsistencyOffBuilder : public RacerSimpleCommandBuilder
+  {
+  public:
+    explicit
+    RacerCheckABoxConsistencyOffBuilder(std::ostream& s)
+      : RacerSimpleCommandBuilder(s, "(dont-check-abox-consistency-before-querying)")
+    { }
+  };
+
+
 } // namespace racer
 } // namespace dlvhex
 

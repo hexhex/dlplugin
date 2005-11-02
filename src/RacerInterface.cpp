@@ -88,6 +88,7 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
 {
   m["racerC"] = new RacerConcept(stream, cache);
   m["racerR"] = new RacerRole(stream, cache);
+  m["racerConsistent"] = new RacerConsistent(stream);
 }
 
 
