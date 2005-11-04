@@ -124,15 +124,17 @@ RacerExtAtom::setupQuery(const Interpretation& in,
 
 template<class Director, class Cacher>
 RacerBaseDirector::DirectorPtr
-RacerExtAtom::getDirectors() const
+RacerExtAtom::getDirectors(RacerCompositeDirector* dir) const
 {
-  RacerBaseDirector::DirectorPtr una   (new RacerUNA(stream));
-  RacerBaseDirector::DirectorPtr owl   (new RacerOpenOWL(stream, una));
-  RacerBaseDirector::DirectorPtr tmp   (new RacerTempABox(stream, owl));
-  RacerBaseDirector::DirectorPtr crpm  (new RacerConceptRolePM(stream, tmp));
+  dir->add(new RacerUNA(stream));
+  dir->add(new RacerOpenOWL(stream));
+  dir->add(new RacerTempABox(stream));
+  dir->add(new RacerConceptRolePM(stream));
 
-  RacerBaseDirector::DirectorPtr query (new Director(stream, crpm));
-  RacerBaseDirector::DirectorPtr cacher(new Cacher(cache, query));
+  dir->add(new Director(stream));
+
+  RacerBaseDirector::DirectorPtr comp(dir);
+  RacerBaseDirector::DirectorPtr cacher(new Cacher(cache, comp));
 
   return cacher;
 }
@@ -208,19 +210,18 @@ RacerConcept::RacerConcept(std::iostream& s, RacerCachingDirector::RacerCache& c
   addInputConstant();  // kb URI
 }
 
-RacerConcept::~RacerConcept()
-{ }
-
 RacerBaseDirector::DirectorPtr
 RacerConcept::getRetrievalDirectors() const
 {
-  return getDirectors<RacerConceptQuery, RacerTermCache>();
+  return getDirectors<RacerConceptQuery,RacerTermCache>
+    (new RacerRetrieveComposite(stream));
 }
 
 RacerBaseDirector::DirectorPtr
 RacerConcept::getQueryDirectors() const
 {
-  return getDirectors<RacerIsConceptQuery, RacerBooleanCache>();
+  return getDirectors<RacerIsConceptQuery,RacerBooleanCache>
+    (new RacerQueryComposite(stream));
 }
 
 
@@ -241,19 +242,21 @@ RacerRole::RacerRole(std::iostream& s, RacerCachingDirector::RacerCache& c)
   addInputConstant();  // kb URI
 }
 
-RacerRole::~RacerRole()
-{ }
-
 RacerBaseDirector::DirectorPtr
 RacerRole::getRetrievalDirectors() const
 {
-  return getDirectors<RacerRoleQuery, RacerTermCache>();
+  return getDirectors<RacerRoleQuery,RacerTermCache>
+    (new RacerRetrieveComposite(stream,
+				RacerRetrieveComposite::RELATED
+				)
+     );
 }
 
 RacerBaseDirector::DirectorPtr
 RacerRole::getQueryDirectors() const
 {
-  return getDirectors<RacerIsRoleQuery, RacerBooleanCache>();
+  return getDirectors<RacerIsRoleQuery, RacerBooleanCache>
+    (new RacerQueryComposite(stream));
 }
 
 
@@ -275,10 +278,6 @@ RacerConsistent::RacerConsistent(std::iostream& s)
   addInputPredicate(); // plusC
   addInputConstant();  // kb URI
 }
-
-RacerConsistent::~RacerConsistent()
-{ }
-
 
 RacerBaseDirector::QueryCtxPtr
 RacerConsistent::setupQuery(const Interpretation& in,
@@ -360,15 +359,15 @@ RacerConsistent::setupQuery(const Interpretation& in,
 RacerBaseDirector::DirectorPtr
 RacerConsistent::getDirectors() const
 {
-  RacerBaseDirector::DirectorPtr una   (new RacerUNA(stream));
-  //RacerBaseDirector::DirectorPtr con   (new RacerABoxConsistencyOff(stream, una));
-  RacerBaseDirector::DirectorPtr owl   (new RacerOpenOWL(stream, una));
-  RacerBaseDirector::DirectorPtr tmp   (new RacerTempABox(stream, owl));
-  RacerBaseDirector::DirectorPtr crpm  (new RacerConceptRolePM(stream, tmp));
+  RacerQueryComposite* dir = new RacerQueryComposite(stream);
 
-  RacerBaseDirector::DirectorPtr consistent (new RacerABoxConsistent(stream, crpm));
+  dir->add(new RacerUNA(stream));
+  dir->add(new RacerOpenOWL(stream));
+  dir->add(new RacerTempABox(stream));
+  dir->add(new RacerConceptRolePM(stream));
+  dir->add(new RacerABoxConsistent(stream));
 
-  return consistent;
+  return RacerBaseDirector::DirectorPtr(dir);
 }
 
 void
@@ -384,7 +383,7 @@ RacerConsistent::retrieve(const Interpretation& in,
 
       qctx = dirs->query(qctx);
 
-      if (!qctx->getAnswer().getAnswer()) // check if ABox is not consistent
+      if (qctx->getAnswer().getIncoherent()) // check if ABox is inconsistent
 	{
 	  out.push_back(Tuple());
 	}
@@ -408,7 +407,7 @@ RacerConsistent::query(const Interpretation& in,
 
       qctx = dirs->query(qctx);
 
-      return qctx->getAnswer().getAnswer();
+      return qctx->getAnswer().getIncoherent();
     }
   catch (RacerError& e)
     {

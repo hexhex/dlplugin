@@ -89,11 +89,11 @@ RacerParse::parse(Answer& answer) throw (RacerParsingError)
 
       answer.setErrorMessage(ans);
 
-      // incoherent?
+      // if kb gets inconsistent just return and set incoherent flag
       if (ans.find("incoherent") != std::string::npos)
 	{
-	  ///@todo do we need to throw an exception if kb is inconsistent?
 	  answer.setIncoherent(true);
+	  return;
 	}
 
       throw RacerParsingError("Received error message \"" + ans + "\"");

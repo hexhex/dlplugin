@@ -40,12 +40,7 @@ namespace racer {
     typedef std::auto_ptr<QueryCtx> QueryCtxPtr;
 
   protected:
-    /// a nested director
-    DirectorPtr director;
-
-    explicit
-    RacerBaseDirector(DirectorPtr d)
-      : director(d)
+    RacerBaseDirector()
     { }
 
   public:
@@ -59,8 +54,8 @@ namespace racer {
 
 
   /**
-   * @brief Template Director for building possible nested RACER
-   * commands and parsing their result.
+   * @brief Template Director for building RACER commands and parsing
+   * their result.
    */
   template <class Builder, class Parser>
   class RacerDirector : public RacerBaseDirector
@@ -71,15 +66,11 @@ namespace racer {
 
   public:
     explicit
-    RacerDirector(std::iostream&, DirectorPtr d = DirectorPtr());
-
-    virtual
-    ~RacerDirector();
+    RacerDirector(std::iostream&);
 
     /**
-     * @brief iteratively calls query on nested RacerBaseDirector
-     * objects and builds/parses RACER commands/answers using the
-     * Builder and Parser members.
+     * @brief builds/parses RACER commands/answers using the Builder
+     * and Parser members.
      *
      * @param qctx
      *
@@ -88,6 +79,74 @@ namespace racer {
      */
     virtual QueryCtxPtr
     query(QueryCtxPtr qctx) throw(RacerError);
+  };
+
+
+
+  /**
+   * @brief A Composite Director for querying lists of RACER commands.
+   */
+  class RacerCompositeDirector : public RacerBaseDirector
+  {
+  protected:
+    typedef std::vector<RacerBaseDirector*> DirectorList;
+
+    DirectorList dirs;
+    std::iostream& stream;
+
+    virtual QueryCtxPtr
+    handleInconsistency(QueryCtxPtr) = 0;
+
+  public:
+    RacerCompositeDirector(std::iostream&);
+
+    virtual
+    ~RacerCompositeDirector();
+
+    virtual void
+    add(RacerBaseDirector*);
+
+    virtual QueryCtxPtr
+    query(QueryCtxPtr qctx) throw(RacerError);
+  };
+
+
+  /**
+   * @brief A Composite Director for RACER query commands.
+   */
+  class RacerQueryComposite : public RacerCompositeDirector
+  {
+  protected:
+    virtual QueryCtxPtr
+    handleInconsistency(QueryCtxPtr qctx);
+
+  public:
+    explicit
+    RacerQueryComposite(std::iostream& s) : RacerCompositeDirector(s)
+    { }
+  };
+
+
+  /**
+   * @brief A Composite Director for RACER retrieval commands.
+   */
+  class RacerRetrieveComposite : public RacerCompositeDirector
+  {
+  public:
+    typedef enum { INDIVIDUALS, RELATED } RetrievalType;
+
+  protected:
+    RetrievalType type;
+
+    virtual QueryCtxPtr
+    handleInconsistency(QueryCtxPtr qctx);
+
+  public:
+    explicit
+    RacerRetrieveComposite(std::iostream& s, RetrievalType t = INDIVIDUALS)
+      : RacerCompositeDirector(s),
+	type(t)
+    { }
   };
 
 
@@ -101,6 +160,7 @@ namespace racer {
     typedef std::map<Term, QueryCtx*> RacerCache;
 
   protected:
+    DirectorPtr director;
     RacerCache& cache;
 
     /// template method checks if found is really a cache hit
@@ -131,10 +191,9 @@ namespace racer {
 
   public:
     explicit
-    RacerBooleanCache(RacerCache&, DirectorPtr d = DirectorPtr());
-
-    virtual
-    ~RacerBooleanCache();
+    RacerBooleanCache(RacerCache& c, DirectorPtr d = DirectorPtr())
+      : RacerCachingDirector(c, d)
+    { }
   };
 
 
@@ -149,10 +208,9 @@ namespace racer {
 
   public:
     explicit
-    RacerTermCache(RacerCache&, DirectorPtr d = DirectorPtr());
-
-    virtual
-    ~RacerTermCache();
+    RacerTermCache(RacerCache& c, DirectorPtr d = DirectorPtr())
+      : RacerCachingDirector(c, d)
+    { }
   };
 
 
@@ -164,8 +222,7 @@ namespace racer {
   typedef RacerDirector<RacerABoxConsistentBuilder, RacerBooleanAnswer> RacerABoxConsistent;
   typedef RacerDirector<RacerCheckABoxConsistencyOffBuilder, RacerIgnoreAnswer> RacerABoxConsistencyOff;
 
-  //typedef RacerDirector<RacerStateBuilder, RacerSimpleAnswer> RacerConceptRolePM;
-  typedef RacerDirector<RacerStateBuilder, RacerIgnoreAnswer> RacerConceptRolePM;
+  typedef RacerDirector<RacerStateBuilder, RacerSimpleAnswer> RacerConceptRolePM;
   typedef RacerDirector<RacerConceptInstancesBuilder, RacerAnswerList> RacerConceptQuery;
   typedef RacerDirector<RacerRoleIndividualsBuilder, RacerAnswerPairList> RacerRoleQuery;
   typedef RacerDirector<RacerIsConceptMemberBuilder, RacerBooleanAnswer> RacerIsConceptQuery;

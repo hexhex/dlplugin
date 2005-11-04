@@ -17,26 +17,16 @@ namespace dlvhex {
 namespace racer {
 
   template <class Builder, class Parser>
-  RacerDirector<Builder, Parser>::RacerDirector(std::iostream& s, DirectorPtr d)
-    : RacerBaseDirector(d),
+  RacerDirector<Builder, Parser>::RacerDirector(std::iostream& s)
+    : RacerBaseDirector(),
       builder(s),
       parser(s)
   { }
-
-
-  template <class Builder, class Parser>
-  RacerDirector<Builder, Parser>::~RacerDirector()
-  { }
-
 
   template <class Builder, class Parser>
   RacerBaseDirector::QueryCtxPtr
   RacerDirector<Builder, Parser>::query(QueryCtxPtr qctx) throw(RacerError)
   {
-    if (director.get() != 0)
-      {
-	qctx = director->query(qctx);
-      }
     builder.buildCommand(qctx->getQuery());
     parser.parse(qctx->getAnswer());
     return qctx;

@@ -54,11 +54,10 @@ namespace racer {
 	       const Tuple& parms,
 	       const Tuple& indv) const;
 
-    /// a template based method which creates nested RacerBaseDirector
-    /// objects
+    /// a template based method which fills the composite
     template<class Director, class Cacher>
     RacerBaseDirector::DirectorPtr
-    getDirectors() const;
+    getDirectors(RacerCompositeDirector*) const;
 
     /// template method for retrieve()
     virtual RacerBaseDirector::DirectorPtr
@@ -95,9 +94,6 @@ namespace racer {
 
   public:
     RacerConcept(std::iostream&, RacerCachingDirector::RacerCache&);
-
-    virtual
-    ~RacerConcept();
   };
 
 
@@ -115,9 +111,6 @@ namespace racer {
 
   public:
     RacerRole(std::iostream&, RacerCachingDirector::RacerCache&);
-
-    virtual
-    ~RacerRole();
   };
 
 
@@ -147,10 +140,8 @@ namespace racer {
     getDirectors() const;
 
   public:
+    explicit
     RacerConsistent(std::iostream&);
-
-    virtual
-    ~RacerConsistent();
 
     virtual void
     retrieve(const Interpretation& in,

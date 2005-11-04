@@ -20,8 +20,101 @@
 using namespace dlvhex::racer;
 
 
+RacerCompositeDirector::RacerCompositeDirector(std::iostream& s)
+  : RacerBaseDirector(),
+    stream(s)
+{ }
+
+RacerCompositeDirector::~RacerCompositeDirector()
+{
+  for (DirectorList::iterator it = dirs.begin(); it != dirs.end(); it++)
+    {
+      delete (*it);
+    }
+}
+
+void
+RacerCompositeDirector::add(RacerBaseDirector* d)
+{
+  if (d)
+    {
+      this->dirs.push_back(d);
+    }
+}
+
+
+RacerBaseDirector::QueryCtxPtr
+RacerCompositeDirector::query(QueryCtxPtr qctx) throw(RacerError)
+{
+  for (DirectorList::iterator it = dirs.begin(); it != dirs.end(); it++)
+    {
+      qctx = (*it)->query(qctx);
+
+      if (qctx->getAnswer().getIncoherent())
+	{
+	  return handleInconsistency(qctx);
+	}
+    }
+
+  return qctx;
+}
+
+
+
+RacerBaseDirector::QueryCtxPtr
+RacerQueryComposite::handleInconsistency(QueryCtxPtr qctx)
+{
+  //std::cerr << "query inconsistent" << std::endl;
+
+  // querying is trivial now -> true
+  qctx->getAnswer().setAnswer(true);
+
+  return qctx;
+}
+
+
+
+RacerBaseDirector::QueryCtxPtr
+RacerRetrieveComposite::handleInconsistency(QueryCtxPtr qctx)
+{
+  //std::cerr << "retrieval inconsistent" << std::endl;
+
+  // just get all individuals
+  RacerAllIndQuery all(stream);
+  qctx = all.query(qctx);
+
+  // check if we need to generate all possible pairs
+  if (type == RELATED)
+    {
+      const std::vector<Tuple>& tuples = qctx->getAnswer().getTuples();
+      std::vector<Tuple> pairs;
+
+      for (std::vector<Tuple>::const_iterator it1 = tuples.begin();
+	   it1 != tuples.end(); it1++)
+	{
+	  for (std::vector<Tuple>::const_iterator it2 = tuples.begin();
+	       it2 != tuples.end(); it2++)
+	    {
+	      Tuple t;
+	      t.push_back((*it1)[0]);	 
+	      t.push_back((*it2)[0]);
+	      
+	      pairs.push_back(t);
+	    }
+	}
+
+      qctx->getAnswer().setTuples(pairs);
+    }
+
+  return qctx;
+}
+
+
+
+
 RacerCachingDirector::RacerCachingDirector(RacerCache& c, DirectorPtr d)
-  : RacerBaseDirector(d),
+  : RacerBaseDirector(),
+    director(d),
     cache(c)
 { }
 
@@ -56,7 +149,7 @@ RacerCachingDirector::query(QueryCtxPtr qctx) throw(RacerError)
 	  delete found;
 	}
       
-      // ask the director chain and add qctx pointer to the cache 
+      // ask the director and add qctx pointer to the cache 
       qctx = director->query(qctx);
       cache[q] = qctx.get();
     }
@@ -65,12 +158,6 @@ RacerCachingDirector::query(QueryCtxPtr qctx) throw(RacerError)
 }
 
 
-RacerTermCache::RacerTermCache(RacerCache& c, DirectorPtr d)
-  : RacerCachingDirector(c, d)
-{ }
-
-RacerTermCache::~RacerTermCache()
-{ }
 
 bool
 RacerTermCache::cacheHit(const QueryCtx& query, const QueryCtx& found) const
@@ -81,12 +168,7 @@ RacerTermCache::cacheHit(const QueryCtx& query, const QueryCtx& found) const
 }
 
 
-RacerBooleanCache::RacerBooleanCache(RacerCache& c, DirectorPtr d)
-  : RacerCachingDirector(c, d)
-{ }
 
-RacerBooleanCache::~RacerBooleanCache()
-{ }
 
 bool
 RacerBooleanCache::cacheHit(const QueryCtx& query, const QueryCtx& found) const

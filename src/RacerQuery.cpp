@@ -186,6 +186,8 @@ Query::isSuperset(const Query& q2) const
 
 
 Answer::Answer()
+  : isIncoherent(false),
+    answer(false)
 { }
 
 Answer::~Answer()
