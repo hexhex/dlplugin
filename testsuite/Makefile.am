@@ -28,6 +28,7 @@ AM_CPPFLAGS = \
 
 TestAll_CXXFLAGS = $(CPPUNIT_CFLAGS)
 
-TestAll_LDFLAGS = $(CPPUNIT_LIBS) $(DLVHEX_LIBS)
+# build statically so we don't depend on an installed libdlvhexracer
+TestAll_LDFLAGS = -static $(CPPUNIT_LIBS) $(DLVHEX_LIBS)
 
 TestAll_LDADD = $(top_builddir)/src/libdlvhexracer.la

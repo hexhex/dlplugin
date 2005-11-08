@@ -197,7 +197,7 @@ RacerConcept::RacerConcept(std::iostream& s, RacerCachingDirector::RacerCache& c
   : RacerExtAtom(s, c)
 {
   //
-  // &racerC[kb,plusC,minusC,plusR,minusR,query](X)
+  // &dlC[kb,plusC,minusC,plusR,minusR,query](X)
   //
 
   setOutputArity(1);
@@ -229,7 +229,7 @@ RacerRole::RacerRole(std::iostream& s, RacerCachingDirector::RacerCache& c)
   : RacerExtAtom(s, c)
 {
   //
-  // &racerR[kb,plusC,minusC,plusR,minusR,query](X,Y)
+  // &dlR[kb,plusC,minusC,plusR,minusR,query](X,Y)
   //
 
   setOutputArity(2);
@@ -267,7 +267,7 @@ RacerConsistent::RacerConsistent(std::iostream& s)
   : stream(s)
 {
   //
-  // &racerConsistent[kb,plusC,minusC,plusR,minusR]()
+  // &dlConsistent[kb,plusC,minusC,plusR,minusR]()
   //
 
   setOutputArity(0);
@@ -383,7 +383,7 @@ RacerConsistent::retrieve(const Interpretation& in,
 
       qctx = dirs->query(qctx);
 
-      if (qctx->getAnswer().getIncoherent()) // check if ABox is inconsistent
+      if (!qctx->getAnswer().getIncoherent()) // check if ABox is consistent
 	{
 	  out.push_back(Tuple());
 	}
@@ -407,7 +407,7 @@ RacerConsistent::query(const Interpretation& in,
 
       qctx = dirs->query(qctx);
 
-      return qctx->getAnswer().getIncoherent();
+      return !qctx->getAnswer().getIncoherent();
     }
   catch (RacerError& e)
     {

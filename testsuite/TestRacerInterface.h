@@ -103,7 +103,7 @@ namespace racer {
 
       std::vector<Tuple> out;
 
-      CPPUNIT_ASSERT_NO_THROW( m["racerC"]->retrieve(in, parms, out) );
+      CPPUNIT_ASSERT_NO_THROW( m["dlC"]->retrieve(in, parms, out) );
 
       output(out);
     }
@@ -148,7 +148,7 @@ namespace racer {
 
       std::vector<Tuple> out;
 
-      CPPUNIT_ASSERT_NO_THROW( m["racerR"]->retrieve(in, parms, out) );
+      CPPUNIT_ASSERT_NO_THROW( m["dlR"]->retrieve(in, parms, out) );
 
       output(out);
     }
@@ -196,10 +196,10 @@ namespace racer {
 
       bool ret;
 
-      CPPUNIT_ASSERT_NO_THROW( ret = m["racerC"]->query(in, parms, indv) );
+      CPPUNIT_ASSERT_NO_THROW( ret = m["dlC"]->query(in, parms, indv) );
       std::cout << "Got: " << ret << std::endl;
 
-      CPPUNIT_ASSERT_NO_THROW( ret = m["racerC"]->query(in, parms, indv) );
+      CPPUNIT_ASSERT_NO_THROW( ret = m["dlC"]->query(in, parms, indv) );
       std::cout << "Got: " << ret << std::endl;
     }
 
@@ -247,10 +247,10 @@ namespace racer {
 
       bool ret;
 
-      CPPUNIT_ASSERT_NO_THROW( ret = m["racerR"]->query(in, parms, indv) );
+      CPPUNIT_ASSERT_NO_THROW( ret = m["dlR"]->query(in, parms, indv) );
       std::cout << "Got: " << ret << std::endl;
 
-      CPPUNIT_ASSERT_NO_THROW( ret = m["racerR"]->query(in, parms, indv) );
+      CPPUNIT_ASSERT_NO_THROW( ret = m["dlR"]->query(in, parms, indv) );
       std::cout << "Got: " << ret << std::endl;
     }
 
