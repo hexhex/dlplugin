@@ -15,6 +15,7 @@
 #include "OWLParser.h"
 #include "RacerDirector.h"
 #include "RacerQuery.h"
+#include "RacerRunner.h"
 
 #include <dlvhex/errorHandling.h>
 #include <dlvhex/Atom.h>
@@ -43,6 +44,13 @@ RacerExtAtom::setupQuery(const Interpretation& in,
 			 const Tuple& parms,
 			 const Tuple& indv) const
 {
+  if (parms.size() != 6)
+    {
+      throw PluginError("Input parameter size mismatch.");
+    }
+
+  RacerRunner::instance()->run();
+
   RacerBaseDirector::QueryCtxPtr qctx(new QueryCtx);
 
   Query& q = qctx->getQuery();
@@ -202,12 +210,12 @@ RacerConcept::RacerConcept(std::iostream& s, RacerCachingDirector::RacerCache& c
 
   setOutputArity(1);
 
-  addInputConstant();  // query
-  addInputPredicate(); // minusR
-  addInputPredicate(); // plusR
-  addInputPredicate(); // minusC
-  addInputPredicate(); // plusC
   addInputConstant();  // kb URI
+  addInputPredicate(); // plusC
+  addInputPredicate(); // minusC
+  addInputPredicate(); // plusR
+  addInputPredicate(); // minusR
+  addInputConstant();  // query
 }
 
 RacerBaseDirector::DirectorPtr
@@ -234,12 +242,12 @@ RacerRole::RacerRole(std::iostream& s, RacerCachingDirector::RacerCache& c)
 
   setOutputArity(2);
 
-  addInputConstant();  // query
-  addInputPredicate(); // minusR
-  addInputPredicate(); // plusR
-  addInputPredicate(); // minusC
-  addInputPredicate(); // plusC
   addInputConstant();  // kb URI
+  addInputPredicate(); // plusC
+  addInputPredicate(); // minusC
+  addInputPredicate(); // plusR
+  addInputPredicate(); // minusR
+  addInputConstant();  // query
 }
 
 RacerBaseDirector::DirectorPtr
@@ -272,17 +280,24 @@ RacerConsistent::RacerConsistent(std::iostream& s)
 
   setOutputArity(0);
 
-  addInputPredicate(); // minusR
-  addInputPredicate(); // plusR
-  addInputPredicate(); // minusC
-  addInputPredicate(); // plusC
   addInputConstant();  // kb URI
+  addInputPredicate(); // plusC
+  addInputPredicate(); // minusC
+  addInputPredicate(); // plusR
+  addInputPredicate(); // minusR
 }
 
 RacerBaseDirector::QueryCtxPtr
 RacerConsistent::setupQuery(const Interpretation& in,
 			    const Tuple& parms) const
 {
+  if (parms.size() != 5)
+    {
+      throw PluginError("Input parameter size mismatch.");
+    }
+
+  RacerRunner::instance()->run();
+
   RacerBaseDirector::QueryCtxPtr qctx(new QueryCtx);
 
   Query& q = qctx->getQuery();
@@ -291,8 +306,6 @@ RacerConsistent::setupQuery(const Interpretation& in,
 
 //   std::cout << std::endl << "Parms: ";
 //   std::copy(parms.begin(), parms.end(), std::ostream_iterator<Term>(std::cout, " "));
-//   std::cout << std::endl << "Indvs: ";
-//   std::copy(indv.begin(), indv.end(), std::ostream_iterator<Term>(std::cout, " "));
 //   std::cout << std::endl << "Ints: ";
 //   std::copy(ints.begin(), ints.end(), std::ostream_iterator<GAtom>(std::cout, " % "));
 //   std::cout << std::endl;

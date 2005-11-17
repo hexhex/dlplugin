@@ -51,8 +51,7 @@ namespace racer {
 
     void runRacerPlusConceptTest()
     {
-      TCPIOStream rsIO;
-      rsIO.open("localhost", 8088);
+      TCPIOStream rsIO("localhost", 8088);
       
       RacerConceptRolePM pcd(rsIO);
 
@@ -64,13 +63,11 @@ namespace racer {
       q->getQuery().setPlusConcept(pc);
 
       CPPUNIT_ASSERT_NO_THROW( q = pcd.query(q) );
-      rsIO.close();
     }
     
     void runRacerAllIndividualsTest()
     {
-      TCPIOStream rsIO;
-      rsIO.open("localhost", 8088);
+      TCPIOStream rsIO("localhost", 8088);
 
       RacerAllIndQuery aiq(rsIO);
 
@@ -78,8 +75,6 @@ namespace racer {
       
       CPPUNIT_ASSERT_NO_THROW( q = aiq.query(q) );
       CPPUNIT_ASSERT(q->getAnswer().getTuples().size() > 0);
-      
-      rsIO.close();
 
       std::vector<Tuple> tv = q->getAnswer().getTuples();
       output(tv);

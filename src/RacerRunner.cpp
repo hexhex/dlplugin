@@ -27,38 +27,34 @@ using namespace dlvhex::racer;
 
 #define PIDFILE "racer.pid"
 
-RacerRunner* RacerRunner::runner = 0;
 
-RacerRunner::RacerRunner()
+RacerRunnerAdaptee::RacerRunnerAdaptee()
   : command(RACERPATH),
     kb(""),
     racer(ACE_INVALID_PID)
-{ }
+{
+  // just instantiate ACE_Process_Manager before we are done
+  // instantiating ourselves since RacerRunnerAdaptee and
+  // ACE_Process_Manager are both managed by ACE_Object_Manager and it
+  // will delete its objects in a LIFO fashion thus destroying the
+  // process table of ACE_Process_Manager before we are ready to kill
+  // RACER
+  ACE_Process_Manager::instance();
+}
 
-RacerRunner::~RacerRunner()
+RacerRunnerAdaptee::~RacerRunnerAdaptee()
 {
   stop();
 }
 
-RacerRunner*
-RacerRunner::instance()
-{
-  if (RacerRunner::runner == 0)
-    {
-      RacerRunner::runner = new RacerRunner;
-    }
-
-  return RacerRunner::runner;
-}
-
 void
-RacerRunner::setKB(const std::string& kb)
+RacerRunnerAdaptee::setKB(const std::string& kb)
 {
   this->kb = kb;
 }
 
 void
-RacerRunner::cleanup()
+RacerRunnerAdaptee::cleanup()
 {
   std::fstream s;
 
@@ -75,7 +71,7 @@ RacerRunner::cleanup()
 }
 
 void
-RacerRunner::savePID()
+RacerRunnerAdaptee::savePID()
 {
   std::fstream s;
   dir.create(PIDFILE);
@@ -85,7 +81,7 @@ RacerRunner::savePID()
 }
 
 void
-RacerRunner::run()
+RacerRunnerAdaptee::run()
 {
   if (racer == ACE_INVALID_PID)
     {
@@ -130,7 +126,7 @@ RacerRunner::run()
 
 
 int
-RacerRunner::handle_signal(int signum, siginfo_t*, ucontext_t*)
+RacerRunnerAdaptee::handle_signal(int signum, siginfo_t*, ucontext_t*)
 {
   stop();
 
@@ -142,7 +138,7 @@ RacerRunner::handle_signal(int signum, siginfo_t*, ucontext_t*)
 
 
 void
-RacerRunner::stop()
+RacerRunnerAdaptee::stop()
 {
   if (racer != ACE_INVALID_PID)
     {

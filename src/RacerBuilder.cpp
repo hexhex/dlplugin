@@ -130,28 +130,38 @@ RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
   const GAtomSet& pr = query.getPlusRole();
 
   //
-  // create the state list. If there is no individual or pair a plain
-  // "(state )" command is not an error.
+  // create a state list. If there is no individual or pair to add
+  // an empty "(state )" command is not an error.
+  //
+  // RACER keeps the enlarged ABox if the command results in an
+  // inconsistent ABox.
   //
 
-  stream << "(state ";
-
-  for (GAtomSet::const_iterator it = pc.begin(); it != pc.end(); it++)
+  try
     {
-      buildPosInstance(*it, nspace);
-    }
-  
-  for (GAtomSet::const_iterator it = mc.begin(); it != mc.end(); it++)
-    {
-      buildNegInstance(*it, nspace);
-    }
+      stream << "(state ";
 
-  for (GAtomSet::const_iterator it = pr.begin(); it != pr.end(); it++)
-    {
-      buildPosRelated(*it, nspace);
-    }
+      for (GAtomSet::const_iterator it = pc.begin(); it != pc.end(); it++)
+	{
+	  buildPosInstance(*it, nspace);
+	}
+      
+      for (GAtomSet::const_iterator it = mc.begin(); it != mc.end(); it++)
+	{
+	  buildNegInstance(*it, nspace);
+	}
 
-  stream << ")" << std::endl;
+      for (GAtomSet::const_iterator it = pr.begin(); it != pr.end(); it++)
+	{
+	  buildPosRelated(*it, nspace);
+	}
+
+      stream << ")" << std::endl;
+    }
+  catch (std::exception& e)
+    {
+      throw RacerBuildingError(e.what());
+    }
 }
 
 
@@ -177,14 +187,21 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingErro
       throw RacerBuildingError("Exactly one individual needed.");
     }
 
-  stream << "(individual-instance? |"
-	 << nspace
-	 << indv[0].getUnquotedString()
-	 << "| |"
-	 << nspace
-	 << q.getUnquotedString()
-	 << "|)"
-	 << std::endl;
+  try
+    {
+      stream << "(individual-instance? |"
+	     << nspace
+	     << indv[0].getUnquotedString()
+	     << "| |"
+	     << nspace
+	     << q.getUnquotedString()
+	     << "|)"
+	     << std::endl;
+    }
+  catch (std::exception& e)
+    {
+      throw RacerBuildingError(e.what());
+    }
 }
 
 
@@ -209,17 +226,24 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
       throw RacerBuildingError("Exactly two individuals needed.");
     }
 
-  stream << "(individuals-related? |"
-	 << nspace
-	 << indv[0].getUnquotedString()
-	 << "| |"
-	 << nspace
-	 << indv[1].getUnquotedString()
-	 << "| |"
-	 << nspace
-	 << q.getUnquotedString()
-	 << "|)"
-	 << std::endl;
+  try
+    {
+      stream << "(individuals-related? |"
+	     << nspace
+	     << indv[0].getUnquotedString()
+	     << "| |"
+	     << nspace
+	     << indv[1].getUnquotedString()
+	     << "| |"
+	     << nspace
+	     << q.getUnquotedString()
+	     << "|)"
+	     << std::endl;
+    }
+  catch (std::exception& e)
+    {
+      throw RacerBuildingError(e.what());
+    }
 }
 
 
@@ -240,23 +264,30 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (RacerBuildingErr
   const Term& q = query.getQuery();
   std::string concept = q.getUnquotedString();
 
-  if (concept[0] != '-')
+  try
     {
-      stream << "(concept-instances |"
-	     << nspace
-	     << concept
-	     << "|)"
-	     << std::endl;
+      if (concept[0] != '-')
+	{
+	  stream << "(concept-instances |"
+		 << nspace
+		 << concept
+		 << "|)"
+		 << std::endl;
+	}
+      else
+	{
+	  concept.erase(0, 1); // remove first character "-"
+	  
+	  stream << "(concept-instances (not |"
+		 << nspace
+		 << concept
+		 << "|))"
+		 << std::endl;
+	}
     }
-  else
+  catch (std::exception& e)
     {
-      concept.erase(0, 1); // remove first character "-"
-
-      stream << "(concept-instances (not |"
-	     << nspace
-	     << concept
-	     << "|))"
-	     << std::endl;
+      throw RacerBuildingError(e.what());
     }
 }
 
@@ -276,11 +307,18 @@ RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (RacerBuildingErro
   std::string nspace = query.getNamespace();
   const Term& q = query.getQuery();
 
-  stream << "(retrieve-related-individuals |"
-	 << nspace
-	 << q.getUnquotedString()
-	 << "|)"
-	 << std::endl;
+  try
+    {
+      stream << "(retrieve-related-individuals |"
+	     << nspace
+	     << q.getUnquotedString()
+	     << "|)"
+	     << std::endl;
+    }
+  catch (std::exception& e)
+    {
+      throw RacerBuildingError(e.what());
+    }
 }
 
 
@@ -299,18 +337,25 @@ RacerOpenOWLBuilder::buildCommand(Query& query) throw (RacerBuildingError)
   // first 7 chars contains the URL scheme
   std::string scheme = doc.substr(0,7);
 
-  if (scheme == "http://" || scheme == "file://") ///@todo file:// is foobar
+  try
     {
-      stream << "(owl-read-document \""
-	     << doc
-	     << "\" :kb-name DEFAULT)"
-	     << std::endl;
+      if (scheme == "http://" || scheme == "file://") ///@todo file:// is foobar
+	{
+	  stream << "(owl-read-document \""
+		 << doc
+		 << "\" :kb-name DEFAULT)"
+		 << std::endl;
+	}
+      else
+	{
+	  stream << "(owl-read-file \""
+		 << doc
+		 << "\" :kb-name DEFAULT)"
+		 << std::endl;
+	}
     }
-  else
+  catch (std::exception& e)
     {
-      stream << "(owl-read-file \""
-	     << doc
-	     << "\" :kb-name DEFAULT)"
-	     << std::endl;
+      throw RacerBuildingError(e.what());
     }
 }

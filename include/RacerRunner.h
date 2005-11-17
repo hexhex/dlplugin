@@ -17,6 +17,8 @@
 
 #include <ace/Event_Handler.h>
 #include <ace/Signal.h>
+#include <ace/Null_Mutex.h>
+#include <ace/Singleton.h>
 
 #include "UserDir.h"
 
@@ -26,12 +28,9 @@ namespace racer {
   /**
    * @brief Starts RACER in another process.
    */
-  class RacerRunner : public ACE_Event_Handler
+  class RacerRunnerAdaptee : public ACE_Event_Handler
   {
   private:
-    /// the singleton
-    static RacerRunner* runner;
-
     std::string command;
     std::string kb;
     pid_t racer;
@@ -42,7 +41,7 @@ namespace racer {
     virtual int
     handle_signal(int signum, siginfo_t* = 0, ucontext_t* = 0);
 
-    /// try to kill an old RACER process
+    /// try to kill a stale RACER process
     virtual void
     cleanup();
 
@@ -50,17 +49,14 @@ namespace racer {
     virtual void
     savePID();
 
-  protected:         
-    RacerRunner();
+    /// Ctor
+    RacerRunnerAdaptee();
+
+    /// Dtor
+    virtual
+    ~RacerRunnerAdaptee();
 
   public:
-    /// singleton instance method
-    static RacerRunner*
-    instance();
-
-    virtual
-    ~RacerRunner();
-
     virtual void
     setKB(const std::string&);
 
@@ -71,7 +67,15 @@ namespace racer {
     /// stop running RACER and remove pid-file
     virtual void
     stop();
+
+    /// transparently allow access from ACE_Singleton<>
+    friend class ACE_Singleton<RacerRunnerAdaptee, ACE_Null_Mutex>;
   };
+
+  /// adapt RacerRunnerAdaptee to a singleton and register it to the
+  /// ACE_Object_Manager facility for automatic object deletion at
+  /// program exit time
+  typedef ACE_Singleton<RacerRunnerAdaptee, ACE_Null_Mutex> RacerRunner;
 
 } // namespace racer
 } // namespace dlvhex

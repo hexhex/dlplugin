@@ -29,7 +29,12 @@ namespace racer {
   class TCPStreamBuf : public std::streambuf
   {
   private:
-    ACE_SOCK_Stream& stream;
+    const std::string host;
+    const unsigned port;
+    
+    /// TCP Socket abstraction
+    ACE_SOCK_Stream stream;
+
     std::streamsize bufsize;
     std::streambuf::char_type* obuf;
     std::streambuf::char_type* ibuf;
@@ -71,9 +76,16 @@ namespace racer {
     sync();
 
   public:
-    /// Ctor
+    /**
+     * Ctor.
+     *
+     * @param host
+     * @param port
+     */
     explicit
-    TCPStreamBuf(ACE_SOCK_Stream& stream, std::streamsize bufsize = 256);
+    TCPStreamBuf(const std::string& host,
+		 unsigned port,
+		 std::streamsize bufsize = 256);
 
     /// Copy Ctor
     TCPStreamBuf(const TCPStreamBuf& sb);
@@ -81,6 +93,23 @@ namespace racer {
     /// Dtor
     virtual
     ~TCPStreamBuf();
+
+    /**
+     * Connects the underlying stream so sb can send and receive data.
+     *
+     * @return false on error, true on success.
+     */
+    virtual bool
+    open();
+
+    /**
+     * Closes the underlying stream.
+     *
+     * @return false on error, true on success.
+     */
+    virtual bool
+    close();
+
   };
 
 
@@ -97,56 +126,23 @@ namespace racer {
   private:
     /// buffered IO
     TCPStreamBuf sb;
-    /// TCP Socket abstraction
-    ACE_SOCK_Stream stream;
 
   public:
     /// Default Ctor
-    TCPIOStream()
+    TCPIOStream(const std::string& host, unsigned port)
       : std::iostream(&sb),
-	sb(stream),
-	stream()
-    { }
+	sb(host, port)
+    {
+      ///@todo hm, when we turn on exceptions the program terminates...
+      // exceptions(std::ios_base::badbit);
+    }
 
     /// Copy Ctor
     TCPIOStream(const TCPIOStream& iostr)
       : std::ios(),
 	std::iostream(&sb),
-	sb(iostr.sb),
-	stream(iostr.stream)
+	sb(iostr.sb)
     { }
-
-    /**
-     * Connects the underlying stream so sb can send and receive data.
-     *
-     * @param host
-     * @param port
-     *
-     * @return -1 on error, 0 on success.
-     */
-    virtual int
-    open(const std::string& host, unsigned port)
-    {
-      close();
-      
-      // connect to the TCP server at host:port
-
-      ACE_INET_Addr addr(port, host.c_str());
-      ACE_SOCK_Connector conn;
-
-      return conn.connect(stream, addr);
-    }
-
-    /**
-     * Closes the underlying stream.
-     *
-     * @return -1 on error, 0 on success.
-     */
-    virtual int
-    close()
-    {
-      return stream.close();
-    }
   };
 
 } // namespace racer

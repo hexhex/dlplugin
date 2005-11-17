@@ -51,52 +51,59 @@ RacerParse::parse(Answer& answer) throw (RacerParsingError)
       return;
     }
 
-  stream.ignore(); // ignore ':'
-
-  std::string anserr;
-  int count;
-  stream >> anserr >> count;
-
-  if (anserr == "answer")
+  try
     {
-      std::stringbuf sb;
-      
-      stream.ignore(2);     // ignore ' "'
-      stream.get(sb, '\"'); // get whole LIST until next '"'
-      stream.ignore();      // ignore closing '"'
-      std::string ans = sb.str();
+      stream.ignore(); // ignore ':'
 
+      std::string anserr;
+      int count;
+      stream >> anserr >> count;
 
-      sb.str("");      // clear stringbuf
-      stream.ignore(); // ignore ' '
-      stream.get(sb);  // get whole NS list
-      std::string nspace = sb.str();
-
-      // remove unconsumed characters to allow consecutive calls to parse()
-      stream.sync();
-
-      // call Template Method for further parsing
-      parseAnswer(answer, ans, nspace);
-    }
-  else // error
-    {
-      std::stringbuf sb;
-      stream.ignore(); // ignore ' '
-      stream.get(sb);
-      std::string ans = sb.str();
-
-      ///@todo do we need a sync on stream?
-
-      answer.setErrorMessage(ans);
-
-      // if kb gets inconsistent just return and set incoherent flag
-      if (ans.find("incoherent") != std::string::npos)
+      if (anserr == "answer")
 	{
-	  answer.setIncoherent(true);
-	  return;
-	}
+	  std::stringbuf sb;
+      
+	  stream.ignore(2);     // ignore ' "'
+	  stream.get(sb, '\"'); // get whole LIST until next '"'
+	  stream.ignore();      // ignore closing '"'
+	  std::string ans = sb.str();
 
-      throw RacerParsingError("Received error message \"" + ans + "\"");
+	  
+	  sb.str("");      // clear stringbuf
+	  stream.ignore(); // ignore ' '
+	  stream.get(sb);  // get whole NS list
+	  std::string nspace = sb.str();
+
+	  // remove unconsumed characters to allow consecutive calls to parse()
+	  stream.sync();
+
+	  // call Template Method for further parsing
+	  parseAnswer(answer, ans, nspace);
+	}
+      else // error
+	{
+	  std::stringbuf sb;
+	  stream.ignore(); // ignore ' '
+	  stream.get(sb);
+	  std::string ans = sb.str();
+
+	  ///@todo do we need a sync on stream?
+
+	  answer.setErrorMessage(ans);
+
+	  // if kb gets inconsistent just return and set incoherent flag
+	  if (ans.find("incoherent") != std::string::npos)
+	    {
+	      answer.setIncoherent(true);
+	      return;
+	    }
+
+	  throw RacerParsingError("Received error message \"" + ans + "\"");
+	}
+    }
+  catch (std::exception& e)
+    {
+      throw RacerParsingError(e.what());
     }
 }
 

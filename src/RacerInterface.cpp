@@ -18,35 +18,17 @@
 #include <algorithm>
 #include <iterator>
 
-#include <ace/OS.h>
+#include <ace/Null_Mutex.h>
+#include <ace/Singleton.h>
 
 using namespace dlvhex::racer;
 
 RacerInterface::RacerInterface()
-{
-  RacerRunner::instance()->run();
-
-  ACE_Time_Value tv(0, 300000);
-
-  // retry until RACER is up and running
-  for (int i = 10; i > 0; i--)
-    {
-      ACE_OS::sleep(tv);
-
-      if (stream.open("localhost", 8088))
-	{
-	  std::cerr << "no conn" << std::endl;
-	}
-      else
-	{
-	  break;
-	}
-    }
-}
+  : stream("localhost", 8088)
+{ }
 
 RacerInterface::~RacerInterface()
 {
-  stream.close();
   RacerRunner::instance()->stop();
 
   // delete all cached QueryCtx's
@@ -92,10 +74,10 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
 }
 
 
-RacerInterface theRacerInterface;
-
 extern "C" PluginInterface*
 PLUGINIMPORTFUNCTION()
 {
-  return &theRacerInterface; // singleton?
+  // adapt RacerInterface to a singleton and automagically register it
+  // at ACE_Object_Manager
+  return ACE_Singleton<RacerInterface, ACE_Null_Mutex>::instance();
 }

@@ -33,12 +33,7 @@ namespace racer {
 
     void runRacerStreamBufTest()
     {
-      ACE_SOCK_Stream rs;
-      ACE_INET_Addr addr(8088, "localhost");
-      ACE_SOCK_Connector conn;
-      conn.connect(rs, addr);
-
-      TCPStreamBuf rsb(rs, 1);
+      TCPStreamBuf rsb("localhost", 8088, 1);
       
       char b[] = "(all-individuals)\n";
       int n = rsb.sputn(b, sizeof b);
@@ -55,14 +50,11 @@ namespace racer {
 	  c = rsb.snextc();
 	}
       while (c != '\n');
-      
-      rs.close();
     }
     
     void runRacerIOStreamTest()
     {
-      TCPIOStream rsIO;
-      rsIO.open("localhost", 8088);
+      TCPIOStream rsIO("localhost", 8088);
       
       rsIO << "(all-individuals)" << std::endl;
       
@@ -74,8 +66,6 @@ namespace racer {
       std::string answ(answer);
       
       CPPUNIT_ASSERT(answ.find("answer") != std::string::npos);
-      
-      rsIO.close();
     }
     
     static CppUnit::Test *suite()

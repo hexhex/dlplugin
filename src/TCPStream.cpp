@@ -19,15 +19,18 @@
 #include <ace/SOCK_Connector.h>
 #include <ace/SOCK_Stream.h>
 #include <ace/INET_Addr.h>
+#include <ace/OS.h>
 
 using namespace dlvhex::racer;
 
 
 
 
-TCPStreamBuf::TCPStreamBuf(ACE_SOCK_Stream& stream,
+TCPStreamBuf::TCPStreamBuf(const std::string& host,
+			   unsigned port,
 			   std::streamsize bufsize)
-  : stream(stream),
+  : host(host),
+    port(port),
     bufsize(bufsize)
 {
   initBuffers();
@@ -36,6 +39,8 @@ TCPStreamBuf::TCPStreamBuf(ACE_SOCK_Stream& stream,
 
 TCPStreamBuf::TCPStreamBuf(const TCPStreamBuf& sb)
   : std::streambuf(),
+    host(sb.host),
+    port(sb.port),
     stream(sb.stream),
     bufsize(sb.bufsize)
 {
@@ -56,6 +61,8 @@ TCPStreamBuf::~TCPStreamBuf()
       delete[] obuf;
       obuf = 0;
     }
+
+  close();
 }
 
 
@@ -70,12 +77,56 @@ TCPStreamBuf::initBuffers()
 }
 
 
+bool
+TCPStreamBuf::open()
+{
+  if (stream.get_handle() == ACE_INVALID_HANDLE)
+    {
+      ACE_Time_Value tv(0, 300000);
+
+      // retry until TCP server is up and running
+      for (int i = 10; i > 0; i--)
+	{
+	  ACE_OS::sleep(tv);
+	  
+	  close();
+      
+	  // connect to the TCP server at host:port
+
+	  ACE_INET_Addr addr(port, host.c_str());
+	  ACE_SOCK_Connector conn;
+
+	  if (conn.connect(stream, addr) == 0)
+	    {
+	      return true; // connection established
+	    }
+	}
+
+      return false; // connection failed
+    }
+
+  return true;
+}
+
+
+bool
+TCPStreamBuf::close()
+{
+  return !stream.close();
+}
+
+
 std::streambuf::int_type
 TCPStreamBuf::overflow(std::streambuf::int_type c)
 {
+  if (!open())
+    {
+      return traits_type::eof();
+    }
+
   if (pptr() >= epptr()) // full obuf
     {
-      sync();
+      sync(); // check return value?
     }
 
   // put c into output buffer so next call to sync() will write it
@@ -92,12 +143,17 @@ TCPStreamBuf::overflow(std::streambuf::int_type c)
 std::streambuf::int_type
 TCPStreamBuf::underflow()
 {
+  if (!open())
+    {
+      return traits_type::eof();
+    }
+
   if (gptr() >= egptr()) // empty ibuf
     {
-      // try to receive len bytes or less
+      // try to receive at most bufsize bytes
       ssize_t n = stream.recv(ibuf, bufsize, 0);
 
-      // nothing to receive or failure
+      // nothing received or failure
       if (n <= 0)
 	{
 	  return traits_type::eof();
@@ -114,6 +170,11 @@ TCPStreamBuf::underflow()
 std::streambuf::int_type
 TCPStreamBuf::sync()
 {
+  if (!open())
+    {
+      return -1;
+    }
+
   // reset input buffer
   setg(ibuf, ibuf, ibuf);
 
