@@ -64,52 +64,77 @@ Query::getQuery() const
 }
 
 void
-Query::setIndividuals(const Tuple& indv)
+Query::setPatternTuple(const Tuple& pattern)
 {
-  this->indv = indv;
+  this->pattern = pattern;
 }
 
 const Tuple&
-Query::getIndividuals() const
+Query::getPatternTuple() const
 {
-  return this->indv;
+  return this->pattern;
 }
 
 void
-Query::setPlusConcept(const GAtomSet& plusConcept)
+Query::setInterpretation(const Interpretation& ints)
 {
-  this->plusConcept = plusConcept;
+  this->interpretation = ints;
 }
 
-const GAtomSet&
-Query::getPlusConcept() const
+const Interpretation&
+Query::getInterpretation() const
 {
-  return this->plusConcept;
-}
-
-void
-Query::setMinusConcept(const GAtomSet& minusConcept)
-{
-  this->minusConcept = minusConcept;
-}
-
-const GAtomSet&
-Query::getMinusConcept() const
-{
-  return this->minusConcept;
+  return this->interpretation;
 }
 
 void
-Query::setPlusRole(const GAtomSet& plusRole)
+Query::setPlusC(const Term& plusC)
 {
-  this->plusRole = plusRole;
+  this->plusC = plusC;
 }
 
-const GAtomSet&
-Query::getPlusRole() const
+const Term&
+Query::getPlusC() const
 {
-  return this->plusRole;
+  return this->plusC;
 }
+
+void
+Query::setMinusC(const Term& minusC)
+{
+  this->minusC = minusC;
+}
+
+const Term&
+Query::getMinusC() const
+{
+  return this->minusC;
+}
+
+void
+Query::setPlusR(const Term& plusR)
+{
+  this->plusR = plusR;
+}
+
+const Term&
+Query::getPlusR() const
+{
+  return this->plusR;
+}
+
+void
+Query::setMinusR(const Term& minusR)
+{
+  this->minusR = minusR;
+}
+
+const Term&
+Query::getMinusR() const
+{
+  return this->minusR;
+}
+
 
 bool
 Query::isSubset(const Query& q2) const
@@ -120,50 +145,37 @@ Query::isSubset(const Query& q2) const
   //
   const Query& q1 = *this;
 
-  const GAtomSet& pc1 = q1.getPlusConcept();
-  const GAtomSet& pc2 = q2.getPlusConcept();
-  
-  const GAtomSet& mc1 = q1.getMinusConcept();
-  const GAtomSet& mc2 = q2.getMinusConcept();
-
-  const GAtomSet& pr1 = q1.getPlusRole();
-  const GAtomSet& pr2 = q2.getPlusRole();
+  const GAtomSet& i1 = q1.getInterpretation().getAtomSet();
+  const GAtomSet& i2 = q2.getInterpretation().getAtomSet();
 
   //
   // q1 is a proper subset of q2:
   // query atoms, nspaces and ontologies are equal
-  // and
-  // class/role membership axioms and negated class
-  // membership axioms of q1 is contained in the
-  // axioms of q2 but not equal.
+  // and interpretation of q1 is contained in the
+  // interpretation of q2 but not equal.
   //
   if (q1.getQuery() == q2.getQuery()
       &&
       q1.getNamespace() == q2.getNamespace()
       &&
       q1.getOntology() == q2.getOntology()
+//       &&
+//       q1.getPatternTuple() == q2.getPatternTuplle()
       &&
-      !(pc1.empty() && pc2.empty()
-	&& 
-	mc1.empty() && mc2.empty()
-	&& 
-	pr1.empty() && pr2.empty()
-	)
+      !(i1.empty() && i2.empty())
       &&
-      std::includes(pc2.begin(), pc2.end(),
-		    pc1.begin(), pc1.end())
+      std::includes(i2.begin(), i2.end(),
+		    i1.begin(), i1.end())
       &&
-      (pc1 != pc2 || (pc1.empty() && pc2.empty()))
+      (i1 != i2 || (i1.empty() && i2.empty()))
       &&
-      std::includes(mc2.begin(), mc2.end(),
-		    mc1.begin(), mc1.end())
+      q1.getPlusC() == q2.getPlusC()
       &&
-      (mc1 != mc2 || (mc1.empty() && mc2.empty()))
+      q1.getMinusC() == q2.getMinusC()
       &&
-      std::includes(pr2.begin(), pr2.end(),
-		    pr1.begin(), pr1.end())
+      q1.getPlusR() == q2.getPlusR()
       &&
-      (pr1 != pr2 || (pr1.empty() && pr2.empty()))
+      q1.getMinusR() == q2.getMinusR()
       )
     {
       return true;
@@ -186,7 +198,8 @@ Query::isSuperset(const Query& q2) const
 
 
 Answer::Answer()
-  : isIncoherent(false),
+  : PluginAtom::Answer(),
+    isIncoherent(false),
     answer(false)
 { }
 
@@ -218,24 +231,6 @@ Answer::getErrorMessage() const
 }
 
 void
-Answer::setTuples(const std::vector<Tuple>& tuples)
-{
-  this->tuples = tuples;
-}
-
-void
-Answer::addTuple(const Tuple& tuple)
-{
-  this->tuples.push_back(tuple);
-}
-
-const std::vector<Tuple>&
-Answer::getTuples() const
-{
-  return this->tuples;
-}
-
-void
 Answer::setAnswer(bool answer)
 {
   this->answer = answer;
@@ -246,6 +241,7 @@ Answer::getAnswer() const
 {
   return this->answer;
 }
+
 
 
 QueryCtx::QueryCtx()

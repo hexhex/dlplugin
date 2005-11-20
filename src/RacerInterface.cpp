@@ -54,11 +54,11 @@ RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
   p.parseIndividuals(a);
 
   ///@todo this is crap. we need a more flexible query container class
-  const std::vector<Tuple>& tv = a.getTuples();
+  const std::vector<Tuple>* tv = a.getTuples();
   std::insert_iterator<std::list<Term> > ins = std::inserter(uni, uni.begin());
 
-  for (std::vector<Tuple>::const_iterator it = tv.begin();
-       it != tv.end();
+  for (std::vector<Tuple>::const_iterator it = tv->begin();
+       it != tv->end();
        it++)
     {
       std::copy((*it).begin(), (*it).end(), ins);

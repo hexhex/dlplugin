@@ -185,6 +185,7 @@ RacerBooleanAnswer::parseAnswer(Answer& answer,
   if (ans == "T")
     {
       answer.setAnswer(true);
+      answer.addTuple(Tuple());
     }
   else if (ans == "NIL")
     {

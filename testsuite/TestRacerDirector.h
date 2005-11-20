@@ -60,7 +60,10 @@ namespace racer {
 
       GAtomSet pc;
       pc.insert(GAtom("plusC(\"Part\",\"foo\")"));
-      q->getQuery().setPlusConcept(pc);
+      Interpretation ints(pc);
+
+      q->getQuery().setInterpretation(ints);
+      q->getQuery().setPlusC(Term("plusC"));
 
       CPPUNIT_ASSERT_NO_THROW( q = pcd.query(q) );
     }
@@ -74,10 +77,10 @@ namespace racer {
       RacerBaseDirector::QueryCtxPtr q(new QueryCtx);
       
       CPPUNIT_ASSERT_NO_THROW( q = aiq.query(q) );
-      CPPUNIT_ASSERT(q->getAnswer().getTuples().size() > 0);
+      CPPUNIT_ASSERT(q->getAnswer().getTuples()->size() > 0);
 
-      std::vector<Tuple> tv = q->getAnswer().getTuples();
-      output(tv);
+      const std::vector<Tuple> *tv = q->getAnswer().getTuples();
+      output(*tv);
     }
     
     static CppUnit::Test *suite()

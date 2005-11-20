@@ -35,18 +35,29 @@ namespace racer {
       is1.insert(GAtom("p(a)"));
       is1.insert(GAtom("p(b)"));
       is1.insert(GAtom("q(c)"));
+      Interpretation ints1(is1);
       
       GAtomSet is2;
       is2.insert(GAtom("p(b)"));
       is2.insert(GAtom("p(a)"));
       is2.insert(GAtom("q(c)"));
+      Interpretation ints2(is2);
 
       Term pa("p(a)");
 
       q1.setQuery(pa);
+      q1.setInterpretation(ints1);
+      q1.setPlusC("p");
+      q1.setMinusC("q");
+      q1.setPlusR("foo");
+      q1.setMinusR("foo");
+
       q2.setQuery(pa);
-      q1.setPlusConcept(is1);
-      q2.setPlusConcept(is2);
+      q2.setInterpretation(ints2);
+      q2.setPlusC("p");
+      q2.setMinusC("p");
+      q2.setPlusR("foo");
+      q2.setMinusR("foo");
 
       CPPUNIT_ASSERT(   q1 == q2  );
       CPPUNIT_ASSERT( !(q1.isSubset(q2)) );
@@ -61,18 +72,29 @@ namespace racer {
       GAtomSet is1;
       is1.insert(GAtom("p(b)"));
       is1.insert(GAtom("q(c)"));
+      Interpretation ints1(is1);
       
       GAtomSet is2;
       is2.insert(GAtom("p(a)"));
       is2.insert(GAtom("p(b)"));
       is2.insert(GAtom("q(c)"));
+      Interpretation ints2(is2);
 
       Term pa("p(a)");
 
       q1.setQuery(pa);
+      q1.setInterpretation(ints1);
+      q1.setPlusC("p");
+      q1.setMinusC("q");
+      q1.setPlusR("foo");
+      q1.setMinusR("foo");
+
       q2.setQuery(pa);
-      q1.setMinusConcept(is1);
-      q2.setMinusConcept(is2);
+      q2.setInterpretation(ints2);
+      q2.setPlusC("p");
+      q2.setMinusC("q");
+      q2.setPlusR("foo");
+      q2.setMinusR("foo");
 
       CPPUNIT_ASSERT( !(q1 == q2) );
       CPPUNIT_ASSERT(   q1.isSubset(q2)  );
@@ -88,17 +110,28 @@ namespace racer {
       is1.insert(GAtom("p(b)"));
       is1.insert(GAtom("p(a)"));
       is1.insert(GAtom("q(c)"));
+      Interpretation ints1(is1);
       
       GAtomSet is2;
       is2.insert(GAtom("p(b)"));
       is2.insert(GAtom("q(c)"));
+      Interpretation ints2(is2);
       
       Term pa("p(a)");
 
       q1.setQuery(pa);
+      q1.setInterpretation(ints1);
+      q1.setPlusC("p");
+      q1.setMinusC("q");
+      q1.setPlusR("foo");
+      q1.setMinusR("foo");
+
       q2.setQuery(pa);
-      q1.setPlusRole(is1);
-      q2.setPlusRole(is2);
+      q2.setInterpretation(ints2);
+      q2.setPlusC("p");
+      q2.setMinusC("q");
+      q2.setPlusR("foo");
+      q2.setMinusR("foo");
 
       CPPUNIT_ASSERT( !(q1 == q2) );
       CPPUNIT_ASSERT( !(q1.isSubset(q2)) );

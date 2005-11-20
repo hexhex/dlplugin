@@ -30,9 +30,8 @@
 using namespace dlvhex::racer;
 
 
-RacerExtAtom::RacerExtAtom(std::iostream& s, RacerCachingDirector::RacerCache& c)
-  : stream(s),
-    cache(c)
+RacerExtAtom::RacerExtAtom(std::iostream& s)
+  : stream(s)
 { }
 
 RacerExtAtom::~RacerExtAtom()
@@ -40,40 +39,18 @@ RacerExtAtom::~RacerExtAtom()
 
 
 RacerBaseDirector::QueryCtxPtr
-RacerExtAtom::setupQuery(const Interpretation& in,
-			 const Tuple& parms,
-			 const Tuple& indv) const
+RacerExtAtom::setupQuery(const PluginAtom::Query& query) const
 {
-  if (parms.size() != 6)
-    {
-      throw PluginError("Input parameter size mismatch.");
-    }
-
   RacerRunner::instance()->run();
 
   RacerBaseDirector::QueryCtxPtr qctx(new QueryCtx);
 
-  Query& q = qctx->getQuery();
+  dlvhex::racer::Query& q = qctx->getQuery();
 
-  const GAtomSet& ints = in.getAtomSet();
-
-//   std::cout << std::endl << "Parms: ";
-//   std::copy(parms.begin(), parms.end(), std::ostream_iterator<Term>(std::cout, " "));
-//   std::cout << std::endl << "Indvs: ";
-//   std::copy(indv.begin(), indv.end(), std::ostream_iterator<Term>(std::cout, " "));
-//   std::cout << std::endl << "Ints: ";
-//   std::copy(ints.begin(), ints.end(), std::ostream_iterator<GAtom>(std::cout, " % "));
-//   std::cout << std::endl;
-
-  // parms[0] contains the KB URI constant
-  std::string ontostr = parms[0].getUnquotedString();
+  // inputtuple[0] contains the KB URI constant
+  std::string ontostr = query.getInputTuple()[0].getUnquotedString();
   q.setOntology(ontostr);
 
-  // parms[5] contains the query constant
-  q.setQuery(parms[5]);
-
-  // query individuals
-  q.setIndividuals(indv);
 
   ///@todo read nspace from owl document
 #if 1
@@ -84,55 +61,34 @@ RacerExtAtom::setupQuery(const Interpretation& in,
   p.parseNamespace(q);
 #endif // "1"
 
-  //
-  // spread interpretation into the appropriate GAtomSet
-  //
-
-  GAtomSet pc;
-  GAtomSet mc;
-  GAtomSet pr;
-  GAtomSet mr;
-
-  for (GAtomSet::const_iterator it = ints.begin();
-       it != ints.end(); it++)
+  if (query.getInputTuple().size() > 5)
     {
-      const GAtom& a = *it;
-      const Term pred = a.getArgument(0);
-
-      if (pred == parms[1]) // plusC
-	{
-	  pc.insert(a);
-	}
-      else if (pred == parms[2]) // minusC
-	{
-	  mc.insert(a);
-	}
-      else if (pred == parms[3]) // plusR
-	{
-	  pr.insert(a);
-	}
-      else if (pred == parms[4]) // minusR
-	{
-	  mr.insert(a);
-	}
-      else
-	{
-	  // just ignore unknown stuff...
-	  // std::cerr << "WTF?" << std::endl;
-	}
+      q.setQuery(query.getInputTuple()[5]);
     }
 
-  q.setPlusConcept(pc);
-  q.setMinusConcept(mc);
-  q.setPlusRole(pr);
-  //q.setMinusRole(mr); ///@todo minusR not implemented yet
+  q.setInterpretation(query.getInterpretation());
+  q.setPatternTuple(query.getPatternTuple());
+  q.setPlusC(query.getInputTuple()[1]);
+  q.setMinusC(query.getInputTuple()[2]);
+  q.setPlusR(query.getInputTuple()[3]);
+  q.setMinusR(query.getInputTuple()[4]);
 
   return qctx;
 }
 
+
+
+
+
+RacerCachingAtom::RacerCachingAtom(std::iostream& s,
+				   RacerCachingDirector::RacerCache& c)
+  : RacerExtAtom(s),
+    cache(c)
+{ }
+
 template<class Director, class Cacher>
 RacerBaseDirector::DirectorPtr
-RacerExtAtom::getDirectors(RacerCompositeDirector* dir) const
+RacerCachingAtom::getCachedDirectors(RacerCompositeDirector* dir) const
 {
   dir->add(new RacerUNA(stream));
   dir->add(new RacerOpenOWL(stream));
@@ -148,19 +104,18 @@ RacerExtAtom::getDirectors(RacerCompositeDirector* dir) const
 }
 
 void
-RacerExtAtom::retrieve(const Interpretation& in,
-		       const Tuple& parms,
-		       std::vector<Tuple>& out) throw(PluginError)
+RacerCachingAtom::retrieve(const PluginAtom::Query& query,
+			   PluginAtom::Answer& answer) throw(PluginError)
 {
   try
     {
-      RacerBaseDirector::DirectorPtr dirs = getRetrievalDirectors();
+      RacerBaseDirector::DirectorPtr dirs = getDirectors(query);
 
-      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(in, parms, Tuple());
+      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(query);
 
       qctx = dirs->query(qctx);
 
-      out = qctx->getAnswer().getTuples();
+      answer = qctx->getAnswer();
 
       // we're done, so don't delete QueryCtx pointer -> it's cached
       qctx.release();
@@ -171,38 +126,10 @@ RacerExtAtom::retrieve(const Interpretation& in,
     }
 }
 
-bool
-RacerExtAtom::query(const Interpretation& in,
-		    const Tuple& parms,
-		    Tuple& indv) throw(PluginError)
-{
-  try
-    {
-      RacerBaseDirector::DirectorPtr dirs = getQueryDirectors();
-
-      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(in, parms, indv);
-
-      qctx = dirs->query(qctx);
-
-      bool ret = qctx->getAnswer().getAnswer();
-
-      // we're done, so don't delete QueryCtx -> it's cached
-      qctx.release();
-
-      return ret;
-    }
-  catch (RacerError& e)
-    {
-      throw PluginError(e.what());
-    }
-}
-
-
-
 
 
 RacerConcept::RacerConcept(std::iostream& s, RacerCachingDirector::RacerCache& c)
-  : RacerExtAtom(s, c)
+  : RacerCachingAtom(s, c)
 {
   //
   // &dlC[kb,plusC,minusC,plusR,minusR,query](X)
@@ -219,22 +146,30 @@ RacerConcept::RacerConcept(std::iostream& s, RacerCachingDirector::RacerCache& c
 }
 
 RacerBaseDirector::DirectorPtr
-RacerConcept::getRetrievalDirectors() const
+RacerConcept::getDirectors(const PluginAtom::Query& query) const
 {
-  return getDirectors<RacerConceptQuery,RacerTermCache>
-    (new RacerRetrieveComposite(stream));
-}
+  if (query.getPatternTuple().size() != 1)
+    {
+      throw PluginError("Pattertuple size mismatch.");
+    }
 
-RacerBaseDirector::DirectorPtr
-RacerConcept::getQueryDirectors() const
-{
-  return getDirectors<RacerIsConceptQuery,RacerBooleanCache>
-    (new RacerQueryComposite(stream));
+  const Term& x = query.getPatternTuple()[0];
+
+  if (x.isVariable()) // retrieval mode
+    {
+      return getCachedDirectors<RacerConceptQuery,RacerTermCache>
+	(new RacerRetrieveComposite(stream));
+    }
+  else // boolean query mode
+    {
+      return getCachedDirectors<RacerIsConceptQuery,RacerBooleanCache>
+	(new RacerQueryComposite(stream));
+    }
 }
 
 
 RacerRole::RacerRole(std::iostream& s, RacerCachingDirector::RacerCache& c)
-  : RacerExtAtom(s, c)
+  : RacerCachingAtom(s, c)
 {
   //
   // &dlR[kb,plusC,minusC,plusR,minusR,query](X,Y)
@@ -251,20 +186,35 @@ RacerRole::RacerRole(std::iostream& s, RacerCachingDirector::RacerCache& c)
 }
 
 RacerBaseDirector::DirectorPtr
-RacerRole::getRetrievalDirectors() const
+RacerRole::getDirectors(const PluginAtom::Query& query) const
 {
-  return getDirectors<RacerRoleQuery,RacerTermCache>
-    (new RacerRetrieveComposite(stream,
-				RacerRetrieveComposite::RELATED
-				)
-     );
-}
+  if (query.getPatternTuple().size() != 2)
+    {
+      throw PluginError("Pattertuple size mismatch.");
+    }
 
-RacerBaseDirector::DirectorPtr
-RacerRole::getQueryDirectors() const
-{
-  return getDirectors<RacerIsRoleQuery, RacerBooleanCache>
-    (new RacerQueryComposite(stream));
+  const Term& x = query.getPatternTuple()[0];
+  const Term& y = query.getPatternTuple()[1];
+
+  if (x.isVariable() && y.isVariable()) // retrieval mode
+    {
+      return getCachedDirectors<RacerRoleQuery,RacerTermCache>
+	(new RacerRetrieveComposite(stream,
+				    RacerRetrieveComposite::RELATED
+				    )
+	 );
+    }
+  else if (!x.isVariable() && !y.isVariable()) // boolean query mode
+    {
+      return getCachedDirectors<RacerIsRoleQuery, RacerBooleanCache>
+	(new RacerQueryComposite(stream));
+    }
+  else // pattern retrieval mode
+    {
+      ///@todo implement pattern retrieval mode
+      std::cerr << "Not implemented yet..." << std::endl;
+      return RacerBaseDirector::DirectorPtr();
+    }
 }
 
 
@@ -272,7 +222,7 @@ RacerRole::getQueryDirectors() const
 
 
 RacerConsistent::RacerConsistent(std::iostream& s)
-  : stream(s)
+  : RacerExtAtom(s)
 {
   //
   // &dlConsistent[kb,plusC,minusC,plusR,minusR]()
@@ -287,90 +237,8 @@ RacerConsistent::RacerConsistent(std::iostream& s)
   addInputPredicate(); // minusR
 }
 
-RacerBaseDirector::QueryCtxPtr
-RacerConsistent::setupQuery(const Interpretation& in,
-			    const Tuple& parms) const
-{
-  if (parms.size() != 5)
-    {
-      throw PluginError("Input parameter size mismatch.");
-    }
-
-  RacerRunner::instance()->run();
-
-  RacerBaseDirector::QueryCtxPtr qctx(new QueryCtx);
-
-  Query& q = qctx->getQuery();
-
-  const GAtomSet& ints = in.getAtomSet();
-
-//   std::cout << std::endl << "Parms: ";
-//   std::copy(parms.begin(), parms.end(), std::ostream_iterator<Term>(std::cout, " "));
-//   std::cout << std::endl << "Ints: ";
-//   std::copy(ints.begin(), ints.end(), std::ostream_iterator<GAtom>(std::cout, " % "));
-//   std::cout << std::endl;
-
-  // parms[0] contains the KB URI constant
-  std::string ontostr = parms[0].getUnquotedString();
-  q.setOntology(ontostr);
-
-  ///@todo read nspace from owl document
-#if 1
-  q.setNamespace("http://www.kr.tuwien.ac.at/staff/roman/shop#");
-#else
-  // get namespace from owl document
-  OWLParser p("file:" + ontostr);
-  p.parseNamespace(q);
-#endif // "1"
-
-  //
-  // spread interpretation into the appropriate GAtomSet
-  //
-
-  GAtomSet pc;
-  GAtomSet mc;
-  GAtomSet pr;
-  GAtomSet mr;
-
-  for (GAtomSet::const_iterator it = ints.begin();
-       it != ints.end(); it++)
-    {
-      const GAtom& a = *it;
-      const Term pred = a.getArgument(0);
-
-      if (pred == parms[1]) // plusC
-	{
-	  pc.insert(a);
-	}
-      else if (pred == parms[2]) // minusC
-	{
-	  mc.insert(a);
-	}
-      else if (pred == parms[3]) // plusR
-	{
-	  pr.insert(a);
-	}
-      else if (pred == parms[4]) // minusR
-	{
-	  mr.insert(a);
-	}
-      else
-	{
-	  // just ignore unknown stuff...
-	  // std::cerr << "WTF?" << std::endl;
-	}
-    }
-
-  q.setPlusConcept(pc);
-  q.setMinusConcept(mc);
-  q.setPlusRole(pr);
-  //q.setMinusRole(mr); ///@todo minusR not implemented yet
-
-  return qctx;
-}
-
 RacerBaseDirector::DirectorPtr
-RacerConsistent::getDirectors() const
+RacerConsistent::getDirectors(const PluginAtom::Query&) const
 {
   RacerQueryComposite* dir = new RacerQueryComposite(stream);
 
@@ -384,43 +252,18 @@ RacerConsistent::getDirectors() const
 }
 
 void
-RacerConsistent::retrieve(const Interpretation& in,
-			  const Tuple& parms,
-			  std::vector<Tuple>& out) throw(PluginError)
+RacerConsistent::retrieve(const PluginAtom::Query& query,
+			  PluginAtom::Answer& answer) throw(PluginError)
 {
   try
     {
-      RacerBaseDirector::DirectorPtr dirs = getDirectors();
+      RacerBaseDirector::DirectorPtr dirs = getDirectors(query);
 
-      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(in, parms);
-
-      qctx = dirs->query(qctx);
-
-      if (!qctx->getAnswer().getIncoherent()) // check if ABox is consistent
-	{
-	  out.push_back(Tuple());
-	}
-    }
-  catch (RacerError& e)
-    {
-      throw PluginError(e.what());
-    }
-}
-
-bool
-RacerConsistent::query(const Interpretation& in,
-		       const Tuple& parms,
-		       Tuple&) throw(PluginError)
-{
-  try
-    {
-      RacerBaseDirector::DirectorPtr dirs = getDirectors();
-
-      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(in, parms);
+      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(query);
 
       qctx = dirs->query(qctx);
 
-      return !qctx->getAnswer().getIncoherent();
+      answer = qctx->getAnswer();
     }
   catch (RacerError& e)
     {

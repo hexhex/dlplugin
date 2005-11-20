@@ -125,9 +125,7 @@ void
 RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
   std::string nspace = query.getNamespace();
-  const GAtomSet& pc = query.getPlusConcept();
-  const GAtomSet& mc = query.getMinusConcept();
-  const GAtomSet& pr = query.getPlusRole();
+  const Interpretation& ints = query.getInterpretation();
 
   //
   // create a state list. If there is no individual or pair to add
@@ -140,20 +138,33 @@ RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
   try
     {
       stream << "(state ";
-
-      for (GAtomSet::const_iterator it = pc.begin(); it != pc.end(); it++)
-	{
-	  buildPosInstance(*it, nspace);
-	}
       
-      for (GAtomSet::const_iterator it = mc.begin(); it != mc.end(); it++)
+      for (GAtomSet::const_iterator it = ints.begin();
+	   it != ints.end(); it++)
 	{
-	  buildNegInstance(*it, nspace);
-	}
-
-      for (GAtomSet::const_iterator it = pr.begin(); it != pr.end(); it++)
-	{
-	  buildPosRelated(*it, nspace);
+	  const GAtom& a = *it;
+	  const Term pred = a.getArgument(0);
+	  
+	  if (pred == query.getPlusC()) // plusC
+	    {
+	      buildPosInstance(a, nspace);
+	    }
+	  else if (pred == query.getMinusC()) // minusC
+	    {
+	      buildNegInstance(a, nspace);
+	    }
+	  else if (pred == query.getPlusR()) // plusR
+	    {
+	      buildPosRelated(a, nspace);
+	    }
+	  else if (pred == query.getMinusR()) // minusR
+	    {
+	      //buildNegRelated(a, nspace);
+	    }
+	  else
+	    {
+	      // just ignore unknown stuff...
+	    }
 	}
 
       stream << ")" << std::endl;
@@ -180,11 +191,11 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingErro
 {
   std::string nspace = query.getNamespace();
   const Term& q = query.getQuery();
-  const Tuple& indv = query.getIndividuals();
+  const Tuple& indv = query.getPatternTuple();
 
-  if (indv.size() != 1)
+  if (indv.size() != 1 || indv[0].isVariable())
     {
-      throw RacerBuildingError("Exactly one individual needed.");
+      throw RacerBuildingError("Incompatible pattern supplied.");
     }
 
   try
@@ -219,11 +230,11 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
   std::string nspace = query.getNamespace();
   const Term& q = query.getQuery();
-  const Tuple& indv = query.getIndividuals();
+  const Tuple& indv = query.getPatternTuple();
 
-  if (indv.size() != 2)
+  if (indv.size() != 2 || indv[0].isVariable() || indv[1].isVariable())
     {
-      throw RacerBuildingError("Exactly two individuals needed.");
+      throw RacerBuildingError("Incompatible pattern supplied.");
     }
 
   try

@@ -35,8 +35,12 @@ namespace racer {
     /// TCP Socket abstraction
     ACE_SOCK_Stream stream;
 
+    /// size of i/o sequences
     std::streamsize bufsize;
+
+    /// output character sequence
     std::streambuf::char_type* obuf;
+    /// input character sequence
     std::streambuf::char_type* ibuf;
 
     /**

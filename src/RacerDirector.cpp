@@ -64,10 +64,9 @@ RacerCompositeDirector::query(QueryCtxPtr qctx) throw(RacerError)
 RacerBaseDirector::QueryCtxPtr
 RacerQueryComposite::handleInconsistency(QueryCtxPtr qctx)
 {
-  //std::cerr << "query inconsistent" << std::endl;
-
   // querying is trivial now -> true
   qctx->getAnswer().setAnswer(true);
+  qctx->getAnswer().setTuples(std::vector<Tuple>());
 
   return qctx;
 }
@@ -77,8 +76,6 @@ RacerQueryComposite::handleInconsistency(QueryCtxPtr qctx)
 RacerBaseDirector::QueryCtxPtr
 RacerRetrieveComposite::handleInconsistency(QueryCtxPtr qctx)
 {
-  //std::cerr << "retrieval inconsistent" << std::endl;
-
   // just get all individuals
   RacerAllIndQuery all(stream);
   qctx = all.query(qctx);
@@ -86,14 +83,14 @@ RacerRetrieveComposite::handleInconsistency(QueryCtxPtr qctx)
   // check if we need to generate all possible pairs
   if (type == RELATED)
     {
-      const std::vector<Tuple>& tuples = qctx->getAnswer().getTuples();
+      const std::vector<Tuple>* tuples = qctx->getAnswer().getTuples();
       std::vector<Tuple> pairs;
 
-      for (std::vector<Tuple>::const_iterator it1 = tuples.begin();
-	   it1 != tuples.end(); it1++)
+      for (std::vector<Tuple>::const_iterator it1 = tuples->begin();
+	   it1 != tuples->end(); it1++)
 	{
-	  for (std::vector<Tuple>::const_iterator it2 = tuples.begin();
-	       it2 != tuples.end(); it2++)
+	  for (std::vector<Tuple>::const_iterator it2 = tuples->begin();
+	       it2 != tuples->end(); it2++)
 	    {
 	      Tuple t;
 	      t.push_back((*it1)[0]);	 

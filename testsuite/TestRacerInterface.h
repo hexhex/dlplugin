@@ -98,14 +98,18 @@ namespace racer {
       parms.push_back(Term("\"plusC\""));
       parms.push_back(Term("\"minusC\""));
       parms.push_back(Term("\"plusR\""));
-      parms.push_back(Term());
+      parms.push_back(Term("\"minusR\""));
       parms.push_back(Term("\"Part\""));
 
-      std::vector<Tuple> out;
+      Tuple pat;
+      pat.push_back(Term("X"));
 
-      CPPUNIT_ASSERT_NO_THROW( m["dlC"]->retrieve(in, parms, out) );
+      PluginAtom::Answer a;
+      PluginAtom::Query q(in, parms, pat);
 
-      output(out);
+      CPPUNIT_ASSERT_NO_THROW( m["dlC"]->retrieve(q, a) );
+
+      output(*a.getTuples());
     }
     
     void runRacerRoleTest()
@@ -143,14 +147,19 @@ namespace racer {
       parms.push_back(Term("\"plusC\""));
       parms.push_back(Term("\"minusC\""));
       parms.push_back(Term("\"plusR\""));
-      parms.push_back(Term());
+      parms.push_back(Term("\"minusR\""));
       parms.push_back(Term("\"provides\""));
 
-      std::vector<Tuple> out;
+      Tuple pat;
+      pat.push_back(Term("X"));
+      pat.push_back(Term("Y"));
 
-      CPPUNIT_ASSERT_NO_THROW( m["dlR"]->retrieve(in, parms, out) );
+      PluginAtom::Answer a;
+      PluginAtom::Query q(in, parms, pat);
 
-      output(out);
+      CPPUNIT_ASSERT_NO_THROW( m["dlR"]->retrieve(q, a) );
+
+      output(*a.getTuples());
     }
 
     void runRacerIsConceptTest()
@@ -188,19 +197,20 @@ namespace racer {
       parms.push_back(Term("\"plusC\""));
       parms.push_back(Term("\"minusC\""));
       parms.push_back(Term("\"plusR\""));
-      parms.push_back(Term());
+      parms.push_back(Term("\"minusR\""));
       parms.push_back(Term("\"Part\""));
 
-      Tuple indv;
-      indv.push_back(Term("\"cpu\""));
+      Tuple pat;
+      pat.push_back(Term("\"cpu\""));
 
-      bool ret;
+      PluginAtom::Answer a;
+      PluginAtom::Query q(in, parms, pat);
 
-      CPPUNIT_ASSERT_NO_THROW( ret = m["dlC"]->query(in, parms, indv) );
-      std::cout << "Got: " << ret << std::endl;
+      CPPUNIT_ASSERT_NO_THROW( m["dlC"]->retrieve(q, a) );
+      std::cout << "Got: " << a.getTuples()->size() << std::endl;
 
-      CPPUNIT_ASSERT_NO_THROW( ret = m["dlC"]->query(in, parms, indv) );
-      std::cout << "Got: " << ret << std::endl;
+      CPPUNIT_ASSERT_NO_THROW( m["dlC"]->retrieve(q, a) );
+      std::cout << "Got: " << a.getTuples()->size() << std::endl;
     }
 
     void runRacerIsRoleTest()
@@ -238,20 +248,21 @@ namespace racer {
       parms.push_back(Term("\"plusC\""));
       parms.push_back(Term("\"minusC\""));
       parms.push_back(Term("\"plusR\""));
-      parms.push_back(Term());
+      parms.push_back(Term("\"minusR\""));
       parms.push_back(Term("\"provides\""));
 
-      Tuple indv;
-      indv.push_back(Term("\"s1\""));
-      indv.push_back(Term("\"moo4\""));
+      Tuple pat;
+      pat.push_back(Term("\"s1\""));
+      pat.push_back(Term("\"moo4\""));
 
-      bool ret;
+      PluginAtom::Answer a;
+      PluginAtom::Query q(in, parms, pat);
 
-      CPPUNIT_ASSERT_NO_THROW( ret = m["dlR"]->query(in, parms, indv) );
-      std::cout << "Got: " << ret << std::endl;
+      CPPUNIT_ASSERT_NO_THROW( m["dlR"]->retrieve(q, a) );
+      std::cout << "Got: " << a.getTuples()->size() << std::endl;
 
-      CPPUNIT_ASSERT_NO_THROW( ret = m["dlR"]->query(in, parms, indv) );
-      std::cout << "Got: " << ret << std::endl;
+      CPPUNIT_ASSERT_NO_THROW( m["dlR"]->retrieve(q, a) );
+      std::cout << "Got: " << a.getTuples()->size() << std::endl;
     }
 
 

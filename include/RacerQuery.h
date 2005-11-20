@@ -34,10 +34,12 @@ namespace racer {
     std::string ontology;
 
     Term query;
-    Tuple indv;
-    GAtomSet plusConcept;
-    GAtomSet minusConcept;
-    GAtomSet plusRole;
+    Tuple pattern;
+    Term plusC;
+    Term minusC;
+    Term plusR;
+    Term minusR;
+    Interpretation interpretation;
 
   public:
     Query();
@@ -64,28 +66,40 @@ namespace racer {
     getQuery() const;
 
     virtual void
-    setIndividuals(const Tuple& indv);
+    setPatternTuple(const Tuple& pattern);
 
     virtual const Tuple&
-    getIndividuals() const;
+    getPatternTuple() const;
 
     virtual void
-    setPlusConcept(const GAtomSet& plusConcept);
+    setInterpretation(const Interpretation& ints);
 
-    virtual const GAtomSet&
-    getPlusConcept() const;
-
-    virtual void
-    setMinusConcept(const GAtomSet& minusConcept);
-
-    virtual const GAtomSet&
-    getMinusConcept() const;
+    virtual const Interpretation&
+    getInterpretation() const;
 
     virtual void
-    setPlusRole(const GAtomSet& plusRole);
+    setPlusC(const Term& plusC);
 
-    virtual const GAtomSet&
-    getPlusRole() const;
+    virtual const Term&
+    getPlusC() const;
+
+    virtual void
+    setMinusC(const Term& minusC);
+
+    virtual const Term&
+    getMinusC() const;
+
+    virtual void
+    setPlusR(const Term& plusR);
+
+    virtual const Term&
+    getPlusR() const;
+
+    virtual void
+    setMinusR(const Term& minusR);
+
+    virtual const Term&
+    getMinusR() const;
 
     ///@return true if interpretation is a proper subset of q2's
     ///interpretation, false otherwise
@@ -115,12 +129,15 @@ namespace racer {
   operator== (const Query& q1, const Query& q2)
   {
     if (q1.getQuery() == q2.getQuery() &&
-	q1.getIndividuals() == q2.getIndividuals() &&
+	q1.getPatternTuple() == q2.getPatternTuple() &&
 	q1.getNamespace() == q2.getNamespace()&&
 	q1.getOntology() == q2.getOntology() &&
-	q1.getPlusConcept() == q2.getPlusConcept() &&
-	q1.getMinusConcept() == q2.getMinusConcept() &&
-	q1.getPlusRole() == q2.getPlusRole()
+	q1.getInterpretation().getAtomSet()
+	== q2.getInterpretation().getAtomSet() &&
+	q1.getPlusC() == q2.getPlusC() &&
+	q1.getMinusC() == q1.getMinusC() &&
+	q1.getPlusR() == q1.getPlusR() &&
+	q1.getMinusR() == q1.getMinusR()
 	)
       {
 	return true;
@@ -142,14 +159,13 @@ namespace racer {
   /**
    * @brief The answer to a query.
    */
-  class Answer
+  class Answer : public PluginAtom::Answer
   {
   private:
     std::string errorMsg;
     bool isIncoherent;
 
     bool answer;
-    std::vector<Tuple> tuples;
 
   public:
     Answer();
@@ -168,15 +184,6 @@ namespace racer {
 
     virtual const std::string&
     getErrorMessage() const;
-
-    virtual void
-    setTuples(const std::vector<Tuple>& tuples);
-
-    virtual void
-    addTuple(const Tuple& tuple);
-
-    virtual const std::vector<Tuple>&
-    getTuples() const;
 
     virtual void
     setAnswer(bool answer);

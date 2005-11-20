@@ -64,7 +64,7 @@ namespace racer {
       Answer a;
       OWLParser p("file:" + shop);
       p.parseIndividuals(a);
-      output(a.getTuples());
+      output(*a.getTuples());
 #if 0
       p.parseNamespace(q);
       CPPUNIT_ASSERT(q.getNamespace() == "http://www.kr.tuwien.ac.at/staff/roman/shop#");

@@ -32,10 +32,12 @@ namespace racer {
       
       GAtomSet pc;
       pc.insert(GAtom("plusC(\"Part\",\"nic\")"));
+      Interpretation ints(pc);
 
       Query q;
 
-      q.setPlusConcept(pc);
+      q.setInterpretation(ints);
+      q.setPlusC(Term("plusC"));
       q.setNamespace("file:shop#");
 
       RacerStateBuilder pib(sst);
@@ -52,10 +54,12 @@ namespace racer {
       
       GAtomSet mc;
       mc.insert(GAtom("minusC(\"Part\",\"nic\")"));
+      Interpretation ints(mc);
 
       Query q;
 
-      q.setMinusConcept(mc);
+      q.setInterpretation(ints);
+      q.setMinusC(Term("minusC"));
       q.setNamespace("file:shop#");
 
       RacerStateBuilder pib(sst);
@@ -72,10 +76,12 @@ namespace racer {
 
       GAtomSet pr;
       pr.insert(GAtom("plusR(\"Part\",\"nic\",\"sic\")"));
+      Interpretation ints(pr);
 
       Query q;
 
-      q.setPlusRole(pr);
+      q.setInterpretation(ints);
+      q.setPlusR(Term("plusR"));
       q.setNamespace("file:shop#");
       
       RacerStateBuilder pib(sst);

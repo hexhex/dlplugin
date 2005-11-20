@@ -34,9 +34,8 @@ namespace racer {
   {
   protected:
     std::iostream& stream;
-    RacerCachingDirector::RacerCache& cache;
 
-    RacerExtAtom(std::iostream&, RacerCachingDirector::RacerCache&);
+    RacerExtAtom(std::iostream&);
 
     virtual
     ~RacerExtAtom();
@@ -44,53 +43,52 @@ namespace racer {
     /**
      * @brief Setup QueryCtx object.
      *
-     * @param in
-     * @param parms
-     * @param indv
+     * @param query
      * @return a new managed QueryCtx pointer
      */
     virtual RacerBaseDirector::QueryCtxPtr
-    setupQuery(const Interpretation& in,
-	       const Tuple& parms,
-	       const Tuple& indv) const;
+    setupQuery(const PluginAtom::Query& query) const;
+
+    /// template method used in retrieve()
+    virtual RacerBaseDirector::DirectorPtr
+    getDirectors(const PluginAtom::Query& query) const = 0;
+
+  public:
+    virtual void
+    retrieve(const PluginAtom::Query& query,
+	     Answer& answer) throw(PluginError) = 0;
+  };
+
+  /**
+   * @brief Base class for cached external atoms.
+   */
+  class RacerCachingAtom : public RacerExtAtom
+  {
+  protected:
+    RacerCachingDirector::RacerCache& cache;
 
     /// a template based method which fills the composite
     template<class Director, class Cacher>
     RacerBaseDirector::DirectorPtr
-    getDirectors(RacerCompositeDirector*) const;
-
-    /// template method for retrieve()
-    virtual RacerBaseDirector::DirectorPtr
-    getRetrievalDirectors() const = 0;
-
-    /// template method for query()
-    virtual RacerBaseDirector::DirectorPtr
-    getQueryDirectors() const = 0;
+    getCachedDirectors(RacerCompositeDirector*) const;
 
   public:
-    virtual void
-    retrieve(const Interpretation& in,
-	     const Tuple& parms,
-	     std::vector<Tuple>& out) throw(PluginError);
+    RacerCachingAtom(std::iostream&, RacerCachingDirector::RacerCache&);
 
-    virtual bool
-    query(const Interpretation& in,
-	  const Tuple& parms,
-	  Tuple& indv) throw(PluginError);
+    virtual void
+    retrieve(const PluginAtom::Query& query,
+	     Answer& answer) throw(PluginError);
   };
 
 
   /**
    * @brief Concept external atom to send data to RACER.
    */
-  class RacerConcept : public RacerExtAtom
+  class RacerConcept : public RacerCachingAtom
   {
   protected:
     virtual RacerBaseDirector::DirectorPtr
-    getRetrievalDirectors() const;
-
-    virtual RacerBaseDirector::DirectorPtr
-    getQueryDirectors() const;
+    getDirectors(const PluginAtom::Query& query) const;
 
   public:
     RacerConcept(std::iostream&, RacerCachingDirector::RacerCache&);
@@ -100,14 +98,11 @@ namespace racer {
   /**
    * @brief Role external atom to send data to RACER.
    */
-  class RacerRole : public RacerExtAtom
+  class RacerRole : public RacerCachingAtom
   {
   protected:
     virtual RacerBaseDirector::DirectorPtr
-    getRetrievalDirectors() const;
-
-    virtual RacerBaseDirector::DirectorPtr
-    getQueryDirectors() const;
+    getDirectors(const PluginAtom::Query& query) const;
 
   public:
     RacerRole(std::iostream&, RacerCachingDirector::RacerCache&);
@@ -118,40 +113,20 @@ namespace racer {
   /**
    * @brief Consitency external atom for RACER.
    */
-  class RacerConsistent : public PluginAtom
+  class RacerConsistent : public RacerExtAtom
   {
-  private:
-    std::iostream& stream;
-
   protected:
-    /**
-     * @brief Setup QueryCtx object.
-     *
-     * @param in
-     * @param parms
-     * @return a new managed QueryCtx pointer
-     */
-    virtual RacerBaseDirector::QueryCtxPtr
-    setupQuery(const Interpretation& in,
-	       const Tuple& parms) const;
-
     /// creates nested RacerBaseDirector objects
-    RacerBaseDirector::DirectorPtr
-    getDirectors() const;
+    virtual RacerBaseDirector::DirectorPtr
+    getDirectors(const PluginAtom::Query&) const;
 
   public:
     explicit
     RacerConsistent(std::iostream&);
 
     virtual void
-    retrieve(const Interpretation& in,
-	     const Tuple& parms,
-	     std::vector<Tuple>& out) throw(PluginError);
-
-    virtual bool
-    query(const Interpretation& in,
-	  const Tuple& parms,
-	  Tuple& indv) throw(PluginError);
+    retrieve(const PluginAtom::Query& query,
+	     Answer& answer) throw(PluginError);
   };
 
 

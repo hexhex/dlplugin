@@ -20,6 +20,7 @@
 #include <ace/SOCK_Stream.h>
 #include <ace/INET_Addr.h>
 #include <ace/OS.h>
+#include <ace/Signal.h>
 
 using namespace dlvhex::racer;
 
@@ -33,6 +34,11 @@ TCPStreamBuf::TCPStreamBuf(const std::string& host,
     port(port),
     bufsize(bufsize)
 {
+  // ignore SIGPIPE
+  ACE_Sig_Set sigpipe;
+  sigpipe.sig_add(SIGPIPE);
+  ACE_Sig_Action siga(SIG_IGN, sigpipe);
+
   initBuffers();
 }
 
@@ -126,7 +132,10 @@ TCPStreamBuf::overflow(std::streambuf::int_type c)
 
   if (pptr() >= epptr()) // full obuf
     {
-      sync(); // check return value?
+      if (sync() == -1)
+	{
+	  return traits_type::eof();
+	}
     }
 
   // put c into output buffer so next call to sync() will write it
@@ -180,18 +189,23 @@ TCPStreamBuf::sync()
 
   if (pptr() != pbase()) // non-empty obuf -> send data
     {
+      errno = ESUCCESS;
+
       // loops until whole obuf is sent
       //
       // Warning: when peer disconnects during the sending we receive
       // a SIGPIPE and the default signal handler exits the program.
-      // Maybe we should check the connection state before we send any
-      // data.
+      // Therefore we have to ignore SIGPIPE (in ctor) and reset the
+      // obuf followed by an error return value. See chapter 5.13 of
+      // W.R. Stevens: Unix Network Programming Vol.1. FYI: Linux has
+      // a MSG_NOSIGNAL flag which does the same, but isn't portable
+      // enough...
       ssize_t n = stream.send_n(pbase(), pptr() - pbase());
 
       // reset output buffer right after sending to the stream
       setp(obuf, obuf + bufsize);
 
-      if (n <= 0) // EOF or failure
+      if (n <= 0 || errno == EPIPE) // EOF or failure
 	{
 	  return -1;
 	}
