@@ -227,6 +227,7 @@ namespace racer {
   typedef RacerDirector<RacerRoleIndividualsBuilder, RacerAnswerPairList> RacerRoleQuery;
   typedef RacerDirector<RacerIsConceptMemberBuilder, RacerBooleanAnswer> RacerIsConceptQuery;
   typedef RacerDirector<RacerIsRoleMemberBuilder, RacerBooleanAnswer> RacerIsRoleQuery;
+  typedef RacerDirector<RacerIndividualFillersBuilder, RacerAnswerList> RacerIndvFillersQuery;
 
 } // namespace racer
 } // namespace dlvhex

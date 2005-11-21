@@ -176,6 +176,21 @@ namespace racer {
     buildCommand(Query& q) throw (RacerBuildingError);
   };
 
+  /**
+   * @brief Creates a command to query role individual fillers.
+   */
+  class RacerIndividualFillersBuilder : public RacerBuilder
+  {
+  public:
+    explicit
+    RacerIndividualFillersBuilder(std::ostream&);
+
+    virtual
+    ~RacerIndividualFillersBuilder();
+
+    virtual void
+    buildCommand(Query& q) throw (RacerBuildingError);
+  };
 
   /**
    * @brief Opens an OWL from file or URL as KB "DEFAULT".

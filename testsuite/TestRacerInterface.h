@@ -207,10 +207,10 @@ namespace racer {
       PluginAtom::Query q(in, parms, pat);
 
       CPPUNIT_ASSERT_NO_THROW( m["dlC"]->retrieve(q, a) );
-      std::cout << "Got: " << a.getTuples()->size() << std::endl;
+      CPPUNIT_ASSERT( a.getTuples()->size() == 1 );
 
       CPPUNIT_ASSERT_NO_THROW( m["dlC"]->retrieve(q, a) );
-      std::cout << "Got: " << a.getTuples()->size() << std::endl;
+      CPPUNIT_ASSERT( a.getTuples()->size() == 1 );
     }
 
     void runRacerIsRoleTest()
@@ -259,10 +259,73 @@ namespace racer {
       PluginAtom::Query q(in, parms, pat);
 
       CPPUNIT_ASSERT_NO_THROW( m["dlR"]->retrieve(q, a) );
-      std::cout << "Got: " << a.getTuples()->size() << std::endl;
+      CPPUNIT_ASSERT( a.getTuples()->size() == 1);
 
       CPPUNIT_ASSERT_NO_THROW( m["dlR"]->retrieve(q, a) );
-      std::cout << "Got: " << a.getTuples()->size() << std::endl;
+      CPPUNIT_ASSERT( a.getTuples()->size() == 1);
+    }
+
+    void runRacerRoleFillersTest()
+    {
+      PluginInterface* pi = PLUGINIMPORTFUNCTION();
+
+      PluginInterface::AtomFunctionMap m;
+      pi->getAtoms(m);
+
+      GAtomSet a1,a2,a3,a4;
+
+      GAtom pc0("\"plusC\"(\"Part\",\"moo1\")");
+      GAtom pc1("\"plusC\"(\"Part\",\"moo2\")");
+      GAtom pc2("\"plusC\"(\"Part\",\"moo3\")");
+      GAtom pc3("\"plusC\"(\"Part\",\"moo4\")");
+      a1.insert(pc0);
+      a1.insert(pc1);
+      a1.insert(pc2);
+      a1.insert(pc3);
+
+      GAtom mc0("\"minusC\"(\"Part\",\"moo5\")");
+      a2.insert(mc0);
+
+      GAtom pr0("\"plusR\"(\"provides\",\"s1\",\"moo4\")");
+      a3.insert(pr0);
+
+      Interpretation in;
+      in.add(a1);
+      in.add(a2);
+      in.add(a3);
+      in.add(a4);
+
+      Tuple parms;
+      parms.push_back(Term(shop));
+      parms.push_back(Term("\"plusC\""));
+      parms.push_back(Term("\"minusC\""));
+      parms.push_back(Term("\"plusR\""));
+      parms.push_back(Term("\"minusR\""));
+      parms.push_back(Term("\"provides\""));
+
+      Tuple pat;
+      pat.push_back(Term("X"));
+      pat.push_back(Term("\"cpu\""));
+
+      PluginAtom::Answer ans1;
+      PluginAtom::Query q1(in, parms, pat);
+
+      CPPUNIT_ASSERT_NO_THROW( m["dlR"]->retrieve(q1, ans1) );
+      CPPUNIT_ASSERT( ans1.getTuples()->size() == 3); // cpu provided in s1,s3,s5
+
+      output(*ans1.getTuples());
+
+      pat.clear();
+      pat.push_back(Term("\"s8\""));
+      pat.push_back(Term("Y"));
+
+      PluginAtom::Answer ans2;
+      PluginAtom::Query q2(in, parms, pat);
+
+      CPPUNIT_ASSERT_NO_THROW( m["dlR"]->retrieve(q2, ans2) );
+      CPPUNIT_ASSERT( ans2.getTuples()->size() == 4); // s8 provides dvdrom,cdrom,soundcard,memory
+
+      output(*ans2.getTuples());
     }
 
 
@@ -309,6 +372,13 @@ namespace racer {
 			    ( 
 			     "RacerIsRole", 
 			     &TestRacerInterface::runRacerIsRoleTest
+			     )
+			    );
+
+      suiteOfTests->addTest(new CppUnit::TestCaller<TestRacerInterface>
+			    ( 
+			     "RacerRoleFillers", 
+			     &TestRacerInterface::runRacerRoleFillersTest
 			     )
 			    );
 

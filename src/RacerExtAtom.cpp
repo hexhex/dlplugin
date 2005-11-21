@@ -211,9 +211,8 @@ RacerRole::getDirectors(const PluginAtom::Query& query) const
     }
   else // pattern retrieval mode
     {
-      ///@todo implement pattern retrieval mode
-      std::cerr << "Not implemented yet..." << std::endl;
-      return RacerBaseDirector::DirectorPtr();
+      return getCachedDirectors<RacerIndvFillersQuery, RacerTermCache>
+	(new RacerRetrieveComposite(stream));
     }
 }
 

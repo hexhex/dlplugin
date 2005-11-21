@@ -259,6 +259,62 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 
 
 
+RacerIndividualFillersBuilder::RacerIndividualFillersBuilder(std::ostream& s)
+  : RacerBuilder(s)
+{ }
+
+
+RacerIndividualFillersBuilder::~RacerIndividualFillersBuilder()
+{ }
+
+void
+RacerIndividualFillersBuilder::buildCommand(Query& query)
+  throw (RacerBuildingError)
+{
+  std::string nspace = query.getNamespace();
+  const Term& q = query.getQuery();
+  const Tuple& indv = query.getPatternTuple();
+
+  if (indv.size() != 2 || !(indv[0].isVariable() ^ indv[1].isVariable()))
+    {
+      throw RacerBuildingError("Incompatible pattern supplied.");
+    }
+
+  try
+    {
+      stream << "(individual-fillers ";
+
+      if (!indv[0].isVariable()) // (const,variable) pattern
+	{
+	  stream << "|"
+		 << nspace
+		 << indv[0].getUnquotedString()
+		 << "| |"
+		 << nspace
+		 << q.getUnquotedString()
+		 << "|";
+	}
+      else // (variable,const) pattern
+	{
+	  stream << "|"
+		 << nspace
+		 << indv[1].getUnquotedString()
+		 << "| (inv |"
+		 << nspace
+		 << q.getUnquotedString()
+		 << "|)";
+	}
+
+      stream << ")" << std::endl;
+    }
+  catch (std::exception& e)
+    {
+      throw RacerBuildingError(e.what());
+    }
+}
+
+
+
 
 
 RacerConceptInstancesBuilder::RacerConceptInstancesBuilder(std::ostream& s)
