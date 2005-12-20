@@ -23,6 +23,5 @@ int main(int, char**)
   runner.addTest(TestRacerTypes::suite());
   runner.addTest(TestRacerQuery::suite());
   runner.addTest(TestOWLParser::suite());
-  runner.run();
-  return 0;
+  return !runner.run();
 }
