@@ -32,6 +32,20 @@ AC_C_CONST
 # Checks for library functions.
 AC_PROG_LIBTOOL
 
+# doxygen stuff
+#
+# these are the defaults, can be overridden by --enable-doxygen-...
+DX_HTML_FEATURE([ON])
+DX_CHM_FEATURE([OFF])
+DX_CHI_FEATURE([OFF])
+DX_MAN_FEATURE([OFF])
+DX_RTF_FEATURE([OFF])
+DX_XML_FEATURE([OFF])
+DX_PDF_FEATURE([OFF])
+DX_PS_FEATURE([ON])
+DX_INIT_DOXYGEN([dlvhex-racerplugin], [doxygen.cfg], [documentation])
+
+
 # Checks for external libraries
 AM_PATH_CPPUNIT([1.10.2])
 
