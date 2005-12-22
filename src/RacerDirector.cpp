@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Wed Aug 24 09:45:18 2005
  * 
- * @brief  Caching Director class for the communication with RACER.
+ * @brief  Composite and Caching Director classes for the communication with RACER.
  * 
  * 
  */
@@ -191,6 +191,6 @@ RacerBooleanCache::cacheHit(const QueryCtx& query, const QueryCtx& found) const
 	}
     }
 
-  // query == found
+  // -> query.getQuery() == found.getQuery() -> cache-hit
   return true;
 }

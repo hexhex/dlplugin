@@ -99,10 +99,10 @@ RacerStateBuilder::buildPosRelated(const GAtom& atom,
 }
 
 //@todo how does negated roles work?
-// void
-// RacerStateBuilder::buildNegRelated(const GAtom& atom,
-// 				   const std::string& nspace)
-// {
+void
+RacerStateBuilder::buildNegRelated(const GAtom&,
+				   const std::string&)
+{
 //   if (atom.getArity() != 4)
 //     {
 //       throw RacerBuildingError("Atom has wrong arity.");
@@ -118,7 +118,7 @@ RacerStateBuilder::buildPosRelated(const GAtom& atom,
 // 	 << nspace
 // 	 << atom.getArgument(1).getUnquotedString()
 // 	 << "|))";
-// }
+}
 
 
 void
@@ -159,7 +159,7 @@ RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 	    }
 	  else if (pred == query.getMinusR()) // minusR
 	    {
-	      //buildNegRelated(a, nspace);
+	      buildNegRelated(a, nspace);
 	    }
 	  else
 	    {

@@ -83,8 +83,9 @@ namespace racer {
     /**
      * Ctor.
      *
-     * @param host
-     * @param port
+     * @param host connect to this host
+     * @param port connect to this port
+     * @param bufsize buffer bufsize bytes
      */
     explicit
     TCPStreamBuf(const std::string& host,

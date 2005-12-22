@@ -31,11 +31,16 @@ namespace racer {
   class RacerBuilder
   {
   protected:
+    /// the builders write commands to this stream
     std::ostream& stream;
 
-    /// Ctor
+    /**
+     * Ctor
+     *
+     * @param s used as output stream
+     */
     explicit
-    RacerBuilder(std::ostream&);
+    RacerBuilder(std::ostream& s);
 
     /// Dtor
     virtual
@@ -45,7 +50,7 @@ namespace racer {
     /**
      * Building method implemented by the children of RacerBuilder.
      *
-     * @param q
+     * @param q contains the information in order to create RACER commands
      */
     virtual void
     buildCommand(Query& q) = 0;
@@ -58,19 +63,17 @@ namespace racer {
   class RacerNullBuilder : public RacerBuilder
   {
   public:
-    /// Ctor
     explicit
     RacerNullBuilder(std::ostream& s)
       : RacerBuilder(s)
     { }
 
-    /// Dtor
     virtual
     ~RacerNullBuilder()
     { }
 
     /**
-     * @brief Ignores input.
+     * @brief Ignores its input.
      */
     virtual void
     buildCommand(Query&)
@@ -79,23 +82,62 @@ namespace racer {
 
 
   /**
-   * @brief Creates command for adding/removing an Individual/Pair to
-   * a Concept/Role.
+   * @brief Creates a state command for adding a list of
+   * Individuals/Pairs to Concepts/Roles.
+   *
+   * @see state macro in RacerPro Reference Manual
    */
   class RacerStateBuilder : public RacerBuilder
   {
   protected:
+    /**
+     * sends an instance command using atom and nspace to build the
+     * individual and concept.
+     *
+     * @param atom
+     * @param nspace
+     *
+     * @see instance macro in RacerPro Reference Manual
+     */
     virtual void
-    buildPosInstance(const GAtom&, const std::string&);
+    buildPosInstance(const GAtom& atom, const std::string& nspace);
 
+    /**
+     * sends an instance command using atom and nspace to build the
+     * individual and negated concept.
+     *
+     * @param atom
+     * @param nspace
+     *
+     * @see instance macro in RacerPro Reference Manual
+     */
     virtual void
-    buildNegInstance(const GAtom&, const std::string&);
+    buildNegInstance(const GAtom& atom, const std::string& nspace);
 
+    /**
+     * sends a related command using atom and nspace to build the
+     * individual and role.
+     *
+     * @param atom
+     * @param nspace
+     *
+     * @see related macro in RacerPro Reference Manual
+     */
     virtual void
-    buildPosRelated(const GAtom&, const std::string&);
+    buildPosRelated(const GAtom& atom, const std::string& nspace);
 
-//     virtual void
-//     buildNegRelated(const GAtom&, const std::string&);
+    /**
+     * sends a related command using atom and nspace to build the
+     * individual and role.
+     *
+     * @param atom
+     * @param nspace
+     *
+     * @todo not implemented yet
+     * @see related macro in RacerPro Reference Manual
+     */
+    virtual void
+    buildNegRelated(const GAtom& atom, const std::string& nspace);
 
   public:
     explicit
@@ -104,13 +146,21 @@ namespace racer {
     virtual
     ~RacerStateBuilder();
 
+    /**
+     * Calls various building methods in order to generate a state command.
+     *
+     * @param q use the Interpretation of Query to generate a state command 
+     */
     virtual void
     buildCommand(Query& q) throw (RacerBuildingError);
   };
 
 
   /**
-   * @brief concept-instance? builder.
+   * @brief Creates an individual-instance? command in order to check
+   * whether an individual is a member of a concept.
+   *
+   * @see individual-instance? macro in RacerPro Reference Manual
    */
   class RacerIsConceptMemberBuilder : public RacerBuilder
   {
@@ -121,13 +171,21 @@ namespace racer {
     virtual
     ~RacerIsConceptMemberBuilder();
 
+    /**
+     * Generate a individual-instance? command.
+     *
+     * @param q use Query to get the individual and the concept name.
+     */
     virtual void
     buildCommand(Query& q) throw (RacerBuildingError);
   };
 
 
   /**
-   * @brief related-individuals? builder.
+   * @brief Creates an individuals-related? command in order to check
+   * whether a pair is a member of a role.
+   *
+   * @see individuals-related? macro in RacerPro Reference Manual
    */
   class RacerIsRoleMemberBuilder : public RacerBuilder
   {
@@ -138,6 +196,11 @@ namespace racer {
     virtual
     ~RacerIsRoleMemberBuilder();
 
+    /**
+     * Generate a individuals-related? command.
+     *
+     * @param q use Query to get the pair and the role name.
+     */
     virtual void
     buildCommand(Query& q) throw (RacerBuildingError);
   };
@@ -145,6 +208,8 @@ namespace racer {
 
   /**
    * @brief Creates a command to query concept instances.
+   *
+   * @see concept-instances macro in RacerPro Reference Manual
    */
   class RacerConceptInstancesBuilder : public RacerBuilder
   {
@@ -162,6 +227,8 @@ namespace racer {
 
   /**
    * @brief Creates a command to query role individuals.
+   *
+   * @see related-individuals macro in RacerPro Reference manual
    */
   class RacerRoleIndividualsBuilder : public RacerBuilder
   {
@@ -178,6 +245,8 @@ namespace racer {
 
   /**
    * @brief Creates a command to query role individual fillers.
+   *
+   * @see individual-fillers macro in RacerPro Reference manual
    */
   class RacerIndividualFillersBuilder : public RacerBuilder
   {
@@ -194,6 +263,9 @@ namespace racer {
 
   /**
    * @brief Opens an OWL from file or URL as KB "DEFAULT".
+   *
+   * @see owl-read-file and owl-read-document functions in RacerPro
+   * Reference manual.
    */
   class RacerOpenOWLBuilder : public RacerBuilder
   {
@@ -215,6 +287,7 @@ namespace racer {
   class RacerSimpleCommandBuilder : public RacerBuilder
   {
   private:
+    /// command used to send it to the stream
     std::string command;
 
   public:
@@ -229,7 +302,7 @@ namespace racer {
     { }
 
     /**
-     * Just send the command to the stream.
+     * Just send a simple command to the stream.
      */
     virtual void
     buildCommand(Query&)
@@ -241,6 +314,8 @@ namespace racer {
 
   /**
    * @brief Requests listing of all individuals.
+   *
+   * @see all-individuals function in RacerPro Reference manual.
    */
   class RacerAllIndividualsBuilder : public RacerSimpleCommandBuilder
   {
@@ -254,6 +329,8 @@ namespace racer {
 
   /**
    * @brief Sets the Unique Name Assumption.
+   *
+   * @see set-unique-name-assumption function in RacerPro Reference manual. 
    */
   class RacerUNABuilder : public RacerSimpleCommandBuilder
   {
@@ -267,6 +344,8 @@ namespace racer {
 
   /**
    * @brief Clone the "DEFAULT" ABox into "temp-abox".
+   *
+   * @see clone-abox macro in RacerPro Reference manual.
    */
   class RacerTempABoxBuilder : public RacerSimpleCommandBuilder
   {
@@ -279,6 +358,8 @@ namespace racer {
 
   /**
    * @brief Checks ABox consistency.
+   *
+   * @see abox-consistent? macro in RacerPro Reference manual.
    */
   class RacerABoxConsistentBuilder : public RacerSimpleCommandBuilder
   {

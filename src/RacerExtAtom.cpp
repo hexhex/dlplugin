@@ -150,7 +150,7 @@ RacerConcept::getDirectors(const PluginAtom::Query& query) const
 {
   if (query.getPatternTuple().size() != 1)
     {
-      throw PluginError("Pattertuple size mismatch.");
+      throw PluginError("PatternTuple size mismatch.");
     }
 
   const Term& x = query.getPatternTuple()[0];
@@ -190,7 +190,7 @@ RacerRole::getDirectors(const PluginAtom::Query& query) const
 {
   if (query.getPatternTuple().size() != 2)
     {
-      throw PluginError("Pattertuple size mismatch.");
+      throw PluginError("PatternTuple size mismatch.");
     }
 
   const Term& x = query.getPatternTuple()[0];

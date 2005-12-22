@@ -6,7 +6,7 @@
  * @author Thomas Krennwallner
  * @date   Fri Sep  2 14:19:05 2005
  * 
- * @brief  
+ * @brief  Parses OWL documents.
  * 
  * 
  */
