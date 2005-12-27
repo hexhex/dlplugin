@@ -30,6 +30,7 @@ namespace racer {
   class RacerParse
   {
   protected:
+    /// the parsers read the answers from this stream
     std::istream& stream;
 
     explicit
@@ -39,14 +40,24 @@ namespace racer {
     ~RacerParse();
 
     /**
-     * Template method.
+     * Template method implemented in the children of RacerParse.
+     *
+     * @param answer set members accourding to ans
+     * @param ans the parsed answer from parse()
+     * @param ns the parsed namespace list from parse()
      */
     virtual void
-    parseAnswer(Answer&, std::string&, std::string&) const = 0;
+    parseAnswer(Answer& answer, std::string& ans, std::string& ns) const = 0;
 
   public:
+    /**
+     * Parses the answers from RACER and sets various members of
+     * Answer with help of parseAnswer().
+     *
+     * @param answer
+     */
     virtual void
-    parse(Answer&) throw (RacerParsingError);
+    parse(Answer& answer) throw (RacerParsingError);
   };
 
 
@@ -57,6 +68,7 @@ namespace racer {
   class RacerIgnoreAnswer : public RacerParse
   {
   protected:
+    /// does nothing
     virtual void
     parseAnswer(Answer&, std::string&, std::string&) const;
 
@@ -67,6 +79,7 @@ namespace racer {
     virtual
     ~RacerIgnoreAnswer();
 
+    /// just remove pending input from stream without parsing it
     virtual void
     parse(Answer&) throw (RacerParsingError);
   };
@@ -78,6 +91,7 @@ namespace racer {
   class RacerSimpleAnswer : public RacerParse
   {
   protected:
+    /// does nothing
     virtual void
     parseAnswer(Answer&, std::string&, std::string&) const throw (RacerParsingError);
 
@@ -96,8 +110,15 @@ namespace racer {
   class RacerBooleanAnswer : public RacerParse
   {
   protected:
+    /**
+     * checks RACERs boolean answer and sets Answer accordingly.
+     *
+     * @param answer
+     * @param ans
+     * @param ns
+     */
     virtual void
-    parseAnswer(Answer&, std::string&, std::string&) const throw (RacerParsingError);
+    parseAnswer(Answer& answer, std::string& ans, std::string& ns) const throw (RacerParsingError);
 
   public:
     explicit
@@ -114,11 +135,26 @@ namespace racer {
   class RacerAnswerList : public RacerParse
   {
   protected:
+    /**
+     * checks RACERs individual list answer and sets Answer accordingly.
+     *
+     * @param answer
+     * @param ans
+     * @param ns
+     */
     virtual void
-    parseAnswer(Answer&, std::string&, std::string&) const throw (RacerParsingError);
+    parseAnswer(Answer& answer, std::string& ans, std::string& ns) const throw (RacerParsingError);
 
+    /**
+     * helper method processes a single individual parsed from a RACER
+     * answer and strips xml namespace from it.
+     *
+     * @param term
+     *
+     * @return individual string
+     */
     virtual std::string&
-    parseTerm(std::string&) const;
+    parseTerm(std::string& term) const;
 
   public:
     explicit
@@ -135,8 +171,15 @@ namespace racer {
   class RacerAnswerPairList : public RacerAnswerList
   {
   protected:
+    /**
+     * checks RACERs pair list answer and sets Answer accordingly.
+     *
+     * @param answer
+     * @param ans
+     * @param ns
+     */
     virtual void
-    parseAnswer(Answer&, std::string&, std::string&) const throw (RacerParsingError);
+    parseAnswer(Answer& answer, std::string& ans, std::string& ns) const throw (RacerParsingError);
 
   public:
     explicit
@@ -153,6 +196,7 @@ namespace racer {
   class RacerNullParser : public RacerParse
   {
   protected:
+    /// does nothing
     virtual void
     parseAnswer(Answer&, std::string&, std::string&) const
     { }
@@ -167,6 +211,7 @@ namespace racer {
     ~RacerNullParser()
     { }
 
+    /// does nothing
     virtual void
     parse(Answer&) throw (RacerParsingError)
     { }

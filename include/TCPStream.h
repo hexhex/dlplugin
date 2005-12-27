@@ -25,11 +25,18 @@ namespace racer {
 
   /**
    * @brief provides input/output buffering for the network connection.
+   *
+   * TCPStreamBuf connects to a TCP server and buffers the input and
+   * output character stream. The connection is going to be
+   * established in a lazy manner, i.e. only when something is
+   * actually sent or received.
    */
   class TCPStreamBuf : public std::streambuf
   {
   private:
+    /// hostname
     const std::string host;
+    /// tcp port
     const unsigned port;
     
     /// TCP Socket abstraction
@@ -54,7 +61,7 @@ namespace racer {
     /**
      * Called when output buffer is full.
      *
-     * @param c
+     * @param c put this character into the output buffer
      *
      * @return traits::not_eof(c) on success, otherwise traits::eof().
      */
@@ -100,7 +107,7 @@ namespace racer {
     ~TCPStreamBuf();
 
     /**
-     * Connects the underlying stream so sb can send and receive data.
+     * Tries to establish a connection to the tcp server.
      *
      * @return false on error, true on success.
      */
@@ -108,7 +115,7 @@ namespace racer {
     open();
 
     /**
-     * Closes the underlying stream.
+     * Closes the connection.
      *
      * @return false on error, true on success.
      */

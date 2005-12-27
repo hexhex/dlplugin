@@ -77,7 +77,8 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
 extern "C" PluginInterface*
 PLUGINIMPORTFUNCTION()
 {
-  // adapt RacerInterface to a singleton and automagically register it
-  // at ACE_Object_Manager
+  /// adapt RacerInterface to a singleton and register it to the
+  /// ACE_Object_Manager facility for automatic object deletion at
+  /// program exit time
   return ACE_Singleton<RacerInterface, ACE_Null_Mutex>::instance();
 }

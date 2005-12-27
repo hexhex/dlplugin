@@ -29,6 +29,8 @@ namespace racer {
 
   /**
    * @brief Base class for RACER external atoms.
+   *
+   * Starts RACER in a lazy manner, i.e. when it's actually needed.
    */
   class RacerExtAtom : public PluginAtom
   {
@@ -45,7 +47,7 @@ namespace racer {
     ~RacerExtAtom();
 
     /**
-     * @brief Setup a new QueryCtx object.
+     * Setup a new QueryCtx object and start the RACER process.
      *
      * @param query use query to setup the QueryCtx
      *
@@ -112,60 +114,71 @@ namespace racer {
 
 
   /**
-   * @brief Concept external atom to send data to RACER.
+   * @brief Implements the concept retrieving atom
+   * &dlC[kb,plusC,minusC,plusR,minusR,query](X).
    */
   class RacerConcept : public RacerCachingAtom
   {
   protected:
     /**
+     * checks whether the pattern tuple requests a boolean or a
+     * retrieval query and creates the director chain accordingly.
      *
+     * @param query
+     *
+     * @return
      */
     virtual RacerBaseDirector::DirectorPtr
     getDirectors(const PluginAtom::Query& query) const;
 
   public:
-    /**
-     *
-     */
     RacerConcept(std::iostream&, RacerCachingDirector::RacerCache&);
   };
 
 
   /**
-   * @brief Role external atom to send data to RACER.
+   * @brief Implements the role retrieving atom
+   * &dlR[kb,plusC,minusC,plusR,minusR,query](X,Y).
    */
   class RacerRole : public RacerCachingAtom
   {
   protected:
     /**
+     * checks whether the pattern tuple requests a boolean, a
+     * retrieval or a individual filler query and creates the director
+     * chain accordingly.
      *
+     * @param query
+     *
+     * @return
      */
     virtual RacerBaseDirector::DirectorPtr
     getDirectors(const PluginAtom::Query& query) const;
 
   public:
-    /**
-     *
-     */
     RacerRole(std::iostream&, RacerCachingDirector::RacerCache&);
   };
 
 
 
   /**
-   * @brief Consistency external atom for RACER.
+   * @brief Implements the consistency checking atom
+   * &dlConsistent[kb,plusC,minusC,plusR,minusR]().
    */
   class RacerConsistent : public RacerExtAtom
   {
   protected:
-    /// creates nested RacerBaseDirector objects
+    /**
+     * creates a director chain to check the consistency of the ABox.
+     *
+     * @param query
+     *
+     * @return
+     */
     virtual RacerBaseDirector::DirectorPtr
-    getDirectors(const PluginAtom::Query&) const;
+    getDirectors(const PluginAtom::Query& query) const;
 
   public:
-    /**
-     *
-     */
     explicit
     RacerConsistent(std::iostream&);
 

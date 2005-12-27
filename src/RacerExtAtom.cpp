@@ -41,6 +41,7 @@ RacerExtAtom::~RacerExtAtom()
 RacerBaseDirector::QueryCtxPtr
 RacerExtAtom::setupQuery(const PluginAtom::Query& query) const
 {
+  // just try to run RACER
   RacerRunner::instance()->run();
 
   RacerBaseDirector::QueryCtxPtr qctx(new QueryCtx);
@@ -61,6 +62,7 @@ RacerExtAtom::setupQuery(const PluginAtom::Query& query) const
   p.parseNamespace(q);
 #endif // "1"
 
+  // set query if input tuple contains a query atom
   if (query.getInputTuple().size() > 5)
     {
       q.setQuery(query.getInputTuple()[5]);

@@ -31,10 +31,15 @@ namespace racer {
   class RacerRunnerAdaptee : public ACE_Event_Handler
   {
   private:
+    /// RACER command
     std::string command;
+    ///
     std::string kb;
+    /// RACER process id
     pid_t racer;
+    /// signal handler
     ACE_Sig_Handler sighandler;
+    /// dlvhex user directory
     UserDir dir;
 
     /// signal handler
@@ -45,7 +50,7 @@ namespace racer {
     virtual void
     cleanup();
 
-    /// store RACERs PID in a pid-file
+    /// store RACERs PID in a pid-file located in dlvhex user directory
     virtual void
     savePID();
 

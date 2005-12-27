@@ -30,15 +30,28 @@ namespace racer {
   class Query
   {
   private:
+    /// use this string to prefix the individuals of the interpretation
     std::string nspace;
+    /// ontology uri
     std::string ontology;
 
+    /// the query term
     Term query;
+    /// tuple pattern
     Tuple pattern;
+    /// term used to identify which individuals are used to extend
+    /// positive concepts
     Term plusC;
+    /// term used to identify which individuals are used to extend
+    /// negative concepts
     Term minusC;
+    /// term used to identify which individuals are used to extend
+    /// positive roles
     Term plusR;
+    /// term used to identify which individuals are used to extend
+    /// negative roles
     Term minusR;
+    /// set of ground atoms
     Interpretation interpretation;
 
   public:
@@ -162,9 +175,11 @@ namespace racer {
   class Answer : public PluginAtom::Answer
   {
   private:
+    /// a RACER error message 
     std::string errorMsg;
+    /// ABox is inconsistent
     bool isIncoherent;
-
+    /// a boolean answer
     bool answer;
 
   public:
