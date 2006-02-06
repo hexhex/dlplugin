@@ -54,8 +54,14 @@ AM_PATH_ACE
 PKG_CHECK_MODULES([RAPTOR], [raptor >= 1.4.7])
 
 PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 0.1])
-dlvhexlibdir=`pkg-config dlvhex --variable=pkglibdir`
+
+AC_ARG_ENABLE(userinstall, 
+             [  --enable-userinstall    Install plugin into home directory],
+             [dlvhexlibdir=$HOME/`pkg-config dlvhex --variable=userplugindir`],
+             [dlvhexlibdir=`pkg-config dlvhex --variable=sysplugindir`]
+             )
 AC_SUBST([dlvhexlibdir])
+
 
 #
 # set system-wide plugin dir
