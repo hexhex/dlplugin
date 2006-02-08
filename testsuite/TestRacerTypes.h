@@ -10,8 +10,11 @@
 #include <cppunit/TestCase.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
 
 #include <dlvhex/Atom.h>
+#include <dlvhex/AtomSet.h>
 
 namespace dlvhex {
 namespace racer {
@@ -19,45 +22,16 @@ namespace racer {
   /**
    * @brief TestCase for some types.
    *
-   * @test Tests types like GAtom and GAtomSet
+   * @test Tests types like Atom and AtomSet
    */
-  class TestRacerTypes : public CppUnit::TestCase
+  class TestRacerTypes : public CppUnit::TestFixture
   {
+    CPPUNIT_TEST_SUITE(TestRacerTypes);
+    CPPUNIT_TEST(runRacerSetTest);
+    CPPUNIT_TEST_SUITE_END();
+
   public: 
-    void runRacerSetTest()
-    {
-      GAtomSet is;
-
-      is.insert(GAtom("p(b)"));
-      is.insert(GAtom("p(b)"));
-      is.insert(GAtom("q(a)"));
-      is.insert(GAtom("q(a,c)"));
-      is.insert(GAtom("q(a,b)"));
-      is.insert(GAtom("p(a)"));
-
-      GAtomSet::const_iterator it = is.begin();
-      CPPUNIT_ASSERT(*it++ == std::string("p(a)"));
-      CPPUNIT_ASSERT(*it++ == std::string("p(b)"));
-      CPPUNIT_ASSERT(*it++ == std::string("q(a)"));
-      CPPUNIT_ASSERT(*it++ == std::string("q(a,b)"));
-      CPPUNIT_ASSERT(*it++ == std::string("q(a,c)"));
-    }
-
-    static CppUnit::Test *suite()
-    {
-      CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestRacerTypes");
-      
-      
-      suiteOfTests->addTest(new CppUnit::TestCaller<TestRacerTypes>
-			    ( 
-			     "RacerTypes", 
-			     &TestRacerTypes::runRacerSetTest
-			     )
-			    );
-      
-      return suiteOfTests;
-    }
-    
+    void runRacerSetTest();   
   };
 
 } // namespace racer

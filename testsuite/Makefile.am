@@ -12,13 +12,23 @@ noinst_HEADERS = \
                  TestRacerTypes.h
 
 
-TESTS = TestAll
+TESTS = TestSuite
 
 TESTS_ENVIRONMENT = EXAMPLES=$(top_srcdir)/examples
 
 check_PROGRAMS = $(TESTS)
 
-TestAll_SOURCES = TestAll.cpp
+TestSuite_SOURCES = \
+                    TestOWLParser.cpp \
+                    TestRacerBuilder.cpp \
+                    TestRacerDirector.cpp \
+                    TestRacerInterface.cpp \
+                    TestRacerParse.cpp \
+                    TestRacerQuery.cpp \
+                    TestRacerRunner.cpp \
+                    TestRacerStream.cpp \
+                    TestRacerTypes.cpp \
+                    TestSuite.cpp
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
@@ -26,9 +36,9 @@ AM_CPPFLAGS = \
 	$(RAPTOR_CFLAGS) \
 	$(DLVHEX_CFLAGS)
 
-TestAll_CXXFLAGS = $(CPPUNIT_CFLAGS)
+TestSuite_CXXFLAGS = $(CPPUNIT_CFLAGS)
 
 # build statically so we don't depend on an installed libdlvhexracer
-TestAll_LDFLAGS = -static $(CPPUNIT_LIBS) $(DLVHEX_LIBS)
+TestSuite_LDFLAGS = -static $(CPPUNIT_LIBS) $(DLVHEX_LIBS)
 
-TestAll_LDADD = $(top_builddir)/src/libdlvhexracer.la
+TestSuite_LDADD = $(top_builddir)/src/libdlvhexracer.la

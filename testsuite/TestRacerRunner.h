@@ -9,6 +9,8 @@
 #include <cppunit/TestCase.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
 
 #include "RacerRunner.h"
 
@@ -20,30 +22,14 @@ namespace racer {
    *
    * @test Tests RacerRunner.
    */
-  class TestRacerRunner : public CppUnit::TestCase
+  class TestRacerRunner : public CppUnit::TestFixture
   {
-  public: 
-    void runRacerRunnerTest()
-    {
-      CPPUNIT_ASSERT(RacerRunner::instance() != 0);
-      RacerRunner::instance()->run();
-    }
+    CPPUNIT_TEST_SUITE(TestRacerRunner);
+    CPPUNIT_TEST(runRacerRunnerTest);
+    CPPUNIT_TEST_SUITE_END();
 
-    static CppUnit::Test *suite()
-    {
-      CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestRacerRunner");
-      
-      
-      suiteOfTests->addTest(new CppUnit::TestCaller<TestRacerRunner>
-			    ( 
-			     "RacerRunner", 
-			     &TestRacerRunner::runRacerRunnerTest
-			     )
-			    );
-      
-      return suiteOfTests;
-    }
-    
+  public: 
+    void runRacerRunnerTest();    
   };
 
 } // namespace racer

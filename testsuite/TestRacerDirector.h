@@ -11,9 +11,12 @@
 #include <cppunit/TestCase.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
 
 #include "RacerDirector.h"
 #include "RacerRunner.h"
+#include "TCPStream.h"
 
 namespace dlvhex {
 namespace racer {
@@ -24,86 +27,22 @@ namespace racer {
    * @test Opens a connection to RACER with TCPIOStream, sends some
    * commands and performs some sanity checks on the result.
    */
-  class TestRacerDirector : public CppUnit::TestCase
+  class TestRacerDirector : public CppUnit::TestFixture
   {
+    CPPUNIT_TEST_SUITE(TestRacerDirector);
+    CPPUNIT_TEST(runRacerPlusConceptTest);
+    CPPUNIT_TEST(runRacerAllIndividualsTest);
+    CPPUNIT_TEST_SUITE_END();
+
   protected:
-    void output(const std::vector<Tuple>& tv)
-    {
-      std::cout << std::endl;
-      for(std::vector<Tuple>::const_iterator it = tv.begin();
-	  it != tv.end();
-	  it++)
-	{
-	  Tuple t = *it;
-	  std::cout << "(";
-	  // copy all elements of t to cout
-	  std::copy(t.begin(), t.end(),
-		    std::ostream_iterator<Term>(std::cout, ") ("));
-	  std::cout << ")" << std::endl;
-	}
-    }
+    void output(const std::vector<Tuple>& tv);
 
   public:
-    virtual void setUp()
-    {
-      RacerRunner::instance()->run();
-    }
+    virtual void setUp();
 
-    void runRacerPlusConceptTest()
-    {
-      TCPIOStream rsIO("localhost", 8088);
-      
-      RacerConceptRolePM pcd(rsIO);
-
-      RacerBaseDirector::QueryCtxPtr q(new QueryCtx);
-      q->getQuery().setNamespace("http://www.kr.tuwien.ac.at/staff/roman/shop#");
-
-      GAtomSet pc;
-      pc.insert(GAtom("plusC(\"Part\",\"foo\")"));
-      Interpretation ints(pc);
-
-      q->getQuery().setInterpretation(ints);
-      q->getQuery().setPlusC(Term("plusC"));
-
-      CPPUNIT_ASSERT_NO_THROW( q = pcd.query(q) );
-    }
+    void runRacerPlusConceptTest();
     
-    void runRacerAllIndividualsTest()
-    {
-      TCPIOStream rsIO("localhost", 8088);
-
-      RacerAllIndQuery aiq(rsIO);
-
-      RacerBaseDirector::QueryCtxPtr q(new QueryCtx);
-      
-      CPPUNIT_ASSERT_NO_THROW( q = aiq.query(q) );
-      CPPUNIT_ASSERT(q->getAnswer().getTuples()->size() > 0);
-
-      const std::vector<Tuple> *tv = q->getAnswer().getTuples();
-      output(*tv);
-    }
-    
-    static CppUnit::Test *suite()
-    {
-      CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestRacerDirector");
-      
-      suiteOfTests->addTest(new CppUnit::TestCaller<TestRacerDirector>
-			    ( 
-			     "RacerPlusConcept", 
-			     &TestRacerDirector::runRacerPlusConceptTest
-			     )
-			    );
-      
-      suiteOfTests->addTest(new CppUnit::TestCaller<TestRacerDirector>
-			    ( 
-			     "RacerAllIndividuals", 
-			     &TestRacerDirector::runRacerAllIndividualsTest
-			     )
-			    );
-      
-      return suiteOfTests;
-    }
-    
+    void runRacerAllIndividualsTest();
   };
 
 } // namespace racer

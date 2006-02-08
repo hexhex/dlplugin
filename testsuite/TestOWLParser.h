@@ -11,6 +11,8 @@
 #include <cppunit/TestCase.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
 
 #include "OWLParser.h"
 
@@ -23,67 +25,24 @@ namespace racer {
    *
    * @test Tests parsing an OWL document.
    */
-  class TestOWLParser : public CppUnit::TestCase
+  class TestOWLParser : public CppUnit::TestFixture
   {
   private:
-    std::string shop;
 
-    void output(const std::vector<Tuple>& tv)
-    {
-      std::cout << std::endl;
-      for(std::vector<Tuple>::const_iterator it = tv.begin();
-	  it != tv.end();
-	  it++)
-	{
-	  Tuple t = *it;
-	  std::cout << "(";
-	  // copy all elements of t to cout
-	  std::copy(t.begin(), t.end(),
-		    std::ostream_iterator<Term>(std::cout, ") ("));
-	  std::cout << ")" << std::endl;
-	}
-    }
+    CPPUNIT_TEST_SUITE(TestOWLParser);
+    CPPUNIT_TEST(runParserTest);
+    CPPUNIT_TEST_SUITE_END();
+
+
+    std::string shop;
+    std::string test;
+
+    void output(const std::vector<Tuple>& tv);
 
   public:
-    virtual void setUp()
-    {
-      const char* ex = getenv("EXAMPLES");
-      if (ex)
-	{
-	  shop = std::string(ex) + std::string("/shop.owl");
-	}
-      else
-	{
-	  shop = "shop.owl";
-	}
-    }
+    virtual void setUp();
 
-    void runParserTest()
-    {
-      Query q;
-      Answer a;
-      OWLParser p("file:" + shop);
-      p.parseIndividuals(a);
-      output(*a.getTuples());
-#if 0
-      p.parseNamespace(q);
-      CPPUNIT_ASSERT(q.getNamespace() == "http://www.kr.tuwien.ac.at/staff/roman/shop#");
-#endif
-    }
-    
-    static CppUnit::Test *suite()
-    {
-      CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("TestOWLParser");
-      
-      suiteOfTests->addTest(new CppUnit::TestCaller<TestOWLParser>
-			    ( 
-			     "OWLParser", 
-			     &TestOWLParser::runParserTest
-			     )
-			    );
-      return suiteOfTests;
-    }
-    
+    void runParserTest();
   };
 
 } // namespace racer
