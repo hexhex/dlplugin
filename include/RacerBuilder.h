@@ -100,7 +100,7 @@ namespace racer {
      * @see instance macro in RacerPro Reference Manual
      */
     virtual void
-    buildPosInstance(const GAtom& atom, const std::string& nspace);
+    buildPosInstance(const Atom& atom, const std::string& nspace);
 
     /**
      * sends an instance command using atom and nspace to build the
@@ -112,7 +112,7 @@ namespace racer {
      * @see instance macro in RacerPro Reference Manual
      */
     virtual void
-    buildNegInstance(const GAtom& atom, const std::string& nspace);
+    buildNegInstance(const Atom& atom, const std::string& nspace);
 
     /**
      * sends a related command using atom and nspace to build the
@@ -124,7 +124,7 @@ namespace racer {
      * @see related macro in RacerPro Reference Manual
      */
     virtual void
-    buildPosRelated(const GAtom& atom, const std::string& nspace);
+    buildPosRelated(const Atom& atom, const std::string& nspace);
 
     /**
      * sends a related command using atom and nspace to build the
@@ -137,7 +137,7 @@ namespace racer {
      * @see related macro in RacerPro Reference Manual
      */
     virtual void
-    buildNegRelated(const GAtom& atom, const std::string& nspace);
+    buildNegRelated(const Atom& atom, const std::string& nspace);
 
   public:
     explicit

@@ -1,0 +1,3 @@
+% -*- prolog -*-
+
+consistent :- &dlConsistent["shop.owl",a,b,c,d]().

@@ -19,7 +19,7 @@
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
-#include <dlvhex/Interpretation.h>
+#include <dlvhex/AtomSet.h>
 
 #include "RacerQuery.h"
 #include "RacerDirector.h"

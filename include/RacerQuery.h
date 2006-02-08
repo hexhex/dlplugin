@@ -145,8 +145,7 @@ namespace racer {
 	q1.getPatternTuple() == q2.getPatternTuple() &&
 	q1.getNamespace() == q2.getNamespace()&&
 	q1.getOntology() == q2.getOntology() &&
-	q1.getInterpretation().getAtomSet()
-	== q2.getInterpretation().getAtomSet() &&
+	q1.getInterpretation() == q2.getInterpretation() &&
 	q1.getPlusC() == q2.getPlusC() &&
 	q1.getMinusC() == q1.getMinusC() &&
 	q1.getPlusR() == q1.getPlusR() &&

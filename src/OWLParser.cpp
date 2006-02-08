@@ -15,12 +15,6 @@
 
 #include <string>
 
-///@todo remove when libraptor 1.4.8 is released
-#if 0
-#include <libxml/parser.h>
-#include <libxml/tree.h>
-#endif
-
 #include <raptor.h>
 
 using namespace dlvhex::racer;
@@ -53,44 +47,6 @@ OWLParser::open(const std::string& uri)
 {
   this->uri = uri;
 }
-
-// void
-// OWLParser::parseNamespace(Query& query)
-// {
-//   ///@todo right now we have to use libxml instead of libraptors
-//   ///namespace handling routines
-//   /* parse the file and get the DOM */
-//   xmlDoc* doc = xmlReadFile(uri.c_str(), NULL, 0);
-  
-//   if (doc == 0)
-//     {
-//       // std::cerr << "error: could not parse file " << uri << std::endl;
-//       return;
-//     }
-
-//   /* Get the root element node */
-//   xmlNodePtr root = xmlDocGetRootElement(doc);
-      
-//   if (root)
-//     {
-//       // search default namespace -> 0
-//       xmlNsPtr ns = xmlSearchNs(doc, root, 0);
-
-//       if (ns)
-// 	{
-// 	  query.setNamespace((const char *) ns->href);
-// 	}
-//     }
-
-//   /* free the document */
-//   xmlFreeDoc(doc);
-
-//   /*
-//    * Free the global variables that may
-//    * have been allocated by the parser.
-//    */
-//   xmlCleanupParser();
-// }
 
 void
 OWLParser::namespaceHandler(void* userData, raptor_namespace* nspace)
@@ -167,13 +123,7 @@ OWLParser::parseNamespace(Query& query)
   raptor_parser* parser = raptor_new_parser("rdfxml");
   raptor_uri* parseURI  = raptor_new_uri((const unsigned char*) uri.c_str());
 
-  ///@todo future versions of libraptor provide a namespace handler.
-  ///Right now we have to use libxml. See
-  ///http://librdf.org/raptor/RELEASE.html#rel1_4_8
-#if 0
-  ///@todo use query
   raptor_set_namespace_handler(parser, &query, OWLParser::namespaceHandler);
-#endif
 
   raptor_parse_file(parser, parseURI, 0);
     

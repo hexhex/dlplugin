@@ -42,7 +42,7 @@ RacerStateBuilder::~RacerStateBuilder()
 { }
 
 void
-RacerStateBuilder::buildPosInstance(const GAtom& atom,
+RacerStateBuilder::buildPosInstance(const Atom& atom,
 				    const std::string& nspace)
 {
   if (atom.getArity() != 3)
@@ -60,7 +60,7 @@ RacerStateBuilder::buildPosInstance(const GAtom& atom,
 }
 
 void
-RacerStateBuilder::buildNegInstance(const GAtom& atom,
+RacerStateBuilder::buildNegInstance(const Atom& atom,
 				    const std::string& nspace)
 {
   if (atom.getArity() != 3)
@@ -78,7 +78,7 @@ RacerStateBuilder::buildNegInstance(const GAtom& atom,
 }
 
 void
-RacerStateBuilder::buildPosRelated(const GAtom& atom,
+RacerStateBuilder::buildPosRelated(const Atom& atom,
 				   const std::string& nspace)
 {
   if (atom.getArity() != 4)
@@ -100,7 +100,7 @@ RacerStateBuilder::buildPosRelated(const GAtom& atom,
 
 //@todo how does negated roles work?
 void
-RacerStateBuilder::buildNegRelated(const GAtom&,
+RacerStateBuilder::buildNegRelated(const Atom&,
 				   const std::string&)
 {
 //   if (atom.getArity() != 4)
@@ -139,10 +139,10 @@ RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
     {
       stream << "(state ";
       
-      for (GAtomSet::const_iterator it = ints.begin();
+      for (AtomSet::const_iterator it = ints.begin();
 	   it != ints.end(); it++)
 	{
-	  const GAtom& a = *it;
+	  const Atom& a = *it;
 	  const Term pred = a.getArgument(0);
 	  
 	  if (pred == query.getPlusC()) // plusC

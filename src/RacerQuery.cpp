@@ -145,8 +145,8 @@ Query::isSubset(const Query& q2) const
   //
   const Query& q1 = *this;
 
-  const GAtomSet& i1 = q1.getInterpretation().getAtomSet();
-  const GAtomSet& i2 = q2.getInterpretation().getAtomSet();
+  const AtomSet& i1 = q1.getInterpretation();
+  const AtomSet& i2 = q2.getInterpretation();
 
   //
   // q1 is a proper subset of q2:

@@ -1,0 +1,3 @@
+% -*- prolog -*-
+
+test(X) v -test(X) :- &dlC["test.owl",a,b,c,d,"Test"](X).

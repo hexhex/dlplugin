@@ -20,7 +20,7 @@
 #include <dlvhex/errorHandling.h>
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
-#include <dlvhex/Interpretation.h>
+#include <dlvhex/AtomSet.h>
 
 #include <assert.h>
 
@@ -52,15 +52,9 @@ RacerExtAtom::setupQuery(const PluginAtom::Query& query) const
   std::string ontostr = query.getInputTuple()[0].getUnquotedString();
   q.setOntology(ontostr);
 
-
-  ///@todo read nspace from owl document
-#if 1
-  q.setNamespace("http://www.kr.tuwien.ac.at/staff/roman/shop#");
-#else
   // get namespace from owl document
   OWLParser p("file:" + ontostr);
   p.parseNamespace(q);
-#endif // "1"
 
   // set query if input tuple contains a query atom
   if (query.getInputTuple().size() > 5)

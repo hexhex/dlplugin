@@ -51,7 +51,8 @@ AM_PATH_CPPUNIT([1.10.2])
 
 AM_PATH_ACE
 
-PKG_CHECK_MODULES([RAPTOR], [raptor >= 1.4.7])
+# we need 1.4.8 for namespace parsing support
+PKG_CHECK_MODULES([RAPTOR], [raptor >= 1.4.8])
 
 PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 0.1])
 
