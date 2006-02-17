@@ -31,6 +31,7 @@ namespace racer {
     CPPUNIT_TEST(runRacerQueryEqualityTest);
     CPPUNIT_TEST(runRacerQuerySubsetTest);
     CPPUNIT_TEST(runRacerQuerySupersetTest);
+    CPPUNIT_TEST(runRacerQueryLessThanTest);
     CPPUNIT_TEST_SUITE_END();
 
   public:
@@ -39,6 +40,8 @@ namespace racer {
     void runRacerQuerySubsetTest();
 
     void runRacerQuerySupersetTest();
+
+    void runRacerQueryLessThanTest();
   };
 
 } // namespace racer

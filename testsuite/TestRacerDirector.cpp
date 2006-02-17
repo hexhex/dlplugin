@@ -50,7 +50,8 @@ TestRacerDirector::runRacerPlusConceptTest()
   q->getQuery().setNamespace("http://www.kr.tuwien.ac.at/staff/roman/shop#");
   
   AtomSet pc;
-  pc.insert(Atom("plusC(\"Part\",\"foo\")"));
+  AtomPtr ap(new Atom("plusC(\"Part\",\"foo\")"));
+  pc.insert(ap);
   Interpretation ints(pc);
   
   q->getQuery().setInterpretation(ints);

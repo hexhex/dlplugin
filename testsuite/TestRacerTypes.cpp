@@ -18,19 +18,26 @@ CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerTypes);
 void
 TestRacerTypes::runRacerSetTest()
 {
+  AtomPtr ap1(new Atom("p(b)"));
+  AtomPtr ap2(new Atom("p(b)"));
+  AtomPtr ap3(new Atom("r(a)"));
+  AtomPtr ap4(new Atom("q(a,c)"));
+  AtomPtr ap5(new Atom("q(a,b)"));
+  AtomPtr ap6(new Atom("p(a)"));
+
   AtomSet is;
       
-  is.insert(Atom("p(b)"));
-  is.insert(Atom("p(b)"));
-  is.insert(Atom("q(a)"));
-  is.insert(Atom("q(a,c)"));
-  is.insert(Atom("q(a,b)"));
-  is.insert(Atom("p(a)"));
+  is.insert(ap1);
+  is.insert(ap2);
+  is.insert(ap3);
+  is.insert(ap4);
+  is.insert(ap5);
+  is.insert(ap6);
 
   AtomSet::const_iterator it = is.begin();
   CPPUNIT_ASSERT(*it++ == std::string("p(a)"));
   CPPUNIT_ASSERT(*it++ == std::string("p(b)"));
-  CPPUNIT_ASSERT(*it++ == std::string("q(a)"));
   CPPUNIT_ASSERT(*it++ == std::string("q(a,b)"));
   CPPUNIT_ASSERT(*it++ == std::string("q(a,c)"));
+  CPPUNIT_ASSERT(*it++ == std::string("r(a)"));
 }

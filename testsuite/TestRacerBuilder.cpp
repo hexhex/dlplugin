@@ -21,7 +21,8 @@ TestRacerBuilder::runRacerPosIndBuilderTest()
   std::stringstream sst;
       
   AtomSet pc;
-  pc.insert(Atom("plusC(\"Part\",\"nic\")"));
+  AtomPtr ap(new Atom("plusC(\"Part\",\"nic\")"));
+  pc.insert(ap);
   Interpretation ints(pc);
 
   Query q;
@@ -44,7 +45,8 @@ TestRacerBuilder::runRacerNegIndBuilderTest()
   std::stringstream sst;
       
   AtomSet mc;
-  mc.insert(Atom("minusC(\"Part\",\"nic\")"));
+  AtomPtr ap(new Atom("minusC(\"Part\",\"nic\")"));
+  mc.insert(ap);
   Interpretation ints(mc);
 
   Query q;
@@ -67,7 +69,8 @@ TestRacerBuilder::runRacerPosPairBuilderTest()
   std::stringstream sst;
 
   AtomSet pr;
-  pr.insert(Atom("plusR(\"Part\",\"nic\",\"sic\")"));
+  AtomPtr ap(new Atom("plusR(\"Part\",\"nic\",\"sic\")"));
+  pr.insert(ap);
   Interpretation ints(pr);
 
   Query q;

@@ -60,19 +60,19 @@ TestRacerInterface::runRacerConceptTest()
   
   AtomSet a1,a2,a3,a4;
   
-  Atom pc0("\"plusC\"(\"Part\",\"moo1\")");
-  Atom pc1("\"plusC\"(\"Part\",\"moo2\")");
-  Atom pc2("\"plusC\"(\"Part\",\"moo3\")");
-  Atom pc3("\"plusC\"(\"Part\",\"moo4\")");
+  AtomPtr pc0(new Atom("\"plusC\"(\"Part\",\"moo1\")"));
+  AtomPtr pc1(new Atom("\"plusC\"(\"Part\",\"moo2\")"));
+  AtomPtr pc2(new Atom("\"plusC\"(\"Part\",\"moo3\")"));
+  AtomPtr pc3(new Atom("\"plusC\"(\"Part\",\"moo4\")"));
   a1.insert(pc0);
   a1.insert(pc1);
   a1.insert(pc2);
   a1.insert(pc3);
   
-  Atom mc0("\"minusC\"(\"Part\",\"moo5\")");
+  AtomPtr mc0(new Atom("\"minusC\"(\"Part\",\"moo5\")"));
   a2.insert(mc0);
   
-  Atom pr0("\"plusR\"(\"provides\",\"s1\",\"moo4\")");
+  AtomPtr pr0(new Atom("\"plusR\"(\"provides\",\"s1\",\"moo4\")"));
   a3.insert(pr0);
   
   Interpretation in;
@@ -89,6 +89,7 @@ TestRacerInterface::runRacerConceptTest()
   parms.push_back(Term("\"minusR\""));
   parms.push_back(Term("\"Part\""));
   
+  // retrieval mode
   Tuple pat;
   pat.push_back(Term("X"));
       
@@ -110,19 +111,19 @@ TestRacerInterface::runRacerRoleTest()
 
   AtomSet a1,a2,a3,a4;
 
-  Atom pc0("\"plusC\"(\"Part\",\"moo1\")");
-  Atom pc1("\"plusC\"(\"Part\",\"moo2\")");
-  Atom pc2("\"plusC\"(\"Part\",\"moo3\")");
-  Atom pc3("\"plusC\"(\"Part\",\"moo4\")");
+  AtomPtr pc0(new Atom("\"plusC\"(\"Part\",\"moo1\")"));
+  AtomPtr pc1(new Atom("\"plusC\"(\"Part\",\"moo2\")"));
+  AtomPtr pc2(new Atom("\"plusC\"(\"Part\",\"moo3\")"));
+  AtomPtr pc3(new Atom("\"plusC\"(\"Part\",\"moo4\")"));
   a1.insert(pc0);
   a1.insert(pc1);
   a1.insert(pc2);
   a1.insert(pc3);
   
-  Atom mc0("\"minusC\"(\"Part\",\"moo5\")");
+  AtomPtr mc0(new Atom("\"minusC\"(\"Part\",\"moo5\")"));
   a2.insert(mc0);
   
-  Atom pr0("\"plusR\"(\"provides\",\"s1\",\"moo4\")");
+  AtomPtr pr0(new Atom("\"plusR\"(\"provides\",\"s1\",\"moo4\")"));
   a3.insert(pr0);
   
   Interpretation in;
@@ -139,6 +140,7 @@ TestRacerInterface::runRacerRoleTest()
   parms.push_back(Term("\"minusR\""));
   parms.push_back(Term("\"provides\""));
   
+  // retrieval mode
   Tuple pat;
   pat.push_back(Term("X"));
   pat.push_back(Term("Y"));
@@ -161,19 +163,19 @@ TestRacerInterface::runRacerIsConceptTest()
   
   AtomSet a1,a2,a3,a4;
   
-  Atom pc0("\"plusC\"(\"Part\",\"moo1\")");
-  Atom pc1("\"plusC\"(\"Part\",\"moo2\")");
-  Atom pc2("\"plusC\"(\"Part\",\"moo3\")");
-  Atom pc3("\"plusC\"(\"Part\",\"moo4\")");
+  AtomPtr pc0(new Atom("\"plusC\"(\"Part\",\"moo1\")"));
+  AtomPtr pc1(new Atom("\"plusC\"(\"Part\",\"moo2\")"));
+  AtomPtr pc2(new Atom("\"plusC\"(\"Part\",\"moo3\")"));
+  AtomPtr pc3(new Atom("\"plusC\"(\"Part\",\"moo4\")"));
   a1.insert(pc0);
   a1.insert(pc1);
   a1.insert(pc2);
   a1.insert(pc3);
   
-  Atom mc0("\"minusC\"(\"Part\",\"moo5\")");
+  AtomPtr mc0(new Atom("\"minusC\"(\"Part\",\"moo5\")"));
   a2.insert(mc0);
   
-  Atom pr0("\"plusR\"(\"provides\",\"s1\",\"moo4\")");
+  AtomPtr pr0(new Atom("\"plusR\"(\"provides\",\"s1\",\"moo4\")"));
   a3.insert(pr0);
   
   Interpretation in;
@@ -190,6 +192,7 @@ TestRacerInterface::runRacerIsConceptTest()
   parms.push_back(Term("\"minusR\""));
   parms.push_back(Term("\"Part\""));
   
+  // query mode
   Tuple pat;
   pat.push_back(Term("\"cpu\""));
   
@@ -197,10 +200,10 @@ TestRacerInterface::runRacerIsConceptTest()
   PluginAtom::Query q(in, parms, pat);
   
   CPPUNIT_ASSERT_NO_THROW( m["dlC"]->retrieve(q, a) );
-  CPPUNIT_ASSERT( a.getTuples()->size() == 1 );
+  CPPUNIT_ASSERT( a.getTuples()->size() == 1 ); // 1 => cpu \in Part
       
   CPPUNIT_ASSERT_NO_THROW( m["dlC"]->retrieve(q, a) );
-  CPPUNIT_ASSERT( a.getTuples()->size() == 1 );
+  CPPUNIT_ASSERT( a.getTuples()->size() == 1 ); // 1 => cpu \in Part
 }
 
 void
@@ -213,19 +216,19 @@ TestRacerInterface::runRacerIsRoleTest()
 
   AtomSet a1,a2,a3,a4;
 
-  Atom pc0("\"plusC\"(\"Part\",\"moo1\")");
-  Atom pc1("\"plusC\"(\"Part\",\"moo2\")");
-  Atom pc2("\"plusC\"(\"Part\",\"moo3\")");
-  Atom pc3("\"plusC\"(\"Part\",\"moo4\")");
+  AtomPtr pc0(new Atom("\"plusC\"(\"Part\",\"moo1\")"));
+  AtomPtr pc1(new Atom("\"plusC\"(\"Part\",\"moo2\")"));
+  AtomPtr pc2(new Atom("\"plusC\"(\"Part\",\"moo3\")"));
+  AtomPtr pc3(new Atom("\"plusC\"(\"Part\",\"moo4\")"));
   a1.insert(pc0);
   a1.insert(pc1);
   a1.insert(pc2);
   a1.insert(pc3);
   
-  Atom mc0("\"minusC\"(\"Part\",\"moo5\")");
+  AtomPtr mc0(new Atom("\"minusC\"(\"Part\",\"moo5\")"));
   a2.insert(mc0);
   
-  Atom pr0("\"plusR\"(\"provides\",\"s1\",\"moo4\")");
+  AtomPtr pr0(new Atom("\"plusR\"(\"provides\",\"s1\",\"moo4\")"));
   a3.insert(pr0);
   
   Interpretation in;
@@ -242,6 +245,7 @@ TestRacerInterface::runRacerIsRoleTest()
   parms.push_back(Term("\"minusR\""));
   parms.push_back(Term("\"provides\""));
   
+  // query mode
   Tuple pat;
   pat.push_back(Term("\"s1\""));
   pat.push_back(Term("\"moo4\""));
@@ -250,10 +254,10 @@ TestRacerInterface::runRacerIsRoleTest()
   PluginAtom::Query q(in, parms, pat);
   
   CPPUNIT_ASSERT_NO_THROW( m["dlR"]->retrieve(q, a) );
-  CPPUNIT_ASSERT( a.getTuples()->size() == 1);
+  CPPUNIT_ASSERT( a.getTuples()->size() == 1); // 1 => (s1,moo4) \in provides
   
   CPPUNIT_ASSERT_NO_THROW( m["dlR"]->retrieve(q, a) );
-  CPPUNIT_ASSERT( a.getTuples()->size() == 1);
+  CPPUNIT_ASSERT( a.getTuples()->size() == 1); // 1 => (s1,moo4) \in provides
 }
 
 void
@@ -266,19 +270,19 @@ TestRacerInterface::runRacerRoleFillersTest()
 
   AtomSet a1,a2,a3,a4;
 
-  Atom pc0("\"plusC\"(\"Part\",\"moo1\")");
-  Atom pc1("\"plusC\"(\"Part\",\"moo2\")");
-  Atom pc2("\"plusC\"(\"Part\",\"moo3\")");
-  Atom pc3("\"plusC\"(\"Part\",\"moo4\")");
+  AtomPtr pc0(new Atom("\"plusC\"(\"Part\",\"moo1\")"));
+  AtomPtr pc1(new Atom("\"plusC\"(\"Part\",\"moo2\")"));
+  AtomPtr pc2(new Atom("\"plusC\"(\"Part\",\"moo3\")"));
+  AtomPtr pc3(new Atom("\"plusC\"(\"Part\",\"moo4\")"));
   a1.insert(pc0);
   a1.insert(pc1);
   a1.insert(pc2);
   a1.insert(pc3);
   
-  Atom mc0("\"minusC\"(\"Part\",\"moo5\")");
+  AtomPtr mc0(new Atom("\"minusC\"(\"Part\",\"moo5\")"));
   a2.insert(mc0);
   
-  Atom pr0("\"plusR\"(\"provides\",\"s1\",\"moo4\")");
+  AtomPtr pr0(new Atom("\"plusR\"(\"provides\",\"s1\",\"moo4\")"));
   a3.insert(pr0);
 
   Interpretation in;
@@ -295,6 +299,7 @@ TestRacerInterface::runRacerRoleFillersTest()
   parms.push_back(Term("\"minusR\""));
   parms.push_back(Term("\"provides\""));
 
+  // pattern retrieval mode
   Tuple pat;
   pat.push_back(Term("X"));
   pat.push_back(Term("\"cpu\""));
@@ -307,6 +312,7 @@ TestRacerInterface::runRacerRoleFillersTest()
   
   output(*ans1.getTuples());
       
+  // pattern retrieval mode
   pat.clear();
   pat.push_back(Term("\"s8\""));
   pat.push_back(Term("Y"));
@@ -318,6 +324,19 @@ TestRacerInterface::runRacerRoleFillersTest()
   CPPUNIT_ASSERT( ans2.getTuples()->size() == 4); // s8 provides dvdrom,cdrom,soundcard,memory
   
   output(*ans2.getTuples());
+
+  // and now try it with a different variable name -> should be in cache
+  pat.clear();
+  pat.push_back(Term("Y"));
+  pat.push_back(Term("\"cpu\""));
+  
+  PluginAtom::Answer ans3;
+  PluginAtom::Query q3(in, parms, pat);
+
+  CPPUNIT_ASSERT_NO_THROW( m["dlR"]->retrieve(q3, ans3) );
+  CPPUNIT_ASSERT( ans3.getTuples()->size() == 3); // cpu provided in s1,s3,s5
+  
+  output(*ans3.getTuples());
 }
 
 
