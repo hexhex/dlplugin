@@ -193,7 +193,7 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingErro
   const Term& q = query.getQuery();
   const Tuple& indv = query.getPatternTuple();
 
-  if (indv.size() != 1 || indv[0].isVariable())
+  if (query.getType() != Query::Boolean)
     {
       throw RacerBuildingError("Incompatible pattern supplied.");
     }
@@ -232,7 +232,7 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
   const Term& q = query.getQuery();
   const Tuple& indv = query.getPatternTuple();
 
-  if (indv.size() != 2 || indv[0].isVariable() || indv[1].isVariable())
+  if (query.getType() != Query::RelatedBoolean)
     {
       throw RacerBuildingError("Incompatible pattern supplied.");
     }
@@ -275,7 +275,8 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
   const Term& q = query.getQuery();
   const Tuple& indv = query.getPatternTuple();
 
-  if (indv.size() != 2 || !(indv[0].isVariable() ^ indv[1].isVariable()))
+  if (query.getType() != Query::LeftRetrieval
+      && query.getType() != Query::RightRetrieval)
     {
       throw RacerBuildingError("Incompatible pattern supplied.");
     }
@@ -284,7 +285,7 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
     {
       stream << "(individual-fillers ";
 
-      if (!indv[0].isVariable()) // (const,variable) pattern
+      if (query.getType() == Query::RightRetrieval) // (const,variable) pattern
 	{
 	  stream << "|"
 		 << nspace

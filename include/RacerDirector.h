@@ -111,8 +111,8 @@ namespace racer {
     /// holds a list of RacerBaseDirector objects
     DirectorList dirs;
 
-    /// keep a reference to the iostream in case we need to create a
-    /// dedicated director
+    /// keep a reference to the iostream just in case we need to
+    /// create a dedicated director
     std::iostream& stream;
 
     /**
@@ -125,13 +125,13 @@ namespace racer {
      * Query
      */
     virtual QueryCtxPtr
-    handleInconsistency(QueryCtxPtr qctx) = 0;
-
-    /// Ctor
-    RacerCompositeDirector(std::iostream&);
-
+    handleInconsistency(QueryCtxPtr qctx);
 
   public:
+    /// Ctor
+    explicit
+    RacerCompositeDirector(std::iostream&);
+
     /**
      * Dtor deletes managed RacerBaseDirector objects.
      */
@@ -163,75 +163,6 @@ namespace racer {
 
 
   /**
-   * @brief A Composite Director for RACER boolean query commands.
-   */
-  class RacerQueryComposite : public RacerCompositeDirector
-  {
-  protected:
-    /**
-     * just set Answer to the empty output tuple since everything is
-     * true now.
-     *
-     * @param qctx
-     *
-     * @return the QueryCtxPtr with the corresponding Answer to the
-     * Query
-     */
-    virtual QueryCtxPtr
-    handleInconsistency(QueryCtxPtr qctx);
-
-  public:
-    explicit
-    RacerQueryComposite(std::iostream& s) : RacerCompositeDirector(s)
-    { }
-  };
-
-
-  /**
-   * @brief A Composite Director for RACER retrieval commands.
-   */
-  class RacerRetrieveComposite : public RacerCompositeDirector
-  {
-  public:
-    /**
-     * used in RacerRetrieveComposite Ctor to determine how to
-     * generate the Answer if ABox is inconsistent.
-     */
-    enum RetrievalType
-      {
-	/// just get the whole universe
-	INDIVIDUALS,
-	
-	/// generate all pairs of individuals
-	RELATED
-      };
-
-  protected:
-    /// the retrieval type of this composite
-    RetrievalType type;
-
-    /**
-     * just get all possible individuals and check whether to generate
-     * all possible pairs from them.
-     *
-     * @param qctx
-     *
-     * @return the QueryCtxPtr with the corresponding Answer to the
-     * Query
-     */
-    virtual QueryCtxPtr
-    handleInconsistency(QueryCtxPtr qctx);
-
-  public:
-    explicit
-    RacerRetrieveComposite(std::iostream& s, RetrievalType t = INDIVIDUALS)
-      : RacerCompositeDirector(s),
-	type(t)
-    { }
-  };
-
-
-  /**
    * @brief Provides caching support for RACER Queries.
    *
    * @see Thomas Eiter, Giovambattista Ianni, Roman Schindlauer, and
@@ -244,8 +175,17 @@ namespace racer {
   class RacerCachingDirector : public RacerBaseDirector
   {
   public:
-    /// maps Query Term -> QueryCtx*
-    typedef std::map<Term, QueryCtx*> RacerCache;
+    struct QueryCtxCompare : public std::binary_function<const QueryCtx*, const QueryCtx*, bool>
+    {
+      bool
+      operator() (const QueryCtx* a, const QueryCtx* b) const
+      {
+	return a->getQuery() < b->getQuery();
+      }
+    };
+
+    /// caches QueryCtx* with help of a std::set
+    typedef std::set<QueryCtx*, QueryCtxCompare> RacerCache;
 
   protected:
     /// the underlying director, usually a RacerCompositeDirector
@@ -255,7 +195,7 @@ namespace racer {
     RacerCache& cache;
 
     /**
-     * template method checks if found is really a cache hit
+     * checks if found is really a cache hit
      *
      * @param query
      * @param found
@@ -264,7 +204,7 @@ namespace racer {
      * false otherwise.
      */
     virtual bool
-    cacheHit(const QueryCtx& query, const QueryCtx& found) const = 0;
+    cacheHit(const QueryCtx& query, const QueryCtx& found) const;
 
   public:
     explicit
@@ -274,10 +214,10 @@ namespace racer {
     ~RacerCachingDirector();
 
     /**
-     * Tries to lookup the query Term in its cache and determines with
-     * help of cacheHit() if its really a cache-hit. Otherwise it
-     * delegates the querying to its underlying director and caches
-     * its QueryCtx object.
+     * Tries to lookup the query in its cache and determines with help
+     * of cacheHit() if its really a cache-hit. Otherwise it delegates
+     * the querying to its underlying director and caches its QueryCtx
+     * object.
      *
      * @param qctx
      *
@@ -289,56 +229,6 @@ namespace racer {
   };
 
 
-  /**
-   * @brief Provides a CacheHit Algorithm for Boolean Queries.
-   */
-  class RacerBooleanCache : public RacerCachingDirector
-  {
-  protected:
-    /**
-     * compare interpretation of query to interpretation of found.
-     *
-     * @param query
-     * @param found
-     *
-     * @return true if found contains a reasonable answer for query,
-     * false otherwise.
-     */
-    virtual bool
-    cacheHit(const QueryCtx& query, const QueryCtx& found) const;
-
-  public:
-    explicit
-    RacerBooleanCache(RacerCache& c, DirectorPtr d = DirectorPtr())
-      : RacerCachingDirector(c, d)
-    { }
-  };
-
-
-  /**
-   * @brief Provides a CacheHit Algorithm for Retrieval Queries.
-   */
-  class RacerTermCache : public RacerCachingDirector
-  {
-  protected:
-    /**
-     * compare interpretation of query to interpretation of found.
-     *
-     * @param query
-     * @param found
-     *
-     * @return true if found contains a reasonable answer for query,
-     * false otherwise.
-     */
-    virtual bool
-    cacheHit(const QueryCtx& query, const QueryCtx& found) const;
-
-  public:
-    explicit
-    RacerTermCache(RacerCache& c, DirectorPtr d = DirectorPtr())
-      : RacerCachingDirector(c, d)
-    { }
-  };
 
   // following typedefs are here for easy of use
 

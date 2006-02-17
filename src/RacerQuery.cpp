@@ -16,7 +16,7 @@
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
 
-#include <assert.h>
+#include <cassert>
 
 using namespace dlvhex::racer;
 
@@ -26,6 +26,44 @@ Query::Query()
 
 Query::~Query()
 { }
+
+Query::QueryType
+Query::getType() const
+{
+  const Tuple& pt = getPatternTuple();
+  unsigned size = pt.size();
+
+  if (size == 1)
+    {
+      const Term& x = pt[0];
+
+      return x.isVariable() ? Query::Retrieval : Query::Boolean;
+    }
+  else if (size == 2)
+    {
+      const Term& x = pt[0];
+      const Term& y = pt[1];
+
+      if (x.isVariable() && y.isVariable())
+	{
+	  return Query::RelatedRetrieval;
+	}
+      else if (!x.isVariable() && !y.isVariable())
+	{
+	  return Query::RelatedBoolean;
+	}
+      else if (x.isVariable() && !y.isVariable())
+	{
+	  return Query::LeftRetrieval;
+	}
+      else if (!x.isVariable() && y.isVariable())
+	{
+	  return Query::RightRetrieval;
+	}
+    }
+
+  assert(false);
+}
 
 void
 Query::setNamespace(const std::string& nspace)
@@ -137,10 +175,10 @@ Query::getMinusR() const
 
 
 bool
-Query::isSubset(const Query& q2) const
+Query::isSubseteq(const Query& q2) const
 {
   //
-  // isSubset() does not lexicographically compare q1 to q2 so this is
+  // isSubseteq() does not lexicographically compare q1 to q2 so this is
   // not an appropriate operator for std::less<Query>
   //
   const Query& q1 = *this;
@@ -149,49 +187,21 @@ Query::isSubset(const Query& q2) const
   const AtomSet& i2 = q2.getInterpretation();
 
   //
-  // q1 is a proper subset of q2:
-  // query atoms, nspaces and ontologies are equal
-  // and interpretation of q1 is contained in the
-  // interpretation of q2 but not equal.
+  // q1 is a subset of q2:
   //
-  if (q1.getQuery() == q2.getQuery()
-      &&
-      q1.getNamespace() == q2.getNamespace()
-      &&
-      q1.getOntology() == q2.getOntology()
-//       &&
-//       q1.getPatternTuple() == q2.getPatternTuplle()
-      &&
-      !(i1.empty() && i2.empty())
-      &&
-      std::includes(i2.begin(), i2.end(),
-		    i1.begin(), i1.end())
-      &&
-      (i1 != i2 || (i1.empty() && i2.empty()))
-      &&
-      q1.getPlusC() == q2.getPlusC()
-      &&
-      q1.getMinusC() == q2.getMinusC()
-      &&
-      q1.getPlusR() == q2.getPlusR()
-      &&
-      q1.getMinusR() == q2.getMinusR()
-      )
-    {
-      return true;
-    }
-
-  return false;
+  // interpretation of q1 is contained in the interpretation of q2.
+  //
+  return std::includes(i2.begin(), i2.end(), i1.begin(), i1.end());
 }
 
 bool
-Query::isSuperset(const Query& q2) const
+Query::isSuperseteq(const Query& q2) const
 {
   //
   // q1 \supset q2 <=> q2 \subset q1
   //
   const Query& q1 = *this;
-  return q2.isSubset(q1);
+  return q2.isSubseteq(q1);
 }
 
 

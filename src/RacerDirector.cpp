@@ -60,47 +60,45 @@ RacerCompositeDirector::query(QueryCtxPtr qctx) throw(RacerError)
 }
 
 
-
 RacerBaseDirector::QueryCtxPtr
-RacerQueryComposite::handleInconsistency(QueryCtxPtr qctx)
+RacerCompositeDirector::handleInconsistency(QueryCtxPtr qctx)
 {
-  // querying is trivial now -> true
-  qctx->getAnswer().setAnswer(true);
-  qctx->getAnswer().setTuples(std::vector<Tuple>());
+  Query::QueryType t = qctx->getQuery().getType();
 
-  return qctx;
-}
-
-
-
-RacerBaseDirector::QueryCtxPtr
-RacerRetrieveComposite::handleInconsistency(QueryCtxPtr qctx)
-{
-  // just get all individuals
-  RacerAllIndQuery all(stream);
-  qctx = all.query(qctx);
-
-  // check if we need to generate all possible pairs
-  if (type == RELATED)
+  if (t == Query::Boolean || t == Query::RelatedBoolean)
     {
-      const std::vector<Tuple>* tuples = qctx->getAnswer().getTuples();
-      std::vector<Tuple> pairs;
+      // querying is trivial now -> true
+      qctx->getAnswer().setAnswer(true);
+      qctx->getAnswer().setTuples(std::vector<Tuple>());
+    }
+  else // retrieval modes
+    {
+      // just get all individuals
+      RacerAllIndQuery all(stream);
+      qctx = all.query(qctx);
 
-      for (std::vector<Tuple>::const_iterator it1 = tuples->begin();
-	   it1 != tuples->end(); it1++)
+      // check if we need to generate all possible pairs
+      if (t == Query::RelatedRetrieval)
 	{
-	  for (std::vector<Tuple>::const_iterator it2 = tuples->begin();
-	       it2 != tuples->end(); it2++)
+	  const std::vector<Tuple>* tuples = qctx->getAnswer().getTuples();
+	  std::vector<Tuple> pairs;
+	  
+	  for (std::vector<Tuple>::const_iterator it1 = tuples->begin();
+	       it1 != tuples->end(); it1++)
 	    {
-	      Tuple t;
-	      t.push_back((*it1)[0]);	 
-	      t.push_back((*it2)[0]);
-	      
-	      pairs.push_back(t);
+	      for (std::vector<Tuple>::const_iterator it2 = tuples->begin();
+		   it2 != tuples->end(); it2++)
+		{
+		  Tuple t;
+		  t.push_back((*it1)[0]);	 
+		  t.push_back((*it2)[0]);
+		  
+		  pairs.push_back(t);
+		}
 	    }
-	}
 
-      qctx->getAnswer().setTuples(pairs);
+	  qctx->getAnswer().setTuples(pairs);
+	}
     }
 
   return qctx;
@@ -123,15 +121,12 @@ RacerCachingDirector::query(QueryCtxPtr qctx) throw(RacerError)
 {
   if (director.get() != 0)
     {
-      Query& query = qctx->getQuery();
-      const Term& q = query.getQuery();
-      
       // is query cached?
-      RacerCache::iterator it = cache.find(q);
+      RacerCache::iterator it = cache.find(qctx.get());
 
       if (it != cache.end())
 	{
-	  QueryCtx* found = (*it).second;
+	  QueryCtx* found = *it;
 	  
 	  if (cacheHit(*qctx, *found))
 	    {
@@ -148,7 +143,7 @@ RacerCachingDirector::query(QueryCtxPtr qctx) throw(RacerError)
       
       // ask the director and add qctx pointer to the cache 
       qctx = director->query(qctx);
-      cache[q] = qctx.get();
+      cache.insert(qctx.get());
     }
 
   return qctx;
@@ -157,40 +152,29 @@ RacerCachingDirector::query(QueryCtxPtr qctx) throw(RacerError)
 
 
 bool
-RacerTermCache::cacheHit(const QueryCtx& query, const QueryCtx& found) const
+RacerCachingDirector::cacheHit(const QueryCtx& query, const QueryCtx& found) const
 {
-  // is query equal to the cached query, i.e., is the set of ints in
-  // query equal to the set of ints in found?
-  return query.getQuery() == found.getQuery();
-}
-
-
-
-
-bool
-RacerBooleanCache::cacheHit(const QueryCtx& query, const QueryCtx& found) const
-{
+  Query::QueryType t = query.getQuery().getType();
   Query& q1 = query.getQuery();
   Query& q2 = found.getQuery();
 
-  bool isPositive = found.getAnswer().getAnswer();
-
-  // is query not equal to the cached query, i.e., is the set of ints
-  // in query not equal to the set of ints in found?
-  if (q1 != q2)
+  if (t == Query::Boolean || t == Query::RelatedBoolean)
     {
-      // if we've got a positive answer check if found is a proper
-      // subset of query
+      bool isPositive = found.getAnswer().getAnswer();
+
       if (isPositive)
 	{
-	  return q2.isSubset(q1);
+	  return q2.isSubseteq(q1);
 	}
-      else // check if found is a proper superset of query
+      else // check if found is a superset of query
 	{
-	  return q2.isSuperset(q1);
+	  return q2.isSuperseteq(q1);
 	}
     }
-
-  // -> query.getQuery() == found.getQuery() -> cache-hit
-  return true;
+  else // retrieval modes
+    {
+      // is the set of ints in query equal to the set of ints in found?
+      return
+	q1.getInterpretation() == q2.getInterpretation();
+    }
 }

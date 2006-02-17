@@ -22,8 +22,6 @@
 #include <dlvhex/Term.h>
 #include <dlvhex/AtomSet.h>
 
-#include <assert.h>
-
 #include <iterator>
 #include <iostream>
 
@@ -82,19 +80,20 @@ RacerCachingAtom::RacerCachingAtom(std::iostream& s,
     cache(c)
 { }
 
-template<class Director, class Cacher>
 RacerBaseDirector::DirectorPtr
-RacerCachingAtom::getCachedDirectors(RacerCompositeDirector* dir) const
+RacerCachingAtom::getCachedDirectors(RacerBaseDirector* cmd) const
 {
+  RacerCompositeDirector* dir = new RacerCompositeDirector(stream);
+
   dir->add(new RacerUNA(stream));
   dir->add(new RacerOpenOWL(stream));
   dir->add(new RacerTempABox(stream));
   dir->add(new RacerConceptRolePM(stream));
 
-  dir->add(new Director(stream));
+  dir->add(cmd); // the actual command to send
 
   RacerBaseDirector::DirectorPtr comp(dir);
-  RacerBaseDirector::DirectorPtr cacher(new Cacher(cache, comp));
+  RacerBaseDirector::DirectorPtr cacher(new RacerCachingDirector(cache, comp));
 
   return cacher;
 }
@@ -105,9 +104,9 @@ RacerCachingAtom::retrieve(const PluginAtom::Query& query,
 {
   try
     {
-      RacerBaseDirector::DirectorPtr dirs = getDirectors(query);
-
       RacerBaseDirector::QueryCtxPtr qctx = setupQuery(query);
+
+      RacerBaseDirector::DirectorPtr dirs = getDirectors(qctx->getQuery());
 
       qctx = dirs->query(qctx);
 
@@ -142,24 +141,19 @@ RacerConcept::RacerConcept(std::iostream& s, RacerCachingDirector::RacerCache& c
 }
 
 RacerBaseDirector::DirectorPtr
-RacerConcept::getDirectors(const PluginAtom::Query& query) const
+RacerConcept::getDirectors(const dlvhex::racer::Query& query) const
 {
-  if (query.getPatternTuple().size() != 1)
+  if (query.getType() == dlvhex::racer::Query::Retrieval) // retrieval mode
     {
-      throw PluginError("PatternTuple size mismatch.");
+      return getCachedDirectors(new RacerConceptQuery(stream));
     }
-
-  const Term& x = query.getPatternTuple()[0];
-
-  if (x.isVariable()) // retrieval mode
+  else if (query.getType() == dlvhex::racer::Query::Boolean) // boolean query mode
     {
-      return getCachedDirectors<RacerConceptQuery,RacerTermCache>
-	(new RacerRetrieveComposite(stream));
+      return getCachedDirectors(new RacerIsConceptQuery(stream));
     }
-  else // boolean query mode
+  else
     {
-      return getCachedDirectors<RacerIsConceptQuery,RacerBooleanCache>
-	(new RacerQueryComposite(stream));
+      throw PluginError("Wrong query type");
     }
 }
 
@@ -182,33 +176,24 @@ RacerRole::RacerRole(std::iostream& s, RacerCachingDirector::RacerCache& c)
 }
 
 RacerBaseDirector::DirectorPtr
-RacerRole::getDirectors(const PluginAtom::Query& query) const
+RacerRole::getDirectors(const dlvhex::racer::Query& query) const
 {
-  if (query.getPatternTuple().size() != 2)
+  if (query.getType() == dlvhex::racer::Query::RelatedRetrieval) // retrieval mode
     {
-      throw PluginError("PatternTuple size mismatch.");
+      return getCachedDirectors(new RacerRoleQuery(stream));
     }
-
-  const Term& x = query.getPatternTuple()[0];
-  const Term& y = query.getPatternTuple()[1];
-
-  if (x.isVariable() && y.isVariable()) // retrieval mode
+  else if (query.getType() == dlvhex::racer::Query::RelatedBoolean) // boolean query mode
     {
-      return getCachedDirectors<RacerRoleQuery,RacerTermCache>
-	(new RacerRetrieveComposite(stream,
-				    RacerRetrieveComposite::RELATED
-				    )
-	 );
+      return getCachedDirectors(new RacerIsRoleQuery(stream));
     }
-  else if (!x.isVariable() && !y.isVariable()) // boolean query mode
+  else if (query.getType() == dlvhex::racer::Query::LeftRetrieval
+	   || query.getType() == dlvhex::racer::Query::RightRetrieval) // pattern retrieval mode
     {
-      return getCachedDirectors<RacerIsRoleQuery, RacerBooleanCache>
-	(new RacerQueryComposite(stream));
+      return getCachedDirectors(new RacerIndvFillersQuery(stream));
     }
-  else // pattern retrieval mode
+  else
     {
-      return getCachedDirectors<RacerIndvFillersQuery, RacerTermCache>
-	(new RacerRetrieveComposite(stream));
+      throw PluginError("Wrong query type");
     }
 }
 
@@ -233,9 +218,9 @@ RacerConsistent::RacerConsistent(std::iostream& s)
 }
 
 RacerBaseDirector::DirectorPtr
-RacerConsistent::getDirectors(const PluginAtom::Query&) const
+RacerConsistent::getDirectors(const dlvhex::racer::Query&) const
 {
-  RacerQueryComposite* dir = new RacerQueryComposite(stream);
+  RacerCompositeDirector* dir = new RacerCompositeDirector(stream);
 
   dir->add(new RacerUNA(stream));
   dir->add(new RacerOpenOWL(stream));
@@ -252,9 +237,9 @@ RacerConsistent::retrieve(const PluginAtom::Query& query,
 {
   try
     {
-      RacerBaseDirector::DirectorPtr dirs = getDirectors(query);
-
       RacerBaseDirector::QueryCtxPtr qctx = setupQuery(query);
+
+      RacerBaseDirector::DirectorPtr dirs = getDirectors(qctx->getQuery());
 
       qctx = dirs->query(qctx);
 

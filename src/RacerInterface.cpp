@@ -35,7 +35,7 @@ RacerInterface::~RacerInterface()
   for (RacerCachingDirector::RacerCache::const_iterator it = cache.begin();
        it != cache.end(); it++)
     {
-      delete (*it).second;
+      delete *it;
     }
 }
 

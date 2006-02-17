@@ -67,7 +67,7 @@ namespace racer {
      * appropriate command to send to the RACER process
      */
     virtual RacerBaseDirector::DirectorPtr
-    getDirectors(const PluginAtom::Query& query) const = 0;
+    getDirectors(const dlvhex::racer::Query& query) const = 0;
 
   public:
     /**
@@ -90,10 +90,9 @@ namespace racer {
     /// reference to the cache of QueryCtx objects
     RacerCachingDirector::RacerCache& cache;
 
-    /// a template based method which fills the composite
-    template<class Director, class Cacher>
+    /// fill a composite and add a caching director
     RacerBaseDirector::DirectorPtr
-    getCachedDirectors(RacerCompositeDirector*) const;
+    getCachedDirectors(RacerBaseDirector*) const;
 
   public:
     RacerCachingAtom(std::iostream&, RacerCachingDirector::RacerCache&);
@@ -129,7 +128,7 @@ namespace racer {
      * @return
      */
     virtual RacerBaseDirector::DirectorPtr
-    getDirectors(const PluginAtom::Query& query) const;
+    getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
     RacerConcept(std::iostream&, RacerCachingDirector::RacerCache&);
@@ -153,7 +152,7 @@ namespace racer {
      * @return
      */
     virtual RacerBaseDirector::DirectorPtr
-    getDirectors(const PluginAtom::Query& query) const;
+    getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
     RacerRole(std::iostream&, RacerCachingDirector::RacerCache&);
@@ -176,7 +175,7 @@ namespace racer {
      * @return
      */
     virtual RacerBaseDirector::DirectorPtr
-    getDirectors(const PluginAtom::Query& query) const;
+    getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
     explicit
