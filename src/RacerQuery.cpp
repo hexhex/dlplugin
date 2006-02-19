@@ -33,7 +33,11 @@ Query::getType() const
   const Tuple& pt = getPatternTuple();
   unsigned size = pt.size();
 
-  if (size == 1)
+  if (size == 0)
+    {
+      return Query::Nullary;
+    }
+  else if (size == 1)
     {
       const Term& x = pt[0];
 

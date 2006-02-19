@@ -30,6 +30,7 @@ namespace racer {
   {
   private:
     CPPUNIT_TEST_SUITE(TestRacerInterface);
+    CPPUNIT_TEST(runRacerConsistentTest);
     CPPUNIT_TEST(runRacerConceptTest);
     CPPUNIT_TEST(runRacerRoleTest);
     CPPUNIT_TEST(runRacerIsConceptTest);
@@ -45,6 +46,8 @@ namespace racer {
 
   public: 
     virtual void setUp();
+
+    void runRacerConsistentTest();
 
     void runRacerConceptTest();
     

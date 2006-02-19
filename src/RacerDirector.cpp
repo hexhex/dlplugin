@@ -65,7 +65,7 @@ RacerCompositeDirector::handleInconsistency(QueryCtxPtr qctx)
 {
   Query::QueryType t = qctx->getQuery().getType();
 
-  if (t == Query::Boolean || t == Query::RelatedBoolean)
+  if (t == Query::Nullary || t == Query::Boolean || t == Query::RelatedBoolean)
     {
       // querying is trivial now -> true
       qctx->getAnswer().setAnswer(true);

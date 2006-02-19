@@ -33,12 +33,13 @@ namespace racer {
     /**
      * The type of a RACER query.
      *
-     * The members of this enum have to be in this order for
+     * The members of the enum have to be in this order for
      * operator<()!
      */
     enum QueryType
       {
-	Retrieval = 0,    // (X)
+	Nullary = 0,      // ()
+	Retrieval,        // (X)
 	Boolean,          // (a)
 	RelatedRetrieval, // (X,Y)
 	LeftRetrieval,    // (X,b)
@@ -242,7 +243,8 @@ namespace racer {
 	      {
 		// both types are equal, i.e. we can't distinguish
 		// between the variables of Query::Retrieval and
-		// Query::RelatedRetrieval query types
+		// Query::RelatedRetrieval query types, or we have
+		// nullary queries
 		lessthan = false;
 	      }
 	  }

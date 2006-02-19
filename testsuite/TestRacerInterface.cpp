@@ -51,6 +51,48 @@ TestRacerInterface::output(const std::vector<Tuple>& tv)
 }
 
 void
+TestRacerInterface::runRacerConsistentTest()
+{
+  PluginInterface* pi = PLUGINIMPORTFUNCTION();
+  
+  PluginInterface::AtomFunctionMap m;
+  pi->getAtoms(m);
+  
+  Interpretation in;
+  
+  Tuple parms;
+  parms.push_back(Term(shop));
+  parms.push_back(Term("\"plusC\""));
+  parms.push_back(Term("\"minusC\""));
+  parms.push_back(Term("\"plusR\""));
+  parms.push_back(Term("\"minusR\""));
+  
+  // atomic mode
+  Tuple pat;
+      
+  PluginAtom::Answer a;
+  PluginAtom::Query q1(in, parms, pat);
+  
+  CPPUNIT_ASSERT_NO_THROW( m["dlConsistent"]->retrieve(q1, a) );
+  CPPUNIT_ASSERT(a.getTuples()->size() == 1);
+
+  AtomSet a1,a2,a3,a4;
+  
+  AtomPtr mc0(new Atom("\"minusC\"(\"Part\",\"cpu\")"));
+  a2.insert(mc0);
+
+  in.insert(a1);
+  in.insert(a2);
+  in.insert(a3);
+  in.insert(a4);
+
+  PluginAtom::Query q2(in, parms, pat);
+
+  CPPUNIT_ASSERT_NO_THROW( m["dlConsistent"]->retrieve(q2, a) );
+  CPPUNIT_ASSERT(a.getTuples()->size() == 0);
+}
+
+void
 TestRacerInterface::runRacerConceptTest()
 {
   PluginInterface* pi = PLUGINIMPORTFUNCTION();
