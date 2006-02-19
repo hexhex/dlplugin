@@ -32,8 +32,9 @@ OWLParser::OWLParser()
 { }
 
 OWLParser::OWLParser(const std::string& u)
-  : uri(u)
-{ }
+{
+  open(u);
+}
 
 OWLParser::OWLParser(const OWLParser& x)
   : uri(x.uri)
@@ -45,7 +46,16 @@ OWLParser::~OWLParser()
 void
 OWLParser::open(const std::string& uri)
 {
-  this->uri = uri;
+  std::string scheme = uri.substr(0,7);
+
+  if (scheme == "http://" || scheme == "file://" || scheme.find("file:") == 0)
+    {
+      this->uri = uri;
+    }
+  else
+    {
+      this->uri = "file:" + uri;
+    }
 }
 
 void
@@ -107,7 +117,7 @@ OWLParser::parseIndividuals(Answer& answer)
 
   raptor_set_statement_handler(parser, &answer, OWLParser::statementHandler);
 
-  raptor_parse_file(parser, parseURI, 0);
+  raptor_parse_uri(parser, parseURI, 0);
     
   raptor_free_uri(parseURI);
   raptor_free_parser(parser);
@@ -125,7 +135,7 @@ OWLParser::parseNamespace(Query& query)
 
   raptor_set_namespace_handler(parser, &query, OWLParser::namespaceHandler);
 
-  raptor_parse_file(parser, parseURI, 0);
+  raptor_parse_uri(parser, parseURI, 0);
     
   raptor_free_uri(parseURI);
   raptor_free_parser(parser);

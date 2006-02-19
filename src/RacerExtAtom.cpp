@@ -51,7 +51,7 @@ RacerExtAtom::setupQuery(const PluginAtom::Query& query) const
   q.setOntology(ontostr);
 
   // get namespace from owl document
-  OWLParser p("file:" + ontostr);
+  OWLParser p(ontostr);
   p.parseNamespace(q);
 
   // set query if input tuple contains a query atom
