@@ -15,9 +15,11 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "RacerRunner.h"
+#include "RacerError.h"
 
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <csignal>
 
 #include <ace/Process_Manager.h>
@@ -113,13 +115,47 @@ RacerRunnerAdaptee::run()
       // start RACER process
       racer = ACE_Process_Manager::instance()->spawn(opt);
 
-      if (racer == ACE_INVALID_PID)
+      // check whether the spawn succeeded
+      ACE_exitcode ec;
+      pid_t check = ACE_Process_Manager::instance()->wait(racer,
+							  ACE_Time_Value(1),
+							  &ec);
+
+      // if ACE_Process_Manager::wait() returns 0, a timeout occurred
+      // while waiting for the process -> RACER is running.  Otherwise
+      // it returns the pid of RACER and handled its exit status ->
+      // RACER is not running.
+      if (check == 0)
 	{
-	  // throw exception?
+	  savePID();
+	}
+      else if (check == racer && ec != 0)
+	{
+	  racer = ACE_INVALID_PID;
+
+	  std::ostringstream os;
+	  os << "Program "
+	     << command
+	     << " stopped with exit status "
+	     << ec;
+
+	  throw RacerError(os.str());
+	}
+      else if (check == racer && ec == 0)
+	{
+	  racer = ACE_INVALID_PID;
+
+	  std::ostringstream os;
+	  os << "Couldn't start "
+	     << command
+	     << ", maybe another RACER instance is running"
+	     << " and I didn't succeed in stopping it.";
+
+	  throw RacerError(os.str());
 	}
       else
 	{
-	  savePID();
+	  throw RacerError("Unknown error while starting " + command);
 	}
     }
 }
