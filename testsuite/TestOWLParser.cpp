@@ -53,13 +53,13 @@ TestOWLParser::runParserTest()
 {
   Query q;
   Answer a;
-  OWLParser p("file:" + shop);
+  OWLParser p(shop);
   p.parseIndividuals(a);
   output(*a.getTuples());
   p.parseNamespace(q);
   CPPUNIT_ASSERT(q.getNamespace() == "http://www.kr.tuwien.ac.at/staff/roman/shop#");
 
-  OWLParser p2("file:" + test);
+  OWLParser p2(test);
   a.setTuples(std::vector<Tuple>());
   p2.parseIndividuals(a);
   output(*a.getTuples());

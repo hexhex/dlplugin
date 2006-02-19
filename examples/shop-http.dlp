@@ -1,0 +1,12 @@
+% -*- prolog -*-
+
+plusProvides("provides","foo","moo").
+plusPart("Part","cpu1").
+minusPart("Part","cpu2").
+minusShop("Shop","not_a_shop").
+
+s(X) :- &dlC["http://www.kr.tuwien.ac.at/staff/roman/swlp/examples/shop.owl",plusPart,minusPart,plusProvides,foo,"Shop"](X).
+p(X,Y) :- &dlR["http://www.kr.tuwien.ac.at/staff/roman/swlp/examples/shop.owl",plusPart,minusPart,plusProvides,foo,provides](X,Y).
+part(X) :- &dlC["http://www.kr.tuwien.ac.at/staff/roman/swlp/examples/shop.owl",plusPart,minusPart,plusProvides,foo,"Part"](X).
+
+nshop(X) :- &dlC["http://www.kr.tuwien.ac.at/staff/roman/swlp/examples/shop.owl",plusPart,minusShop,plusProvides,foo,"-Shop"](X).

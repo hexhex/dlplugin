@@ -353,4 +353,19 @@ TestRacerInterface::runGetUniverseTest()
   std::copy(lterm.begin(), lterm.end(),
 	    std::ostream_iterator<Term>(std::cout, ") ("));
   std::cout << ")" << std::endl;
+
+  CPPUNIT_ASSERT( lterm.size() == 20 );
+  
+  lterm.clear();
+
+  std::string kruri = "http://www.kr.tuwien.ac.at/staff/roman/swlp/examples/shop.owl";
+  pi->getUniverse(kruri, lterm);
+  
+  std::cout << "(";
+  std::copy(lterm.begin(), lterm.end(),
+	    std::ostream_iterator<Term>(std::cout, ") ("));
+  std::cout << ")" << std::endl;
+
+  CPPUNIT_ASSERT( lterm.size() == 20 );
+
 }

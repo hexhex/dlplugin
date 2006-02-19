@@ -3,9 +3,10 @@
 plusProvides("provides","foo","moo").
 plusPart("Part","cpu1").
 minusPart("Part","cpu2").
+minusShop("Shop","not_a_shop").
 
 s(X) :- &dlC["shop.owl",plusPart,minusPart,plusProvides,foo,"Shop"](X).
 p(X,Y) :- &dlR["shop.owl",plusPart,minusPart,plusProvides,foo,provides](X,Y).
 part(X) :- &dlC["shop.owl",plusPart,minusPart,plusProvides,foo,"Part"](X).
 
-nshop(X) :- &dlC["shop.owl",plusPart,minusPart,plusProvides,foo,"-Shop"](X).
+nshop(X) :- &dlC["shop.owl",plusPart,minusShop,plusProvides,foo,"-Shop"](X).
