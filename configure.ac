@@ -3,10 +3,30 @@ AC_INIT([dlvhex-racerplugin],[0.1],[tkren@kr.tuwien.ac.at])
 AC_CONFIG_SRCDIR([src/RacerRunner.cpp])
 AC_CONFIG_HEADER([src/config.h])
 
-if test "$RACERPATH" = ""; then
-    RACERPATH=RacerPro
+
+
+#
+# the user didn't supply a path for Racer
+#
+if test "$RACER" = ""; then
+    # we assume "RacerPro"
+    RACER=RacerPro
+    # and check if and where it exists
+    AC_PATH_PROG(RACERPATH, $RACER, notfound)
+else
+    # the user supplied a 'RACER=...'
+    # check if it exists (with search path=/, since the user supplied
+    # an entire path!) and set RACERPATH to it!
+    AC_CHECK_PROG(RACERPATH, $RACER, $RACER, notfound, [/])
 fi
-    
+
+if test "$RACERPATH" = notfound; then
+    AC_MSG_ERROR([Racer not found. Download it at http://www.racer-systems.com])
+fi
+
+#
+# put the racer path into config.h
+#
 AC_DEFINE_UNQUOTED(RACERPATH,"$RACERPATH",[Path of RACER executable])
 
 
