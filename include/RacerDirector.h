@@ -206,9 +206,19 @@ namespace racer {
     virtual bool
     cacheHit(const QueryCtx& query, const QueryCtx& found) const;
 
+    /**
+     * tries to find query in the cache.
+     *
+     * @param query
+     *
+     * @return the position of the cached QueryCtx*.
+     */
+    virtual RacerCache::iterator
+    find(QueryCtx* query) const;
+
   public:
     explicit
-    RacerCachingDirector(RacerCache&, DirectorPtr d = DirectorPtr());
+    RacerCachingDirector(RacerCache&, DirectorPtr d);
 
     virtual
     ~RacerCachingDirector();
@@ -228,6 +238,23 @@ namespace racer {
     query(QueryCtxPtr qctx) throw(RacerError);
   };
 
+
+  /**
+   * @brief For debugging reasons.
+   */
+  class RacerDebugCachingDirector : public RacerCachingDirector
+  {
+  protected:
+    virtual bool
+    cacheHit(const QueryCtx& query, const QueryCtx& found) const;
+ 
+    virtual RacerCache::iterator
+    find(QueryCtx* query) const;
+
+  public:
+    explicit
+    RacerDebugCachingDirector(RacerCache&, DirectorPtr d);
+  };
 
 
   // following typedefs are here for easy of use

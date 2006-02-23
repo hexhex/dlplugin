@@ -121,24 +121,21 @@ RacerCachingDirector::query(QueryCtxPtr qctx) throw(RacerError)
 {
   if (director.get() != 0)
     {
-      // is query cached?
-      RacerCache::iterator it = cache.find(qctx.get());
+      RacerCache::iterator found = find(qctx.get());
 
-      if (it != cache.end())
+      if (found != cache.end())
 	{
-	  QueryCtx* found = *it;
-	  
-	  if (cacheHit(*qctx, *found))
+	  if (cacheHit(*qctx, **found))
 	    {
 	      // delete qctx pointer and overwrite with found pointer
-	      qctx.reset(found);
+	      qctx.reset(*found);
 	      return qctx;
 	    }
 	  
 	  // there is no cache hit
 	  // -> invalidate cache entry and delete found QueryCtx
-	  cache.erase(it);
-	  delete found;
+	  cache.erase(found);
+	  delete *found;
 	}
       
       // ask the director and add qctx pointer to the cache 
@@ -150,13 +147,19 @@ RacerCachingDirector::query(QueryCtxPtr qctx) throw(RacerError)
 }
 
 
+RacerCachingDirector::RacerCache::iterator
+RacerCachingDirector::find(QueryCtx* query) const
+{
+  // is query cached?
+  return cache.find(query);
+}
 
 bool
 RacerCachingDirector::cacheHit(const QueryCtx& query, const QueryCtx& found) const
 {
   Query::QueryType t = query.getQuery().getType();
-  Query& q1 = query.getQuery();
-  Query& q2 = found.getQuery();
+  const Query& q1 = query.getQuery();
+  const Query& q2 = found.getQuery();
 
   if (t == Query::Boolean || t == Query::RelatedBoolean)
     {
@@ -177,4 +180,55 @@ RacerCachingDirector::cacheHit(const QueryCtx& query, const QueryCtx& found) con
       return
 	q1.getInterpretation() == q2.getInterpretation();
     }
+}
+
+
+
+
+RacerDebugCachingDirector::RacerDebugCachingDirector(RacerCache& c, DirectorPtr d)
+  : RacerCachingDirector(c, d)
+{ }
+
+RacerCachingDirector::RacerCache::iterator
+RacerDebugCachingDirector::find(QueryCtx* query) const
+{
+  std::cout << "-----" << std::endl;
+
+  for (RacerCache::const_iterator it = cache.begin();
+       it != cache.end(); it++)
+    {
+      std::cout << "   " << (*(*it)).getQuery() << std::endl;
+    }
+
+  std::cout << "q: " << query->getQuery();
+
+  RacerCache::iterator found = RacerCachingDirector::find(query);
+
+  if (found != cache.end())
+    {
+      std::cout << " found in cache";
+    }
+  else
+    {
+      std::cout << std::endl;
+    }
+
+  return found;
+}
+
+bool
+RacerDebugCachingDirector::cacheHit(const QueryCtx& query, const QueryCtx& found) const
+{
+  bool ret = RacerCachingDirector::cacheHit(query, found);
+
+  if (ret)
+    {
+      std::cout << " and is a cache-hit!" << std::endl;
+    }
+  else
+    {
+      std::cout << std::endl;
+    }
+
+  return ret;
 }

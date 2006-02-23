@@ -16,6 +16,7 @@
 #include <string>
 #include <functional>
 #include <vector>
+#include <sstream>
 
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Atom.h>
@@ -198,14 +199,23 @@ namespace racer {
   inline bool
   operator< (const Query& q1, const Query& q2)
   {
-    // first check if q1 < q2 without looking at the query types
-    bool lessthan = q1.getQuery() < q2.getQuery()
-      || q1.getNamespace() < q2.getNamespace()
-      || q1.getOntology() < q2.getOntology()
-      || q1.getPlusC() < q2.getPlusC()
-      || q1.getMinusC() < q2.getMinusC()
-      || q1.getPlusR() < q2.getPlusR()
-      || q1.getMinusR() < q2.getMinusR();
+    std::ostringstream os1;
+    std::ostringstream os2;
+
+    // paste the string representation of the various Query members
+    // (without the query types) into the ostringstream in order to
+    // compare them
+
+    os1 << q1.getNamespace() << q1.getOntology()
+	<< q1.getPlusC() << q1.getMinusC() << q1.getPlusR() << q1.getMinusR()
+	<< q1.getQuery();
+
+    os2 << q2.getNamespace() << q2.getOntology()
+	<< q2.getPlusC() << q2.getMinusC() << q2.getPlusR() << q2.getMinusR()
+	<< q2.getQuery();
+
+    // check if q1 < q2 without looking at the query types
+    bool lessthan = os1.str() < os2.str();
 
     // if q1 >= q2 we have to look at the query types in order to
     // compute the < relation on them
@@ -254,7 +264,8 @@ namespace racer {
 	  }
 	else
 	  {
-	    // nothing to do, lessthan as well as eq are false 
+	    // nothing to do, either q1 > q2, or q1 == q1 and
+	    // q1.getType() > q2.geType().
 	  }
       }
 
@@ -271,13 +282,13 @@ namespace racer {
   operator== (const Query& q1, const Query& q2)
   {
     return
-      q1.getQuery() == q2.getQuery()
-      && q1.getNamespace() == q2.getNamespace()
+      q1.getNamespace() == q2.getNamespace()
       && q1.getOntology() == q2.getOntology()
       && q1.getPlusC() == q2.getPlusC()
       && q1.getMinusC() == q2.getMinusC()
       && q1.getPlusR() == q2.getPlusR()
-      && q1.getMinusR() == q2.getMinusR();
+      && q1.getMinusR() == q2.getMinusR()
+      && q1.getQuery() == q2.getQuery();
   }
 
   /**

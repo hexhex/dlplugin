@@ -93,7 +93,21 @@ RacerCachingAtom::getCachedDirectors(RacerBaseDirector* cmd) const
   dir->add(cmd); // the actual command to send
 
   RacerBaseDirector::DirectorPtr comp(dir);
-  RacerBaseDirector::DirectorPtr cacher(new RacerCachingDirector(cache, comp));
+  RacerBaseDirector::DirectorPtr cacher;
+
+  if (getenv("DEBUGCACHE") != 0)
+    {
+      cacher = RacerBaseDirector::DirectorPtr(new RacerDebugCachingDirector(cache,
+									    comp
+									    )
+					      );
+    }
+  else
+    {
+      cacher = RacerBaseDirector::DirectorPtr(new RacerCachingDirector(cache,
+								       comp)
+					      );
+    }
 
   return cacher;
 }
