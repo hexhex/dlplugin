@@ -17,7 +17,6 @@
 #include "RacerQuery.h"
 #include "RacerRunner.h"
 
-#include <dlvhex/errorHandling.h>
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
 #include <dlvhex/AtomSet.h>
