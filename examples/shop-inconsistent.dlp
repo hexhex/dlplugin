@@ -2,4 +2,4 @@
 
 minusShop("Shop","s1").
 
-consistent :- &dlConsistent["shop.owl",plusShop,minusShop,plusProvides,foo]().
+consistent :- &dlConsistent["shop.owl",plusShop,minusShop,plusProvides,foo].
