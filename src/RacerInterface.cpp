@@ -68,9 +68,10 @@ RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
 void
 RacerInterface::getAtoms(AtomFunctionMap& m)
 {
-  m["dlC"] = new RacerConcept(stream, cache);
-  m["dlR"] = new RacerRole(stream, cache);
+  m["dlC"]          = new RacerConcept(stream, cache);
+  m["dlR"]          = new RacerRole(stream, cache);
   m["dlConsistent"] = new RacerConsistent(stream);
+  m["dlDR"]         = new RacerDatatypeRole(stream, cache);
 }
 
 

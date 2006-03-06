@@ -263,3 +263,40 @@ RacerConsistent::retrieve(const PluginAtom::Query& query,
       throw PluginError(e.what());
     }
 }
+
+
+
+RacerDatatypeRole::RacerDatatypeRole(std::iostream& s,
+				     RacerCachingDirector::RacerCache& c)
+  : RacerCachingAtom(s, c)
+{
+  //
+  // &dlDR[kb,plusC,minusC,plusR,minusR,query](X,Y)
+  //
+
+  setOutputArity(2);
+
+  addInputConstant();  // kb URI
+  addInputPredicate(); // plusC
+  addInputPredicate(); // minusC
+  addInputPredicate(); // plusR
+  addInputPredicate(); // minusR
+  addInputConstant();  // query
+}
+
+RacerBaseDirector::DirectorPtr
+RacerDatatypeRole::getDirectors(const dlvhex::racer::Query& query) const
+{
+  if (query.getType() == dlvhex::racer::Query::RelatedRetrieval) // retrieval mode
+    {
+      return RacerBaseDirector::DirectorPtr(); //getCachedDirectors(new RacerRoleQuery(stream));
+    }
+  else if (query.getType() == dlvhex::racer::Query::RightRetrieval) // pattern retrieval mode
+    {
+      return RacerBaseDirector::DirectorPtr(); //getCachedDirectors(new RacerIndvFillersQuery(stream));
+    }
+  else
+    {
+      throw PluginError("Wrong query type");
+    }
+}

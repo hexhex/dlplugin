@@ -193,6 +193,30 @@ namespace racer {
   };
 
 
+  /**
+   * @brief Implements the datatype role retrieving atom
+   * &dlDR[kb,plusC,minusC,plusR,minusR,query](X,Y).
+   */
+  class RacerDatatypeRole : public RacerCachingAtom
+  {
+  protected:
+    /**
+     * checks whether the pattern tuple requests a boolean, a
+     * retrieval or a individual filler query and creates the director
+     * chain accordingly.
+     *
+     * @param query
+     *
+     * @return
+     */
+    virtual RacerBaseDirector::DirectorPtr
+    getDirectors(const dlvhex::racer::Query& query) const;
+
+  public:
+    RacerDatatypeRole(std::iostream&, RacerCachingDirector::RacerCache&);
+  };
+
+
 } // namespace racer
 } // namespace dlvhex
 
