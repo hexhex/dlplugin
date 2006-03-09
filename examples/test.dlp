@@ -1,3 +1,5 @@
 % -*- prolog -*-
 
 test(X) v -test(X) :- &dlC["test.owl",a,b,c,d,"Test"](X).
+
+%testno(X) :- &dlDR["test.owl",a,b,c,d,"hasTestValue"]("test1",X).

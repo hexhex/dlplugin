@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE rdf:RDF [
+  <!ENTITY rdf  "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+  <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+  <!ENTITY xsd  "http://www.w3.org/2001/XMLSchema#" >
+  <!ENTITY owl  "http://www.w3.org/2002/07/owl#" >
+]>
 <rdf:RDF
-  xmlns:owl="http://www.w3.org/2002/07/owl#"
-  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-  xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+  xmlns:owl="&owl;"
+  xmlns:rdf="&rdf;"
+  xmlns:rdfs="&rdfs;"
+  xmlns:xsd="&xsd;"
   xmlns="http://www.test.com/test#"
   xml:base="http://www.test.com/test">
 
@@ -11,7 +17,19 @@
 
   <owl:Class rdf:ID="Test"/>
 
-  <Test rdf:ID="test1"/>
-  <Test rdf:ID="test2"/>
+  <owl:Class rdf:ID="TestInteger" />
+  
+  <owl:DatatypeProperty rdf:about="hasTestValue">
+    <rdfs:domain rdf:resource="#Test" />
+    <rdfs:range  rdf:resource="&xsd;positiveInteger" />
+  </owl:DatatypeProperty>
 
+  <Test rdf:ID="test1">
+    <hasTestValue rdf:datatype="&xsd;positiveInteger">1</hasTestValue>
+    <hasTestValue rdf:datatype="&xsd;positiveInteger">2</hasTestValue>
+  </Test>
+  <Test rdf:ID="test2">
+    <hasTestValue rdf:datatype="&xsd;positiveInteger">2</hasTestValue>
+  </Test>
+  
 </rdf:RDF>
