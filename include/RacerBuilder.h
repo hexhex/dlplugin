@@ -243,6 +243,7 @@ namespace racer {
     buildCommand(Query& q) throw (RacerBuildingError);
   };
 
+
   /**
    * @brief Creates a command to query role individual fillers.
    *
@@ -260,6 +261,28 @@ namespace racer {
     virtual void
     buildCommand(Query& q) throw (RacerBuildingError);
   };
+
+
+  /**
+   * @brief Creates a command to query datatype role individual
+   * fillers.
+   *
+   * @see individual-told-datatype-fillers function in RacerPro
+   * Reference manual
+   */
+  class RacerIndividualDatatypeFillersBuilder : public RacerBuilder
+  {
+  public:
+    explicit
+    RacerIndividualDatatypeFillersBuilder(std::ostream&);
+
+    virtual
+    ~RacerIndividualDatatypeFillersBuilder();
+
+    virtual void
+    buildCommand(Query& q) throw (RacerBuildingError);
+  };
+
 
   /**
    * @brief Opens an OWL from file or URL as KB "DEFAULT".
@@ -355,6 +378,7 @@ namespace racer {
       : RacerSimpleCommandBuilder(s, "(clone-abox DEFAULT :new-name temp-abox :overwrite t)")
     { }
   };
+
 
   /**
    * @brief Checks ABox consistency.

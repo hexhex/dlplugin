@@ -427,3 +427,56 @@ RacerOpenOWLBuilder::buildCommand(Query& query) throw (RacerBuildingError)
       throw RacerBuildingError(e.what());
     }
 }
+
+
+
+RacerIndividualDatatypeFillersBuilder::RacerIndividualDatatypeFillersBuilder(std::ostream& s)
+  : RacerBuilder(s)
+{ }
+
+
+RacerIndividualDatatypeFillersBuilder::~RacerIndividualDatatypeFillersBuilder()
+{ }
+
+void
+RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
+  throw (RacerBuildingError)
+{
+  std::string nspace = query.getNamespace();
+  const Term& q = query.getQuery();
+  const Tuple& indv = query.getPatternTuple();
+
+  if (query.getType() != Query::RelatedRetrieval
+      && query.getType() != Query::RightRetrieval)
+    {
+      throw RacerBuildingError("Incompatible pattern supplied.");
+    }
+
+  try
+    {
+      stream << "(individual-told-datatype-fillers ";
+
+      if (query.getType() == Query::RightRetrieval) // (const,variable) pattern
+	{
+	  stream << "|"
+		 << nspace
+		 << indv[0].getUnquotedString()
+		 << "| |"
+		 << nspace
+		 << q.getUnquotedString()
+		 << "|";
+	}
+      else // (variable,variable) pattern
+	{
+	  ///@todo get all possible pairs of datatype fillers? how
+	  ///should we get all possible individuals?
+	  throw RacerBuildingError("RelatedRetrieval not implemented yet");
+	}
+
+      stream << ")" << std::endl;
+    }
+  catch (std::exception& e)
+    {
+      throw RacerBuildingError(e.what());
+    }
+}

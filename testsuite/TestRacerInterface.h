@@ -36,11 +36,14 @@ namespace racer {
     CPPUNIT_TEST(runRacerIsConceptTest);
     CPPUNIT_TEST(runRacerIsRoleTest);
     CPPUNIT_TEST(runRacerRoleFillersTest);
+    CPPUNIT_TEST(runRacerDatatypeRoleFillersTest);
     CPPUNIT_TEST(runGetUniverseTest);
     CPPUNIT_TEST_SUITE_END();
 
     std::string shop;
     std::string shopuri;
+    std::string test;
+    std::string testuri;
 
     void output(const std::vector<Tuple>& tv);
 
@@ -58,6 +61,8 @@ namespace racer {
     void runRacerIsRoleTest();
 
     void runRacerRoleFillersTest();
+
+    void runRacerDatatypeRoleFillersTest();
 
     void runGetUniverseTest();    
   };

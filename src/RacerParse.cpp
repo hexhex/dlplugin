@@ -206,18 +206,32 @@ RacerAnswerList::RacerAnswerList(std::istream& s)
 RacerAnswerList::~RacerAnswerList()
 { }
 
-std::string&
-RacerAnswerList::parseTerm(std::string& term) const
+Term
+RacerAnswerList::parseTerm(const std::string& term) const
 {
-  // remove '|' ... '|'
-  term.erase(0, 1);
-  term.erase(term.length() - 1, 1);
+  if (term[0] == '|' && term[term.length() - 1] == '|') // object type
+    {
+      // remove '|' ... '|'
+      std::string tmp = term.substr(1, term.length() - 2);
+      
+      std::string::size_type i = tmp.find_last_of('#');
 
-  // strip xml namespace
-  std::string::size_type i = term.find_last_of('#');
-  term.erase(0, i+1);
+      // strip xml namespace
+      tmp.erase(0, i+1);
 
-  return term;
+      // return string Term
+      return Term(tmp, true);
+    }
+  else // integer(?) data type
+    {
+      int i;
+      std::istringstream iss(term);
+
+      iss >> i;
+
+      // return integer Term
+      return Term(i);
+    }
 }
 
 void
@@ -248,8 +262,8 @@ RacerAnswerList::parseAnswer(Answer& answer,
 
 	  iss >> term;
 
-	  // add single quoted Term
-	  tl.push_back(Term(parseTerm(term), true));
+	  // add the Term
+	  tl.push_back(parseTerm(term));
 
 	  answer.addTuple(tl);
 	}
@@ -278,7 +292,7 @@ RacerAnswerPairList::parseAnswer(Answer& answer,
     {
       if (ans == "NIL")
 	{
-	  return;
+	  return; // empty list -> nothing to do
 	}
 
       // remove '(' ... ')'
@@ -292,19 +306,18 @@ RacerAnswerPairList::parseAnswer(Answer& answer,
 
       while (!iss.eof())
 	{
-	  iss.ignore(); // ignore '('
-
 	  tl.clear();
 	  term1.clear();
 	  term2.clear();
 
 	  iss >> term1 >> term2;
 
+	  term1.erase(0, 1);                // remove '('
 	  term2.erase(term2.size() - 1, 1); // remove ')'
 
-	  // add pair of quoted terms
-	  tl.push_back(Term(parseTerm(term1), true));
-	  tl.push_back(Term(parseTerm(term2), true));
+	  // add pair of Terms
+	  tl.push_back(parseTerm(term1));
+	  tl.push_back(parseTerm(term2));
 
 	  answer.addTuple(tl);
 	}

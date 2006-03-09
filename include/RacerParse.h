@@ -147,14 +147,15 @@ namespace racer {
 
     /**
      * helper method processes a single individual parsed from a RACER
-     * answer and strips xml namespace from it.
+     * answer and strips xml namespace from it in case it is a object
+     * individual. Otherwise it converts it into a integer Term.
      *
      * @param term
      *
-     * @return individual string
+     * @return the correspondig Term
      */
-    virtual std::string&
-    parseTerm(std::string& term) const;
+    virtual Term
+    parseTerm(const std::string& term) const;
 
   public:
     explicit

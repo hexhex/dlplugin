@@ -289,11 +289,12 @@ RacerDatatypeRole::getDirectors(const dlvhex::racer::Query& query) const
 {
   if (query.getType() == dlvhex::racer::Query::RelatedRetrieval) // retrieval mode
     {
-      return RacerBaseDirector::DirectorPtr(); //getCachedDirectors(new RacerRoleQuery(stream));
+      ///@todo non-functional part
+      throw PluginError("Related Retrieval Datatype Role not implemented yet");
     }
   else if (query.getType() == dlvhex::racer::Query::RightRetrieval) // pattern retrieval mode
     {
-      return RacerBaseDirector::DirectorPtr(); //getCachedDirectors(new RacerIndvFillersQuery(stream));
+      return getCachedDirectors(new RacerIndvDataFillersQuery(stream)); 
     }
   else
     {

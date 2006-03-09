@@ -25,11 +25,18 @@ TestRacerInterface::setUp()
 	std::string(ex) +
 	std::string("/shop.owl");
       shopuri = "file:" + std::string(ex) + "/shop.owl";
+
+      test =
+	std::string(ex) +
+	std::string("/test.owl");
+      testuri = "file:" + std::string(ex) + "/test.owl";
     }
   else
     {
       shop = std::string("./shop.owl");
       shopuri = std::string("file:shop.owl");
+      test = std::string("./test.owl");
+      testuri = std::string("file:test.owl");
     }
 }
 
@@ -379,6 +386,45 @@ TestRacerInterface::runRacerRoleFillersTest()
   CPPUNIT_ASSERT( ans3.getTuples()->size() == 3); // cpu provided in s1,s3,s5
   
   output(*ans3.getTuples());
+}
+
+
+void
+TestRacerInterface::runRacerDatatypeRoleFillersTest()
+{
+  PluginInterface* pi = PLUGINIMPORTFUNCTION();
+
+  PluginInterface::AtomFunctionMap m;
+  pi->getAtoms(m);
+
+  AtomSet a1,a2,a3,a4;
+
+  Interpretation in;
+  in.insert(a1);
+  in.insert(a2);
+  in.insert(a3);
+  in.insert(a4);
+
+  Tuple parms;
+  parms.push_back(Term(test));
+  parms.push_back(Term("\"a\""));
+  parms.push_back(Term("\"b\""));
+  parms.push_back(Term("\"c\""));
+  parms.push_back(Term("\"d\""));
+  parms.push_back(Term("\"hasTestValue\""));
+
+  // pattern retrieval mode
+  Tuple pat;
+  pat.push_back(Term("\"test1\""));
+  pat.push_back(Term("X"));
+
+  PluginAtom::Answer ans1;
+  PluginAtom::Query q1(in, parms, pat);
+
+  CPPUNIT_ASSERT_NO_THROW( m["dlDR"]->retrieve(q1, ans1) );
+  CPPUNIT_ASSERT( ans1.getTuples()->size() == 2); // 
+  
+  output(*ans1.getTuples());
 }
 
 
