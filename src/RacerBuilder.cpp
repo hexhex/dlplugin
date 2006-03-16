@@ -454,23 +454,24 @@ RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
 
   try
     {
-      stream << "(individual-told-datatype-fillers ";
+      stream << "(retrieve ";
 
       if (query.getType() == Query::RightRetrieval) // (const,variable) pattern
 	{
-	  stream << "|"
-		 << nspace
-		 << indv[0].getUnquotedString()
-		 << "| |"
+	  stream << "($?*Y) (and (?*X $?*Y (:owl-datatype-role |"
 		 << nspace
 		 << q.getUnquotedString()
-		 << "|";
+		 << "|)) (same-as ?X |"
+ 		 << nspace
+ 		 << indv[0].getUnquotedString()
+ 		 << "|))";
 	}
       else // (variable,variable) pattern
 	{
-	  ///@todo get all possible pairs of datatype fillers? how
-	  ///should we get all possible individuals?
-	  throw RacerBuildingError("RelatedRetrieval not implemented yet");
+	  stream << "(?*X $?*Y) (?*X $?*Y (:owl-datatype-role |"
+		 << nspace
+		 << q.getUnquotedString()
+		 << "|))";
 	}
 
       stream << ")" << std::endl;

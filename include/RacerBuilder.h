@@ -406,6 +406,19 @@ namespace racer {
     { }
   };
 
+  /**
+   * @brief Enable data substrate mirroring.
+   *
+   * @see 
+   */
+  class RacerDataSubstrateMirrorBuilder : public RacerSimpleCommandBuilder
+  {
+  public:
+    explicit
+    RacerDataSubstrateMirrorBuilder(std::ostream& s)
+      : RacerSimpleCommandBuilder(s, "(enable-data-substrate-mirroring)")
+    { }
+  };
 
 } // namespace racer
 } // namespace dlvhex

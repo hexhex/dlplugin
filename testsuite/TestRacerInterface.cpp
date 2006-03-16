@@ -422,9 +422,22 @@ TestRacerInterface::runRacerDatatypeRoleFillersTest()
   PluginAtom::Query q1(in, parms, pat);
 
   CPPUNIT_ASSERT_NO_THROW( m["dlDR"]->retrieve(q1, ans1) );
-  CPPUNIT_ASSERT( ans1.getTuples()->size() == 2); // 
+  CPPUNIT_ASSERT( ans1.getTuples()->size() == 2); // test1 hasTestValue 1,2
   
   output(*ans1.getTuples());
+
+  // retrieval mode
+  pat.clear();
+  pat.push_back(Term("X"));
+  pat.push_back(Term("Y"));
+
+  PluginAtom::Answer ans2;
+  PluginAtom::Query q2(in, parms, pat);
+
+  CPPUNIT_ASSERT_NO_THROW( m["dlDR"]->retrieve(q2, ans2) );
+  CPPUNIT_ASSERT( ans2.getTuples()->size() == 3); // (test1 1) (test1 2) (test2 2)
+  
+  output(*ans2.getTuples());
 }
 
 

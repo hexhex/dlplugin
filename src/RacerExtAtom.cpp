@@ -287,14 +287,14 @@ RacerDatatypeRole::RacerDatatypeRole(std::iostream& s,
 RacerBaseDirector::DirectorPtr
 RacerDatatypeRole::getDirectors(const dlvhex::racer::Query& query) const
 {
-  if (query.getType() == dlvhex::racer::Query::RelatedRetrieval) // retrieval mode
+  if (query.getType() == dlvhex::racer::Query::RelatedRetrieval ||
+      query.getType() == dlvhex::racer::Query::RightRetrieval)
     {
-      ///@todo non-functional part
-      throw PluginError("Related Retrieval Datatype Role not implemented yet");
-    }
-  else if (query.getType() == dlvhex::racer::Query::RightRetrieval) // pattern retrieval mode
-    {
-      return getCachedDirectors(new RacerIndvDataFillersQuery(stream)); 
+      ///@todo this is kind of a hack, maybe we should unify this stuff...
+      RacerCompositeDirector* dir = new RacerCompositeDirector(stream);
+      dir->add(new RacerDirector<RacerDataSubstrateMirrorBuilder,RacerIgnoreAnswer>(stream));
+      dir->add(new RacerIndvDataFillersQuery(stream));
+      return getCachedDirectors(dir); 
     }
   else
     {

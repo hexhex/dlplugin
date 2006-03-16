@@ -289,7 +289,7 @@ namespace racer {
   typedef RacerDirector<RacerIndividualFillersBuilder, RacerAnswerList> RacerIndvFillersQuery;
   /// request a list of datatype individuals which are fillers of a
   /// role for a specified individual
-  typedef RacerDirector<RacerIndividualDatatypeFillersBuilder,RacerAnswerList> RacerIndvDataFillersQuery;
+  typedef RacerDirector<RacerIndividualDatatypeFillersBuilder,RacerRetrieveList> RacerIndvDataFillersQuery;
 
 } // namespace racer
 } // namespace dlvhex

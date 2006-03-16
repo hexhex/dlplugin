@@ -222,8 +222,11 @@ RacerAnswerList::parseTerm(const std::string& term) const
       // return string Term
       return Term(tmp, true);
     }
-  else // integer(?) data type
+  else
     {
+      ///@todo right now, only integer data types are supported. For
+      ///string data types (escaped with \") we need a better parsing
+      ///engine.
       int i;
       std::istringstream iss(term);
 
@@ -320,6 +323,75 @@ RacerAnswerPairList::parseAnswer(Answer& answer,
 	  tl.push_back(parseTerm(term2));
 
 	  answer.addTuple(tl);
+	}
+    }
+  catch(std::exception& e)
+    {
+      throw RacerParsingError(e.what());
+    }
+}
+
+
+RacerRetrieveList::RacerRetrieveList(std::istream& s)
+  : RacerAnswerList(s)
+{ }
+
+RacerRetrieveList::~RacerRetrieveList()
+{ }
+
+void
+RacerRetrieveList::parseAnswer(Answer& answer,
+			       std::string& ans,
+			       std::string&
+			       ) const throw (RacerParsingError)
+{
+  try
+    {
+      if (ans == "NIL")
+	{
+	  return; // empty list -> nothing to do
+	}
+
+      // remove '(' ... ')'
+      ans.erase(0, 1);
+      ans.erase(ans.size() - 1, 1);
+
+      std::istringstream iss(ans);
+      Tuple tl;
+
+      while (!iss.eof())
+	{
+	  if (iss.get() == '(') // a new tuple ((var term) (var term) ... )
+	    {
+	      tl.clear();
+
+	      while (iss.peek() != ')') // parse all upcoming (var term) pairs
+		{
+		  std::stringbuf sb;
+		  sb.str("");
+		  
+		  iss.ignore(); // ignore '('
+		  iss.get(sb, ')');
+		  iss.ignore(); // ignore ')'
+		  if (iss.peek() == ' ') iss.ignore();
+
+		  std::string s = sb.str(); // a pair of "variable term"
+
+		  std::string::size_type pos = s.find(' ');
+
+		  if (std::string::npos == pos)
+		    {
+		      throw RacerParsingError("RacerParse just made a booboo, bailing out.");
+		    }
+
+		  // add term to the tuple
+		  tl.push_back(parseTerm(s.substr(pos + 1)));
+		}
+
+	      answer.addTuple(tl);
+	      
+	      iss.ignore();
+	    }
 	}
     }
   catch(std::exception& e)

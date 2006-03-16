@@ -192,6 +192,31 @@ namespace racer {
 
 
   /**
+   * @brief Parses list of tuples answers from (retrieve) RACER command.
+   */
+  class RacerRetrieveList : public RacerAnswerList
+  {
+  protected:
+    /**
+     * checks RACERs retrieve list answer and sets Answer accordingly.
+     *
+     * @param answer
+     * @param ans
+     * @param ns
+     */
+    virtual void
+    parseAnswer(Answer& answer, std::string& ans, std::string& ns) const throw (RacerParsingError);
+
+  public:
+    explicit
+    RacerRetrieveList(std::istream&);
+
+    virtual
+    ~RacerRetrieveList();
+  };
+
+
+  /**
    * @brief A parser which does nothing. Mainly for testing purposes.
    */
   class RacerNullParser : public RacerParse
