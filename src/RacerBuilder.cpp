@@ -458,7 +458,7 @@ RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
 
       if (query.getType() == Query::RightRetrieval) // (const,variable) pattern
 	{
-	  stream << "($?*Y) (and (?*X $?*Y (:owl-datatype-role |"
+	  stream << "(?X $?*Y) (and (?*X $?*Y (:owl-datatype-role |"
 		 << nspace
 		 << q.getUnquotedString()
 		 << "|)) (same-as ?X |"
