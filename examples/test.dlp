@@ -2,4 +2,7 @@
 
 test(X) v -test(X) :- &dlC["test.owl",a,b,c,d,"Test"](X).
 
-%testno(X) :- &dlDR["test.owl",a,b,c,d,"hasTestValue"]("test1",X).
+testno(X,Y) :- &dlDR["test.owl",a,b,c,d,"hasTestValue"](X,Y).
+
+%testnames(X,Y) :- &dlDR["test.owl",a,b,c,d,"hasName"](X,Y).
+

@@ -24,11 +24,20 @@
     <rdfs:range  rdf:resource="&xsd;positiveInteger" />
   </owl:DatatypeProperty>
 
+    <owl:DatatypeProperty rdf:ID="hasName">
+      <rdfs:label>hasName</rdfs:label>
+      <rdfs:domain rdf:resource="#Test"/>
+      <rdfs:range rdf:resource="&xsd;string"/>
+  </owl:DatatypeProperty>
+  
   <Test rdf:ID="test1">
+    <hasName rdf:datatype="&xsd;string">This is my test 1</hasName>
     <hasTestValue rdf:datatype="&xsd;positiveInteger">1</hasTestValue>
     <hasTestValue rdf:datatype="&xsd;positiveInteger">2</hasTestValue>
   </Test>
   <Test rdf:ID="test2">
+    <hasName rdf:datatype="&xsd;string">This is my test 2</hasName>
+    <hasName rdf:datatype="&xsd;string">and my test 2 has 2 names</hasName>
     <hasTestValue rdf:datatype="&xsd;positiveInteger">2</hasTestValue>
   </Test>
   
