@@ -6,3 +6,5 @@ testno(X,Y) :- &dlDR["test.owl",a,b,c,d,"hasTestValue"](X,Y).
 
 %testnames(X,Y) :- &dlDR["test.owl",a,b,c,d,"hasName"](X,Y).
 
+test1(Y) :- &dlDR["test.owl",a,b,c,d,"hasTestValue"]("test1",Y).
+

@@ -283,6 +283,7 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
 
   try
     {
+      ///@todo always return as pairs...
       stream << "(individual-fillers ";
 
       if (query.getType() == Query::RightRetrieval) // (const,variable) pattern

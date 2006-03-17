@@ -8,5 +8,6 @@ minusShop("Shop","not_a_shop").
 s(X) :- &dlC["shop.owl",plusPart,minusPart,plusProvides,foo,"Shop"](X).
 p(X,Y) :- &dlR["shop.owl",plusPart,minusPart,plusProvides,foo,provides](X,Y).
 part(X) :- &dlC["shop.owl",plusPart,minusPart,plusProvides,foo,"Part"](X).
+parts1(X) :- &dlR["shop.owl",plusPart,minusPart,plusProvides,foo,"provides"]("s1",X).
 
 nshop(X) :- &dlC["shop.owl",plusPart,minusShop,plusProvides,foo,"-Shop"](X).

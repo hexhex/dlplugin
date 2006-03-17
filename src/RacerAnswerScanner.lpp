@@ -1,0 +1,73 @@
+%{
+#include <iostream>
+#include <string>
+
+#include "RacerAnswerParser.tab.hh"
+#include "RacerAnswerDriver.h"
+using namespace std;
+
+// #ifdef YY_DECL
+// #undef YY_DECL
+// #endif
+#define yylval ((YYSTYPE*)lexval)
+#define yylloc ((yy::location*)lexloc)
+                                                                                                               
+%}
+
+%option c++ noyywrap nounput batch debug
+%option yyclass="RacerFlexLexer"
+
+NEWLINE         \15?\n
+BLANK           ([ \t]+)
+NUMBER          ([0-9]+)
+STRING          ([A-Za-z][A-Za-z_0-9]*)
+QUOTED_STRING   (\\\"[^\\\"]*\\\")
+
+%%
+
+
+{NEWLINE}		{ return NEWLINE;       }
+
+"("			{ return LIST_OPEN;	}
+")"			{ return LIST_CLOSE;	}
+"|"                     { return PIPE;          }
+"#"                     { return POUND;         }
+"$"                     { return DOLLAR; }
+"*"                     { return STAR; }
+"NIL"                   { return NIL;           }
+"?"                     { return QUESTIONMARK;  }
+"\""                    { return QUOTE; }
+":"                     { return COLON; }
+"T"                     { return TRUE_OR_T; }
+":answer"               { return RACERANSWER; }
+":error"                { return RACERERROR; }
+
+{STRING}                |
+{QUOTED_STRING}         {
+                          yylval->sval = new std::string(yytext);
+                          return STRING;
+			}
+
+{NUMBER}                {
+                          yylval->sval = new std::string(yytext);
+                          return NUMBER; 
+			}
+
+{BLANK}			{ /* Skip blanks */	}
+
+
+
+.			{ driver->error (*yylloc, "invalid character");}
+
+%%
+
+void
+yy::RacerAnswerDriver::scan_begin ()
+{
+}
+void
+yy::RacerAnswerDriver::scan_end ()
+{
+
+}
+

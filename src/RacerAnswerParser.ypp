@@ -1,0 +1,130 @@
+%skeleton "lalr1.cc"                          /*  -*- C++ -*- */
+%define "parser_class_name" "RacerAnswerParser"
+%defines
+
+%{
+#include <string>
+#include "RacerAnswerDriver.h"
+%}
+
+// The parsing context.
+%parse-param { yy::RacerAnswerDriver& driver }
+%lex-param   { yy::RacerAnswerDriver& driver }
+%locations
+%debug
+%error-verbose
+//%verbose /* really verbose output */
+
+%union {
+  std::string* sval;
+}
+
+
+
+%token <sval> STRING QUOTED_STRING NUMBER
+%token ERROR
+%token NEWLINE
+%token LIST_OPEN
+%token LIST_CLOSE
+%token PIPE
+%token POUND
+%token NIL
+%token QUESTIONMARK
+%token BLANK
+%token QUOTE
+%token COLON
+%token DOLLAR
+%token STAR
+%token RACERANSWER
+%token RACERERROR
+%token TRUE_OR_T
+
+// automagically delete all allocated objects after the parsing process
+%destructor { delete $$; } STRING QUOTED_STRING NUMBER
+
+%%
+
+racer: /* empty */
+     | RACERANSWER NUMBER QUOTE message QUOTE nslist NEWLINE
+     | RACERERROR  NUMBER QUOTE errormsg QUOTE QUOTE QUOTE NEWLINE
+;
+
+
+nslist: QUOTE QUOTE
+;
+
+
+errormsg: identifier { }
+        | identifier errormsg { }
+;
+
+
+message: boolean | list
+;
+
+
+boolean: TRUE_OR_T { }
+       | NIL { }
+;
+
+
+list: LIST_OPEN individuals LIST_CLOSE
+    | LIST_OPEN pairs LIST_CLOSE
+    | LIST_OPEN lists LIST_CLOSE
+;
+
+
+individuals: individual
+           | individual individuals
+;
+
+
+pairs: LIST_OPEN individual individual LIST_CLOSE
+     | LIST_OPEN individual individual LIST_CLOSE pairs
+;
+
+
+lists: LIST_OPEN tuples LIST_CLOSE
+     | LIST_OPEN tuples LIST_CLOSE lists
+;
+
+
+tuples: LIST_OPEN variable individual LIST_CLOSE
+      | LIST_OPEN variable individual LIST_CLOSE tuples
+;
+
+
+individual: PIPE identifier POUND identifier PIPE { }
+          | identifier { }
+;
+
+variable: QUESTIONMARK identifier
+        | DOLLAR QUESTIONMARK identifier
+        | QUESTIONMARK STAR identifier
+        | DOLLAR QUESTIONMARK STAR identifier
+;
+
+identifier: STRING { }
+          | QUOTED_STRING { }
+          | TRUE_OR_T { }
+          | NUMBER { }
+;
+
+%%
+
+void
+yy::RacerAnswerParser::error (const yy::RacerAnswerParser::location_type& l,
+			      const std::string& m)
+{
+  driver.error (l, m);
+}
+
+
+// bison callback for a pure C++ parsing engine
+YY_DECL
+{
+  RacerFlexLexer* lex = driver.getLexer();
+  lex->lexval = yylval;
+  lex->lexloc = yylloc;
+  return lex->yylex ();
+}
