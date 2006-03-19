@@ -1,122 +1,208 @@
-%skeleton "lalr1.cc"                          /*  -*- C++ -*- */
+/*  -*- C++ -*- */
+
+/**
+ * @file   RacerAnswerParser.ypp
+ * @author Thomas Krennwallner
+ * @date   Fri Mar 17 21:59:38 2006
+ * 
+ * @brief  
+ * 
+ * 
+ */
+
+
+%skeleton "lalr1.cc"
 %define "parser_class_name" "RacerAnswerParser"
 %defines
+%file-prefix = "RacerAnswerParser"
 
 %{
-#include <string>
 #include "RacerAnswerDriver.h"
+#include "RacerError.h"
+
+#include <string>
 %}
 
-// The parsing context.
-%parse-param { yy::RacerAnswerDriver& driver }
-%lex-param   { yy::RacerAnswerDriver& driver }
+// this is the parsing context, passed as parameters to the
+// yy::RacerAnswerParser ctor
+%parse-param { dlvhex::racer::RacerAnswerDriver& driver }
+%parse-param { dlvhex::racer::Answer& answer }
+
+// bison passes the driver as additional parameter to the lexer
+// function YY_DECL, so we can abuse the driver to get the real lexer
+// object and call the yylex() method
+%lex-param   { dlvhex::racer::RacerAnswerDriver& driver }
+
+// use a yy::location object to keep track of the location information
 %locations
+
+// debug parser
 %debug
 %error-verbose
-//%verbose /* really verbose output */
+%verbose /* really verbose output */
 
+// this is YYSTYPE, the semantics
 %union {
+  int ival;
   std::string* sval;
+  Term* termval;
+  Tuple* tupleval;
 }
 
+%type <termval> identifier;
+%type <termval> individual;
+%type <tupleval> tuple;
+%type <tupleval> pair;
 
-
-%token <sval> STRING QUOTED_STRING NUMBER
-%token ERROR
-%token NEWLINE
-%token LIST_OPEN
-%token LIST_CLOSE
-%token PIPE
-%token POUND
+%token <sval> STRING
+%token <ival> NUMBER
 %token NIL
-%token QUESTIONMARK
-%token BLANK
-%token QUOTE
-%token COLON
-%token DOLLAR
-%token STAR
-%token RACERANSWER
-%token RACERERROR
-%token TRUE_OR_T
+%token TRUE
+%token ANSWER
+%token ERROR
 
-// automagically delete all allocated objects after the parsing process
-%destructor { delete $$; } STRING QUOTED_STRING NUMBER
+// automagically delete all dynamically allocated objects after the
+// parsing process (but keep those identifier terms, they are passed
+// on to the individuals)
+%destructor { delete $$; } STRING individual tuple pair
+
+// in debugging mode output the content of the corresponding terminal
+// symbol
+%printer    { debug_stream() << *$$; } STRING
+%printer    { debug_stream() << $$; } NUMBER
 
 %%
 
 racer: /* empty */
-     | RACERANSWER NUMBER QUOTE message QUOTE nslist NEWLINE
-     | RACERERROR  NUMBER QUOTE errormsg QUOTE QUOTE QUOTE NEWLINE
+     | ANSWER message '\n'
+     | ERROR STRING '\n'
+       {
+	 answer.setErrorMessage(*$2);
+
+	 // if kb gets inconsistent just return and set incoherent flag
+	 if ($2->find("incoherent") != std::string::npos)
+	   {
+	     answer.setIncoherent(true);
+	   }
+	 else
+	   {
+	     throw dlvhex::racer::RacerParsingError(*$2);
+	   }
+       }
+;
+
+// a Racer answer message is either a boolean, a list or a status
+message: boolean | list | status
+;
+
+// a Racer boolean answer is either "T" or "NIL"
+boolean: TRUE
+         {
+	   answer.setAnswer(true);
+	   answer.setTuples(std::vector<Tuple>(1));
+	 }
+       | NIL
+         {
+	   answer.setAnswer(false);
+	 }
 ;
 
 
-nslist: QUOTE QUOTE
+// a Racer list is either a list of individuals, a list of pairs or a
+// list of tuples
+list: '(' individuals ')'
+    | '(' pairs ')'
+    | '(' tuples ')'
 ;
 
-
-errormsg: identifier { }
-        | identifier errormsg { }
+// a Racer status message, just ignore it
+status: ':' STRING
+      | '|' STRING '|'
+      | STRING
 ;
 
-
-message: boolean | list
-;
-
-
-boolean: TRUE_OR_T { }
-       | NIL { }
-;
-
-
-list: LIST_OPEN individuals LIST_CLOSE
-    | LIST_OPEN pairs LIST_CLOSE
-    | LIST_OPEN lists LIST_CLOSE
-;
-
-
+// just add the sequence of individuals to the answer
 individuals: individual
-           | individual individuals
+           {
+	     Tuple t;
+	     t.push_back(*$1);
+	     answer.addTuple(t);
+	   }
+           | individuals individual
+           {
+	     Tuple t;
+	     t.push_back(*$2);
+	     answer.addTuple(t);
+	   }
+;
+
+// add the parsed Tuple to the answer
+pairs: '(' pair ')' { answer.addTuple(*$2); }
+     | pairs '(' pair ')' { answer.addTuple(*$3); }
+;
+
+// a Racer pair is a pair of individuals -> use both individuals in a
+// new Tuple
+pair: individual individual
+      {
+	$$ = new Tuple;
+        $$->push_back(*$1);
+        $$->push_back(*$2);
+      }
+;
+
+// add the parsed Tuple to the answer
+tuples: '(' tuple ')' { answer.addTuple(*$2); }
+      | tuples '(' tuple ')' { answer.addTuple(*$3); }
+;
+
+// a Racer tuple consists of a pair (var ind) -> just use the
+// individual
+tuple: '(' variable individual ')'
+       {
+	 $$ = new Tuple;
+	 $$->push_back(*$3);
+       }
+     | tuple '(' variable individual ')'
+       {
+	 $1->push_back(*$4);
+       }
 ;
 
 
-pairs: LIST_OPEN individual individual LIST_CLOSE
-     | LIST_OPEN individual individual LIST_CLOSE pairs
+// an individual is an identifier (without namespace)
+individual: '|' nsid '#' identifier '|' { $$ = $4; }
+          | identifier { $$ = $1; }
 ;
 
-
-lists: LIST_OPEN tuples LIST_CLOSE
-     | LIST_OPEN tuples LIST_CLOSE lists
+// Racer has 4 types of variables
+variable: '?' variableid
+        | '$' '?' variableid
+        | '?' '*' variableid
+        | '$' '?' '*' variableid
 ;
 
-
-tuples: LIST_OPEN variable individual LIST_CLOSE
-      | LIST_OPEN variable individual LIST_CLOSE tuples
+// this is a rather weak version of a namespace identifier
+nsid: STRING ':' '/' '/' STRING
+    | STRING ':' STRING
 ;
 
-
-individual: PIPE identifier POUND identifier PIPE { }
-          | identifier { }
+variableid: STRING
 ;
 
-variable: QUESTIONMARK identifier
-        | DOLLAR QUESTIONMARK identifier
-        | QUESTIONMARK STAR identifier
-        | DOLLAR QUESTIONMARK STAR identifier
-;
-
-identifier: STRING { }
-          | QUOTED_STRING { }
-          | TRUE_OR_T { }
-          | NUMBER { }
+identifier: STRING { $$ = new Term(*$1, true); }
+          | NUMBER { $$ = new Term($1); }
 ;
 
 %%
 
+// error method of bison parser -> call error method of the
+// corresponding driver
 void
 yy::RacerAnswerParser::error (const yy::RacerAnswerParser::location_type& l,
 			      const std::string& m)
 {
-  driver.error (l, m);
+  driver.error(l, m);
 }
 
 
@@ -126,5 +212,5 @@ YY_DECL
   RacerFlexLexer* lex = driver.getLexer();
   lex->lexval = yylval;
   lex->lexloc = yylloc;
-  return lex->yylex ();
+  return lex->yylex (); // call the drivers lexer
 }

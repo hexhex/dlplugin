@@ -18,10 +18,9 @@ CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerParse);
 void
 TestRacerParse::runRacerSimpleAnswerTest()
 {
-  std::stringstream ss;
-  ss << ":answer 1 \"NIL\" \"\"";
+  std::istringstream ss(":answer 1 \"NIL\" \"\"\n");
 
-  RacerSimpleAnswer sa(ss);
+  RacerParse sa(ss);
   Answer a;
 
   CPPUNIT_ASSERT_NO_THROW( sa.parse(a) );
@@ -30,10 +29,9 @@ TestRacerParse::runRacerSimpleAnswerTest()
 void
 TestRacerParse::runRacerAnswerListTest()
 {
-  std::stringstream ss;
-  ss << ":answer 1 \"(|file:foobar#myfoo1| |file:foobar#myfoo2|)\" \"\"";
+  std::istringstream ss(":answer 1 \"(|file:foobar#myfoo1| |file:foobar#myfoo2|)\" \"\"\n");
   
-  RacerAnswerList al(ss);
+  RacerParse al(ss);
   Answer a;
 
   CPPUNIT_ASSERT_NO_THROW( al.parse(a) );

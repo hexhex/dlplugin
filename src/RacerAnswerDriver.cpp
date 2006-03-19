@@ -1,43 +1,73 @@
+/**
+ * @file   RacerAnswerDriver.cpp
+ * @author Thomas Krennwallner
+ * @date   Sat Mar 18 15:04:27 2006
+ * 
+ * @brief  
+ * 
+ * 
+ */
+
 #include <iostream>
 
-#include "RacerAnswerDriver.h"
+#include "RacerFlexLexer.h"
+#include "RacerAnswerParser.hpp"
 #include "RacerQuery.h"
+#include "RacerError.h"
 
+using namespace dlvhex::racer;
 
-yy::RacerAnswerDriver::RacerAnswerDriver ()
+RacerAnswerDriver::RacerAnswerDriver(std::istream& i)
+  : is(i),
+    lexer(new RacerFlexLexer(this))
 {
-  lexer = new RacerFlexLexer(this);
 }
      
-yy::RacerAnswerDriver::~RacerAnswerDriver ()
+RacerAnswerDriver::~RacerAnswerDriver()
 {
   delete lexer;
 }
 
 RacerFlexLexer*
-yy::RacerAnswerDriver::getLexer()
+RacerAnswerDriver::getLexer()
 {
   return lexer;
 }
 
 void
-yy::RacerAnswerDriver::parse (std::istream& is, dlvhex::racer::Answer &a)
+RacerAnswerDriver::syncStream()
 {
-  scan_begin ();
-  yy::RacerAnswerParser parser (*this);
-  parser.set_debug_level(true);
-  parser.parse ();
-  scan_end ();
+  // sync and clear stream s.t. consecutive reading on the stream
+  // works. Otherwise we would need to create a dedicated iostream for
+  // each Racer command.
+
+  is.sync();
+  is.clear();
+}
+
+void
+RacerAnswerDriver::parse(Answer &a) throw (RacerParsingError)
+{
+  yy::RacerAnswerParser parser(*this, a);
+  parser.set_debug_level(false);
+  lexer->switch_streams(&is, &std::cerr);
+  parser.parse();
+  syncStream();
+}
+
+void
+RacerAnswerDriver::error(const yy::location& l,
+			 const std::string& m) throw (RacerParsingError)
+{
+  syncStream();
+  std::stringstream s;
+  s << "Parsing error at " << l << ": " << m;
+  throw RacerParsingError(s.str());
 }
      
 void
-yy::RacerAnswerDriver::error (const yy::location& l, const std::string& m)
+RacerAnswerDriver::error(const std::string& m) throw (RacerParsingError)
 {
-  std::cerr << "shit happened at " << l << ": " << m << std::endl;
-}
-     
-void
-yy::RacerAnswerDriver::error (const std::string& m)
-{
-  std::cerr << m << std::endl;
+  syncStream();
+  throw dlvhex::racer::RacerParsingError("Parsing error: " + m);
 }

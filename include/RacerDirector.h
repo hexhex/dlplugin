@@ -262,34 +262,34 @@ namespace racer {
   /// builds nothing and parses nothing. Mainly for testing purposes.
   typedef RacerDirector<RacerNullBuilder, RacerNullParser> RacerNullDirector;
   /// requests all individuals and parses the corresponding answer
-  typedef RacerDirector<RacerAllIndividualsBuilder, RacerAnswerList> RacerAllIndQuery;
+  typedef RacerDirector<RacerAllIndividualsBuilder, RacerParse> RacerAllIndQuery;
   /// turn on unique name assumption
   typedef RacerDirector<RacerUNABuilder, RacerIgnoreAnswer> RacerUNA;
   /// create a temporary ABox called DEFAULT
-  typedef RacerDirector<RacerTempABoxBuilder, RacerSimpleAnswer> RacerTempABox;
+  typedef RacerDirector<RacerTempABoxBuilder, RacerParse> RacerTempABox;
   /// request to open an OWL document
-  typedef RacerDirector<RacerOpenOWLBuilder, RacerSimpleAnswer> RacerOpenOWL;
+  typedef RacerDirector<RacerOpenOWLBuilder, RacerParse> RacerOpenOWL;
   /// ask whether ABox is consistent
-  typedef RacerDirector<RacerABoxConsistentBuilder, RacerBooleanAnswer> RacerABoxConsistent;
+  typedef RacerDirector<RacerABoxConsistentBuilder, RacerParse> RacerABoxConsistent;
   ///
   typedef RacerDirector<RacerCheckABoxConsistencyOffBuilder, RacerIgnoreAnswer> RacerABoxConsistencyOff;
 
   /// extend ABox by a given set of individuals/pairs
-  typedef RacerDirector<RacerStateBuilder, RacerSimpleAnswer> RacerConceptRolePM;
+  typedef RacerDirector<RacerStateBuilder, RacerParse> RacerConceptRolePM;
   /// request a list of individuals from a specified concept
-  typedef RacerDirector<RacerConceptInstancesBuilder, RacerAnswerList> RacerConceptQuery;
+  typedef RacerDirector<RacerConceptInstancesBuilder, RacerParse> RacerConceptQuery;
   /// request a list of pairs from a specified role
-  typedef RacerDirector<RacerRoleIndividualsBuilder, RacerAnswerPairList> RacerRoleQuery;
+  typedef RacerDirector<RacerRoleIndividualsBuilder, RacerParse> RacerRoleQuery;
   /// ask whether a given individual is member of a specified concept
-  typedef RacerDirector<RacerIsConceptMemberBuilder, RacerBooleanAnswer> RacerIsConceptQuery;
+  typedef RacerDirector<RacerIsConceptMemberBuilder, RacerParse> RacerIsConceptQuery;
   /// ask whether a given pair is member of a specified role
-  typedef RacerDirector<RacerIsRoleMemberBuilder, RacerBooleanAnswer> RacerIsRoleQuery;
+  typedef RacerDirector<RacerIsRoleMemberBuilder, RacerParse> RacerIsRoleQuery;
   /// request a list of individuals which are fillers of a role for a
   /// specified individual
-  typedef RacerDirector<RacerIndividualFillersBuilder, RacerAnswerList> RacerIndvFillersQuery;
+  typedef RacerDirector<RacerIndividualFillersBuilder, RacerParse> RacerIndvFillersQuery;
   /// request a list of datatype individuals which are fillers of a
   /// role for a specified individual
-  typedef RacerDirector<RacerIndividualDatatypeFillersBuilder,RacerRetrieveList> RacerIndvDataFillersQuery;
+  typedef RacerDirector<RacerIndividualDatatypeFillersBuilder,RacerParse> RacerIndvDataFillersQuery;
 
 } // namespace racer
 } // namespace dlvhex

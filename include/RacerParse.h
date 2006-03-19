@@ -33,23 +33,13 @@ namespace racer {
     /// the parsers read the answers from this stream
     std::istream& stream;
 
+  public:
     explicit
     RacerParse(std::istream&);
 
     virtual
     ~RacerParse();
 
-    /**
-     * Template method implemented in the children of RacerParse.
-     *
-     * @param answer set members accourding to ans
-     * @param ans the parsed answer from parse()
-     * @param ns the parsed namespace list from parse()
-     */
-    virtual void
-    parseAnswer(Answer& answer, std::string& ans, std::string& ns) const = 0;
-
-  public:
     /**
      * Parses the answers from RACER and sets various members of
      * Answer with help of parseAnswer().
@@ -67,11 +57,6 @@ namespace racer {
    */
   class RacerIgnoreAnswer : public RacerParse
   {
-  protected:
-    /// does nothing
-    virtual void
-    parseAnswer(Answer&, std::string&, std::string&) const;
-
   public:
     explicit
     RacerIgnoreAnswer(std::istream&);
@@ -86,147 +71,10 @@ namespace racer {
 
 
   /**
-   * @brief Parses simple answers from RACER.
-   */
-  class RacerSimpleAnswer : public RacerParse
-  {
-  protected:
-    /// does nothing
-    virtual void
-    parseAnswer(Answer&, std::string&, std::string&) const throw (RacerParsingError);
-
-  public:
-    explicit
-    RacerSimpleAnswer(std::istream&);
-
-    virtual
-    ~RacerSimpleAnswer();
-  };
-
-
-  /**
-   * @brief Parses boolean answers from RACER.
-   */
-  class RacerBooleanAnswer : public RacerParse
-  {
-  protected:
-    /**
-     * checks RACERs boolean answer and sets Answer accordingly.
-     *
-     * @param answer
-     * @param ans
-     * @param ns
-     */
-    virtual void
-    parseAnswer(Answer& answer, std::string& ans, std::string& ns) const throw (RacerParsingError);
-
-  public:
-    explicit
-    RacerBooleanAnswer(std::istream&);
-
-    virtual
-    ~RacerBooleanAnswer();
-  };
-
-
-  /**
-   * @brief Parses list answers from RACER.
-   */
-  class RacerAnswerList : public RacerParse
-  {
-  protected:
-    /**
-     * checks RACERs individual list answer and sets Answer accordingly.
-     *
-     * @param answer
-     * @param ans
-     * @param ns
-     */
-    virtual void
-    parseAnswer(Answer& answer, std::string& ans, std::string& ns) const throw (RacerParsingError);
-
-    /**
-     * helper method processes a single individual parsed from a RACER
-     * answer and strips xml namespace from it in case it is a object
-     * individual. Otherwise it converts it into a integer Term.
-     *
-     * @param term
-     *
-     * @return the correspondig Term
-     */
-    virtual Term
-    parseTerm(const std::string& term) const;
-
-  public:
-    explicit
-    RacerAnswerList(std::istream&);
-
-    virtual
-    ~RacerAnswerList();
-  };
-
-
-  /**
-   * @brief Parses list answerpairs from RACER.
-   */
-  class RacerAnswerPairList : public RacerAnswerList
-  {
-  protected:
-    /**
-     * checks RACERs pair list answer and sets Answer accordingly.
-     *
-     * @param answer
-     * @param ans
-     * @param ns
-     */
-    virtual void
-    parseAnswer(Answer& answer, std::string& ans, std::string& ns) const throw (RacerParsingError);
-
-  public:
-    explicit
-    RacerAnswerPairList(std::istream&);
-
-    virtual
-    ~RacerAnswerPairList();
-  };
-
-
-  /**
-   * @brief Parses list of tuples answers from (retrieve) RACER command.
-   */
-  class RacerRetrieveList : public RacerAnswerList
-  {
-  protected:
-    /**
-     * checks RACERs retrieve list answer and sets Answer accordingly.
-     *
-     * @param answer
-     * @param ans
-     * @param ns
-     */
-    virtual void
-    parseAnswer(Answer& answer, std::string& ans, std::string& ns) const throw (RacerParsingError);
-
-  public:
-    explicit
-    RacerRetrieveList(std::istream&);
-
-    virtual
-    ~RacerRetrieveList();
-  };
-
-
-  /**
    * @brief A parser which does nothing. Mainly for testing purposes.
    */
   class RacerNullParser : public RacerParse
   {
-  protected:
-    /// does nothing
-    virtual void
-    parseAnswer(Answer&, std::string&, std::string&) const
-    { }
-
   public:
     explicit
     RacerNullParser(std::istream& s)

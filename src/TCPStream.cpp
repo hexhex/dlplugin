@@ -30,7 +30,8 @@ using namespace dlvhex::racer;
 TCPStreamBuf::TCPStreamBuf(const std::string& host,
 			   unsigned port,
 			   std::streamsize bufsize)
-  : host(host),
+  : std::streambuf(),
+    host(host),
     port(port),
     bufsize(bufsize)
 {
@@ -77,7 +78,8 @@ TCPStreamBuf::initBuffers()
 {
   obuf = new std::streambuf::char_type[bufsize];
   ibuf = new std::streambuf::char_type[bufsize];
-  
+  ACE_OS::memset(obuf, 0, bufsize);
+  ACE_OS::memset(ibuf, 0, bufsize);
   setp(obuf, obuf + bufsize);
   setg(ibuf, ibuf, ibuf);
 }
@@ -93,8 +95,6 @@ TCPStreamBuf::open()
       // retry until TCP server is up and running
       for (int i = 10; i > 0; i--)
 	{
-	  ACE_OS::sleep(tv);
-	  
 	  close();
       
 	  // connect to the TCP server at host:port
@@ -106,6 +106,10 @@ TCPStreamBuf::open()
 	    {
 	      return true; // connection established
 	    }
+
+	  // do a nice power napping after an unsuccessful attempt to
+	  // open the connection
+	  ACE_OS::sleep(tv);
 	}
 
       return false; // connection failed
@@ -159,6 +163,13 @@ TCPStreamBuf::underflow()
 
   if (gptr() >= egptr()) // empty ibuf
     {
+      if ((egptr() > ibuf) && (*(egptr() - 1) == '\n'))
+	{
+	  // if last character was a '\n' we are done -> reset buffers
+	  sync();
+	  return traits_type::eof();
+	}
+
       // try to receive at most bufsize bytes
       ssize_t n = stream.recv(ibuf, bufsize, 0);
 
@@ -171,7 +182,7 @@ TCPStreamBuf::underflow()
       setg(ibuf, ibuf, ibuf + n); // set new input buffer boundaries
     }
 
-  return (streambuf::int_type) (streambuf::char_type) *gptr();
+  return *gptr();
 }
 
 
@@ -185,6 +196,7 @@ TCPStreamBuf::sync()
     }
 
   // reset input buffer
+  ACE_OS::memset(ibuf, 0, bufsize);
   setg(ibuf, ibuf, ibuf);
 
   if (pptr() != pbase()) // non-empty obuf -> send data
@@ -203,6 +215,7 @@ TCPStreamBuf::sync()
       ssize_t n = stream.send_n(pbase(), pptr() - pbase());
 
       // reset output buffer right after sending to the stream
+      ACE_OS::memset(obuf, 0, bufsize);
       setp(obuf, obuf + bufsize);
 
       if (n <= 0 || errno == EPIPE) // EOF or failure

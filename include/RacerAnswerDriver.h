@@ -1,63 +1,99 @@
-// -*- C++ -*-
+/* -*- C++ -*- */
+
+/**
+ * @file   RacerAnswerDriver.h
+ * @author Thomas Krennwallner
+ * @date   Fri Mar 17 22:26:20 2006
+ * 
+ * @brief  
+ * 
+ * 
+ */
+
 
 #ifndef _RACERANSWERDRIVER_H
 #define _RACERANSWERDRIVER_H
 
 
+// Bison doesn't #define YY_DECL, so we do.
+#ifndef YY_DECL
+
+//
+// Forward declarations.
+//
+
+union YYSTYPE;
+
 namespace yy
 {
   class location;
   class RacerAnswerParser;
+}
+
+namespace dlvhex {
+namespace racer {
   class RacerAnswerDriver;
 }
+}
 
-#include "RacerAnswerParser.tab.hh"
-
-// Forward declarations.
-union YYSTYPE;
-
-#ifndef YY_DECL
 // Announce to Flex the prototype we want for lexing function, ...
-#define YY_DECL	\
-       int yylex (YYSTYPE* yylval, yy::location* yylloc, yy::RacerAnswerDriver& driver)
+#define YY_DECL								\
+  int yylex (YYSTYPE* yylval,						\
+	     yy::location* yylloc,					\
+	     dlvhex::racer::RacerAnswerDriver& driver)
+
 // ... and declare it for the parser's sake.
 YY_DECL;
-#endif 
+#endif /* YY_DECL */
 
-#include "dlvhex/Term.h"
+#include <dlvhex/Term.h>
+
 #include "RacerQuery.h"
+#include "RacerFlexLexer.h"
+#include "RacerError.h"
+
 #include <iostream>
 #include <string>
-#include "RacerFlexLexer.h"
 
-namespace yy {
+namespace dlvhex {
+namespace racer {
 
+  /**
+   * @brief Conducting the whole scanning and parsing of Racer
+   * Answers.
+   */
+  class RacerAnswerDriver
+  {
+  private:
+    RacerFlexLexer* lexer;
+    std::istream& is;
 
-// Conducting the whole scanning and parsing of Racer Answers
-class RacerAnswerDriver
-{
-private:
-  RacerFlexLexer* lexer;
+    void
+    syncStream();
 
-public:
-  RacerAnswerDriver ();
-  virtual ~RacerAnswerDriver ();
-     
-  // Handling the scanner.
-  void scan_begin ();
-  void scan_end ();
-  
-  // Handling the parser.
-  void parse (std::istream& is, dlvhex::racer::Answer& a);
+  public:
+    RacerAnswerDriver(std::istream& is);
 
-  // Error handling.
-  void error (const yy::location& l, const std::string& m);
-  void error (const std::string& m);
+    virtual
+    ~RacerAnswerDriver();
 
-  RacerFlexLexer* getLexer();
-};
+    // Handling the parser.
+    void
+    parse(dlvhex::racer::Answer& a) throw (RacerParsingError);
 
-}
+    // Error handling.
+    void
+    error(const yy::location& l, const std::string& m) throw (RacerParsingError);
+
+    void
+    error(const std::string& m) throw (RacerParsingError);
+
+    RacerFlexLexer*
+    getLexer();
+  };
+
+} // namespace racer
+} // namespace dlvhex
 
 #endif // _RACERANSWERDRIVER_H
 

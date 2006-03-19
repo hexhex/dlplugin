@@ -1,73 +1,107 @@
+/* -*- C++ -*- */
+
+/**
+ * @file   RacerAnswerScanner.lpp
+ * @author Thomas Krennwallner
+ * @date   Fri Mar 17 21:57:18 2006
+ * 
+ * @brief  Defines RacerFlexLexer::yylex() method.
+ * 
+ */
+
 %{
 #include <iostream>
+#include <sstream>
 #include <string>
 
-#include "RacerAnswerParser.tab.hh"
+// for yy::location 
+#include "RacerAnswerParser.hpp"
 #include "RacerAnswerDriver.h"
+
 using namespace std;
 
-// #ifdef YY_DECL
-// #undef YY_DECL
-// #endif
-#define yylval ((YYSTYPE*)lexval)
+// keep the RacerFlexLexer as close as possible to the C version
+#define yylval (*(YYSTYPE*)lexval)
 #define yylloc ((yy::location*)lexloc)
-                                                                                                               
+#define driver (*lexdrv)
 %}
 
 %option c++ noyywrap nounput batch debug
 %option yyclass="RacerFlexLexer"
 
-NEWLINE         \15?\n
-BLANK           ([ \t]+)
-NUMBER          ([0-9]+)
-STRING          ([A-Za-z][A-Za-z_0-9]*)
-QUOTED_STRING   (\\\"[^\\\"]*\\\")
+NEWLINE         \r?\n
+BLANK           [ \t]
+NUMBER          (\-)?[0-9]+
+STRING          [A-Za-z][A-Za-z0-9_\-\./]*
+QUOTED_STRING   \\\"[^\"]*\\\"
+
+%x racererror raceranswer eatanswerfudge
+
+%{
+// advance the end location after each tokenizing step
+#define YY_USER_ACTION  yylloc->columns(yyleng);
+%}
 
 %%
 
-
-{NEWLINE}		{ return NEWLINE;       }
-
-"("			{ return LIST_OPEN;	}
-")"			{ return LIST_CLOSE;	}
-"|"                     { return PIPE;          }
-"#"                     { return POUND;         }
-"$"                     { return DOLLAR; }
-"*"                     { return STAR; }
-"NIL"                   { return NIL;           }
-"?"                     { return QUESTIONMARK;  }
-"\""                    { return QUOTE; }
-":"                     { return COLON; }
-"T"                     { return TRUE_OR_T; }
-":answer"               { return RACERANSWER; }
-":error"                { return RACERERROR; }
-
-{STRING}                |
-{QUOTED_STRING}         {
-                          yylval->sval = new std::string(yytext);
-                          return STRING;
-			}
-
-{NUMBER}                {
-                          yylval->sval = new std::string(yytext);
-                          return NUMBER; 
-			}
-
-{BLANK}			{ /* Skip blanks */	}
+%{
+// set begin location to the end location
+yylloc->step();
+%}
 
 
+^":error"  BEGIN(racererror); return ERROR;
+^":answer" BEGIN(eatanswerfudge); return ANSWER;
 
-.			{ driver->error (*yylloc, "invalid character");}
+
+<eatanswerfudge>{
+
+  [^\"]*   /* eat non-" chars */ yylloc->step();
+  "\""     BEGIN(raceranswer); yylloc->step();
+
+}
+
+
+<racererror>[^\n]+ { /* get the error message until next \n */
+    BEGIN(INITIAL);
+    yylval.sval = new std::string(yytext);
+    return STRING;
+  }
+
+
+<raceranswer>{
+
+  "NIL\""       BEGIN(INITIAL); return NIL;
+  "T\""         BEGIN(INITIAL); return TRUE;
+  "\""          BEGIN(INITIAL); yylloc->step();
+
+  [()|#$*?:/]   return *yytext;
+
+  {STRING} {
+    yylval.sval = new std::string(yytext);
+    return STRING;
+  }
+
+  {QUOTED_STRING} {
+    std::string tmp(yytext);
+    yylval.sval = new std::string(tmp.substr(2, tmp.length() - 4));
+    return STRING;
+  }
+
+  {NUMBER} {
+    std::istringstream s(yytext);
+    s >> yylval.ival;
+    return NUMBER; 
+  }
+
+}
+
+<*>{BLANK}+       /* skip blanks */ yylloc->step();
+
+\"[^\"]*\"        /* ignore trailing ".*" */ yylloc->step();
+{NEWLINE}         yylloc->lines(yyleng); return '\n';
+
+.                 driver.error(*yylloc, "invalid character");
 
 %%
-
-void
-yy::RacerAnswerDriver::scan_begin ()
-{
-}
-void
-yy::RacerAnswerDriver::scan_end ()
-{
-
-}
 
