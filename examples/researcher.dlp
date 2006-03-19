@@ -1,0 +1,5 @@
+
+url("http://www.personal-reader.de/rdf/ResearcherOntology.owl").
+per(X) :- &dlC[U,a,b,c,d,"ResearcherOntology"](X), url(U).
+name(Y) :- per(X), &dlDR[U,a,b,c,d,"name"](X,Y), url(U).
+
