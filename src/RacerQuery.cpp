@@ -214,11 +214,25 @@ Query::isSuperseteq(const Query& q2) const
 Answer::Answer()
   : PluginAtom::Answer(),
     isIncoherent(false),
-    answer(false)
+    answer(false),
+    query(0) // don't care
+{ }
+
+Answer::Answer(const Query* q)
+  : PluginAtom::Answer(),
+    isIncoherent(false),
+    answer(false),
+    query(q)
 { }
 
 Answer::~Answer()
 { }
+
+void
+Answer::setQuery(const Query* q)
+{
+  this->query = q;
+}
 
 void
 Answer::setIncoherent(bool isIncoherent)
@@ -256,10 +270,41 @@ Answer::getAnswer() const
   return this->answer;
 }
 
+void
+Answer::addTuple(const Tuple& out)
+{
+  if (query == 0)
+    {
+      PluginAtom::Answer::addTuple(out);
+    }
+  else
+    {
+      Query::QueryType t = query->getType();
+
+      if (t == Query::LeftRetrieval)
+	{
+	  Tuple tmp(out);
+	  tmp.push_back(query->getPatternTuple()[1]);
+
+	  PluginAtom::Answer::addTuple(tmp);
+	}
+      else if (t == Query::RightRetrieval)
+	{
+	  Tuple tmp(1, query->getPatternTuple()[0]);
+	  tmp.insert(tmp.end(), out.begin(), out.end());
+
+	  PluginAtom::Answer::addTuple(tmp);
+	}
+      else
+	{
+	  PluginAtom::Answer::addTuple(out);
+	}
+    }
+}
 
 
 QueryCtx::QueryCtx()
-  : q(new Query), a(new Answer)
+  : q(new Query), a(new Answer(q))
 { }
 
 QueryCtx::QueryCtx(const QueryCtx& qctx)
@@ -284,6 +329,7 @@ QueryCtx::setQuery(Query* q)
 	  delete this->q;
 	}
       this->q = q;
+      this->a->setQuery(this->q);
     }
 }
 
@@ -304,6 +350,7 @@ QueryCtx::setAnswer(Answer* a)
 	  delete this->a;
 	}
       this->a = a;
+      this->a->setQuery(this->q);
     }
 }
 

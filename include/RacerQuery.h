@@ -315,12 +315,20 @@ namespace racer {
     bool isIncoherent;
     /// a boolean answer
     bool answer;
+    /// keep a reference to our query, so we can determine if we need
+    /// to fill tuples in some query flavours
+    const Query* query;
 
   public:
     Answer();
 
+    Answer(const Query* q);
+
     virtual
     ~Answer();
+
+    virtual void
+    setQuery(const Query* q);
 
     virtual void
     setIncoherent(bool isIncoherent);
@@ -339,6 +347,9 @@ namespace racer {
 
     virtual bool
     getAnswer() const;
+
+    virtual void
+    addTuple(const Tuple& out);
 
   };
 
