@@ -65,8 +65,10 @@ namespace racer {
   class RacerAnswerDriver
   {
   private:
-    RacerFlexLexer* lexer;
+    /// parse this stream
     std::istream& is;
+    /// lexer object which scans the stream
+    RacerFlexLexer* lexer;
 
     void
     syncStream();
