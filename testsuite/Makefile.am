@@ -38,7 +38,6 @@ AM_CPPFLAGS = \
 
 TestSuite_CXXFLAGS = $(CPPUNIT_CFLAGS)
 
-# build statically so we don't depend on an installed libdlvhexracer
-TestSuite_LDFLAGS = -static $(CPPUNIT_LIBS) $(DLVHEX_LIBS)
+TestSuite_LDFLAGS = $(CPPUNIT_LIBS) $(DLVHEX_LIBS)
 
 TestSuite_LDADD = $(top_builddir)/src/libdlvhexracer.la
