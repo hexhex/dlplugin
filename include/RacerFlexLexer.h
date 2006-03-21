@@ -13,7 +13,8 @@
 #ifndef _RACERFLEXLEXER_H
 #define _RACERFLEXLEXER_H
 
-// put FlexLexer.h into its own include guards, some kind of kludge
+// put FlexLexer.h into its own include guards or yyFlexLexer gets
+// redefined
 #ifndef __FLEX_LEXER_H
 #include <FlexLexer.h>
 #endif
@@ -36,6 +37,9 @@ namespace racer {
 
   /**
    * @brief Use a refined yyFlexLexer.
+   *
+   * Sad but true, we can't put RacerFlexLexer into the dlvhex::racer
+   * namespace, flex is not aware of namespaces.
    */
   struct RacerFlexLexer : public yyFlexLexer
   {
@@ -44,7 +48,7 @@ namespace racer {
     dlvhex::racer::RacerAnswerDriver* lexdrv;
     yy::location* lexloc;
     YYSTYPE* lexval;
-    int yylex(); // implemented in lex.yy.cc
+    int yylex(); // implemented in RacerAnswerScanner.lpp
   };
 
 #endif // _RACERFLEXLEXER_H

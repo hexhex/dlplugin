@@ -14,38 +14,6 @@
 #ifndef _RACERANSWERDRIVER_H
 #define _RACERANSWERDRIVER_H
 
-
-// Bison doesn't #define YY_DECL, so we do.
-#ifndef YY_DECL
-
-//
-// Forward declarations.
-//
-
-union YYSTYPE;
-
-namespace yy
-{
-  class location;
-  class RacerAnswerParser;
-}
-
-namespace dlvhex {
-namespace racer {
-  class RacerAnswerDriver;
-}
-}
-
-// Announce to Flex the prototype we want for lexing function, ...
-#define YY_DECL								\
-  int yylex (YYSTYPE* yylval,						\
-	     yy::location* yylloc,					\
-	     dlvhex::racer::RacerAnswerDriver& driver)
-
-// ... and declare it for the parser's sake.
-YY_DECL;
-#endif /* YY_DECL */
-
 #include <dlvhex/Term.h>
 
 #include "RacerQuery.h"

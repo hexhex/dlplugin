@@ -66,7 +66,7 @@ yylloc->step();
     BEGIN(INITIAL);
     yylval.sval = new std::string(yytext);
     return STRING;
-  }
+ }
 
 
 <raceranswer>{
@@ -83,14 +83,12 @@ yylloc->step();
   }
 
   {QUOTED_STRING} {
-    std::string tmp(yytext);
-    yylval.sval = new std::string(tmp.substr(2, tmp.length() - 4));
+    yylval.sval = new std::string(yytext + 2, yyleng - 4); // skip \"
     return STRING;
   }
 
   {NUMBER} {
-    std::istringstream s(yytext);
-    s >> yylval.ival;
+    std::istringstream(yytext) >> yylval.ival;
     return NUMBER; 
   }
 
