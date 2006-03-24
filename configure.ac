@@ -45,6 +45,10 @@ AC_PROG_YACC
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS([sys/param.h])
 
+AC_LANG_PUSH([C++])
+AC_CHECK_HEADER([FlexLexer.h])
+AC_LANG_POP([C++])
+
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
 AC_C_CONST

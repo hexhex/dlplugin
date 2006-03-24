@@ -114,11 +114,12 @@ RacerRunnerAdaptee::run()
 
       // start RACER process
       racer = ACE_Process_Manager::instance()->spawn(opt);
+      ACE_OS::sleep(ACE_Time_Value(1)); // give RACER time to start
 
       // check whether the spawn succeeded
       ACE_exitcode ec;
       pid_t check = ACE_Process_Manager::instance()->wait(racer,
-							  ACE_Time_Value(1),
+							  ACE_Time_Value(0,1),
 							  &ec);
 
       // if ACE_Process_Manager::wait() returns 0, a timeout occurred
