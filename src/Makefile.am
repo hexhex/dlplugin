@@ -25,7 +25,6 @@ RacerBuilder.cpp \
 RacerDirector.cpp \
 RacerExtAtom.cpp \
 RacerInterface.cpp \
-RacerParse.cpp \
 RacerRunner.cpp \
 RacerQuery.cpp \
 TCPStream.cpp \

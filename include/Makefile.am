@@ -9,7 +9,6 @@ noinst_HEADERS = \
                  RacerError.h \
                  RacerExtAtom.h \
                  RacerInterface.h \
-                 RacerParse.h \
                  RacerQuery.h \
                  RacerRunner.h \
                  TCPStream.h \

@@ -10,6 +10,7 @@
 
 #include <iostream>
 
+#include "RacerAnswerDriver.h"
 #include "RacerFlexLexer.h"
 #include "RacerAnswerParser.hpp"
 #include "RacerQuery.h"
@@ -17,47 +18,39 @@
 
 using namespace dlvhex::racer;
 
-RacerAnswerDriver::RacerAnswerDriver(std::istream& i)
-  : is(i),
+
+RacerBaseAnswerDriver::RacerBaseAnswerDriver(std::istream& i)
+  : stream(i),
     lexer(new RacerFlexLexer(this))
 {
 }
      
-RacerAnswerDriver::~RacerAnswerDriver()
+RacerBaseAnswerDriver::~RacerBaseAnswerDriver()
 {
   delete lexer;
 }
 
 RacerFlexLexer*
-RacerAnswerDriver::getLexer()
+RacerBaseAnswerDriver::getLexer()
 {
   return lexer;
 }
 
 void
-RacerAnswerDriver::syncStream()
+RacerBaseAnswerDriver::syncStream()
 {
   // sync and clear stream s.t. consecutive reading on the stream
   // works. Otherwise we would need to create a dedicated iostream for
   // each Racer command.
 
-  is.sync();
-  is.clear();
+  stream.sync();
+  stream.clear();
 }
 
-void
-RacerAnswerDriver::parse(Answer &a) throw (RacerParsingError)
-{
-  yy::RacerAnswerParser parser(*this, a);
-  parser.set_debug_level(false);
-  lexer->switch_streams(&is, &std::cerr);
-  parser.parse();
-  syncStream();
-}
 
 void
-RacerAnswerDriver::error(const yy::location& l,
-			 const std::string& m) throw (RacerParsingError)
+RacerBaseAnswerDriver::error(const yy::location& l,
+			     const std::string& m) throw (RacerParsingError)
 {
   syncStream();
   std::stringstream s;
@@ -66,8 +59,58 @@ RacerAnswerDriver::error(const yy::location& l,
 }
      
 void
-RacerAnswerDriver::error(const std::string& m) throw (RacerParsingError)
+RacerBaseAnswerDriver::error(const std::string& m) throw (RacerParsingError)
 {
   syncStream();
-  throw dlvhex::racer::RacerParsingError("Parsing error: " + m);
+  throw RacerParsingError("Parsing error: " + m);
+}
+
+
+
+RacerAnswerDriver::RacerAnswerDriver(std::istream& i)
+  : RacerBaseAnswerDriver(i)
+{ }
+
+RacerAnswerDriver::~RacerAnswerDriver()
+{ }
+
+void
+RacerAnswerDriver::parse(Answer &a) throw (RacerParsingError)
+{
+  if (!stream.eof())
+    {
+      yy::RacerAnswerParser parser(*this, a);
+      parser.set_debug_level(false);
+      lexer->switch_streams(&stream, &std::cerr);
+      parser.parse();
+      syncStream();
+    }
+}
+
+
+
+RacerIgnoreAnswer::RacerIgnoreAnswer(std::istream& s)
+  : RacerBaseAnswerDriver(s)
+{ }
+
+RacerIgnoreAnswer::~RacerIgnoreAnswer()
+{ }
+
+void
+RacerIgnoreAnswer::parse(Answer&) throw (RacerParsingError)
+{
+  // Just skip the answer. This is useful for such "glorious" Racer
+  // responses as "T" for a (set-unique-name-assumption t). Otherwise
+  // we would end up with an additional empty tuple in the Answer
+  // object.
+
+  char tmp[256];
+
+  while (!stream.eof() && !stream.fail())
+    {
+      stream.read(tmp, 256);
+    }
+
+  // reset stream so we can reutilize it
+  syncStream();
 }

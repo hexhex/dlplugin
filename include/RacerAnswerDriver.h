@@ -27,29 +27,34 @@ namespace dlvhex {
 namespace racer {
 
   /**
-   * @brief Conducting the whole scanning and parsing of Racer
-   * Answers.
+   * @brief Base class for the parsers.
    */
-  class RacerAnswerDriver
+  class RacerBaseAnswerDriver
   {
-  private:
-    /// parse this stream
-    std::istream& is;
+  protected:
+    /// the parser read the answers from this stream
+    std::istream& stream;
     /// lexer object which scans the stream
     RacerFlexLexer* lexer;
 
     void
     syncStream();
 
-  public:
-    RacerAnswerDriver(std::istream& is);
+    explicit
+    RacerBaseAnswerDriver(std::istream&);
 
     virtual
-    ~RacerAnswerDriver();
+    ~RacerBaseAnswerDriver();
 
-    // Handling the parser.
-    void
-    parse(dlvhex::racer::Answer& a) throw (RacerParsingError);
+  public:
+
+    /**
+     * Parses the answers from RACER.
+     *
+     * @param answer
+     */
+    virtual void
+    parse(Answer& answer) throw (RacerParsingError) = 0;
 
     // Error handling.
     void
@@ -61,6 +66,67 @@ namespace racer {
     RacerFlexLexer*
     getLexer();
   };
+
+
+  /**
+   * @brief Conducting the whole scanning and parsing of Racer
+   * Answers.
+   */
+  class RacerAnswerDriver : public RacerBaseAnswerDriver
+  {
+  public:
+    RacerAnswerDriver(std::istream& is);
+
+    virtual
+    ~RacerAnswerDriver();
+
+    // Handling the parser.
+    virtual void
+    parse(Answer& a) throw (RacerParsingError);
+  };
+
+
+  /**
+   * @brief Ignores a RACER reply to parse answer and errors without
+   * an exception.
+   */
+  class RacerIgnoreAnswer : public RacerBaseAnswerDriver
+  {
+  public:
+    explicit
+    RacerIgnoreAnswer(std::istream&);
+
+    virtual
+    ~RacerIgnoreAnswer();
+
+    /// just remove pending input from stream without parsing it
+    virtual void
+    parse(Answer&) throw (RacerParsingError);
+  };
+
+
+  /**
+   * @brief A parser which does nothing. Mainly for testing purposes.
+   */
+  class RacerNullParser : public RacerBaseAnswerDriver
+  {
+  public:
+    explicit
+    RacerNullParser(std::istream& s)
+      : RacerBaseAnswerDriver(s)
+    { }
+
+    virtual
+    ~RacerNullParser()
+    { }
+
+    /// does nothing
+    virtual void
+    parse(Answer&) throw (RacerParsingError)
+    { }
+  };
+
+
 
 } // namespace racer
 } // namespace dlvhex

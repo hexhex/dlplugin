@@ -20,7 +20,7 @@ TestRacerParse::runRacerSimpleAnswerTest()
 {
   std::istringstream ss(":answer 1 \"NIL\" \"\"\n");
 
-  RacerParse sa(ss);
+  RacerAnswerDriver sa(ss);
   Answer a;
 
   CPPUNIT_ASSERT_NO_THROW( sa.parse(a) );
@@ -31,7 +31,7 @@ TestRacerParse::runRacerAnswerListTest()
 {
   std::istringstream ss(":answer 1 \"(|file:foobar#myfoo1| |file:foobar#myfoo2|)\" \"\"\n");
   
-  RacerParse al(ss);
+  RacerAnswerDriver al(ss);
   Answer a;
 
   CPPUNIT_ASSERT_NO_THROW( al.parse(a) );

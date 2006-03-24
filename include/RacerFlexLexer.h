@@ -31,7 +31,7 @@ union YYSTYPE;
 
 namespace dlvhex {
 namespace racer {
-  class RacerAnswerDriver;
+  class RacerBaseAnswerDriver;
 } // namespace racer
 } // namespace dlvhex
 
@@ -43,9 +43,9 @@ namespace racer {
    */
   struct RacerFlexLexer : public yyFlexLexer
   {
-    RacerFlexLexer(dlvhex::racer::RacerAnswerDriver* d) : lexdrv(d) { }
+    RacerFlexLexer(dlvhex::racer::RacerBaseAnswerDriver* d) : lexdrv(d) { }
     virtual ~RacerFlexLexer() { }
-    dlvhex::racer::RacerAnswerDriver* lexdrv;
+    dlvhex::racer::RacerBaseAnswerDriver* lexdrv;
     yy::location* lexloc;
     YYSTYPE* lexval;
     int yylex(); // implemented in RacerAnswerScanner.lpp

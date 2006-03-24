@@ -14,7 +14,7 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "RacerParse.h"
+#include "RacerAnswerDriver.h"
 
 namespace dlvhex {
 namespace racer {

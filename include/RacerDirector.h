@@ -22,7 +22,7 @@
 
 #include "RacerError.h"
 #include "RacerQuery.h"
-#include "RacerParse.h"
+#include "RacerAnswerDriver.h"
 #include "RacerBuilder.h"
 
 namespace dlvhex {
@@ -262,34 +262,34 @@ namespace racer {
   /// builds nothing and parses nothing. Mainly for testing purposes.
   typedef RacerDirector<RacerNullBuilder, RacerNullParser> RacerNullDirector;
   /// requests all individuals and parses the corresponding answer
-  typedef RacerDirector<RacerAllIndividualsBuilder, RacerParse> RacerAllIndQuery;
+  typedef RacerDirector<RacerAllIndividualsBuilder, RacerAnswerDriver> RacerAllIndQuery;
   /// turn on unique name assumption
   typedef RacerDirector<RacerUNABuilder, RacerIgnoreAnswer> RacerUNA;
   /// create a temporary ABox called DEFAULT
-  typedef RacerDirector<RacerTempABoxBuilder, RacerParse> RacerTempABox;
+  typedef RacerDirector<RacerTempABoxBuilder, RacerAnswerDriver> RacerTempABox;
   /// request to open an OWL document
-  typedef RacerDirector<RacerOpenOWLBuilder, RacerParse> RacerOpenOWL;
+  typedef RacerDirector<RacerOpenOWLBuilder, RacerAnswerDriver> RacerOpenOWL;
   /// ask whether ABox is consistent
-  typedef RacerDirector<RacerABoxConsistentBuilder, RacerParse> RacerABoxConsistent;
+  typedef RacerDirector<RacerABoxConsistentBuilder, RacerAnswerDriver> RacerABoxConsistent;
   ///
   typedef RacerDirector<RacerCheckABoxConsistencyOffBuilder, RacerIgnoreAnswer> RacerABoxConsistencyOff;
 
   /// extend ABox by a given set of individuals/pairs
-  typedef RacerDirector<RacerStateBuilder, RacerParse> RacerConceptRolePM;
+  typedef RacerDirector<RacerStateBuilder, RacerAnswerDriver> RacerConceptRolePM;
   /// request a list of individuals from a specified concept
-  typedef RacerDirector<RacerConceptInstancesBuilder, RacerParse> RacerConceptQuery;
+  typedef RacerDirector<RacerConceptInstancesBuilder, RacerAnswerDriver> RacerConceptQuery;
   /// request a list of pairs from a specified role
-  typedef RacerDirector<RacerRoleIndividualsBuilder, RacerParse> RacerRoleQuery;
+  typedef RacerDirector<RacerRoleIndividualsBuilder, RacerAnswerDriver> RacerRoleQuery;
   /// ask whether a given individual is member of a specified concept
-  typedef RacerDirector<RacerIsConceptMemberBuilder, RacerParse> RacerIsConceptQuery;
+  typedef RacerDirector<RacerIsConceptMemberBuilder, RacerAnswerDriver> RacerIsConceptQuery;
   /// ask whether a given pair is member of a specified role
-  typedef RacerDirector<RacerIsRoleMemberBuilder, RacerParse> RacerIsRoleQuery;
+  typedef RacerDirector<RacerIsRoleMemberBuilder, RacerAnswerDriver> RacerIsRoleQuery;
   /// request a list of individuals which are fillers of a role for a
   /// specified individual
-  typedef RacerDirector<RacerIndividualFillersBuilder, RacerParse> RacerIndvFillersQuery;
+  typedef RacerDirector<RacerIndividualFillersBuilder, RacerAnswerDriver> RacerIndvFillersQuery;
   /// request a list of datatype individuals which are fillers of a
   /// role for a specified individual
-  typedef RacerDirector<RacerIndividualDatatypeFillersBuilder,RacerParse> RacerIndvDataFillersQuery;
+  typedef RacerDirector<RacerIndividualDatatypeFillersBuilder,RacerAnswerDriver> RacerIndvDataFillersQuery;
 
 } // namespace racer
 } // namespace dlvhex
