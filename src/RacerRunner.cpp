@@ -89,12 +89,14 @@ RacerRunnerAdaptee::run()
     {
       cleanup();
 
-      // register all "fatal" signals s.t. RACER will always be killed
+      // register all "fatal" signals, so we can stop the running
+      // RACER process
       sighandler.register_handler(SIGSEGV, this);
       sighandler.register_handler(SIGINT, this);
       sighandler.register_handler(SIGQUIT, this);
       sighandler.register_handler(SIGKILL, this);
       sighandler.register_handler(SIGTERM, this);
+      sighandler.register_handler(SIGABRT, this); // assert() raises SIGABRT
 
       std::string cmdline(command);
 

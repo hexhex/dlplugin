@@ -21,6 +21,7 @@
 #include <ace/INET_Addr.h>
 #include <ace/OS.h>
 #include <ace/Signal.h>
+#include <ace/Countdown_Time.h>
 
 using namespace dlvhex::racer;
 
@@ -90,18 +91,22 @@ TCPStreamBuf::open()
 {
   if (stream.get_handle() == ACE_INVALID_HANDLE)
     {
+      ACE_INET_Addr addr(port, host.c_str());
+      ACE_SOCK_Connector conn;
+
       ACE_Time_Value tv(0, 300000);
 
-      // retry until TCP server is up and running
-      for (int i = 10; i > 0; i--)
+      ACE_Time_Value timeout(3);
+
+      // retry at most timeout seconds for establishing a connection
+      // to the TCP server
+      for (ACE_Countdown_Time left(&timeout);
+	   timeout > ACE_Time_Value::zero;
+	   left.update())
 	{
 	  close();
       
 	  // connect to the TCP server at host:port
-
-	  ACE_INET_Addr addr(port, host.c_str());
-	  ACE_SOCK_Connector conn;
-
 	  if (conn.connect(stream, addr) == 0)
 	    {
 	      return true; // connection established
