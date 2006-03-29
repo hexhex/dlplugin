@@ -59,7 +59,7 @@ YY_DECL;
   Tuple* tupleval;
 }
 
-%type <termval> identifier;
+%type <sval> nsid;
 %type <termval> individual;
 %type <tupleval> tuple;
 %type <tupleval> pair;
@@ -72,9 +72,8 @@ YY_DECL;
 %token ERROR
 
 // automagically delete all dynamically allocated objects after the
-// parsing process (but keep those identifier terms, they are passed
-// on to the individuals)
-%destructor { delete $$; } STRING individual tuple pair
+// parsing process
+%destructor { delete $$; } STRING nsid individual pair tuple
 
 // in debugging mode output the content of the corresponding terminal
 // symbol
@@ -83,8 +82,7 @@ YY_DECL;
 
 %%
 
-racer: /* empty */
-     | ANSWER message '\n'
+racer: ANSWER message '\n'
      | ERROR STRING '\n'
        {
 	 answer.setErrorMessage(*$2);
@@ -187,14 +185,18 @@ tuple: '(' variable individual ')'
 ;
 
 
-// an individual is an identifier (without namespace)
-individual: '|' nsid '#' identifier '|'
+// an individual is a symbol (maybe with namespace) or a number
+individual: '|' nsid '#' STRING '|'
             {
-	      $$ = $4;
+	      $$ = new Term(*$2 + "#" + *$4, true);
 	    }
-          | identifier
+          | STRING
             {
-	      $$ = $1;
+	      $$ = new Term(*$1, true);
+	    }
+          | NUMBER
+            {
+	      $$ = new Term($1);
 	    }
 ;
 
@@ -207,27 +209,23 @@ variable: '?' STRING
 
 // this is a rather weak version of a namespace identifier
 nsid: STRING ':' '/' '/' STRING
+      {
+	$$ = new std::string(*$1 + "://" + *$5);
+      }
     | STRING ':' STRING
+      {
+	$$ = new std::string(*$1 + ":" + *$3);
+      }
 ;
 
-// identifiers are strings or numbers
-identifier: STRING
-            {
-	      $$ = new Term(*$1, true);
-	    }
-          | NUMBER
-            {
-	      $$ = new Term($1);
-	    }
-;
 
 %%
 
 // error method of bison parser -> call error method of the
 // corresponding driver
 void
-yy::RacerAnswerParser::error (const yy::RacerAnswerParser::location_type& l,
-			      const std::string& m)
+yy::RacerAnswerParser::error(const yy::RacerAnswerParser::location_type& l,
+			     const std::string& m)
 {
   driver.error(l, m);
 }

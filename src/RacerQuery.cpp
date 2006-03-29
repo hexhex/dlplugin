@@ -284,13 +284,35 @@ Answer::addTuple(const Tuple& out)
       if (t == Query::LeftRetrieval)
 	{
 	  Tuple tmp(out);
-	  tmp.push_back(query->getPatternTuple()[1]);
+
+	  std::string p = query->getPatternTuple()[1].getUnquotedString();
+
+	  if (p.find('#') == std::string::npos)
+	    {
+	      tmp.push_back(Term(query->getNamespace() + p, true));
+	    }
+	  else
+	    {
+	      tmp.push_back(Term(p, true));
+	    }
 
 	  PluginAtom::Answer::addTuple(tmp);
 	}
       else if (t == Query::RightRetrieval)
 	{
-	  Tuple tmp(1, query->getPatternTuple()[0]);
+	  Tuple tmp;
+
+	  std::string p = query->getPatternTuple()[0].getUnquotedString();
+
+	  if (p.find('#') == std::string::npos)
+	    {
+	      tmp.push_back(Term(query->getNamespace() + p, true));
+	    }
+	  else
+	    {
+	      tmp.push_back(Term(p, true));
+	    }
+
 	  tmp.insert(tmp.end(), out.begin(), out.end());
 
 	  PluginAtom::Answer::addTuple(tmp);

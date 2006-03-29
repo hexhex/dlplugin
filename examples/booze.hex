@@ -1,0 +1,8 @@
+#namespace("booze","http://potato.cs.man.ac.uk/ontologies/booze#")
+
+url("http://oiled.man.ac.uk/ontologies/booze").
+
+aredwine :- &dlC[U,a,b,c,d,"booze:RED-WINE"]("http://potato.cs.man.ac.uk/ontologies/booze#CLOS-DE-VOUGEOT-COTES-D-OR"), url(U).
+redwine(X) :- &dlC[U,a,b,c,d,"booze:RED-WINE"](X), url(U).
+wine(X) :- &dlC[U,a,b,c,d,"booze:WINE"](X), url(U).
+whitewine(X) :- &dlC[U,a,b,c,d,"booze:WHITE-WINE"](X), url(U).

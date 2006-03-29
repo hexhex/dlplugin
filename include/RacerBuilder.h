@@ -46,6 +46,15 @@ namespace racer {
     virtual
     ~RacerBuilder();
 
+    /**
+     * Get a proper symbolname to build the RACER query.
+     * @param query the query object
+     * @param name symbol name
+     * @return the symbolname for RACER
+     */
+    virtual std::string
+    createName(const Query& query, const std::string& name) const;
+
   public:
     /**
      * Building method implemented by the children of RacerBuilder.
@@ -91,53 +100,53 @@ namespace racer {
   {
   protected:
     /**
-     * sends an instance command using atom and nspace to build the
+     * sends an instance command using atom and query to build the
      * individual and concept.
      *
+     * @param query
      * @param atom
-     * @param nspace
      *
      * @see instance macro in RacerPro Reference Manual
      */
     virtual void
-    buildPosInstance(const Atom& atom, const std::string& nspace);
+    buildPosInstance(const Query& query, const Atom& atom);
 
     /**
-     * sends an instance command using atom and nspace to build the
+     * sends an instance command using atom and query to build the
      * individual and negated concept.
      *
+     * @param query
      * @param atom
-     * @param nspace
      *
      * @see instance macro in RacerPro Reference Manual
      */
     virtual void
-    buildNegInstance(const Atom& atom, const std::string& nspace);
+    buildNegInstance(const Query& query, const Atom& atom);
 
     /**
-     * sends a related command using atom and nspace to build the
+     * sends a related command using atom and query to build the
      * individual and role.
      *
+     * @param query
      * @param atom
-     * @param nspace
      *
      * @see related macro in RacerPro Reference Manual
      */
     virtual void
-    buildPosRelated(const Atom& atom, const std::string& nspace);
+    buildPosRelated(const Query& query, const Atom& atom);
 
     /**
-     * sends a related command using atom and nspace to build the
+     * sends a related command using atom and query to build the
      * individual and role.
      *
+     * @param query
      * @param atom
-     * @param nspace
      *
      * @todo not implemented yet
      * @see related macro in RacerPro Reference Manual
      */
     virtual void
-    buildNegRelated(const Atom& atom, const std::string& nspace);
+    buildNegRelated(const Query& query, const Atom& atom);
 
   public:
     explicit

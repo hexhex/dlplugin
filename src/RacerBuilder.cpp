@@ -32,6 +32,19 @@ RacerBuilder::RacerBuilder(std::ostream& s)
 RacerBuilder::~RacerBuilder()
 { }
 
+std::string
+RacerBuilder::createName(const Query& query,
+			 const std::string& name) const
+{
+  if (name.find('#') == std::string::npos)
+    {
+      return "|" + query.getNamespace() + name + "|";
+    }
+  else
+    {
+      return "|" + name + "|";
+    }
+}
 
 
 RacerStateBuilder::RacerStateBuilder(std::ostream& s)
@@ -42,66 +55,55 @@ RacerStateBuilder::~RacerStateBuilder()
 { }
 
 void
-RacerStateBuilder::buildPosInstance(const Atom& atom,
-				    const std::string& nspace)
+RacerStateBuilder::buildPosInstance(const Query& query, const Atom& atom)
 {
   if (atom.getArity() != 3)
     {
       throw RacerBuildingError("buildPosInstance: Atom has wrong arity.");
     }
 
-  stream << "(instance |"
-	 << nspace
-	 << atom.getArgument(2).getUnquotedString()
-	 << "| |"
-	 << nspace
-	 << atom.getArgument(1).getUnquotedString()
-	 << "|)";
+  stream << "(instance "
+	 << createName(query, atom.getArgument(2).getUnquotedString())
+	 << " "
+	 << createName(query, atom.getArgument(1).getUnquotedString())
+	 << ")";
 }
 
 void
-RacerStateBuilder::buildNegInstance(const Atom& atom,
-				    const std::string& nspace)
+RacerStateBuilder::buildNegInstance(const Query& query, const Atom& atom)
 {
   if (atom.getArity() != 3)
     {
       throw RacerBuildingError("buildNegInstance: Atom has wrong arity.");
     }
 
-  stream << "(instance |"
-	 << nspace
-	 << atom.getArgument(2).getUnquotedString()
-	 << "| (not |"
-	 << nspace
-	 << atom.getArgument(1).getUnquotedString()
-	 << "|))";
+  stream << "(instance "
+	 << createName(query, atom.getArgument(2).getUnquotedString())
+	 << " (not "
+	 << createName(query, atom.getArgument(1).getUnquotedString())
+	 << "))";
 }
 
 void
-RacerStateBuilder::buildPosRelated(const Atom& atom,
-				   const std::string& nspace)
+RacerStateBuilder::buildPosRelated(const Query& query, const Atom& atom)
 {
   if (atom.getArity() != 4)
     {
       throw RacerBuildingError("buildPosRelated: Atom has wrong arity.");
     }
 
-  stream << "(related |"
-	 << nspace
-	 << atom.getArgument(2).getUnquotedString()
-	 << "| |"
-	 << nspace
-	 << atom.getArgument(3).getUnquotedString()
-	 << "| |"
-	 << nspace
-	 << atom.getArgument(1).getUnquotedString()
-	 << "|)";
+  stream << "(related "
+	 << createName(query, atom.getArgument(2).getUnquotedString())
+	 << " "
+	 << createName(query, atom.getArgument(3).getUnquotedString())
+	 << " "
+	 << createName(query, atom.getArgument(1).getUnquotedString())
+	 << ")";
 }
 
 //@todo how does negated roles work?
 void
-RacerStateBuilder::buildNegRelated(const Atom&,
-				   const std::string&)
+RacerStateBuilder::buildNegRelated(const Query&, const Atom&)
 {
 //   if (atom.getArity() != 4)
 //     {
@@ -124,7 +126,6 @@ RacerStateBuilder::buildNegRelated(const Atom&,
 void
 RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
-  std::string nspace = query.getNamespace();
   const Interpretation& ints = query.getInterpretation();
 
   //
@@ -147,19 +148,19 @@ RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 	  
 	  if (pred == query.getPlusC()) // plusC
 	    {
-	      buildPosInstance(a, nspace);
+	      buildPosInstance(query, a);
 	    }
 	  else if (pred == query.getMinusC()) // minusC
 	    {
-	      buildNegInstance(a, nspace);
+	      buildNegInstance(query, a);
 	    }
 	  else if (pred == query.getPlusR()) // plusR
 	    {
-	      buildPosRelated(a, nspace);
+	      buildPosRelated(query, a);
 	    }
 	  else if (pred == query.getMinusR()) // minusR
 	    {
-	      buildNegRelated(a, nspace);
+	      buildNegRelated(query, a);
 	    }
 	  else
 	    {
@@ -189,7 +190,6 @@ RacerIsConceptMemberBuilder::~RacerIsConceptMemberBuilder()
 void
 RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
-  std::string nspace = query.getNamespace();
   const Term& q = query.getQuery();
   const Tuple& indv = query.getPatternTuple();
 
@@ -200,13 +200,11 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingErro
 
   try
     {
-      stream << "(individual-instance? |"
-	     << nspace
-	     << indv[0].getUnquotedString()
-	     << "| |"
-	     << nspace
-	     << q.getUnquotedString()
-	     << "|)"
+      stream << "(individual-instance? "
+	     << createName(query, indv[0].getUnquotedString())
+	     << " "
+	     << createName(query, q.getUnquotedString())
+	     << ")"
 	     << std::endl;
     }
   catch (std::exception& e)
@@ -228,7 +226,6 @@ RacerIsRoleMemberBuilder::~RacerIsRoleMemberBuilder()
 void
 RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
-  std::string nspace = query.getNamespace();
   const Term& q = query.getQuery();
   const Tuple& indv = query.getPatternTuple();
 
@@ -239,16 +236,13 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 
   try
     {
-      stream << "(individuals-related? |"
-	     << nspace
-	     << indv[0].getUnquotedString()
-	     << "| |"
-	     << nspace
-	     << indv[1].getUnquotedString()
-	     << "| |"
-	     << nspace
-	     << q.getUnquotedString()
-	     << "|)"
+      stream << "(individuals-related? "
+	     << createName(query, indv[0].getUnquotedString())
+	     << " "
+	     << createName(query, indv[1].getUnquotedString())
+	     << " "
+	     << createName(query, q.getUnquotedString())
+	     << ")"
 	     << std::endl;
     }
   catch (std::exception& e)
@@ -271,7 +265,6 @@ void
 RacerIndividualFillersBuilder::buildCommand(Query& query)
   throw (RacerBuildingError)
 {
-  std::string nspace = query.getNamespace();
   const Term& q = query.getQuery();
   const Tuple& indv = query.getPatternTuple();
 
@@ -283,28 +276,20 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
 
   try
     {
-      ///@todo always return as pairs...
       stream << "(individual-fillers ";
 
       if (query.getType() == Query::RightRetrieval) // (const,variable) pattern
 	{
-	  stream << "|"
-		 << nspace
-		 << indv[0].getUnquotedString()
-		 << "| |"
-		 << nspace
-		 << q.getUnquotedString()
-		 << "|";
+	  stream << createName(query, indv[0].getUnquotedString())
+		 << " "
+		 << createName(query, q.getUnquotedString());
 	}
       else // (variable,const) pattern
 	{
-	  stream << "|"
-		 << nspace
-		 << indv[1].getUnquotedString()
-		 << "| (inv |"
-		 << nspace
-		 << q.getUnquotedString()
-		 << "|)";
+	  stream << createName(query, indv[1].getUnquotedString())
+		 << " (inv "
+		 << createName(query, q.getUnquotedString())
+		 << ")";
 	}
 
       stream << ")" << std::endl;
@@ -329,7 +314,6 @@ RacerConceptInstancesBuilder::~RacerConceptInstancesBuilder()
 void
 RacerConceptInstancesBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
-  std::string nspace = query.getNamespace();
   const Term& q = query.getQuery();
   std::string concept = q.getUnquotedString();
 
@@ -337,20 +321,18 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (RacerBuildingErr
     {
       if (concept[0] != '-')
 	{
-	  stream << "(concept-instances |"
-		 << nspace
-		 << concept
-		 << "|)"
+	  stream << "(concept-instances "
+		 << createName(query, concept)
+		 << ")"
 		 << std::endl;
 	}
       else
 	{
 	  concept.erase(0, 1); // remove first character "-"
 	  
-	  stream << "(concept-instances (not |"
-		 << nspace
-		 << concept
-		 << "|))"
+	  stream << "(concept-instances (not "
+		 << createName(query, concept)
+		 << "))"
 		 << std::endl;
 	}
     }
@@ -373,15 +355,13 @@ RacerRoleIndividualsBuilder::~RacerRoleIndividualsBuilder()
 void
 RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
-  std::string nspace = query.getNamespace();
   const Term& q = query.getQuery();
 
   try
     {
-      stream << "(retrieve-related-individuals |"
-	     << nspace
-	     << q.getUnquotedString()
-	     << "|)"
+      stream << "(retrieve-related-individuals "
+	     << createName(query, q.getUnquotedString())
+	     << ")"
 	     << std::endl;
     }
   catch (std::exception& e)
@@ -443,7 +423,6 @@ void
 RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
   throw (RacerBuildingError)
 {
-  std::string nspace = query.getNamespace();
   const Term& q = query.getQuery();
   const Tuple& indv = query.getPatternTuple();
 
@@ -461,20 +440,17 @@ RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
 	{
 	  // only retrieve the datatype, let Answer add the
 	  // corresponding individual
-	  stream << "($?*Y) (and (?*X $?*Y (:owl-datatype-role |"
-		 << nspace
-		 << q.getUnquotedString()
-		 << "|)) (same-as ?X |"
- 		 << nspace
- 		 << indv[0].getUnquotedString()
- 		 << "|))";
+	  stream << "($?*Y) (and (?*X $?*Y (:owl-datatype-role "
+		 << createName(query, q.getUnquotedString())
+		 << ")) (same-as ?X "
+ 		 << createName(query, indv[0].getUnquotedString())
+ 		 << "))";
 	}
       else // (variable,variable) pattern
 	{
-	  stream << "(?*X $?*Y) (?*X $?*Y (:owl-datatype-role |"
-		 << nspace
-		 << q.getUnquotedString()
-		 << "|))";
+	  stream << "(?*X $?*Y) (?*X $?*Y (:owl-datatype-role "
+		 << createName(query, q.getUnquotedString())
+		 << "))";
 	}
 
       stream << ")" << std::endl;

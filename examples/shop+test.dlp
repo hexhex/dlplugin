@@ -1,0 +1,27 @@
+% -*- prolog -*-
+
+#namespace("shop", "http://www.kr.tuwien.ac.at/staff/roman/shop#")
+#namespace("shop", "http://www.test.com/test#")
+
+plusProvides("provides","foo","moo").
+plusPart("Part","cpu1").
+minusPart("Part","cpu2").
+minusShop("Shop","not_a_shop").
+
+s0(X) :- &dlC["shop.owl",a,b,c,d,"Shop"](X).
+s2(Y) :- &dlC["shop.owl",a,b,c,d,"Shop"](Y).
+
+s1(X) :- &dlC["shop.owl",plusPart,minusPart,plusProvides,foo,"Shop"](X).
+
+p0(X,Y) :- &dlR["shop.owl",plusPart,minusPart,plusProvides,foo,"provides"](X,Y), s0(X).
+
+p1(A,B) :- &dlR["shop.owl",plusPart,minusPart,plusProvides,foo,"provides"](A,B), not s1(B).
+
+part(X) :- &dlC["shop.owl",plusPart,minusPart,plusProvides,foo,"Part"](X).
+
+nshop1(X) :- &dlC["shop.owl",a,b,c,d,"-Shop"](X).
+nshop2(X) :- &dlC["shop.owl",plusPart,minusShop,plusProvides,foo,"-Shop"](X).
+
+
+tester1(X) :- &dlC["test.owl",a,b,c,d,"Test"](X).
+tester2(X) :- &dlC["test.owl","a","b","c","d","Test"](X).

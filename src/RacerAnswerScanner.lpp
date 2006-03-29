@@ -35,7 +35,7 @@ NUMBER          (\-)?[0-9]+
 STRING          [A-Za-z][A-Za-z0-9_\-\./]*
 QUOTED_STRING   \\\"[^\"]*\\\"
 
-%x racererror raceranswer eatanswerfudge
+%x racererror raceranswer eatanswerfudge answertrailer
 
 %{
 // advance the end location after each tokenizing step
@@ -71,9 +71,9 @@ yylloc->step();
 
 <raceranswer>{
 
-  "NIL\""       BEGIN(INITIAL); return NIL;
-  "T\""         BEGIN(INITIAL); return TRUE;
-  "\""          BEGIN(INITIAL); yylloc->step();
+  "NIL\""       BEGIN(answertrailer); return NIL;
+  "T\""         BEGIN(answertrailer); return TRUE;
+  "\""          BEGIN(answertrailer); yylloc->step();
 
   [()|#$*?:/]   return *yytext;
 
@@ -94,9 +94,15 @@ yylloc->step();
 
 }
 
+
+<answertrailer>[^\n]+ { /* ignore rest of answer */
+  BEGIN(INITIAL);
+  yylloc->step();
+ }
+
+
 <*>{BLANK}+       /* skip blanks */ yylloc->step();
 
-\"[^\"]*\"        /* ignore trailing ".*" */ yylloc->step();
 {NEWLINE}         yylloc->lines(yyleng); return '\n';
 
 .                 driver.error(*yylloc, "invalid character");
