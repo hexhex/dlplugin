@@ -43,7 +43,7 @@
     <hasName rdf:datatype="&xsd;string">and my test 2 has 2 names</hasName>
     <hasTestValue rdf:datatype="&xsd;positiveInteger">2</hasTestValue>
   </Test>
-  <Test rdf:about="http://www.yet-another-test.com/test#test1"/>
+  <Test rdf:about="http://www.yet-another-test.com/test%20with%20spaces#test1"/>
 
   <tst:Test rdf:about="http://www.another-test.com/test#test3"/>
   

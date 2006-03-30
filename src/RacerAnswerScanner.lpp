@@ -32,7 +32,7 @@ using namespace std;
 NEWLINE         \r?\n
 BLANK           [ \t]
 NUMBER          (\-)?[0-9]+
-STRING          [A-Za-z][A-Za-z0-9_\-\./]*
+STRING          [A-Za-z][A-Za-z0-9_\-\./%]*
 QUOTED_STRING   \\\"[^\"]*\\\"
 
 %x racererror raceranswer eatanswerfudge answertrailer

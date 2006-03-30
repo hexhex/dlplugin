@@ -139,7 +139,7 @@ TCPStreamBuf::overflow(std::streambuf::int_type c)
       return traits_type::eof();
     }
 
-  if (pptr() >= epptr()) // full obuf
+  if (pptr() >= epptr()) // full obuf -> write buffer
     {
       if (sync() == -1)
 	{
@@ -147,8 +147,9 @@ TCPStreamBuf::overflow(std::streambuf::int_type c)
 	}
     }
 
-  // put c into output buffer so next call to sync() will write it
-  if (c != traits_type::eof())
+  // if c != EOF, put c into output buffer so next call to sync() will
+  // write it
+  if (!traits_type::eq_int_type(c, traits_type::eof()))
     {
       *pptr() = (char_type) c;
       pbump(1); // increase put pointer by one
@@ -166,9 +167,9 @@ TCPStreamBuf::underflow()
       return traits_type::eof();
     }
 
-  if (gptr() >= egptr()) // empty ibuf
+  if (gptr() >= egptr()) // empty ibuf -> get data
     {
-      if ((egptr() > ibuf) && (*(egptr() - 1) == '\n'))
+      if ((egptr() > ibuf) && traits_type::eq(*(egptr() - 1), '\n'))
 	{
 	  // if last character was a '\n' we are done -> reset buffers
 	  sync();
@@ -187,7 +188,7 @@ TCPStreamBuf::underflow()
       setg(ibuf, ibuf, ibuf + n); // set new input buffer boundaries
     }
 
-  return *gptr();
+  return traits_type::to_int_type(*gptr());
 }
 
 

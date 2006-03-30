@@ -9,6 +9,10 @@ http://www.kr.tuwien.ac.at/staff/roman/dlvhex/
 ** RACER
 http://www.racer-systems.com/
 
+** flex + bison
+http://www.gnu.org/software/flex/
+http://www.gnu.org/software/bison/
+
 ** ACE
 http://www.cs.wustl.edu/~schmidt/ACE.html
 
@@ -22,6 +26,13 @@ http://cppunit.sourceforge.net/
 * Building and installing dlvhex-racerplugin
 
 ** Prerequisites
+
+*** flex + bison
+dlvhex-racerplugin uses relatively new features of flex and bison, so
+install the newest versions of flex + bison. dlvhex-racerplugin was
+tested with flex 2.5.33 and bison 2.1. For installation instruction
+see the corresponding INSTALL files of the source packages.
+
 
 *** dlvhex
 See dlvhex installation instructions.
