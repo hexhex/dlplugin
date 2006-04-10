@@ -87,9 +87,14 @@ racer: ANSWER message '\n'
        {
 	 answer.setErrorMessage(*$2);
 
-	 // if kb gets inconsistent just return and set incoherent flag
-	 if ($2->find("incoherent") != std::string::npos)
+	 // Racer returns "ABox XXX is incoherent." for 'old' Racer
+	 // queries, and "ABox XXX is inconsistent! Querying denied."
+	 // for nRQL queries.
+	 if ($2->find("incoherent") != std::string::npos ||
+	     $2->find("inconsistent") != std::string::npos)
 	   {
+	     // if kb gets inconsistent just return without error and
+	     // set incoherent flag
 	     answer.setIncoherent(true);
 	   }
 	 else
