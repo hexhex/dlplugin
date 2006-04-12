@@ -85,13 +85,16 @@ YY_DECL;
 racer: ANSWER message '\n'
      | ERROR STRING '\n'
        {
-	 answer.setErrorMessage(*$2);
+	 std::string err(*$2);
+	 delete $2;
+
+	 answer.setErrorMessage(err);
 
 	 // Racer returns "ABox XXX is incoherent." for 'old' Racer
 	 // queries, and "ABox XXX is inconsistent! Querying denied."
 	 // for nRQL queries.
-	 if ($2->find("incoherent") != std::string::npos ||
-	     $2->find("inconsistent") != std::string::npos)
+	 if (err.find("incoherent") != std::string::npos ||
+	     err.find("inconsistent") != std::string::npos)
 	   {
 	     // if kb gets inconsistent just return without error and
 	     // set incoherent flag
@@ -99,7 +102,7 @@ racer: ANSWER message '\n'
 	   }
 	 else
 	   {
-	     throw dlvhex::racer::RacerParsingError(*$2);
+	     throw dlvhex::racer::RacerParsingError(err);
 	   }
        }
 ;
@@ -130,18 +133,29 @@ list: '(' individuals ')'
 
 // a Racer status message, just ignore it
 status: ':' STRING
+        {
+	  delete $2;
+	}
       | '|' STRING '|'
+        {
+	  delete $2;
+	}
       | STRING
+        {
+	  delete $1;
+	}
 ;
 
 // just add the sequence of individuals to the answer
 individuals: individual
              {
 	       answer.addTuple(Tuple(1, *$1));
+	       delete $1;
 	     }
            | individuals individual
              { 
 	       answer.addTuple(Tuple(1, *$2));
+	       delete $2;
 	     }
 ;
 
@@ -149,10 +163,12 @@ individuals: individual
 pairs: '(' pair ')'
        {
 	 answer.addTuple(*$2);
+	 delete $2;
        }
      | pairs '(' pair ')'
        {
 	 answer.addTuple(*$3);
+	 delete $3;
        }
 ;
 
@@ -163,6 +179,8 @@ pair: individual individual
 	$$ = new Tuple;
         $$->push_back(*$1);
         $$->push_back(*$2);
+	delete $1;
+	delete $2;
       }
 ;
 
@@ -170,10 +188,12 @@ pair: individual individual
 tuples: '(' tuple ')'
         {
 	  answer.addTuple(*$2);
+	  delete $2;
 	}
       | tuples '(' tuple ')'
         {
 	  answer.addTuple(*$3);
+	  delete $3;
 	}
 ;
 
@@ -182,10 +202,12 @@ tuples: '(' tuple ')'
 tuple: '(' variable individual ')'
        {
 	 $$ = new Tuple(1, *$3);
+	 delete $3;
        }
      | tuple '(' variable individual ')'
        {
 	 $1->push_back(*$4);
+	 delete $4;
        }
 ;
 
@@ -194,10 +216,13 @@ tuple: '(' variable individual ')'
 individual: '|' nsid '#' STRING '|'
             {
 	      $$ = new Term(*$2 + "#" + *$4, true);
+	      delete $2;
+	      delete $4;
 	    }
           | STRING
             {
 	      $$ = new Term(*$1, true);
+	      delete $1;
 	    }
           | NUMBER
             {
@@ -207,19 +232,35 @@ individual: '|' nsid '#' STRING '|'
 
 // Racer has 4 types of variables
 variable: '?' STRING
+          {
+	    delete $2;
+	  }
         | '$' '?' STRING
+          {
+	    delete $3;
+	  }
         | '?' '*' STRING
+          {
+	    delete $3;
+	  }
         | '$' '?' '*' STRING
+          {
+	    delete $4;
+	  }
 ;
 
 // this is a rather weak version of a namespace identifier
 nsid: STRING ':' '/' '/' STRING
       {
 	$$ = new std::string(*$1 + "://" + *$5);
+	delete $1;
+	delete $5;
       }
     | STRING ':' STRING
       {
 	$$ = new std::string(*$1 + ":" + *$3);
+	delete $1;
+	delete $3;
       }
 ;
 
