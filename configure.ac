@@ -72,7 +72,7 @@ DX_INIT_DOXYGEN([dlvhex-racerplugin], [doxygen.cfg], [documentation])
 
 # Checks for external libraries
 AM_PATH_CPPUNIT([1.10.2])
-
+AC_PATH_BOOST
 AM_PATH_ACE
 
 # we need 1.4.8 for namespace parsing support
