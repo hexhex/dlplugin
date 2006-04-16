@@ -19,37 +19,45 @@ void
 TestRacerNRQL::runRacerRetrieveTest()
 {
   std::stringstream sst;
-      
-  AtomSet pc;
-  AtomPtr ap(new Atom("plusC(\"Part\",\"nic\")"));
-  pc.insert(ap);
-  Interpretation ints(pc);
 
-  Query q;
+  NRQLRetrieveUnderPremise nrql;
 
-  q.setQuery(Term("q"));
-  q.setPatternTuple(Tuple(1, Term("X")));
-  q.setInterpretation(ints);
-  q.setPlusC(Term("plusC"));
-  q.setNamespace("file:shop#");
-  
-  RacerNRQLBasePtr nrql
-    (RacerNRQLBasePtr
-     (new RacerNRQLBody
-      (RacerNRQLBasePtr
-       (new RacerNRQLHead
-	(RacerNRQLBasePtr
-	 (new RacerNRQLRetrieve(sst)
-	  )
-	 )
-	)
-       )
-      )
-     );
-  
+  nrql.addHead(new ABoxQueryVariable("X"));
+  nrql.addHead(new ABoxQueryVariable("Y"));
 
-  nrql->retrieve(q);
-      
+  NRQLConjunction* c = new NRQLConjunction;
+  c->addAtom(new NRQLQueryAtom
+	     (new ConceptQuery
+	      (new ABoxQueryConcept("foo"),
+	       new ABoxQueryVariable("X")
+	       )
+	      )
+	     );
+  c->addAtom(new NRQLQueryAtom
+	     (new RoleQuery
+	      (new ABoxQueryRole("moo"),
+	       new ABoxQueryVariable("X"),
+	       new ABoxQueryVariable("Y")
+	       )
+	      )
+	     );
+
+  NRQLUnion* u = new NRQLUnion;
+  u->addAtom(new NRQLQueryAtom
+	     (new NegationQuery
+	      (new ConceptQuery
+	       (new ABoxQueryConcept("fu"),
+		new ABoxQueryVariable("X")
+		)
+	       )
+	      )
+	     );
+
+  u->addAtom(c);
+  nrql.addBody(u);
+
+  sst << nrql;
+     
   std::string s = sst.str();
 
 //   CPPUNIT_ASSERT(s == "(state (instance |file:shop#nic| |file:shop#Part|))\n");
@@ -60,88 +68,11 @@ TestRacerNRQL::runRacerRetrieveTest()
 void
 TestRacerNRQL::runRacerTBoxRetrieveTest()
 {
-  std::stringstream sst;
-      
-  AtomSet pc;
-  AtomPtr ap(new Atom("plusC(\"Part\",\"nic\")"));
-  pc.insert(ap);
-  Interpretation ints(pc);
-
-  Query q;
-
-  q.setQuery(Term("q"));
-  q.setPatternTuple(Tuple(1, Term("X")));
-  q.setInterpretation(ints);
-  q.setPlusC(Term("plusC"));
-  q.setNamespace("file:shop#");
-  
-  RacerNRQLBasePtr nrql
-    (RacerNRQLBasePtr
-     (new RacerNRQLBody
-      (RacerNRQLBasePtr
-       (new RacerNRQLHead
-	(RacerNRQLBasePtr
-	 (new RacerNRQLTBoxRetrieve(sst)
-	  )
-	 )
-	)
-       )
-      )
-     );
-  
-
-  nrql->retrieve(q);
-      
-  std::string s = sst.str();
-
-//   CPPUNIT_ASSERT(s == "(state (instance |file:shop#nic| |file:shop#Part|))\n");
-
-  std::cout << "### " << s << std::endl;
 }
 
 
 void
 TestRacerNRQL::runRacerPremiseRetrieveTest()
 {
-  std::stringstream sst;
-      
-  AtomSet pc;
-  AtomPtr ap(new Atom("plusC(\"Part\",\"nic\")"));
-  pc.insert(ap);
-  Interpretation ints(pc);
 
-  Query q;
-
-  q.setQuery(Term("q"));
-  q.setPatternTuple(Tuple(4, Term("X")));
-  q.setInterpretation(ints);
-  q.setPlusC(Term("plusC"));
-  q.setNamespace("file:shop#");
-  
-  RacerNRQLBasePtr nrql
-    (RacerNRQLBasePtr
-     (new RacerNRQLBody
-      (RacerNRQLBasePtr
-       (new RacerNRQLHead
-	(RacerNRQLBasePtr
-	 (new RacerNRQLPremise
-	  (RacerNRQLBasePtr
-	   (new RacerNRQLRetrieve(sst)
-	    )
-	   )
-	  )
-	 )
-	)
-       )
-      )
-     );
-  
-
-  nrql->retrieve(q);
-      
-  std::string s = sst.str();
-
-//   CPPUNIT_ASSERT(s == "(state (instance |file:shop#nic| |file:shop#Part|))\n");
-
-  std::cout << "### " << s << std::endl;
 }

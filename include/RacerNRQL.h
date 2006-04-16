@@ -13,232 +13,152 @@
 #ifndef _RACERNRQL_H
 #define _RACERNRQL_H
 
-#include "RacerQuery.h"
+#include "RacerQueryExpr.h"
 
 #include <boost/shared_ptr.hpp>
 
 #include <iostream>
+#include <vector>
 
 namespace dlvhex {
 namespace racer {
 
-  class RacerNRQLBase
+  class NRQLBase
   {
-  private:
-    std::ostream& stream;
-
   protected:
-    explicit
-    RacerNRQLBase(std::ostream& o) : stream(o) {}
+    virtual std::ostream&
+    output(std::ostream&) const = 0;
 
   public:
     virtual
-    ~RacerNRQLBase() {}
+    ~NRQLBase() {}
 
-    virtual void
-    build(const Query&) = 0;
+    friend std::ostream&
+    operator<< (std::ostream&, const NRQLBase&);
+  };
 
-    virtual void
-    walk(const Query&) = 0;
+  std::ostream&
+  operator<< (std::ostream& s, const NRQLBase& b);
 
-    virtual void
-    retrieve(const Query&) = 0;
+
+  class NRQLBody : public NRQLBase
+  {
+  protected:
+    NRQLBody() {}
+
+  public:
+    typedef NRQLBody value_type;
+    typedef const value_type* const_pointer;
+    typedef boost::shared_ptr<const value_type> shared_pointer;
+  };
+
+
+
+  class NRQLQueryAtom : public NRQLBody
+  {
+  private:
+    const ABoxQueryAtom::shared_pointer atom;
 
     std::ostream&
-    getStream() const { return stream; }
+    output(std::ostream& s) const;
+
+  public:
+    explicit
+    NRQLQueryAtom(ABoxQueryAtom::const_pointer a);
   };
 
 
 
-
-  typedef boost::shared_ptr<RacerNRQLBase> RacerNRQLBasePtr;
-
-
-
-  class RacerNRQLDecorator : public RacerNRQLBase
+  class NRQLConjunction : public NRQLBody
   {
   private:
-    RacerNRQLBasePtr composite;
+    std::vector<NRQLBody::shared_pointer> list;
+
+    std::ostream&
+    output(std::ostream& s) const;
 
   public:
-    explicit
-    RacerNRQLDecorator(RacerNRQLBasePtr c);
-
-    virtual
-    ~RacerNRQLDecorator();
-
-    virtual void
-    build(const Query& query);
-
-    virtual void
-    walk(const Query& query);
-
-    virtual void
-    retrieve(const Query& query);
+    void
+    addAtom(NRQLBody::const_pointer e);
   };
 
 
-  class RacerNRQLAtom : public RacerNRQLBase
+
+  class NRQLUnion : public NRQLBody
   {
+  private:
+    std::vector<NRQLBody::shared_pointer> list;
+
+    std::ostream&
+    output(std::ostream& s) const;
+
   public:
-    explicit
-    RacerNRQLAtom(std::ostream& o);
-
-    virtual
-    ~RacerNRQLAtom();
-
     virtual void
-    build(const Query& query);
-
-    virtual void
-    walk(const Query& query);
-
-    virtual void
-    retrieve(const Query& query);
+    addAtom(NRQLBody::const_pointer e);
   };
 
 
-  class RacerNRQLRetrieve : public RacerNRQLBase
+
+
+  class NRQLRetrieve : public NRQLBase
   {
+  private:
+    std::vector<ABoxQueryExpr::shared_pointer> head;
+    std::vector<NRQLBody::shared_pointer> body;
+
+    std::ostream&
+    output(std::ostream& s) const;
+
   public:
-    explicit
-    RacerNRQLRetrieve(std::ostream& o) : RacerNRQLBase(o) {}
+    void
+    addHead(ABoxQueryExpr::const_pointer e);
 
-    virtual
-    ~RacerNRQLRetrieve() {}
-
-    virtual void
-    build(const Query& query)
-    {
-      getStream() << "retrieve";
-    }
-
-    virtual void
-    walk(const Query& query)
-    {
-      build(query);
-    }
-
-    virtual void
-    retrieve(const Query& query)
-    { }
+    void
+    addBody(NRQLBody::const_pointer e);
   };
 
 
 
-  class RacerNRQLTBoxRetrieve : public RacerNRQLBase
+  class NRQLTBoxRetrieve : public NRQLBase
   {
+  private:
+    std::vector<ABoxQueryExpr::shared_pointer> head;
+    std::vector<NRQLBody::shared_pointer> body;
+
+    std::ostream&
+    output(std::ostream& s) const;
+
   public:
-    explicit
-    RacerNRQLTBoxRetrieve(std::ostream& o) : RacerNRQLBase(o) {}
+    void
+    addHead(ABoxQueryExpr::const_pointer e);
 
-    virtual
-    ~RacerNRQLTBoxRetrieve() {}
-
-    virtual void
-    build(const Query& query)
-    {
-      getStream() << "tbox-retrieve";
-    }
-
-    virtual void
-    walk(const Query& query)
-    {
-      build(query);
-    }
-
-    virtual void
-    retrieve(const Query& query)
-    { }
+    void
+    addBody(NRQLBody::const_pointer e);
   };
 
 
-  class RacerNRQLHead : public RacerNRQLDecorator
+
+  class NRQLRetrieveUnderPremise : public NRQLBase
   {
+  private:
+    std::vector<ABoxAssertion::shared_pointer> premise;
+    std::vector<ABoxQueryExpr::shared_pointer> head;
+    std::vector<NRQLBody::shared_pointer> body;
+
+    std::ostream&
+    output(std::ostream& s) const;
+
   public:
-    explicit
-    RacerNRQLHead(RacerNRQLBasePtr c);
+    void
+    addPremise(ABoxAssertion::const_pointer e);
 
-    virtual
-    ~RacerNRQLHead();
+    void
+    addHead(ABoxQueryExpr::const_pointer e);
 
-    virtual void
-    build(const Query& query);
-
-    virtual void
-    walk(const Query& query);
+    void
+    addBody(NRQLBody::const_pointer e);
   };
 
-
-
-  class RacerNRQLConjunction : public RacerNRQLDecorator
-  {
-  public:
-    explicit
-    RacerNRQLConjunction(RacerNRQLBasePtr c);
-    
-    virtual
-    ~RacerNRQLConjunction();
-
-    virtual void
-    build(const Query& query);
-
-    virtual void
-    walk(const Query& query);
-  };
-
-
-  class RacerNRQLUnion : public RacerNRQLDecorator
-  {
-  public:
-    explicit
-    RacerNRQLUnion(RacerNRQLBasePtr c);
-    
-    virtual
-    ~RacerNRQLUnion();
-
-    virtual void
-    build(const Query& query);
-
-    virtual void
-    walk(const Query& query);
-  };
-
-
-
-  class RacerNRQLBody : public RacerNRQLDecorator
-  {
-  public:
-    explicit
-    RacerNRQLBody(RacerNRQLBasePtr c);
-    
-    virtual
-    ~RacerNRQLBody();
-
-    virtual void
-    build(const Query& query);
-
-    virtual void
-    walk(const Query& query);
-  };
- 
-
-
-  class RacerNRQLPremise : public RacerNRQLDecorator
-  {
-  public:
-    explicit
-    RacerNRQLPremise(RacerNRQLBasePtr c);
-
-    virtual
-    ~RacerNRQLPremise();
-
-    virtual void
-    build(const Query& query);
-
-    virtual void
-    walk(const Query& query);
-  };
 
 
 } // namespace racer

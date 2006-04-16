@@ -7,275 +7,183 @@
  * 
  * @brief  
  * 
- * 
+ * @todo this is so not documented
  */
 
 #include "RacerNRQL.h"
-#include "RacerQuery.h"
 
+#include <boost/shared_ptr.hpp>
+
+#include <iostream>
+#include <iterator>
+#include <vector>
 
 using namespace dlvhex::racer;
 
 
+namespace dlvhex {
+namespace racer {
 
-RacerNRQLAtom::RacerNRQLAtom(std::ostream& o)
-  : RacerNRQLBase(o)
-{}
+  std::ostream&
+  operator<< (std::ostream& s, const NRQLBase& b)
+  {
+    return b.output(s);
+  }
 
-RacerNRQLAtom::~RacerNRQLAtom()
-{}
-
-void
-RacerNRQLAtom::build(const Query& query)
-{
-  getStream() << "(";
-
-  getStream() << ")";
-//   const Tuple& q = query.getQuery().getQuery();
-
-//   for (Tuple::const_iterator it = q.begin(); it != q.end(); it++)
-//     {
-//       getStream() << "(";
-	    
-//       Atom& a = *it;
-
-//       Term& p = a.getPredicate();
-//       Tuple& t = a.getArguments();
-
-//       for (Tuple::const_iterator arg = t.begin(); arg != t.end(); arg++)
-// 	{
-// 	  Term& x = *arg;
-	  
-// 	  if (x.isVariable())
-// 	    {
-// 	      getStream() << "$?" << x.getUnquotedString() << " ";
-// 	    }
-// 	  else
-// 	    {
-// 	      ///@todo check nsid
-// 	      getStream() << "|" << x.getUnquotedString() << "| ";
-// 	    }
-// 	}
-      
-//       ///@todo check nsid
-//       getStream() << "|" << p.getUnquotedString() << "|";
-	  
-//       getStream() << ")";
-//     }
-}
-
-void
-RacerNRQLAtom::walk(const Query& query)
-{
-  build(query);
-}
-
-void
-RacerNRQLAtom::retrieve(const Query& query)
-{
-  build(query);
-}
-
-
-RacerNRQLDecorator::RacerNRQLDecorator(RacerNRQLBasePtr c)
-  : RacerNRQLBase(c->getStream()), composite(c)
-{}
-
-RacerNRQLDecorator::~RacerNRQLDecorator()
-{}
-
-void
-RacerNRQLDecorator::build(const Query& query)
-{
-  composite->build(query);
-}
-
-void
-RacerNRQLDecorator::walk(const Query& query)
-{
-  composite->walk(query);
-}
-
-void
-RacerNRQLDecorator::retrieve(const Query& query)
-{
-  getStream() << "(";
-  walk(query);
-  getStream() << ")" << std::endl;
-}
-
-
-
-
-RacerNRQLHead::RacerNRQLHead(RacerNRQLBasePtr c)
-  : RacerNRQLDecorator(c)
-{}
-
-RacerNRQLHead::~RacerNRQLHead()
-{}
-
-void
-RacerNRQLHead::build(const Query& query)
-{
-  getStream() << " (";
-
-  const Tuple& out = query.getPatternTuple();
   
-  for (Tuple::const_iterator it = out.begin(); it != out.end(); it++)
+  struct Dereference
+  {
+    template<typename T>
+    T&
+    operator() (const boost::shared_ptr<T>& ptr) const
     {
-      const Term* t = &*it;
-      
-      if (t->isVariable())
-	{
-	  getStream() << "$?" << t->getVariable();
-	}
-      else
-	{
-	  getStream() << "|" << t->getUnquotedString() << "|"; ///@todo check nsid
-	}
-
-      getStream() << " ";
+      return *ptr;
     }
+  };
+
+  template<typename T>
+  std::ostream&
+  operator<< (std::ostream& s,
+	      const std::vector<boost::shared_ptr<T> >& v)
+  {
+    if (!v.empty())
+      {
+	std::transform(v.begin(),
+		       v.end() - 1,
+		       std::ostream_iterator<T>(s, " "),
+		       Dereference()
+		       );
+
+	s << *v.back();
+      }
+    
+    return s;
+  }
   
-  getStream() << ")";
 }
-
-void
-RacerNRQLHead::walk(const Query& query)
-{
-  RacerNRQLDecorator::walk(query);
-
-  build(query);
 }
 
 
 
-RacerNRQLBody::RacerNRQLBody(RacerNRQLBasePtr c)
-  : RacerNRQLDecorator(c)
-{}
+NRQLQueryAtom::NRQLQueryAtom(ABoxQueryAtom::const_pointer a)
+  : atom(a)
+{ }
 
-RacerNRQLBody::~RacerNRQLBody()
-{}
-
-void
-RacerNRQLBody::build(const Query& query)
+std::ostream&
+NRQLQueryAtom::output(std::ostream& s) const
 {
-  ///@todo check if conjunctive or single query
-
-  RacerNRQLBasePtr ats(new RacerNRQLAtom(getStream()));
-  RacerNRQLConjunction(ats).build(query);
-
-  //  RacerNRQLAtom(getStream()).build(query);
-}
-
-void
-RacerNRQLBody::walk(const Query& query)
-{
-  RacerNRQLDecorator::walk(query);
-
-  build(query);
-}
-
-
-RacerNRQLConjunction::RacerNRQLConjunction(RacerNRQLBasePtr c)
-  : RacerNRQLDecorator(c)
-{}
-
-RacerNRQLConjunction::~RacerNRQLConjunction()
-{}
-
-void
-RacerNRQLConjunction::build(const Query& query)
-{
-  getStream() << "(and ";
-  RacerNRQLDecorator::build(query);
-  getStream() << ")";
-}
-
-void
-RacerNRQLConjunction::walk(const Query& query)
-{
-  RacerNRQLDecorator::walk(query);
-
-  build(query);
+  return s << "(" << *atom << ")";
 }
 
 
 
-RacerNRQLUnion::RacerNRQLUnion(RacerNRQLBasePtr c)
-  : RacerNRQLDecorator(c)
-{}
-
-RacerNRQLUnion::~RacerNRQLUnion()
-{}
-
-void
-RacerNRQLUnion::build(const Query& query)
+std::ostream&
+NRQLConjunction::output(std::ostream& s) const
 {
-  getStream() << "(union ";
-  RacerNRQLDecorator::build(query);
-  getStream() << ")";
+  return s << "(and "
+ 	   << list
+	   << ")";
 }
 
 void
-RacerNRQLUnion::walk(const Query& query)
+NRQLConjunction::addAtom(NRQLBody::const_pointer e)
 {
-  RacerNRQLDecorator::walk(query);
+  list.push_back(NRQLBody::shared_pointer(e));
+}
 
-  build(query);
+
+std::ostream&
+NRQLUnion::output(std::ostream& s) const
+{
+  return s << "(union "
+	   << list
+	   << ")";
+}
+
+void
+NRQLUnion::addAtom(NRQLBody::const_pointer e)
+{
+  list.push_back(NRQLBody::shared_pointer(e));
 }
 
 
 
-RacerNRQLPremise::RacerNRQLPremise(RacerNRQLBasePtr c)
-  : RacerNRQLDecorator(c)
-{}
-
-RacerNRQLPremise::~RacerNRQLPremise()
-{}
-
-void
-RacerNRQLPremise::build(const Query& query)
+std::ostream&
+NRQLRetrieve::output(std::ostream& s) const
 {
-  getStream() << "-under-premise (";
-
-  const Interpretation& ints = query.getInterpretation();
-      
-  for (AtomSet::const_iterator it = ints.begin();
-       it != ints.end(); it++)
-    {
-//       const Atom& a = *it;
-//       const Term& pred = a.getArgument(0);
-	  
-//       if (pred == query.getPlusC()) // plusC
-// 	{
-// 	  buildPosInstance(query, a);
-// 	}
-//       else if (pred == query.getMinusC()) // minusC
-// 	{
-// 	  buildNegInstance(query, a);
-// 	}
-//       else if (pred == query.getPlusR()) // plusR
-// 	{
-// 	  buildPosRelated(query, a);
-// 	}
-//       else if (pred == query.getMinusR()) // minusR
-// 	{
-// 	  buildNegRelated(query, a);
-// 	}
-//       else
-// 	{
-// 	  // just ignore unknown stuff...
-// 	}
-    }
-
-  getStream() << ")";
+  return s << "(retrieve (" 
+	   << head
+	   << ") "
+	   << body
+	   << ")";
 }
 
 void
-RacerNRQLPremise::walk(const Query& query)
+NRQLRetrieve::addHead(ABoxQueryExpr::const_pointer e)
 {
-  RacerNRQLDecorator::walk(query);
+  head.push_back(ABoxQueryExpr::shared_pointer(e));
+}
 
-  build(query);
+void
+NRQLRetrieve::addBody(NRQLBody::const_pointer e)
+{
+  body.push_back(NRQLBody::shared_pointer(e));
+}
+
+
+
+
+std::ostream&
+NRQLTBoxRetrieve::output(std::ostream& s) const
+{
+  return s << "(tbox-retrieve ("
+	   << head
+	   << ") "
+	   << body
+	   << ")";
+}
+
+void
+NRQLTBoxRetrieve::addHead(ABoxQueryExpr::const_pointer e)
+{
+  head.push_back(ABoxQueryExpr::shared_pointer(e));
+}
+
+void
+NRQLTBoxRetrieve::addBody(NRQLBody::const_pointer e)
+{
+  body.push_back(NRQLBody::shared_pointer(e));
+}
+
+
+
+
+std::ostream&
+NRQLRetrieveUnderPremise::output(std::ostream& s) const
+{
+  return s << "(retrieve-under-premise ("
+	   << premise
+ 	   << ") ("
+	   << head
+ 	   << ") "
+	   << body
+	   << ")";
+}
+
+void
+NRQLRetrieveUnderPremise::addPremise(ABoxAssertion::const_pointer e)
+{
+  premise.push_back(ABoxAssertion::shared_pointer(e));
+}
+
+void
+NRQLRetrieveUnderPremise::addHead(ABoxQueryExpr::const_pointer e)
+{
+  head.push_back(ABoxQueryExpr::shared_pointer(e));
+}
+
+void
+NRQLRetrieveUnderPremise::addBody(NRQLBody::const_pointer e)
+{
+  body.push_back(NRQLBody::shared_pointer(e));
 }
