@@ -103,7 +103,7 @@ namespace racer {
   class NRQLRetrieve : public NRQLBase
   {
   private:
-    std::vector<ABoxQueryExpr::shared_pointer> head;
+    std::vector<ABoxQueryObject::shared_pointer> head;
     std::vector<NRQLBody::shared_pointer> body;
 
     std::ostream&
@@ -111,7 +111,7 @@ namespace racer {
 
   public:
     void
-    addHead(ABoxQueryExpr::const_pointer e);
+    addHead(ABoxQueryObject::const_pointer e);
 
     void
     addBody(NRQLBody::const_pointer e);
@@ -122,7 +122,7 @@ namespace racer {
   class NRQLTBoxRetrieve : public NRQLBase
   {
   private:
-    std::vector<ABoxQueryExpr::shared_pointer> head;
+    std::vector<ABoxQueryObject::shared_pointer> head;
     std::vector<NRQLBody::shared_pointer> body;
 
     std::ostream&
@@ -130,7 +130,7 @@ namespace racer {
 
   public:
     void
-    addHead(ABoxQueryExpr::const_pointer e);
+    addHead(ABoxQueryObject::const_pointer e);
 
     void
     addBody(NRQLBody::const_pointer e);
@@ -142,7 +142,7 @@ namespace racer {
   {
   private:
     std::vector<ABoxAssertion::shared_pointer> premise;
-    std::vector<ABoxQueryExpr::shared_pointer> head;
+    std::vector<ABoxQueryObject::shared_pointer> head;
     std::vector<NRQLBody::shared_pointer> body;
 
     std::ostream&
@@ -153,7 +153,7 @@ namespace racer {
     addPremise(ABoxAssertion::const_pointer e);
 
     void
-    addHead(ABoxQueryExpr::const_pointer e);
+    addHead(ABoxQueryObject::const_pointer e);
 
     void
     addBody(NRQLBody::const_pointer e);

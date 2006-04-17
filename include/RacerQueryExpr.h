@@ -7,6 +7,7 @@
  * 
  * @brief  
  * 
+ * @todo this is so not documented
  * 
  */
 
@@ -53,12 +54,6 @@ namespace racer {
 
     ABoxQueryExpr() { }
 
-    std::ostream&
-    output(std::ostream& s) const
-    {
-      return s << symbol;
-    }
-   
   public:
     typedef ABoxQueryExpr value_type;
     typedef const value_type* const_pointer;
@@ -66,7 +61,23 @@ namespace racer {
   };
 
 
-  class ABoxQueryVariable : public ABoxQueryExpr
+
+  class ABoxQueryObject : public ABoxQueryExpr
+  {
+  protected:
+    explicit
+    ABoxQueryObject(const std::string& s) : ABoxQueryExpr(s) { }
+
+    ABoxQueryObject() {}
+
+  public:
+    typedef ABoxQueryObject value_type;
+    typedef const value_type* const_pointer;
+    typedef boost::shared_ptr<const value_type> shared_pointer;
+  };
+
+
+  class ABoxQueryVariable : public ABoxQueryObject
   {
   protected:
     std::ostream&
@@ -77,14 +88,15 @@ namespace racer {
     }
 
   public:
+    explicit
     ABoxQueryVariable(const std::string& name)
-      : ABoxQueryExpr(name)
+      : ABoxQueryObject(name)
     { }
   };
 
 
 
-  class ABoxQueryIndividual : public ABoxQueryExpr
+  class ABoxQueryIndividual : public ABoxQueryObject
   {
   protected:
     std::ostream&
@@ -95,14 +107,17 @@ namespace racer {
     }
 
   public:
+    explicit
     ABoxQueryIndividual(const std::string& name)
-      : ABoxQueryExpr(name)
+      : ABoxQueryObject(name)
     { }
 
     typedef ABoxQueryIndividual value_type;
     typedef const value_type* const_pointer;
     typedef boost::shared_ptr<const value_type> shared_pointer;
   };
+
+
 
 
   class ABoxQueryConcept : public ABoxQueryExpr
@@ -116,6 +131,7 @@ namespace racer {
     }
 
   public:
+    explicit
     ABoxQueryConcept(const std::string& name)
       : ABoxQueryExpr(name)
     { }
@@ -137,6 +153,7 @@ namespace racer {
     }
 
   public:
+    explicit
     ABoxQueryRole(const std::string& name)
       : ABoxQueryExpr(name)
     { }
@@ -145,6 +162,8 @@ namespace racer {
     typedef const value_type* const_pointer;
     typedef boost::shared_ptr<const value_type> shared_pointer;
   };
+
+
 
 
   class ABoxAssertion : public QueryExpr
@@ -244,7 +263,7 @@ namespace racer {
     std::ostream&
     output(std::ostream& s) const
     {
-      return s << "not (" << *atom << ")";
+      return s << "(not " << *atom << ")";
     }
 
   public:
@@ -262,7 +281,7 @@ namespace racer {
     std::ostream&
     output(std::ostream& s) const
     {
-      return s << "inv (" << *atom << ")";
+      return s << "(inv " << *atom << ")";
     }
 
   public:
@@ -276,18 +295,18 @@ namespace racer {
   {
   private:
     const ABoxQueryConcept::shared_pointer cExpr;
-    const ABoxQueryExpr::shared_pointer aExpr;
+    const ABoxQueryObject::shared_pointer aExpr;
 
   protected:
     std::ostream&
     output(std::ostream& s) const
     {
-      return s << *aExpr << " " << *cExpr;
+      return s << "(" << *aExpr << " " << *cExpr << ")";
     }
 
   public:
     ConceptQuery(ABoxQueryConcept::const_pointer c,
-		 ABoxQueryExpr::const_pointer a)
+		 ABoxQueryObject::const_pointer a)
       : cExpr(c), aExpr(a)
     { }
   };
@@ -298,24 +317,20 @@ namespace racer {
   {
   private:
     const ABoxQueryRole::shared_pointer rExpr;
-    const ABoxQueryExpr::shared_pointer a1Expr;
-    const ABoxQueryExpr::shared_pointer a2Expr;
+    const ABoxQueryObject::shared_pointer a1Expr;
+    const ABoxQueryObject::shared_pointer a2Expr;
 
   protected:
     std::ostream&
     output(std::ostream& s) const
     {
-      return s << *a1Expr
-	       << " "
-	       << *a2Expr
-	       << " "
-	       << *rExpr;
+      return s << "(" << *a1Expr << " " << *a2Expr << " "  << *rExpr << ")";
     }
 
   public:
     RoleQuery(ABoxQueryRole::const_pointer r,
-	      ABoxQueryExpr::const_pointer a1,
-	      ABoxQueryExpr::const_pointer a2)
+	      ABoxQueryObject::const_pointer a1,
+	      ABoxQueryObject::const_pointer a2)
       : rExpr(r), a1Expr(a1), a2Expr(a2)
     { }
   };

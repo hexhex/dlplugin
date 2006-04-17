@@ -72,7 +72,7 @@ NRQLQueryAtom::NRQLQueryAtom(ABoxQueryAtom::const_pointer a)
 std::ostream&
 NRQLQueryAtom::output(std::ostream& s) const
 {
-  return s << "(" << *atom << ")";
+  return s << *atom;
 }
 
 
@@ -88,7 +88,8 @@ NRQLConjunction::output(std::ostream& s) const
 void
 NRQLConjunction::addAtom(NRQLBody::const_pointer e)
 {
-  list.push_back(NRQLBody::shared_pointer(e));
+  NRQLBody::shared_pointer sp(e);
+  list.push_back(sp);
 }
 
 
@@ -103,7 +104,8 @@ NRQLUnion::output(std::ostream& s) const
 void
 NRQLUnion::addAtom(NRQLBody::const_pointer e)
 {
-  list.push_back(NRQLBody::shared_pointer(e));
+  NRQLBody::shared_pointer sp(e);
+  list.push_back(sp);
 }
 
 
@@ -119,15 +121,17 @@ NRQLRetrieve::output(std::ostream& s) const
 }
 
 void
-NRQLRetrieve::addHead(ABoxQueryExpr::const_pointer e)
+NRQLRetrieve::addHead(ABoxQueryObject::const_pointer e)
 {
-  head.push_back(ABoxQueryExpr::shared_pointer(e));
+  ABoxQueryObject::shared_pointer sp(e);
+  head.push_back(sp);
 }
 
 void
 NRQLRetrieve::addBody(NRQLBody::const_pointer e)
 {
-  body.push_back(NRQLBody::shared_pointer(e));
+  NRQLBody::shared_pointer sp(e);
+  body.push_back(sp);
 }
 
 
@@ -144,15 +148,17 @@ NRQLTBoxRetrieve::output(std::ostream& s) const
 }
 
 void
-NRQLTBoxRetrieve::addHead(ABoxQueryExpr::const_pointer e)
+NRQLTBoxRetrieve::addHead(ABoxQueryObject::const_pointer e)
 {
-  head.push_back(ABoxQueryExpr::shared_pointer(e));
+  ABoxQueryObject::shared_pointer sp(e);
+  head.push_back(sp);
 }
 
 void
 NRQLTBoxRetrieve::addBody(NRQLBody::const_pointer e)
 {
-  body.push_back(NRQLBody::shared_pointer(e));
+  NRQLBody::shared_pointer sp(e);
+  body.push_back(sp);
 }
 
 
@@ -173,17 +179,20 @@ NRQLRetrieveUnderPremise::output(std::ostream& s) const
 void
 NRQLRetrieveUnderPremise::addPremise(ABoxAssertion::const_pointer e)
 {
-  premise.push_back(ABoxAssertion::shared_pointer(e));
+  ABoxAssertion::shared_pointer sp(e);
+  premise.push_back(sp);
 }
 
 void
-NRQLRetrieveUnderPremise::addHead(ABoxQueryExpr::const_pointer e)
+NRQLRetrieveUnderPremise::addHead(ABoxQueryObject::const_pointer e)
 {
-  head.push_back(ABoxQueryExpr::shared_pointer(e));
+  ABoxQueryObject::shared_pointer sp(e);
+  head.push_back(sp);
 }
 
 void
 NRQLRetrieveUnderPremise::addBody(NRQLBody::const_pointer e)
 {
-  body.push_back(NRQLBody::shared_pointer(e));
+  NRQLBody::shared_pointer sp(e);
+  body.push_back(sp);
 }
