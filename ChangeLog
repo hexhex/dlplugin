@@ -1,0 +1,10 @@
+2006-04-18  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerNRQL.cpp: Add documentation.
+	Refine class hierarchy.
+	* include/RacerNRQL.h: Likewise.
+	
+	* include/RacerQueryExpr.h: Add documentation.
+	Refine class hierarchy.
+	Add support for namespace identifier and different types of variables.
+
