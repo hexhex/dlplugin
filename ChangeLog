@@ -1,5 +1,22 @@
 2006-04-18  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* include/RacerNRQL.h: Publish operator<< for std::vector of
+	boost::shared_ptr's.
+
+	* src/RacerQueryExpr.cpp: Move code of RacerQueryExpr.h here.
+	* include/RacerQueryExpr.h: Likewise.
+
+	* src/Makefile.am (libdlvhexracer_la_SOURCES): Add RacerQueryExpr.cpp.
+
+	* src/RacerQuery.cpp (Query::createBody, Query::createHead)
+	(Query::createPremise): Construct lists of the corresponding query
+	expressions.
+	* include/RacerQuery.h: Likewise.
+
+	* src/RacerBuilder.cpp (RacerStateBuilder::buildCommand): Use
+	Query::createPremise() for building the state command.
+	* include/RacerBuilder.h: Likewise.
+
 	* src/RacerNRQL.cpp: Add documentation.
 	Refine class hierarchy.
 	* include/RacerNRQL.h: Likewise.
