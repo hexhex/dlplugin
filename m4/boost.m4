@@ -37,7 +37,7 @@ dnl use it
 
   AC_LANG_SAVE
   AC_LANG_CPLUSPLUS
-  OLD_CXX_FLAGS=$CXXFLAGS
+  OLD_CXXFLAGS=$CXXFLAGS
   CXXFLAGS="$CXXFLAGS $BOOST_CXXFLAGS"
   AC_MSG_CHECKING([for the Boost C++ libraries, version $boost_min_version or newer])
   AC_TRY_COMPILE(
