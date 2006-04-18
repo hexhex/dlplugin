@@ -48,10 +48,7 @@ namespace racer {
    * @return the stream result of e.output().
    */
   std::ostream&
-  operator<< (std::ostream& s, const QueryExpr& e)
-  {
-    return e.output(s);
-  }
+  operator<< (std::ostream& s, const QueryExpr& e);
 
 
   /**
@@ -63,30 +60,8 @@ namespace racer {
     std::string symbol;		/**< symbol string */
     std::string nsid;		/**< namespace identifier */
 
-
-    
     virtual std::ostream&
-    output(std::ostream& s) const
-    {
-      if (symbol.find('#') == std::string::npos) // symbol doesn't contain '#'
-	{
-	  if (nsid.find('#') != std::string::npos) // nsid contains '#'
-	    {
-	      s << '|' << nsid << symbol << '|';
-	    }
-	  else			// nsid doesn't contain '#'
-	    {
-	      s << symbol;
-	    }
-	}
-      else // symbol contains '#'
-	{
-	  s << '|' << symbol << '|';
-	}
-
-      return s;
-    }
-
+    output(std::ostream& s) const;
 
     /** 
      * Ctor.
@@ -146,22 +121,7 @@ namespace racer {
 				   Variable */
 
     std::ostream&
-    output(std::ostream& s) const
-    {
-      if (typeFlags & VariableType::noninjective)
-	{
-	  s << '$';
-	}
-
-      s << '?';
-
-      if (typeFlags & VariableType::substrate)
-	{
-	  s << '*';
-	}
-
-      return s << symbol;
-    }
+    output(std::ostream& s) const;
 
    public:
     explicit
@@ -194,19 +154,19 @@ namespace racer {
 
 
   /**
-   * Base class for atomic and complex concepts and roles.
+   * Base class for atomic and complex concepts.
    */
-  class ABoxDescrExpr : public ABoxQueryExpr
+  class ABoxConceptDescrExpr : public ABoxQueryExpr
   {
   protected:
-    ABoxDescrExpr(const std::string& s, const std::string& n)
+    ABoxConceptDescrExpr(const std::string& s, const std::string& n)
       : ABoxQueryExpr(s, n)
     { }
 
-    ABoxDescrExpr() {}
+    ABoxConceptDescrExpr() {}
 
   public:
-    typedef ABoxDescrExpr value_type;
+    typedef ABoxConceptDescrExpr value_type;
     typedef const value_type* const_pointer;
     typedef boost::shared_ptr<const value_type> shared_pointer;
   };
@@ -217,16 +177,51 @@ namespace racer {
   /**
    * An atomic Concept expression.
    */
-  class ABoxQueryConcept : public ABoxDescrExpr
+  class ABoxQueryConcept : public ABoxConceptDescrExpr
   {
   public:
     explicit
     ABoxQueryConcept(const std::string& name,
 		     const std::string& nsid = std::string())
-      : ABoxDescrExpr(name, nsid)
+      : ABoxConceptDescrExpr(name, nsid)
+    { }
+  };
+
+
+  /**
+   * A negated concept expression.
+   */
+  class ABoxNegatedConcept : public ABoxConceptDescrExpr
+  {
+  private:
+    ABoxQueryConcept::shared_pointer cExpr;
+
+    std::ostream&
+    output(std::ostream& s) const;
+
+  public:
+    explicit
+    ABoxNegatedConcept(ABoxQueryConcept::const_pointer c)
+      : cExpr(c)
+    { }
+  };
+
+
+
+  /**
+   * Base class for atomic and complex roles.
+   */
+  class ABoxRoleDescrExpr : public ABoxQueryExpr
+  {
+  protected:
+    ABoxRoleDescrExpr(const std::string& s, const std::string& n)
+      : ABoxQueryExpr(s, n)
     { }
 
-    typedef ABoxQueryConcept value_type;
+    ABoxRoleDescrExpr() {}
+
+  public:
+    typedef ABoxRoleDescrExpr value_type;
     typedef const value_type* const_pointer;
     typedef boost::shared_ptr<const value_type> shared_pointer;
   };
@@ -235,18 +230,14 @@ namespace racer {
   /**
    * An atomic Role expression.
    */
-  class ABoxQueryRole : public ABoxDescrExpr
+  class ABoxQueryRole : public ABoxRoleDescrExpr
   {
   public:
     explicit
     ABoxQueryRole(const std::string& name,
 		  const std::string& nsid = std::string())
-      : ABoxDescrExpr(name, nsid)
+      : ABoxRoleDescrExpr(name, nsid)
     { }
-
-    typedef ABoxQueryRole value_type;
-    typedef const value_type* const_pointer;
-    typedef boost::shared_ptr<const value_type> shared_pointer;
   };
 
 
@@ -273,22 +264,15 @@ namespace racer {
   class ABoxInstance : public ABoxAssertion
   {
   private:
-    const ABoxQueryConcept::shared_pointer cExpr;
+    const ABoxConceptDescrExpr::shared_pointer cExpr;
     const ABoxQueryIndividual::shared_pointer iExpr;
 
   protected:
     std::ostream&
-    output(std::ostream& s) const
-    {
-      return s << "(instance "
-	       << *cExpr
-	       << " "
-	       << *iExpr
-	       << ")";
-    }
+    output(std::ostream& s) const;
 
   public:
-    ABoxInstance(ABoxQueryConcept::const_pointer c,
+    ABoxInstance(ABoxConceptDescrExpr::const_pointer c,
 		 ABoxQueryIndividual::const_pointer i)
       : cExpr(c), iExpr(i)
     {}
@@ -305,25 +289,16 @@ namespace racer {
   class ABoxRelated : public ABoxAssertion
   {
   private:
-    const ABoxQueryRole::shared_pointer rExpr;
+    const ABoxRoleDescrExpr::shared_pointer rExpr;
     const ABoxQueryIndividual::shared_pointer i1Expr;
     const ABoxQueryIndividual::shared_pointer i2Expr;
 
   protected:
     std::ostream&
-    output(std::ostream& s) const
-    {
-      return s << "(related "
-	       << *i1Expr
-	       << " "
-	       << *i2Expr
-	       << " "
-	       << *rExpr
-	       << ")";
-    }
+    output(std::ostream& s) const;
 
   public:
-    ABoxRelated(ABoxQueryRole::const_pointer r,
+    ABoxRelated(ABoxRoleDescrExpr::const_pointer r,
 		ABoxQueryIndividual::const_pointer i1,
 		ABoxQueryIndividual::const_pointer i2)
       : rExpr(r), i1Expr(i1), i2Expr(i2)
@@ -357,10 +332,7 @@ namespace racer {
 
   protected:
     std::ostream&
-    output(std::ostream& s) const
-    {
-      return s << "(not " << *atom << ")";
-    }
+    output(std::ostream& s) const;
 
   public:
     explicit
@@ -378,10 +350,7 @@ namespace racer {
 
   protected:
     std::ostream&
-    output(std::ostream& s) const
-    {
-      return s << "(inv " << *atom << ")";
-    }
+    output(std::ostream& s) const;
 
   public:
     explicit
@@ -400,10 +369,7 @@ namespace racer {
 
   protected:
     std::ostream&
-    output(std::ostream& s) const
-    {
-      return s << "(" << *oExpr << " " << *cExpr << ")";
-    }
+    output(std::ostream& s) const;
 
   public:
     ConceptQuery(ABoxQueryConcept::const_pointer c,
@@ -425,10 +391,7 @@ namespace racer {
 
   protected:
     std::ostream&
-    output(std::ostream& s) const
-    {
-      return s << "(" << *o1Expr << " " << *o2Expr << " "  << *rExpr << ")";
-    }
+    output(std::ostream& s) const;
 
   public:
     RoleQuery(ABoxQueryRole::const_pointer r,
