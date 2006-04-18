@@ -11,6 +11,8 @@
  */
 
 #include "RacerQuery.h"
+#include "RacerNRQL.h"
+#include "RacerQueryExpr.h"
 
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Atom.h>
@@ -207,6 +209,110 @@ Query::isSuperseteq(const Query& q2) const
   const Query& q1 = *this;
   return q2.isSubseteq(q1);
 }
+
+
+
+
+const std::vector<NRQLBody::shared_pointer>*
+Query::createBody() const
+{
+  return new std::vector<NRQLBody::shared_pointer>;
+}
+
+
+const std::vector<ABoxQueryObject::shared_pointer>*
+Query::createHead() const
+{
+  std::vector<ABoxQueryObject::shared_pointer>* v = new std::vector<ABoxQueryObject::shared_pointer>;
+
+  for (Tuple::const_iterator it = getPatternTuple().begin();
+       it != getPatternTuple().end();
+       ++it)
+    {
+      if (it->isVariable())
+	{
+	  ABoxQueryVariable::shared_pointer sp
+	    (new ABoxQueryVariable(it->getVariable()));
+
+	  v->push_back(sp);
+	}
+      else
+	{
+	  ABoxQueryIndividual::shared_pointer sp
+	    (new ABoxQueryIndividual(it->getUnquotedString()));
+
+	  v->push_back(sp);
+	}
+    }
+
+  return v;
+}
+
+const std::vector<ABoxAssertion::shared_pointer>*
+Query::createPremise() const
+{
+  std::vector<ABoxAssertion::shared_pointer>* v = new std::vector<ABoxAssertion::shared_pointer>;
+
+  for (AtomSet::const_iterator it = getInterpretation().begin();
+       it != getInterpretation().end(); it++)
+    {
+      const Atom& a = *it;
+      const Term pred = a.getArgument(0);
+
+      if (pred == getPlusC()) // plusC
+	{
+	  ABoxInstance::shared_pointer sp
+	    (new ABoxInstance
+	     (new ABoxQueryConcept
+	      (a.getArgument(1).getUnquotedString(), getNamespace()),
+	      new ABoxQueryIndividual
+	      (a.getArgument(2).getUnquotedString(), getNamespace())
+	      )
+	     );
+
+	  v->push_back(sp);
+	}
+      else if (pred == getMinusC()) // minusC
+	{
+	  ABoxInstance::shared_pointer sp
+	    (new ABoxInstance
+	     (new ABoxNegatedConcept
+	      (new ABoxQueryConcept
+	       (a.getArgument(1).getUnquotedString(), getNamespace())),
+	      new ABoxQueryIndividual
+	      (a.getArgument(2).getUnquotedString(), getNamespace())
+	      )
+	     );
+
+	  v->push_back(sp);
+	}
+      else if (pred == getPlusR()) // plusR
+	{
+	  ABoxRelated::shared_pointer sp
+	    (new ABoxRelated
+	     (new ABoxQueryRole
+	      (a.getArgument(1).getUnquotedString(), getNamespace()),
+	      new ABoxQueryIndividual
+	      (a.getArgument(2).getUnquotedString(), getNamespace()),
+	      new ABoxQueryIndividual
+	      (a.getArgument(3).getUnquotedString(), getNamespace())
+	      )
+	     );
+	  v->push_back(sp);
+	}
+      else if (pred == getMinusR()) // minusR
+	{
+	  // dunno
+	}
+      else
+	{
+	  // just ignore unknown stuff...
+	}
+    }
+
+  return v;
+}
+
 
 
 

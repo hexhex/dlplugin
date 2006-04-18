@@ -13,6 +13,9 @@
 #ifndef _RACERQUERY_H
 #define _RACERQUERY_H
 
+#include "RacerNRQL.h"
+#include "RacerQueryExpr.h"
+
 #include <string>
 #include <functional>
 #include <vector>
@@ -145,6 +148,17 @@ namespace racer {
     ///interpretation, false otherwise
     virtual bool
     isSuperseteq(const Query& q2) const;
+
+
+    virtual const std::vector<NRQLBody::shared_pointer>*
+    createBody() const;
+
+    virtual const std::vector<ABoxQueryObject::shared_pointer>*
+    createHead() const;
+
+    virtual const std::vector<ABoxAssertion::shared_pointer>*
+    createPremise() const;
+
 
     friend std::ostream&
     operator<< (std::ostream&, const Query&);
