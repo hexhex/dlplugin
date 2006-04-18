@@ -5,9 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Sat Apr 15 16:02:08 2006
  * 
- * @brief  
- * 
- * @todo this is so not documented
+ * @brief  Class hierarchy for basic query expressions.
  * 
  */
 
@@ -25,6 +23,10 @@ namespace dlvhex {
 namespace racer {
 
 
+  /**
+   * Base class for all the basic query expressions. Resembles the
+   * interpreter pattern.
+   */
   class QueryExpr
   {
   protected:
@@ -37,20 +39,64 @@ namespace racer {
   };
 
 
+  /** 
+   * Calls e.output().
+   * 
+   * @param s 
+   * @param e
+   * 
+   * @return the stream result of e.output().
+   */
   std::ostream&
-  operator<< (std::ostream& s, const QueryExpr& a)
+  operator<< (std::ostream& s, const QueryExpr& e)
   {
-    return a.output(s);
+    return e.output(s);
   }
 
 
+  /**
+   * Base class for simple expressions used in ABox Queries.
+   */
   class ABoxQueryExpr : public QueryExpr
   {
   protected:
-    std::string symbol;
+    std::string symbol;		/**< symbol string */
+    std::string nsid;		/**< namespace identifier */
 
-    explicit
-    ABoxQueryExpr(const std::string& s) : symbol(s) { }
+
+    
+    virtual std::ostream&
+    output(std::ostream& s) const
+    {
+      if (symbol.find('#') == std::string::npos) // symbol doesn't contain '#'
+	{
+	  if (nsid.find('#') != std::string::npos) // nsid contains '#'
+	    {
+	      s << '|' << nsid << symbol << '|';
+	    }
+	  else			// nsid doesn't contain '#'
+	    {
+	      s << symbol;
+	    }
+	}
+      else // symbol contains '#'
+	{
+	  s << '|' << symbol << '|';
+	}
+
+      return s;
+    }
+
+
+    /** 
+     * Ctor.
+     * 
+     * @param s symbol string
+     * @param n namespace identifier
+     */
+    ABoxQueryExpr(const std::string& s, const std::string& n)
+      : symbol(s), nsid(n)
+    { }
 
     ABoxQueryExpr() { }
 
@@ -61,12 +107,16 @@ namespace racer {
   };
 
 
-
+  /**
+   * Base class for ABox Query objects, i.e. individuals and
+   * variables.
+   */
   class ABoxQueryObject : public ABoxQueryExpr
   {
   protected:
-    explicit
-    ABoxQueryObject(const std::string& s) : ABoxQueryExpr(s) { }
+    ABoxQueryObject(const std::string& s, const std::string& n)
+      : ABoxQueryExpr(s, n)
+    { }
 
     ABoxQueryObject() {}
 
@@ -77,39 +127,63 @@ namespace racer {
   };
 
 
+  /**
+   * An ABox query variable with 4 different kinds of types: injective
+   * (?x), non-injective ($?x), substrate (?*x) and
+   * non-injective/substrate ($?*x)
+   */
   class ABoxQueryVariable : public ABoxQueryObject
   {
+   public:
+    struct VariableType
+      {
+	static const unsigned noninjective = 0x1;
+	static const unsigned substrate = 0x2;
+      };
+
   protected:
+    unsigned typeFlags;		/**< the type of this Query
+				   Variable */
+
     std::ostream&
     output(std::ostream& s) const
     {
-      ///@todo checkout variable type
-      return s << "$?" << symbol;
+      if (typeFlags & VariableType::noninjective)
+	{
+	  s << '$';
+	}
+
+      s << '?';
+
+      if (typeFlags & VariableType::substrate)
+	{
+	  s << '*';
+	}
+
+      return s << symbol;
     }
 
-  public:
+   public:
     explicit
-    ABoxQueryVariable(const std::string& name)
-      : ABoxQueryObject(name)
+    ABoxQueryVariable(const std::string& name, unsigned tf = 0)
+      : ABoxQueryObject(name, std::string()), typeFlags(tf)
     { }
   };
 
 
 
+
+
+  /**
+   * A simple ABox individual expression.
+   */
   class ABoxQueryIndividual : public ABoxQueryObject
   {
-  protected:
-    std::ostream&
-    output(std::ostream& s) const
-    {
-      ///@todo nsid
-      return s << symbol;
-    }
-
   public:
     explicit
-    ABoxQueryIndividual(const std::string& name)
-      : ABoxQueryObject(name)
+    ABoxQueryIndividual(const std::string& name,
+			const std::string& nsid = std::string())
+      : ABoxQueryObject(name, nsid)
     { }
 
     typedef ABoxQueryIndividual value_type;
@@ -119,21 +193,37 @@ namespace racer {
 
 
 
-
-  class ABoxQueryConcept : public ABoxQueryExpr
+  /**
+   * Base class for atomic and complex concepts and roles.
+   */
+  class ABoxDescrExpr : public ABoxQueryExpr
   {
   protected:
-    std::ostream&
-    output(std::ostream& s) const
-    {
-      ///@todo nsid
-      return s << symbol;
-    }
+    ABoxDescrExpr(const std::string& s, const std::string& n)
+      : ABoxQueryExpr(s, n)
+    { }
+
+    ABoxDescrExpr() {}
 
   public:
+    typedef ABoxDescrExpr value_type;
+    typedef const value_type* const_pointer;
+    typedef boost::shared_ptr<const value_type> shared_pointer;
+  };
+
+
+
+
+  /**
+   * An atomic Concept expression.
+   */
+  class ABoxQueryConcept : public ABoxDescrExpr
+  {
+  public:
     explicit
-    ABoxQueryConcept(const std::string& name)
-      : ABoxQueryExpr(name)
+    ABoxQueryConcept(const std::string& name,
+		     const std::string& nsid = std::string())
+      : ABoxDescrExpr(name, nsid)
     { }
 
     typedef ABoxQueryConcept value_type;
@@ -142,20 +232,16 @@ namespace racer {
   };
 
 
-  class ABoxQueryRole : public ABoxQueryExpr
+  /**
+   * An atomic Role expression.
+   */
+  class ABoxQueryRole : public ABoxDescrExpr
   {
-  protected:
-    std::ostream&
-    output(std::ostream& s) const
-    {
-      ///@todo nsid
-      return s << symbol;
-    }
-
   public:
     explicit
-    ABoxQueryRole(const std::string& name)
-      : ABoxQueryExpr(name)
+    ABoxQueryRole(const std::string& name,
+		  const std::string& nsid = std::string())
+      : ABoxDescrExpr(name, nsid)
     { }
 
     typedef ABoxQueryRole value_type;
@@ -166,6 +252,9 @@ namespace racer {
 
 
 
+  /**
+   * Base class for ABox assertions.
+   */
   class ABoxAssertion : public QueryExpr
   {
   protected:
@@ -178,11 +267,14 @@ namespace racer {
   };
 
 
+  /**
+   * instance assertion.
+   */
   class ABoxInstance : public ABoxAssertion
   {
   private:
     const ABoxQueryConcept::shared_pointer cExpr;
-    const ABoxQueryIndividual::shared_pointer aExpr;
+    const ABoxQueryIndividual::shared_pointer iExpr;
 
   protected:
     std::ostream&
@@ -191,14 +283,14 @@ namespace racer {
       return s << "(instance "
 	       << *cExpr
 	       << " "
-	       << *aExpr
+	       << *iExpr
 	       << ")";
     }
 
   public:
     ABoxInstance(ABoxQueryConcept::const_pointer c,
-		 ABoxQueryIndividual::const_pointer a)
-      : cExpr(c), aExpr(a)
+		 ABoxQueryIndividual::const_pointer i)
+      : cExpr(c), iExpr(i)
     {}
 
     typedef ABoxInstance value_type;
@@ -207,24 +299,24 @@ namespace racer {
   };
 
 
-
-
-
+  /**
+   * related assertion.
+   */
   class ABoxRelated : public ABoxAssertion
   {
   private:
     const ABoxQueryRole::shared_pointer rExpr;
-    const ABoxQueryIndividual::shared_pointer a1Expr;
-    const ABoxQueryIndividual::shared_pointer a2Expr;
+    const ABoxQueryIndividual::shared_pointer i1Expr;
+    const ABoxQueryIndividual::shared_pointer i2Expr;
 
   protected:
     std::ostream&
     output(std::ostream& s) const
     {
       return s << "(related "
-	       << *a1Expr
+	       << *i1Expr
 	       << " "
-	       << *a2Expr
+	       << *i2Expr
 	       << " "
 	       << *rExpr
 	       << ")";
@@ -232,15 +324,16 @@ namespace racer {
 
   public:
     ABoxRelated(ABoxQueryRole::const_pointer r,
-		ABoxQueryIndividual::const_pointer a1,
-		ABoxQueryIndividual::const_pointer a2)
-      : rExpr(r), a1Expr(a1), a2Expr(a2)
+		ABoxQueryIndividual::const_pointer i1,
+		ABoxQueryIndividual::const_pointer i2)
+      : rExpr(r), i1Expr(i1), i2Expr(i2)
     {}
   };
 
 
-
-
+  /**
+   * Base class for simple and complex query expressions.
+   */
   class ABoxQueryAtom : public QueryExpr
   {
   protected:
@@ -254,6 +347,9 @@ namespace racer {
 
 
 
+  /**
+   * A negated query expression.
+   */
   class NegationQuery : public ABoxQueryAtom
   {
   private:
@@ -272,6 +368,9 @@ namespace racer {
   };
 
 
+  /**
+   * An inverted query expression.
+   */
   class InvertedQuery : public ABoxQueryAtom
   {
   private:
@@ -290,48 +389,52 @@ namespace racer {
   };
 
 
-
+  /**
+   * A concept query atom.
+   */
   class ConceptQuery : public ABoxQueryAtom
   {
   private:
     const ABoxQueryConcept::shared_pointer cExpr;
-    const ABoxQueryObject::shared_pointer aExpr;
+    const ABoxQueryObject::shared_pointer oExpr;
 
   protected:
     std::ostream&
     output(std::ostream& s) const
     {
-      return s << "(" << *aExpr << " " << *cExpr << ")";
+      return s << "(" << *oExpr << " " << *cExpr << ")";
     }
 
   public:
     ConceptQuery(ABoxQueryConcept::const_pointer c,
-		 ABoxQueryObject::const_pointer a)
-      : cExpr(c), aExpr(a)
+		 ABoxQueryObject::const_pointer o)
+      : cExpr(c), oExpr(o)
     { }
   };
 
 
-
+  /**
+   * A role query atom.
+   */
   class RoleQuery : public ABoxQueryAtom
   {
   private:
     const ABoxQueryRole::shared_pointer rExpr;
-    const ABoxQueryObject::shared_pointer a1Expr;
-    const ABoxQueryObject::shared_pointer a2Expr;
+    const ABoxQueryObject::shared_pointer o1Expr;
+    const ABoxQueryObject::shared_pointer o2Expr;
 
   protected:
     std::ostream&
     output(std::ostream& s) const
     {
-      return s << "(" << *a1Expr << " " << *a2Expr << " "  << *rExpr << ")";
+      return s << "(" << *o1Expr << " " << *o2Expr << " "  << *rExpr << ")";
     }
 
   public:
     RoleQuery(ABoxQueryRole::const_pointer r,
-	      ABoxQueryObject::const_pointer a1,
-	      ABoxQueryObject::const_pointer a2)
-      : rExpr(r), a1Expr(a1), a2Expr(a2)
+	      ABoxQueryObject::const_pointer o1,
+	      ABoxQueryObject::const_pointer o2)
+      : rExpr(r), o1Expr(o1), o2Expr(o2)
     { }
   };
 
