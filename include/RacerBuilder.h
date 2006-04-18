@@ -98,56 +98,6 @@ namespace racer {
    */
   class RacerStateBuilder : public RacerBuilder
   {
-  protected:
-    /**
-     * sends an instance command using atom and query to build the
-     * individual and concept.
-     *
-     * @param query
-     * @param atom
-     *
-     * @see instance macro in RacerPro Reference Manual
-     */
-    virtual void
-    buildPosInstance(const Query& query, const Atom& atom);
-
-    /**
-     * sends an instance command using atom and query to build the
-     * individual and negated concept.
-     *
-     * @param query
-     * @param atom
-     *
-     * @see instance macro in RacerPro Reference Manual
-     */
-    virtual void
-    buildNegInstance(const Query& query, const Atom& atom);
-
-    /**
-     * sends a related command using atom and query to build the
-     * individual and role.
-     *
-     * @param query
-     * @param atom
-     *
-     * @see related macro in RacerPro Reference Manual
-     */
-    virtual void
-    buildPosRelated(const Query& query, const Atom& atom);
-
-    /**
-     * sends a related command using atom and query to build the
-     * individual and role.
-     *
-     * @param query
-     * @param atom
-     *
-     * @todo not implemented yet
-     * @see related macro in RacerPro Reference Manual
-     */
-    virtual void
-    buildNegRelated(const Query& query, const Atom& atom);
-
   public:
     explicit
     RacerStateBuilder(std::ostream&);

@@ -54,74 +54,6 @@ RacerStateBuilder::RacerStateBuilder(std::ostream& s)
 RacerStateBuilder::~RacerStateBuilder()
 { }
 
-void
-RacerStateBuilder::buildPosInstance(const Query& query, const Atom& atom)
-{
-  if (atom.getArity() != 3)
-    {
-      throw RacerBuildingError("buildPosInstance: Atom has wrong arity.");
-    }
-
-  stream << "(instance "
-	 << createName(query, atom.getArgument(2).getUnquotedString())
-	 << " "
-	 << createName(query, atom.getArgument(1).getUnquotedString())
-	 << ")";
-}
-
-void
-RacerStateBuilder::buildNegInstance(const Query& query, const Atom& atom)
-{
-  if (atom.getArity() != 3)
-    {
-      throw RacerBuildingError("buildNegInstance: Atom has wrong arity.");
-    }
-
-  stream << "(instance "
-	 << createName(query, atom.getArgument(2).getUnquotedString())
-	 << " (not "
-	 << createName(query, atom.getArgument(1).getUnquotedString())
-	 << "))";
-}
-
-void
-RacerStateBuilder::buildPosRelated(const Query& query, const Atom& atom)
-{
-  if (atom.getArity() != 4)
-    {
-      throw RacerBuildingError("buildPosRelated: Atom has wrong arity.");
-    }
-
-  stream << "(related "
-	 << createName(query, atom.getArgument(2).getUnquotedString())
-	 << " "
-	 << createName(query, atom.getArgument(3).getUnquotedString())
-	 << " "
-	 << createName(query, atom.getArgument(1).getUnquotedString())
-	 << ")";
-}
-
-//@todo how does negated roles work?
-void
-RacerStateBuilder::buildNegRelated(const Query&, const Atom&)
-{
-//   if (atom.getArity() != 4)
-//     {
-//       throw RacerBuildingError("Atom has wrong arity.");
-//     }
-
-//   stream << "(related |"
-// 	 << nspace
-// 	 << atom.getArgument(2).getUnquotedString()
-// 	 << "| |"
-// 	 << nspace
-// 	 << atom.getArgument(3).getUnquotedString()
-// 	 << "| (not |"
-// 	 << nspace
-// 	 << atom.getArgument(1).getUnquotedString()
-// 	 << "|))";
-}
-
 
 void
 RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
@@ -138,37 +70,11 @@ RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 
   try
     {
-      stream << "(state ";
-      
-      for (AtomSet::const_iterator it = ints.begin();
-	   it != ints.end(); it++)
-	{
-	  const Atom& a = *it;
-	  const Term pred = a.getArgument(0);
-	  
-	  if (pred == query.getPlusC()) // plusC
-	    {
-	      buildPosInstance(query, a);
-	    }
-	  else if (pred == query.getMinusC()) // minusC
-	    {
-	      buildNegInstance(query, a);
-	    }
-	  else if (pred == query.getPlusR()) // plusR
-	    {
-	      buildPosRelated(query, a);
-	    }
-	  else if (pred == query.getMinusR()) // minusR
-	    {
-	      buildNegRelated(query, a);
-	    }
-	  else
-	    {
-	      // just ignore unknown stuff...
-	    }
-	}
+      const std::vector<ABoxAssertion::shared_pointer>* v = query.createPremise();
 
-      stream << ")" << std::endl;
+      stream << "(state " << *v << ")" << std::endl;
+
+      delete v;
     }
   catch (std::exception& e)
     {
