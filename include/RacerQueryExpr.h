@@ -34,6 +34,9 @@ namespace racer {
     output(std::ostream&) const = 0;
 
   public:
+    virtual
+    ~QueryExpr() {}
+
     friend std::ostream&
     operator<< (std::ostream&, const QueryExpr&);
   };
