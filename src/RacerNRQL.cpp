@@ -5,9 +5,8 @@
  * @author Thomas Krennwallner
  * @date   Thu Apr 13 12:11:21 2006
  * 
- * @brief  
+ * @brief  Class hierarchy for nRQL query expressions.
  * 
- * @todo this is so not documented
  */
 
 #include "RacerNRQL.h"
@@ -24,15 +23,33 @@ using namespace dlvhex::racer;
 namespace dlvhex {
 namespace racer {
 
+  /** 
+   * Calls b.output().
+   * 
+   * @param s 
+   * @param b 
+   * 
+   * @return the stream result of b.output().
+   */
   std::ostream&
   operator<< (std::ostream& s, const NRQLBase& b)
   {
     return b.output(s);
   }
 
-  
+
+  /**
+   * Dereferences a boost::shared_ptr.
+   */
   struct Dereference
   {
+    /** 
+     * Returns a reference to the object contained in ptr.
+     *
+     * @param ptr
+     * 
+     * @return ptr.operator*()
+     */
     template<typename T>
     T&
     operator() (const boost::shared_ptr<T>& ptr) const
@@ -41,6 +58,15 @@ namespace racer {
     }
   };
 
+
+  /** 
+   * Calls operator<< on every element of v, seperated by a blank.
+   * 
+   * @param s 
+   * @param v a vector of boost::shared_ptr<T>
+   * 
+   * @return s
+   */
   template<typename T>
   std::ostream&
   operator<< (std::ostream& s,
@@ -110,6 +136,23 @@ NRQLUnion::addAtom(NRQLBody::const_pointer e)
 
 
 
+
+void
+NRQLQuery::addHead(ABoxQueryObject::const_pointer e)
+{
+  ABoxQueryObject::shared_pointer sp(e);
+  head.push_back(sp);
+}
+
+void
+NRQLQuery::addBody(NRQLBody::const_pointer e)
+{
+  NRQLBody::shared_pointer sp(e);
+  body.push_back(sp);
+}
+
+
+
 std::ostream&
 NRQLRetrieve::output(std::ostream& s) const
 {
@@ -119,21 +162,6 @@ NRQLRetrieve::output(std::ostream& s) const
 	   << body
 	   << ")";
 }
-
-void
-NRQLRetrieve::addHead(ABoxQueryObject::const_pointer e)
-{
-  ABoxQueryObject::shared_pointer sp(e);
-  head.push_back(sp);
-}
-
-void
-NRQLRetrieve::addBody(NRQLBody::const_pointer e)
-{
-  NRQLBody::shared_pointer sp(e);
-  body.push_back(sp);
-}
-
 
 
 
@@ -146,22 +174,6 @@ NRQLTBoxRetrieve::output(std::ostream& s) const
 	   << body
 	   << ")";
 }
-
-void
-NRQLTBoxRetrieve::addHead(ABoxQueryObject::const_pointer e)
-{
-  ABoxQueryObject::shared_pointer sp(e);
-  head.push_back(sp);
-}
-
-void
-NRQLTBoxRetrieve::addBody(NRQLBody::const_pointer e)
-{
-  NRQLBody::shared_pointer sp(e);
-  body.push_back(sp);
-}
-
-
 
 
 std::ostream&
@@ -181,18 +193,4 @@ NRQLRetrieveUnderPremise::addPremise(ABoxAssertion::const_pointer e)
 {
   ABoxAssertion::shared_pointer sp(e);
   premise.push_back(sp);
-}
-
-void
-NRQLRetrieveUnderPremise::addHead(ABoxQueryObject::const_pointer e)
-{
-  ABoxQueryObject::shared_pointer sp(e);
-  head.push_back(sp);
-}
-
-void
-NRQLRetrieveUnderPremise::addBody(NRQLBody::const_pointer e)
-{
-  NRQLBody::shared_pointer sp(e);
-  body.push_back(sp);
 }

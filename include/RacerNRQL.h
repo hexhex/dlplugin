@@ -5,8 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Thu Apr 13 11:24:32 2006
  * 
- * @brief  
- * 
+ * @brief  Class hierarchy for nRQL query expressions.
  * 
  */
 
@@ -23,9 +22,15 @@
 namespace dlvhex {
 namespace racer {
 
+
+
+  /**
+   * Base class for nRQL query expressions. Resembles interpreter
+   * pattern.
+   */
   class NRQLBase
   {
-  protected:
+  private:
     virtual std::ostream&
     output(std::ostream&) const = 0;
 
@@ -37,10 +42,23 @@ namespace racer {
     operator<< (std::ostream&, const NRQLBase&);
   };
 
+
+  /** 
+   * Calls b.output().
+   * 
+   * @param s 
+   * @param b 
+   * 
+   * @return the stream result of b.output().
+   */
   std::ostream&
   operator<< (std::ostream& s, const NRQLBase& b);
 
 
+
+  /**
+   * Base class for nRQL body expressions.
+   */
   class NRQLBody : public NRQLBase
   {
   protected:
@@ -53,7 +71,9 @@ namespace racer {
   };
 
 
-
+  /**
+   * A nRQL query atom.
+   */
   class NRQLQueryAtom : public NRQLBody
   {
   private:
@@ -69,6 +89,9 @@ namespace racer {
 
 
 
+  /**
+   * A nRQL conjunctive expression.
+   */
   class NRQLConjunction : public NRQLBody
   {
   private:
@@ -84,6 +107,9 @@ namespace racer {
 
 
 
+  /**
+   * A nRQL union expression.
+   */
   class NRQLUnion : public NRQLBody
   {
   private:
@@ -93,21 +119,21 @@ namespace racer {
     output(std::ostream& s) const;
 
   public:
-    virtual void
+    void
     addAtom(NRQLBody::const_pointer e);
   };
 
 
-
-
-  class NRQLRetrieve : public NRQLBase
+  /**
+   * Base class for the nRQL queries.
+   */
+  class NRQLQuery : public NRQLBase
   {
-  private:
-    std::vector<ABoxQueryObject::shared_pointer> head;
-    std::vector<NRQLBody::shared_pointer> body;
+  protected:
+    std::vector<ABoxQueryObject::shared_pointer> head; /**< query head */
+    std::vector<NRQLBody::shared_pointer> body;	/**< query body */
 
-    std::ostream&
-    output(std::ostream& s) const;
+    NRQLQuery() {}
 
   public:
     void
@@ -115,35 +141,42 @@ namespace racer {
 
     void
     addBody(NRQLBody::const_pointer e);
+
+    typedef NRQLQuery value_type;
+    typedef const value_type* const_pointer;
+    typedef boost::shared_ptr<const value_type> shared_pointer;
   };
 
 
-
-  class NRQLTBoxRetrieve : public NRQLBase
+  /**
+   * A retrieve query.
+   */
+  class NRQLRetrieve : public NRQLQuery
   {
   private:
-    std::vector<ABoxQueryObject::shared_pointer> head;
-    std::vector<NRQLBody::shared_pointer> body;
-
     std::ostream&
     output(std::ostream& s) const;
-
-  public:
-    void
-    addHead(ABoxQueryObject::const_pointer e);
-
-    void
-    addBody(NRQLBody::const_pointer e);
   };
 
 
-
-  class NRQLRetrieveUnderPremise : public NRQLBase
+  /**
+   * A tbox-retrieve query.
+   */
+  class NRQLTBoxRetrieve : public NRQLQuery
   {
   private:
-    std::vector<ABoxAssertion::shared_pointer> premise;
-    std::vector<ABoxQueryObject::shared_pointer> head;
-    std::vector<NRQLBody::shared_pointer> body;
+    std::ostream&
+    output(std::ostream& s) const;
+  };
+
+
+  /**
+   * A retrieve-under-premise query.
+   */
+  class NRQLRetrieveUnderPremise : public NRQLQuery
+  {
+  private:
+    std::vector<ABoxAssertion::shared_pointer> premise;	/**< query premise */
 
     std::ostream&
     output(std::ostream& s) const;
@@ -151,12 +184,6 @@ namespace racer {
   public:
     void
     addPremise(ABoxAssertion::const_pointer e);
-
-    void
-    addHead(ABoxQueryObject::const_pointer e);
-
-    void
-    addBody(NRQLBody::const_pointer e);
   };
 
 
