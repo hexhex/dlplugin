@@ -46,15 +46,6 @@ namespace racer {
     virtual
     ~RacerBuilder();
 
-    /**
-     * Get a proper symbolname to build the RACER query.
-     * @param query the query object
-     * @param name symbol name
-     * @return the symbolname for RACER
-     */
-    virtual std::string
-    createName(const Query& query, const std::string& name) const;
-
   public:
     /**
      * Building method implemented by the children of RacerBuilder.
@@ -75,10 +66,6 @@ namespace racer {
     explicit
     RacerNullBuilder(std::ostream& s)
       : RacerBuilder(s)
-    { }
-
-    virtual
-    ~RacerNullBuilder()
     { }
 
     /**
@@ -102,9 +89,6 @@ namespace racer {
     explicit
     RacerStateBuilder(std::ostream&);
 
-    virtual
-    ~RacerStateBuilder();
-
     /**
      * Calls various building methods in order to generate a state command.
      *
@@ -126,9 +110,6 @@ namespace racer {
   public:
     explicit
     RacerIsConceptMemberBuilder(std::ostream&);
-
-    virtual
-    ~RacerIsConceptMemberBuilder();
 
     /**
      * Generate a individual-instance? command.
@@ -152,9 +133,6 @@ namespace racer {
     explicit
     RacerIsRoleMemberBuilder(std::ostream&);
 
-    virtual
-    ~RacerIsRoleMemberBuilder();
-
     /**
      * Generate a individuals-related? command.
      *
@@ -176,9 +154,6 @@ namespace racer {
     explicit
     RacerConceptInstancesBuilder(std::ostream&);
 
-    virtual
-    ~RacerConceptInstancesBuilder();
-
     virtual void
     buildCommand(Query& q) throw (RacerBuildingError);
   };
@@ -195,9 +170,6 @@ namespace racer {
     explicit
     RacerRoleIndividualsBuilder(std::ostream&);
 
-    virtual
-    ~RacerRoleIndividualsBuilder();
-
     virtual void
     buildCommand(Query& q) throw (RacerBuildingError);
   };
@@ -213,9 +185,6 @@ namespace racer {
   public:
     explicit
     RacerIndividualFillersBuilder(std::ostream&);
-
-    virtual
-    ~RacerIndividualFillersBuilder();
 
     virtual void
     buildCommand(Query& q) throw (RacerBuildingError);
@@ -235,9 +204,6 @@ namespace racer {
     explicit
     RacerIndividualDatatypeFillersBuilder(std::ostream&);
 
-    virtual
-    ~RacerIndividualDatatypeFillersBuilder();
-
     virtual void
     buildCommand(Query& q) throw (RacerBuildingError);
   };
@@ -254,9 +220,6 @@ namespace racer {
   public:
     explicit
     RacerOpenOWLBuilder(std::ostream&);
-
-    virtual
-    ~RacerOpenOWLBuilder();
 
     virtual void
     buildCommand(Query& q) throw (RacerBuildingError);
@@ -277,10 +240,6 @@ namespace racer {
 			      const std::string& cmd)
       : RacerBuilder(s),
 	command(cmd)
-    { }
-
-    virtual
-    ~RacerSimpleCommandBuilder()
     { }
 
     /**
