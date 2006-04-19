@@ -78,6 +78,14 @@ ABoxNegatedConcept::output(std::ostream& s) const
 }
 
 
+
+std::ostream&
+ABoxInvertedRole::output(std::ostream& s) const
+{
+  return s << "(inv " << *rExpr << ")";
+}
+
+
 std::ostream&
 ABoxInstance::output(std::ostream& s) const
 {

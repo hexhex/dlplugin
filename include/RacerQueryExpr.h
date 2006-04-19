@@ -244,6 +244,23 @@ namespace racer {
   };
 
 
+  /**
+   * A negated concept expression.
+   */
+  class ABoxInvertedRole : public ABoxRoleDescrExpr
+  {
+  private:
+    ABoxQueryRole::shared_pointer rExpr;
+
+    std::ostream&
+    output(std::ostream& s) const;
+
+  public:
+    explicit
+    ABoxInvertedRole(ABoxQueryRole::const_pointer r)
+      : rExpr(r)
+    { }
+  };
 
 
   /**
@@ -405,7 +422,12 @@ namespace racer {
   };
 
 
+
 } // namespace racer
 } // namespace dlvhex
+
+
+#include "RacerQueryExpr.tcc"
+
 
 #endif /* _RACERQUERYEXPR_H */
