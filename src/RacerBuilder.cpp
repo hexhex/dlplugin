@@ -21,6 +21,7 @@
 #include <iostream>
 #include <string>
 #include <functional>
+#include <memory>
 
 using namespace dlvhex::racer;
 
@@ -32,34 +33,14 @@ RacerBuilder::RacerBuilder(std::ostream& s)
 RacerBuilder::~RacerBuilder()
 { }
 
-std::string
-RacerBuilder::createName(const Query& query,
-			 const std::string& name) const
-{
-  if (name.find('#') == std::string::npos)
-    {
-      return "|" + query.getNamespace() + name + "|";
-    }
-  else
-    {
-      return "|" + name + "|";
-    }
-}
-
 
 RacerStateBuilder::RacerStateBuilder(std::ostream& s)
   : RacerBuilder(s)
 { }
 
-RacerStateBuilder::~RacerStateBuilder()
-{ }
-
-
 void
 RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
-  const Interpretation& ints = query.getInterpretation();
-
   //
   // create a state list. If there is no individual or pair to add
   // an empty "(state )" command is not an error.
@@ -70,11 +51,10 @@ RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 
   try
     {
-      const std::vector<ABoxAssertion::shared_pointer>* v = query.createPremise();
+      std::auto_ptr<const std::vector<ABoxAssertion::shared_pointer> > v
+	(query.createPremise());
 
       stream << "(state " << *v << ")" << std::endl;
-
-      delete v;
     }
   catch (std::exception& e)
     {
@@ -87,10 +67,6 @@ RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 
 RacerIsConceptMemberBuilder::RacerIsConceptMemberBuilder(std::ostream& s)
   : RacerBuilder(s)
-{ }
-
-
-RacerIsConceptMemberBuilder::~RacerIsConceptMemberBuilder()
 { }
 
 void
@@ -107,9 +83,13 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingErro
   try
     {
       stream << "(individual-instance? "
-	     << createName(query, indv[0].getUnquotedString())
+	     << ABoxQueryIndividual(indv[0].getUnquotedString(),
+				    query.getNamespace()
+				    )
 	     << " "
-	     << createName(query, q.getUnquotedString())
+	     << ABoxQueryConcept(q.getUnquotedString(),
+				 query.getNamespace()
+				 )
 	     << ")"
 	     << std::endl;
     }
@@ -123,10 +103,6 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingErro
 
 RacerIsRoleMemberBuilder::RacerIsRoleMemberBuilder(std::ostream& s)
   : RacerBuilder(s)
-{ }
-
-
-RacerIsRoleMemberBuilder::~RacerIsRoleMemberBuilder()
 { }
 
 void
@@ -143,11 +119,17 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
   try
     {
       stream << "(individuals-related? "
-	     << createName(query, indv[0].getUnquotedString())
+	     << ABoxQueryIndividual(indv[0].getUnquotedString(),
+				    query.getNamespace()
+				    )
 	     << " "
-	     << createName(query, indv[1].getUnquotedString())
+	     << ABoxQueryIndividual(indv[1].getUnquotedString(),
+				    query.getNamespace()
+				    )
 	     << " "
-	     << createName(query, q.getUnquotedString())
+	     << ABoxQueryRole(q.getUnquotedString(),
+			      query.getNamespace()
+			      )
 	     << ")"
 	     << std::endl;
     }
@@ -161,10 +143,6 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 
 RacerIndividualFillersBuilder::RacerIndividualFillersBuilder(std::ostream& s)
   : RacerBuilder(s)
-{ }
-
-
-RacerIndividualFillersBuilder::~RacerIndividualFillersBuilder()
 { }
 
 void
@@ -182,23 +160,38 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
 
   try
     {
-      stream << "(individual-fillers ";
+      std::auto_ptr<ABoxQueryIndividual> i;
+      std::auto_ptr<ABoxRoleDescrExpr> r;
 
       if (query.getType() == Query::RightRetrieval) // (const,variable) pattern
 	{
-	  stream << createName(query, indv[0].getUnquotedString())
-		 << " "
-		 << createName(query, q.getUnquotedString());
+	  i.reset(new ABoxQueryIndividual(indv[0].getUnquotedString(),
+					  query.getNamespace()
+					  )
+		  );
+
+	  r.reset(new ABoxQueryRole(q.getUnquotedString(),
+				    query.getNamespace()
+				    )
+		  );
 	}
       else // (variable,const) pattern
 	{
-	  stream << createName(query, indv[1].getUnquotedString())
-		 << " (inv "
-		 << createName(query, q.getUnquotedString())
-		 << ")";
+	  i.reset(new ABoxQueryIndividual(indv[1].getUnquotedString(),
+					  query.getNamespace()
+					  )
+		  );
+
+
+	  r.reset(new ABoxInvertedRole
+		  (new ABoxQueryRole(q.getUnquotedString(),
+				     query.getNamespace()
+				     )
+		   )
+		  );
 	}
 
-      stream << ")" << std::endl;
+      stream << "(individual-fillers " << *i << " " << *r << ")" << std::endl;
     }
   catch (std::exception& e)
     {
@@ -214,9 +207,6 @@ RacerConceptInstancesBuilder::RacerConceptInstancesBuilder(std::ostream& s)
   : RacerBuilder(s)
 { }
 
-RacerConceptInstancesBuilder::~RacerConceptInstancesBuilder()
-{ }
-
 void
 RacerConceptInstancesBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
@@ -225,22 +215,23 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (RacerBuildingErr
 
   try
     {
+      std::auto_ptr<ABoxConceptDescrExpr> c;
+
       if (concept[0] != '-')
 	{
-	  stream << "(concept-instances "
-		 << createName(query, concept)
-		 << ")"
-		 << std::endl;
+	  c.reset(new ABoxQueryConcept(concept, query.getNamespace()));
 	}
       else
 	{
 	  concept.erase(0, 1); // remove first character "-"
-	  
-	  stream << "(concept-instances (not "
-		 << createName(query, concept)
-		 << "))"
-		 << std::endl;
+
+	  c.reset(new ABoxNegatedConcept
+		  (new ABoxQueryConcept(concept, query.getNamespace())
+		   )
+		  );
 	}
+
+      stream << "(concept-instances " << *c << ")" << std::endl;
     }
   catch (std::exception& e)
     {
@@ -255,9 +246,6 @@ RacerRoleIndividualsBuilder::RacerRoleIndividualsBuilder(std::ostream& s)
   : RacerBuilder(s)
 { }
 
-RacerRoleIndividualsBuilder::~RacerRoleIndividualsBuilder()
-{ }
-
 void
 RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
@@ -266,7 +254,9 @@ RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (RacerBuildingErro
   try
     {
       stream << "(retrieve-related-individuals "
-	     << createName(query, q.getUnquotedString())
+	     << ABoxQueryRole(q.getUnquotedString(),
+			      query.getNamespace()
+			      )
 	     << ")"
 	     << std::endl;
     }
@@ -279,9 +269,6 @@ RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (RacerBuildingErro
 
 RacerOpenOWLBuilder::RacerOpenOWLBuilder(std::ostream& s)
   : RacerBuilder(s)
-{ }
-
-RacerOpenOWLBuilder::~RacerOpenOWLBuilder()
 { }
 
 void
@@ -321,10 +308,6 @@ RacerIndividualDatatypeFillersBuilder::RacerIndividualDatatypeFillersBuilder(std
   : RacerBuilder(s)
 { }
 
-
-RacerIndividualDatatypeFillersBuilder::~RacerIndividualDatatypeFillersBuilder()
-{ }
-
 void
 RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
   throw (RacerBuildingError)
@@ -347,15 +330,21 @@ RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
 	  // only retrieve the datatype, let Answer add the
 	  // corresponding individual
 	  stream << "($?*Y) (and (?*X $?*Y (:owl-datatype-role "
-		 << createName(query, q.getUnquotedString())
+		 << ABoxQueryRole(q.getUnquotedString(),
+				  query.getNamespace()
+				  )
 		 << ")) (same-as ?X "
- 		 << createName(query, indv[0].getUnquotedString())
+ 		 << ABoxQueryIndividual(indv[0].getUnquotedString(),
+					query.getNamespace()
+					)
  		 << "))";
 	}
       else // (variable,variable) pattern
 	{
 	  stream << "(?*X $?*Y) (?*X $?*Y (:owl-datatype-role "
-		 << createName(query, q.getUnquotedString())
+		 << ABoxQueryRole(q.getUnquotedString(),
+				  query.getNamespace()
+				  )
 		 << "))";
 	}
 
