@@ -36,55 +36,6 @@ namespace racer {
   {
     return b.output(s);
   }
-
-
-  /**
-   * Dereferences a boost::shared_ptr.
-   */
-  struct Dereference
-  {
-    /** 
-     * Returns a reference to the object contained in ptr.
-     *
-     * @param ptr
-     * 
-     * @return ptr.operator*()
-     */
-    template<typename T>
-    T&
-    operator() (const boost::shared_ptr<T>& ptr) const
-    {
-      return *ptr;
-    }
-  };
-
-
-  /** 
-   * Calls operator<< on every element of v, seperated by a blank.
-   * 
-   * @param s 
-   * @param v a vector of boost::shared_ptr<T>
-   * 
-   * @return s
-   */
-  template<typename T>
-  std::ostream&
-  operator<< (std::ostream& s,
-	      const std::vector<boost::shared_ptr<T> >& v)
-  {
-    if (!v.empty())
-      {
-	std::transform(v.begin(),
-		       v.end() - 1,
-		       std::ostream_iterator<T>(s, " "),
-		       Dereference()
-		       );
-
-	s << *v.back();
-      }
-    
-    return s;
-  }
   
 }
 }

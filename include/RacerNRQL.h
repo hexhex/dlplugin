@@ -55,20 +55,6 @@ namespace racer {
   operator<< (std::ostream& s, const NRQLBase& b);
 
 
-  /** 
-   * Calls operator<< on every element of v, seperated by a blank.
-   * 
-   * @param s 
-   * @param v a vector of boost::shared_ptr<T>
-   * 
-   * @return s
-   */
-  template<typename T>
-  std::ostream&
-  operator<< (std::ostream& s,
-	      const std::vector<boost::shared_ptr<T> >& v);
-
-
   /**
    * Base class for nRQL body expressions.
    */
