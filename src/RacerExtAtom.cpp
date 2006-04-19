@@ -12,7 +12,6 @@
 
 #include "RacerExtAtom.h"
 
-#include "OWLParser.h"
 #include "RacerDirector.h"
 #include "RacerQuery.h"
 #include "RacerRunner.h"
@@ -33,43 +32,6 @@ RacerExtAtom::RacerExtAtom(std::iostream& s)
 
 RacerExtAtom::~RacerExtAtom()
 { }
-
-
-RacerBaseDirector::QueryCtxPtr
-RacerExtAtom::setupQuery(const PluginAtom::Query& query) const
-{
-  // just try to run RACER
-  RacerRunner::instance()->run();
-
-  RacerBaseDirector::QueryCtxPtr qctx(new QueryCtx);
-
-  dlvhex::racer::Query& q = qctx->getQuery();
-
-  // inputtuple[0] contains the KB URI constant
-  std::string ontostr = query.getInputTuple()[0].getUnquotedString();
-  q.setOntology(ontostr);
-
-  // get namespace from owl document
-  OWLParser p(ontostr);
-  p.parseNamespace(q);
-
-  // set query if input tuple contains a query atom
-  if (query.getInputTuple().size() > 5)
-    {
-      q.setQuery(query.getInputTuple()[5]);
-    }
-
-  q.setInterpretation(query.getInterpretation());
-  q.setPatternTuple(query.getPatternTuple());
-  q.setPlusC(query.getInputTuple()[1]);
-  q.setMinusC(query.getInputTuple()[2]);
-  q.setPlusR(query.getInputTuple()[3]);
-  q.setMinusR(query.getInputTuple()[4]);
-
-  return qctx;
-}
-
-
 
 
 
@@ -117,7 +79,10 @@ RacerCachingAtom::retrieve(const PluginAtom::Query& query,
 {
   try
     {
-      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(query);
+      // just try to run RACER
+      RacerRunner::instance()->run();
+
+      RacerBaseDirector::QueryCtxPtr qctx(new QueryCtx(query));
 
       RacerBaseDirector::DirectorPtr dirs = getDirectors(qctx->getQuery());
 
@@ -250,7 +215,10 @@ RacerConsistent::retrieve(const PluginAtom::Query& query,
 {
   try
     {
-      RacerBaseDirector::QueryCtxPtr qctx = setupQuery(query);
+      // just try to run RACER
+      RacerRunner::instance()->run();
+
+      RacerBaseDirector::QueryCtxPtr qctx(new QueryCtx(query));
 
       RacerBaseDirector::DirectorPtr dirs = getDirectors(qctx->getQuery());
 

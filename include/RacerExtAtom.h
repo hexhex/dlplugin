@@ -47,16 +47,6 @@ namespace racer {
     ~RacerExtAtom();
 
     /**
-     * Setup a new QueryCtx object and start the RACER process.
-     *
-     * @param query use query to setup the QueryCtx
-     *
-     * @return a new managed QueryCtx pointer
-     */
-    virtual RacerBaseDirector::QueryCtxPtr
-    setupQuery(const PluginAtom::Query& query) const;
-
-    /**
      * children of RacerExtAtom implement this method to create a
      * director or a chain of directors with help of the composite
      * director classes.
