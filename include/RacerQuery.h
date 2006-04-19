@@ -381,6 +381,9 @@ namespace racer {
     QueryCtx();
 
     explicit
+    QueryCtx(const PluginAtom::Query& query);
+
+    explicit
     QueryCtx(const QueryCtx& qctx);
 
     virtual

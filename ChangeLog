@@ -1,4 +1,31 @@
+2006-04-19  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/RacerQuery.h (QueryCtx): Add a Ctor for PluginAtom::Query.
+	* src/RacerQuery.cpp: Likewise.
+
+	* include/RacerExtAtom.h (RacerExtAtom::setupQuery): Remove.
+	* src/RacerExtAtom.cpp: Likewise.
+
+	* src/RacerQuery.cpp (Query::createHead): Simplify code.
+
+	* src/RacerBuilder.cpp: Use the interpreters of RacerQueryExpr to
+	build the commands.
+
+	* include/RacerBuilder.h (RacerBuilder::createName): Remove.
+
+	* include/RacerQueryExpr.tcc: New file.
+
+	* include/RacerNRQL.h: Move operator<< to RacerQueryExpr.tcc.
+	* src/RacerNRQL.cpp: Likewise.
+
+	* src/RacerQueryExpr.cpp (ABoxInvertedRole): New class.
+	* include/RacerQueryExpr.h: Likewise.
+
 2006-04-18  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/RacerQueryExpr.h (~QueryExpr): Add virtual dtor.
+
+	* m4/boost.m4: OLD_CXX_FLAGS != OLD_CXXFLAGS.
 
 	* include/RacerNRQL.h: Publish operator<< for std::vector of
 	boost::shared_ptr's.

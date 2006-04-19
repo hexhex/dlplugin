@@ -10,6 +10,7 @@
  * 
  */
 
+#include "OWLParser.h"
 #include "RacerQuery.h"
 #include "RacerNRQL.h"
 #include "RacerQueryExpr.h"
@@ -223,7 +224,8 @@ Query::createBody() const
 const std::vector<ABoxQueryObject::shared_pointer>*
 Query::createHead() const
 {
-  std::vector<ABoxQueryObject::shared_pointer>* v = new std::vector<ABoxQueryObject::shared_pointer>;
+  std::vector<ABoxQueryObject::shared_pointer>* v =
+    new std::vector<ABoxQueryObject::shared_pointer>;
 
   for (Tuple::const_iterator it = getPatternTuple().begin();
        it != getPatternTuple().end();
@@ -432,6 +434,31 @@ Answer::addTuple(const Tuple& out)
 QueryCtx::QueryCtx()
   : q(new Query), a(new Answer(q))
 { }
+
+QueryCtx::QueryCtx(const PluginAtom::Query& query)
+  : q(new Query), a(new Answer(q))
+{
+  // inputtuple[0] contains the KB URI constant
+  std::string ontostr = query.getInputTuple()[0].getUnquotedString();
+  q->setOntology(ontostr);
+
+  // set query if input tuple contains a query atom
+  if (query.getInputTuple().size() > 5)
+    {
+      q->setQuery(query.getInputTuple()[5]);
+    }
+
+  // get namespace from owl document
+  OWLParser p(ontostr);
+  p.parseNamespace(*q);
+
+  q->setInterpretation(query.getInterpretation());
+  q->setPatternTuple(query.getPatternTuple());
+  q->setPlusC(query.getInputTuple()[1]);
+  q->setMinusC(query.getInputTuple()[2]);
+  q->setPlusR(query.getInputTuple()[3]);
+  q->setMinusR(query.getInputTuple()[4]);
+}
 
 QueryCtx::QueryCtx(const QueryCtx& qctx)
 {
