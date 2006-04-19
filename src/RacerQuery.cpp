@@ -229,20 +229,18 @@ Query::createHead() const
        it != getPatternTuple().end();
        ++it)
     {
+      ABoxQueryObject::shared_pointer sp;
+
       if (it->isVariable())
 	{
-	  ABoxQueryVariable::shared_pointer sp
-	    (new ABoxQueryVariable(it->getVariable()));
-
-	  v->push_back(sp);
+	  sp.reset(new ABoxQueryVariable(it->getVariable()));
 	}
       else
 	{
-	  ABoxQueryIndividual::shared_pointer sp
-	    (new ABoxQueryIndividual(it->getUnquotedString()));
-
-	  v->push_back(sp);
+	  sp.reset(new ABoxQueryIndividual(it->getUnquotedString()));
 	}
+
+      v->push_back(sp);
     }
 
   return v;
