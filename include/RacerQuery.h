@@ -16,14 +16,14 @@
 #include "RacerNRQL.h"
 #include "RacerQueryExpr.h"
 
+#include <dlvhex/PluginInterface.h>
+#include <dlvhex/Atom.h>
+#include <dlvhex/Term.h>
+
 #include <string>
 #include <functional>
 #include <vector>
 #include <sstream>
-
-#include <dlvhex/PluginInterface.h>
-#include <dlvhex/Atom.h>
-#include <dlvhex/Term.h>
 
 namespace dlvhex {
 namespace racer {
@@ -401,6 +401,8 @@ namespace racer {
     virtual Answer&
     getAnswer() const;
 
+    typedef QueryCtx value_type;
+    typedef boost::shared_ptr<value_type> shared_pointer; /// managed QueryCtx
   };
 
 } // namespace racer

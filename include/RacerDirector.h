@@ -13,10 +13,6 @@
 #ifndef _RACERDIRECTOR_H
 #define _RACERDIRECTOR_H
 
-#include <iostream>
-#include <map>
-#include <memory>
-
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
 
@@ -24,6 +20,9 @@
 #include "RacerQuery.h"
 #include "RacerAnswerDriver.h"
 #include "RacerBuilder.h"
+
+#include <iosfwd>
+#include <set>
 
 namespace dlvhex {
 namespace racer {
@@ -34,10 +33,9 @@ namespace racer {
   class RacerBaseDirector
   {
   public:
-    /// managed RacerBaseDirector
-    typedef std::auto_ptr<RacerBaseDirector> DirectorPtr;
-    /// managed QueryCtx
-    typedef std::auto_ptr<QueryCtx> QueryCtxPtr;
+    typedef RacerBaseDirector value_type;
+    typedef boost::shared_ptr<value_type> shared_pointer; /// managed
+							  /// RacerBaseDirector
 
   protected:
     RacerBaseDirector()
@@ -53,8 +51,8 @@ namespace racer {
      *
      * @param qctx
      */
-    virtual QueryCtxPtr
-    query(QueryCtxPtr qctx) throw(RacerError) = 0;
+    virtual QueryCtx::shared_pointer
+    query(QueryCtx::shared_pointer qctx) throw(RacerError) = 0;
   };
 
 
@@ -84,26 +82,31 @@ namespace racer {
      * @brief builds/parses RACER commands/answers using the Builder
      * and Parser members.
      *
-     * @param qctx pass the appropriate QueryCtxPtr member to the
-     * Builder/Parser.
+     * @param qctx pass the appropriate QueryCtx::shared_pointer
+     * member to the Builder/Parser.
      *
-     * @return the QueryCtxPtr with the corresponding Answer to the
-     * Query
+     * @return the QueryCtx::shared_pointer with the corresponding
+     * Answer to the Query
      */
-    virtual QueryCtxPtr
-    query(QueryCtxPtr qctx) throw(RacerError);
+    virtual QueryCtx::shared_pointer
+    query(QueryCtx::shared_pointer qctx) throw(RacerError);
   };
 
 
 
   /**
-   * @brief A base composite director for querying lists of RACER commands.
+   * @brief A base composite director for querying lists of RACER
+   * commands.
    *
    * Provides a list of RacerBaseDirector and takes care of
    * inconsistency during execution of the RACER commands.
    */
   class RacerCompositeDirector : public RacerBaseDirector
   {
+  public:
+    typedef RacerCompositeDirector value_type;
+    typedef boost::shared_ptr<value_type> shared_pointer;
+
   protected:
     /// managed RacerBaseDirector pointers
     typedef std::vector<RacerBaseDirector*> DirectorList;
@@ -121,11 +124,11 @@ namespace racer {
      *
      * @param qctx
      *
-     * @return the QueryCtxPtr with the corresponding Answer to the
-     * Query
+     * @return the QueryCtx::shared_pointer with the corresponding
+     * Answer to the Query
      */
-    virtual QueryCtxPtr
-    handleInconsistency(QueryCtxPtr qctx);
+    virtual QueryCtx::shared_pointer
+    handleInconsistency(QueryCtx::shared_pointer qctx);
 
   public:
     /// Ctor
@@ -141,7 +144,8 @@ namespace racer {
     /**
      * adds a new RacerBaseDirector to dirs.
      *
-     * @param d add it to the managed list of RacerBaseDirector objects
+     * @param d add it to the managed list of RacerBaseDirector
+     * objects
      */
     virtual void
     add(RacerBaseDirector* d);
@@ -154,11 +158,11 @@ namespace racer {
      *
      * @param qctx
      *
-     * @return the QueryCtxPtr with the corresponding Answer to the
-     * Query
+     * @return the QueryCtx::shared_pointer with the corresponding
+     * Answer to the Query
      */
-    virtual QueryCtxPtr
-    query(QueryCtxPtr qctx) throw(RacerError);
+    virtual QueryCtx::shared_pointer
+    query(QueryCtx::shared_pointer qctx) throw(RacerError);
   };
 
 
@@ -175,21 +179,25 @@ namespace racer {
   class RacerCachingDirector : public RacerBaseDirector
   {
   public:
-    struct QueryCtxCompare : public std::binary_function<const QueryCtx*, const QueryCtx*, bool>
+    struct QueryCtxCompare
+      : public std::binary_function<const QueryCtx::shared_pointer,
+				    const QueryCtx::shared_pointer,
+				    bool>
     {
       bool
-      operator() (const QueryCtx* a, const QueryCtx* b) const
+      operator() (const QueryCtx::shared_pointer& a,
+		  const QueryCtx::shared_pointer& b) const
       {
 	return a->getQuery() < b->getQuery();
       }
     };
 
-    /// caches QueryCtx* with help of a std::set
-    typedef std::set<QueryCtx*, QueryCtxCompare> RacerCache;
+    /// caches QueryCtx::shared_pointer with help of a std::set
+    typedef std::set<QueryCtx::shared_pointer, QueryCtxCompare> RacerCache;
 
   protected:
     /// the underlying director, usually a RacerCompositeDirector
-    DirectorPtr director;
+    RacerBaseDirector::shared_pointer director;
 
     /// reference to the cache of QueryCtx objects
     RacerCache& cache;
@@ -211,14 +219,14 @@ namespace racer {
      *
      * @param query
      *
-     * @return the position of the cached QueryCtx*.
+     * @return the position of the cached QueryCtx::shared_pointer.
      */
     virtual RacerCache::iterator
-    find(QueryCtx* query) const;
+    find(const QueryCtx::shared_pointer& query) const;
 
   public:
     explicit
-    RacerCachingDirector(RacerCache&, DirectorPtr d);
+    RacerCachingDirector(RacerCache&, RacerBaseDirector::shared_pointer d);
 
     virtual
     ~RacerCachingDirector();
@@ -231,11 +239,11 @@ namespace racer {
      *
      * @param qctx
      *
-     * @return the QueryCtxPtr with the corresponding Answer to the
-     * Query
+     * @return the QueryCtx::shared_pointer with the corresponding
+     * Answer to the Query
      */
-    virtual QueryCtxPtr
-    query(QueryCtxPtr qctx) throw(RacerError);
+    virtual QueryCtx::shared_pointer
+    query(QueryCtx::shared_pointer qctx) throw(RacerError);
   };
 
 
@@ -249,11 +257,11 @@ namespace racer {
     cacheHit(const QueryCtx& query, const QueryCtx& found) const;
  
     virtual RacerCache::iterator
-    find(QueryCtx* query) const;
+    find(const QueryCtx::shared_pointer& query) const;
 
   public:
     explicit
-    RacerDebugCachingDirector(RacerCache&, DirectorPtr d);
+    RacerDebugCachingDirector(RacerCache&, RacerBaseDirector::shared_pointer d);
   };
 
 

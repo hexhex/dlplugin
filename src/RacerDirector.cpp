@@ -15,7 +15,7 @@
 #include "RacerError.h"
 #include "RacerQuery.h"
 
-#include <memory>
+#include <boost/shared_ptr.hpp>
 
 using namespace dlvhex::racer;
 
@@ -43,8 +43,8 @@ RacerCompositeDirector::add(RacerBaseDirector* d)
 }
 
 
-RacerBaseDirector::QueryCtxPtr
-RacerCompositeDirector::query(QueryCtxPtr qctx) throw(RacerError)
+QueryCtx::shared_pointer
+RacerCompositeDirector::query(QueryCtx::shared_pointer qctx) throw(RacerError)
 {
   for (DirectorList::iterator it = dirs.begin(); it != dirs.end(); it++)
     {
@@ -60,8 +60,8 @@ RacerCompositeDirector::query(QueryCtxPtr qctx) throw(RacerError)
 }
 
 
-RacerBaseDirector::QueryCtxPtr
-RacerCompositeDirector::handleInconsistency(QueryCtxPtr qctx)
+QueryCtx::shared_pointer
+RacerCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
 {
   Query::QueryType t = qctx->getQuery().getType();
 
@@ -107,7 +107,8 @@ RacerCompositeDirector::handleInconsistency(QueryCtxPtr qctx)
 
 
 
-RacerCachingDirector::RacerCachingDirector(RacerCache& c, DirectorPtr d)
+RacerCachingDirector::RacerCachingDirector(RacerCache& c,
+					   RacerBaseDirector::shared_pointer d)
   : RacerBaseDirector(),
     director(d),
     cache(c)
@@ -116,31 +117,30 @@ RacerCachingDirector::RacerCachingDirector(RacerCache& c, DirectorPtr d)
 RacerCachingDirector::~RacerCachingDirector()
 { }
 
-RacerBaseDirector::QueryCtxPtr
-RacerCachingDirector::query(QueryCtxPtr qctx) throw(RacerError)
+QueryCtx::shared_pointer
+RacerCachingDirector::query(QueryCtx::shared_pointer qctx) throw(RacerError)
 {
   if (director.get() != 0)
     {
-      RacerCache::iterator found = find(qctx.get());
+      RacerCache::iterator found = find(qctx);
 
       if (found != cache.end())
 	{
 	  if (cacheHit(*qctx, **found))
 	    {
 	      // delete qctx pointer and overwrite with found pointer
-	      qctx.reset(*found);
+	      qctx = *found;
 	      return qctx;
 	    }
 	  
 	  // there is no cache hit
-	  // -> invalidate cache entry and delete found QueryCtx
+	  // -> invalidate cache entry and found QueryCtx::shared_pointer
 	  cache.erase(found);
-	  delete *found;
 	}
       
       // ask the director and add qctx pointer to the cache 
       qctx = director->query(qctx);
-      cache.insert(qctx.get());
+      cache.insert(qctx);
     }
 
   return qctx;
@@ -148,7 +148,7 @@ RacerCachingDirector::query(QueryCtxPtr qctx) throw(RacerError)
 
 
 RacerCachingDirector::RacerCache::iterator
-RacerCachingDirector::find(QueryCtx* query) const
+RacerCachingDirector::find(const QueryCtx::shared_pointer& query) const
 {
   // is query cached?
   return cache.find(query);
@@ -185,19 +185,20 @@ RacerCachingDirector::cacheHit(const QueryCtx& query, const QueryCtx& found) con
 
 
 
-RacerDebugCachingDirector::RacerDebugCachingDirector(RacerCache& c, DirectorPtr d)
+RacerDebugCachingDirector::RacerDebugCachingDirector(RacerCache& c,
+						     RacerBaseDirector::shared_pointer d)
   : RacerCachingDirector(c, d)
 { }
 
 RacerCachingDirector::RacerCache::iterator
-RacerDebugCachingDirector::find(QueryCtx* query) const
+RacerDebugCachingDirector::find(const QueryCtx::shared_pointer& query) const
 {
   std::cout << "-----" << std::endl;
 
   for (RacerCache::const_iterator it = cache.begin();
        it != cache.end(); it++)
     {
-      std::cout << "   " << (*(*it)).getQuery() << std::endl;
+      std::cout << "   " << (*it)->getQuery() << std::endl;
     }
 
   std::cout << "q: " << query->getQuery();

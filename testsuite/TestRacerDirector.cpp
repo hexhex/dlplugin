@@ -46,7 +46,7 @@ TestRacerDirector::runRacerPlusConceptTest()
       
   RacerConceptRolePM pcd(rsIO);
   
-  RacerBaseDirector::QueryCtxPtr q(new QueryCtx);
+  QueryCtx::shared_pointer q(new QueryCtx);
   q->getQuery().setNamespace("http://www.kr.tuwien.ac.at/staff/roman/shop#");
   
   AtomSet pc;
@@ -67,7 +67,7 @@ TestRacerDirector::runRacerAllIndividualsTest()
   
   RacerAllIndQuery aiq(rsIO);
   
-  RacerBaseDirector::QueryCtxPtr q(new QueryCtx);
+  QueryCtx::shared_pointer q(new QueryCtx);
   
   CPPUNIT_ASSERT_NO_THROW( q = aiq.query(q) );
   CPPUNIT_ASSERT(q->getAnswer().getTuples()->size() > 0);

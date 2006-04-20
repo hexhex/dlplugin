@@ -24,8 +24,9 @@ namespace racer {
   { }
 
   template <class Builder, class Parser>
-  RacerBaseDirector::QueryCtxPtr
-  RacerDirector<Builder, Parser>::query(QueryCtxPtr qctx) throw(RacerError)
+  QueryCtx::shared_pointer
+  RacerDirector<Builder, Parser>::query(QueryCtx::shared_pointer qctx)
+    throw(RacerError)
   {
     builder.buildCommand(qctx->getQuery());
     parser.parse(qctx->getAnswer());

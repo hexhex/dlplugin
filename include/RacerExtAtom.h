@@ -13,9 +13,6 @@
 #ifndef _RACEREXTATOM_H
 #define _RACEREXTATOM_H
 
-#include <iostream>
-#include <memory>
-
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
@@ -23,6 +20,8 @@
 
 #include "RacerQuery.h"
 #include "RacerDirector.h"
+
+#include <iosfwd>
 
 namespace dlvhex {
 namespace racer {
@@ -53,22 +52,24 @@ namespace racer {
      *
      * @param query
      *
-     * @return a RacerBaseDirector::DirectorPtr representing the
+     * @return a RacerBaseDirector::shared_pointer representing the
      * appropriate command to send to the RACER process
      */
-    virtual RacerBaseDirector::DirectorPtr
+    virtual RacerBaseDirector::shared_pointer
     getDirectors(const dlvhex::racer::Query& query) const = 0;
 
   public:
     /**
-     * Base retrieve method for all RACER external atoms.
+     * Retrieve method used in all external atoms.
+     *
+     * calls getDirectors() in order to get an Answer to the Query.
      *
      * @param query
      * @param answer
      */
     virtual void
     retrieve(const PluginAtom::Query& query,
-	     PluginAtom::Answer& answer) throw(PluginError) = 0;
+	     PluginAtom::Answer& answer) throw(PluginError);
   };
 
   /**
@@ -81,24 +82,11 @@ namespace racer {
     RacerCachingDirector::RacerCache& cache;
 
     /// fill a composite and add a caching director
-    RacerBaseDirector::DirectorPtr
+    RacerBaseDirector::shared_pointer
     getCachedDirectors(RacerBaseDirector*) const;
 
   public:
     RacerCachingAtom(std::iostream&, RacerCachingDirector::RacerCache&);
-
-    /**
-     * Retrieve method used in all caching external atoms.
-     *
-     * calls setupQuery() and getCachedDirectors() in order to get an
-     * Answer to the Query.
-     *
-     * @param query
-     * @param answer
-     */
-    virtual void
-    retrieve(const PluginAtom::Query& query,
-	     PluginAtom::Answer& answer) throw(PluginError);
   };
 
 
@@ -117,7 +105,7 @@ namespace racer {
      *
      * @return
      */
-    virtual RacerBaseDirector::DirectorPtr
+    virtual RacerBaseDirector::shared_pointer
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
@@ -141,7 +129,7 @@ namespace racer {
      *
      * @return
      */
-    virtual RacerBaseDirector::DirectorPtr
+    virtual RacerBaseDirector::shared_pointer
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
@@ -164,22 +152,12 @@ namespace racer {
      *
      * @return
      */
-    virtual RacerBaseDirector::DirectorPtr
+    virtual RacerBaseDirector::shared_pointer
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
     explicit
     RacerConsistent(std::iostream&);
-
-    /**
-     * Retrieve method checks whether ABox is consistent.
-     *
-     * @param query
-     * @param answer
-     */
-    virtual void
-    retrieve(const PluginAtom::Query& query,
-	     PluginAtom::Answer& answer) throw(PluginError);
   };
 
 
@@ -199,7 +177,7 @@ namespace racer {
      *
      * @return
      */
-    virtual RacerBaseDirector::DirectorPtr
+    virtual RacerBaseDirector::shared_pointer
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
