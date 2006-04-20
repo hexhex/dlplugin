@@ -14,14 +14,11 @@
 #ifndef _RACERANSWERDRIVER_H
 #define _RACERANSWERDRIVER_H
 
-#include <dlvhex/Term.h>
-
 #include "RacerQuery.h"
 #include "RacerFlexLexer.h"
 #include "RacerError.h"
 
-#include <iostream>
-#include <string>
+#include <iosfwd>
 
 namespace dlvhex {
 namespace racer {

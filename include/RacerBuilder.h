@@ -13,14 +13,11 @@
 #ifndef _RACERBUILDER_H
 #define _RACERBUILDER_H
 
-#include <iostream>
-#include <string>
-
-#include <dlvhex/Atom.h>
-#include <dlvhex/Term.h>
-
 #include "RacerError.h"
 #include "RacerQuery.h"
+
+#include <iosfwd>
+#include <string>
 
 namespace dlvhex {
 namespace racer {

@@ -15,7 +15,6 @@
 #include <ace/OS.h>
 
 #include <fstream>
-#include <iostream>
 #include <string>
 
 using namespace dlvhex::racer;

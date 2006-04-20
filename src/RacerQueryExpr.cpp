@@ -11,7 +11,8 @@
 
 #include "RacerQueryExpr.h"
 
-#include <iostream>
+#include <iosfwd>
+#include <string>
 
 using namespace dlvhex::racer;
 

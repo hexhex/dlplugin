@@ -55,13 +55,13 @@
 #ifndef _RACERINTERFACE_H
 #define _RACERINTERFACE_H
 
-#include <dlvhex/PluginInterface.h>
-#include <dlvhex/Atom.h>
-#include <dlvhex/Term.h>
-
 #include "RacerRunner.h"
 #include "RacerDirector.h"
 #include "TCPStream.h"
+
+#include <dlvhex/PluginInterface.h>
+#include <dlvhex/Atom.h>
+#include <dlvhex/Term.h>
 
 namespace dlvhex {
 namespace racer {

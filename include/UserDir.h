@@ -14,7 +14,7 @@
 #ifndef _USERDIR_H
 #define _USERDIR_H
 
-#include <fstream>
+#include <iosfwd>
 #include <string>
 
 namespace dlvhex {

@@ -13,8 +13,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <iostream>
-#include <iterator>
+#include <iosfwd>
 #include <vector>
 
 using namespace dlvhex::racer;

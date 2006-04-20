@@ -13,14 +13,11 @@
 #ifndef _OWLPARSER_H
 #define _OWLPARSER_H
 
-#include <string>
+#include "RacerQuery.h"
 
 #include <raptor.h>
 
-#include <dlvhex/PluginInterface.h>
-
-#include "RacerQuery.h"
-
+#include <string>
 
 
 namespace dlvhex {
