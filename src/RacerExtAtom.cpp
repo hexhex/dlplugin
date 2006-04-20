@@ -20,8 +20,10 @@
 #include <dlvhex/Term.h>
 #include <dlvhex/AtomSet.h>
 
+#include <boost/shared_ptr.hpp>
+
 #include <iterator>
-#include <iostream>
+#include <iosfwd>
 
 using namespace dlvhex::racer;
 
@@ -34,6 +36,30 @@ RacerExtAtom::~RacerExtAtom()
 { }
 
 
+void
+RacerExtAtom::retrieve(const PluginAtom::Query& query,
+		       PluginAtom::Answer& answer) throw(PluginError)
+{
+  try
+    {
+      // just try to run RACER
+      RacerRunner::instance()->run();
+
+      QueryCtx::shared_pointer qctx(new QueryCtx(query));
+
+      RacerBaseDirector::shared_pointer dirs = getDirectors(qctx->getQuery());
+
+      qctx = dirs->query(qctx);
+
+      answer = qctx->getAnswer();
+    }
+  catch (RacerError& e)
+    {
+      throw PluginError(e.what());
+    }
+}
+
+
 
 RacerCachingAtom::RacerCachingAtom(std::iostream& s,
 				   RacerCachingDirector::RacerCache& c)
@@ -41,62 +67,41 @@ RacerCachingAtom::RacerCachingAtom(std::iostream& s,
     cache(c)
 { }
 
-RacerBaseDirector::DirectorPtr
+RacerBaseDirector::shared_pointer
 RacerCachingAtom::getCachedDirectors(RacerBaseDirector* cmd) const
 {
-  RacerCompositeDirector* dir = new RacerCompositeDirector(stream);
+  RacerCompositeDirector::shared_pointer comp(new RacerCompositeDirector(stream));
 
-  dir->add(new RacerUNA(stream));
-  dir->add(new RacerOpenOWL(stream));
-  dir->add(new RacerTempABox(stream));
-  dir->add(new RacerConceptRolePM(stream));
+  comp->add(new RacerUNA(stream));
+  comp->add(new RacerOpenOWL(stream));
+  comp->add(new RacerTempABox(stream));
+  comp->add(new RacerConceptRolePM(stream));
 
-  dir->add(cmd); // the actual command to send
+  comp->add(cmd); // the actual command to send
 
-  RacerBaseDirector::DirectorPtr comp(dir);
-  RacerBaseDirector::DirectorPtr cacher;
+  const char* c = getenv("DEBUGCACHE");
 
-  if (getenv("DEBUGCACHE") != 0)
+  if (c != 0) // found environment variable DEBUGCACHE
     {
-      cacher = RacerBaseDirector::DirectorPtr(new RacerDebugCachingDirector(cache,
-									    comp
-									    )
-					      );
+      int val;
+      std::istringstream(c) >> val;
+
+      if (val == 0) // no caching
+	{
+	  return comp;
+	}
+      else // debug query caching
+	{
+	  return RacerBaseDirector::shared_pointer(new RacerDebugCachingDirector
+						   (cache, comp)
+						   );
+	}
     }
-  else
-    {
-      cacher = RacerBaseDirector::DirectorPtr(new RacerCachingDirector(cache,
-								       comp)
-					      );
-    }
 
-  return cacher;
-}
-
-void
-RacerCachingAtom::retrieve(const PluginAtom::Query& query,
-			   PluginAtom::Answer& answer) throw(PluginError)
-{
-  try
-    {
-      // just try to run RACER
-      RacerRunner::instance()->run();
-
-      RacerBaseDirector::QueryCtxPtr qctx(new QueryCtx(query));
-
-      RacerBaseDirector::DirectorPtr dirs = getDirectors(qctx->getQuery());
-
-      qctx = dirs->query(qctx);
-
-      answer = qctx->getAnswer();
-
-      // we're done, so don't delete QueryCtx pointer -> it's cached
-      qctx.release();
-    }
-  catch (RacerError& e)
-    {
-      throw PluginError(e.what());
-    }
+  // default action is query caching
+  return RacerBaseDirector::shared_pointer(new RacerCachingDirector
+					   (cache, comp)
+					   );
 }
 
 
@@ -118,7 +123,7 @@ RacerConcept::RacerConcept(std::iostream& s, RacerCachingDirector::RacerCache& c
   addInputConstant();  // query
 }
 
-RacerBaseDirector::DirectorPtr
+RacerBaseDirector::shared_pointer
 RacerConcept::getDirectors(const dlvhex::racer::Query& query) const
 {
   if (query.getType() == dlvhex::racer::Query::Retrieval) // retrieval mode
@@ -153,7 +158,7 @@ RacerRole::RacerRole(std::iostream& s, RacerCachingDirector::RacerCache& c)
   addInputConstant();  // query
 }
 
-RacerBaseDirector::DirectorPtr
+RacerBaseDirector::shared_pointer
 RacerRole::getDirectors(const dlvhex::racer::Query& query) const
 {
   if (query.getType() == dlvhex::racer::Query::RelatedRetrieval) // retrieval mode
@@ -195,42 +200,20 @@ RacerConsistent::RacerConsistent(std::iostream& s)
   addInputPredicate(); // minusR
 }
 
-RacerBaseDirector::DirectorPtr
+RacerBaseDirector::shared_pointer
 RacerConsistent::getDirectors(const dlvhex::racer::Query&) const
 {
-  RacerCompositeDirector* dir = new RacerCompositeDirector(stream);
+  RacerCompositeDirector::shared_pointer comp(new RacerCompositeDirector(stream));
 
-  dir->add(new RacerUNA(stream));
-  dir->add(new RacerOpenOWL(stream));
-  dir->add(new RacerTempABox(stream));
-  dir->add(new RacerConceptRolePM(stream));
-  dir->add(new RacerABoxConsistent(stream));
+  comp->add(new RacerUNA(stream));
+  comp->add(new RacerOpenOWL(stream));
+  comp->add(new RacerTempABox(stream));
+  comp->add(new RacerConceptRolePM(stream));
+  comp->add(new RacerABoxConsistent(stream));
 
-  return RacerBaseDirector::DirectorPtr(dir);
+  return comp;
 }
 
-void
-RacerConsistent::retrieve(const PluginAtom::Query& query,
-			  PluginAtom::Answer& answer) throw(PluginError)
-{
-  try
-    {
-      // just try to run RACER
-      RacerRunner::instance()->run();
-
-      RacerBaseDirector::QueryCtxPtr qctx(new QueryCtx(query));
-
-      RacerBaseDirector::DirectorPtr dirs = getDirectors(qctx->getQuery());
-
-      qctx = dirs->query(qctx);
-
-      answer = qctx->getAnswer();
-    }
-  catch (RacerError& e)
-    {
-      throw PluginError(e.what());
-    }
-}
 
 
 
@@ -252,7 +235,7 @@ RacerDatatypeRole::RacerDatatypeRole(std::iostream& s,
   addInputConstant();  // query
 }
 
-RacerBaseDirector::DirectorPtr
+RacerBaseDirector::shared_pointer
 RacerDatatypeRole::getDirectors(const dlvhex::racer::Query& query) const
 {
   if (query.getType() == dlvhex::racer::Query::RelatedRetrieval ||
