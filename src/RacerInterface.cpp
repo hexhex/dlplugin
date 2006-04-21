@@ -29,14 +29,8 @@ RacerInterface::RacerInterface()
 
 RacerInterface::~RacerInterface()
 {
+  // stop RacerPro server
   RacerRunner::instance()->stop();
-
-  // delete all cached QueryCtx's
-  for (RacerCachingDirector::RacerCache::const_iterator it = cache.begin();
-       it != cache.end(); it++)
-    {
-      delete *it;
-    }
 }
 
 
@@ -74,6 +68,14 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
   m["dlDR"]         = new RacerDatatypeRole(stream, cache);
 }
 
+void
+RacerInterface::setOptions(int argc, char* argv[])
+{
+//   for (int i = 0; i < argc; i++)
+//     {
+//       std::cout << argv[i] << std::endl;
+//     }
+}
 
 extern "C" PluginInterface*
 PLUGINIMPORTFUNCTION()

@@ -103,6 +103,15 @@ namespace racer {
      */
     virtual void
     getAtoms(AtomFunctionMap& m);
+
+    /**
+     * Set the command line arguments here.
+     *
+     * @param argc
+     * @param argv 
+     */
+    virtual void
+    setOptions(int argc, char *argv[]);
   };
 
 } // namespace racer
