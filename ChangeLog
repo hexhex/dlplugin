@@ -1,3 +1,10 @@
+2006-04-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerInterface.cpp (RacerInterface::~RacerInterface): Don't
+	delete cache entries, they are managed shared_ptr's now.
+	(RacerInterface::setOptions): New method.
+	* include/RacerInterface.h: Likewise.
+
 2006-04-19  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/RacerQuery.h (QueryCtx): Add a Ctor for PluginAtom::Query.
