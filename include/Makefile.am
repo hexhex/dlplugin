@@ -10,6 +10,8 @@ noinst_HEADERS = \
                  RacerExtAtom.h \
                  RacerInterface.h \
                  RacerQuery.h \
+                 RacerQueryExpr.h \
+                 RacerQueryExpr.tcc \
                  RacerRunner.h \
                  TCPStream.h \
                  UserDir.h \
