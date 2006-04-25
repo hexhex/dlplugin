@@ -15,8 +15,11 @@ location.hh \
 position.hh \
 stack.hh
 
+bin_SCRIPTS = dl-rewriter
+
 dlvhexlib_LTLIBRARIES = libdlvhexracer.la
 libdlvhexracer_la_SOURCES = \
+DLRewriter.cpp \
 OWLParser.cpp \
 RacerAnswerParser.ypp \
 RacerAnswerScanner.lpp \
