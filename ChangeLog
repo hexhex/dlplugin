@@ -1,3 +1,19 @@
+2006-04-25  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/Makefile.am (noinst_HEADERS): Add DLRewriter.h.
+
+	* src/Makefile.am (bin_SCRIPTS): Add dl-rewriter.
+	Add DLRewriter.cpp.
+
+	* src/OWLParser.cpp (OWLParser::parseNames): Parse concept and
+	role names.
+	* include/OWLParser.h: Likewise.
+
+	* src/RacerInterface.cpp: Add DLRewriter.
+	* include/RacerInterface.h: Likewise.
+
+	* src/dl-rewriter: New file.
+
 2006-04-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/Makefile.am (noinst_HEADERS): Add RacerQueryExpr.h and
