@@ -14,6 +14,7 @@
 
 #include "RacerExtAtom.h"
 #include "OWLParser.h"
+#include "DLRewriter.h"
 
 #include <algorithm>
 #include <iterator>
@@ -24,20 +25,23 @@
 using namespace dlvhex::racer;
 
 RacerInterface::RacerInterface()
-  : stream("localhost", 8088)
+  : stream("localhost", 8088),
+    rewriter(new DLRewriter(std::cin,std::cout))
 { }
 
 RacerInterface::~RacerInterface()
 {
+  delete rewriter;
   // stop RacerPro server
   RacerRunner::instance()->stop();
 }
 
 
 PluginRewriter*
-RacerInterface::createRewriter(std::istream&, std::ostream&)
+RacerInterface::createRewriter(std::istream& i, std::ostream& o)
 {
-  return 0; // nothing implemented yet
+  rewriter->setStreams(&i,&o);
+  return rewriter;
 }
 
 void
@@ -71,10 +75,17 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
 void
 RacerInterface::setOptions(int argc, char* argv[])
 {
-//   for (int i = 0; i < argc; i++)
-//     {
-//       std::cout << argv[i] << std::endl;
-//     }
+  for (int i = 0; i < argc; i++)
+    {
+      std::string s = argv[i];
+      
+      if (s.find("--ontology=") != std::string::npos)
+	{
+	  std::string uri = s.substr(s.find("="));
+	  std::cout << uri << std::endl;
+	  rewriter->setUri(uri);
+	}
+    }
 }
 
 extern "C" PluginInterface*
