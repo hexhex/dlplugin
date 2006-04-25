@@ -43,6 +43,12 @@ namespace racer {
     /// owl namespace
     static const std::string owlNspace;
 
+    static const std::string rdfsSubPropertyOf;
+    static const std::string owlClass;
+    static const std::string owlSubClassOf;
+    static const std::string owlObjectProperty;
+    static const std::string owlInverseOf;
+
 
   protected:
     /**
@@ -55,6 +61,9 @@ namespace racer {
      */
     static void
     statementHandler(void* userData, const raptor_statement* statement);
+
+    static void
+    tboxHandler(void* userData, const raptor_statement* statement);
 
     /**
      * The namespace callback handler for libraptor.
@@ -103,6 +112,9 @@ namespace racer {
      */
     virtual void
     parseNamespace(Query& query);
+
+    virtual void
+    parseNames(std::set<Term>&,std::set<Term>&);
   };
 
 } // namespace racer
