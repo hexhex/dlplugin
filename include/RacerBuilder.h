@@ -335,6 +335,21 @@ namespace racer {
     { }
   };
 
+  /**
+   * @brief Enable data substrate mirroring.
+   *
+   * @see 
+   */
+  class RacerImportOntologies : public RacerSimpleCommandBuilder
+  {
+  public:
+    explicit
+    RacerImportOntologies(std::ostream& s)
+      : RacerSimpleCommandBuilder(s, "(kb-ontologies DEFAULT)")
+    { }
+  };
+
+
 } // namespace racer
 } // namespace dlvhex
 

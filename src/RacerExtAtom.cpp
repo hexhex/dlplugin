@@ -74,6 +74,7 @@ RacerCachingAtom::getCachedDirectors(RacerBaseDirector* cmd) const
 
   comp->add(new RacerUNA(stream));
   comp->add(new RacerOpenOWL(stream));
+  comp->add(new RacerDirector<RacerImportOntologies,RacerIgnoreAnswer>(stream));
   comp->add(new RacerTempABox(stream));
   comp->add(new RacerConceptRolePM(stream));
 
@@ -207,6 +208,7 @@ RacerConsistent::getDirectors(const dlvhex::racer::Query&) const
 
   comp->add(new RacerUNA(stream));
   comp->add(new RacerOpenOWL(stream));
+  comp->add(new RacerDirector<RacerImportOntologies,RacerIgnoreAnswer>(stream));
   comp->add(new RacerTempABox(stream));
   comp->add(new RacerConceptRolePM(stream));
   comp->add(new RacerABoxConsistent(stream));
