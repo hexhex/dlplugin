@@ -7,6 +7,7 @@
 	* src/RacerRunner.cpp (RacerRunner::isRunning)
 	(RacerRunner::setPort, RacerRunner::getPort): New methods.
 	(RacerRunner::run): Don't check for running Racer processes.
+	(RacerRunner::run): Try to start Racer with a new port number.
 	* include/RacerRunner.h: Likewise.
 
 	* include/TCPStream.h (TCPIOStream::setConnection): New method.

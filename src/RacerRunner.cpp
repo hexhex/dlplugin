@@ -118,71 +118,78 @@ RacerRunnerAdaptee::run()
       sighandler.register_handler(SIGTERM, this);
       sighandler.register_handler(SIGABRT, this); // assert() raises SIGABRT
 
-      std::ostringstream cmdline;
 
-      cmdline << command 
-	      << " -http 0 " // turn off http requests
-	      << " -port "
-	      << port;
 
-      if (!kb.empty())
+      for (unsigned portCount = 0; portCount < 20; portCount++)
 	{
-	  cmdline << " -init " << kb;
-	}
+	  std::ostringstream cmdline;
 
-      ACE_Process_Options opt;
-      opt.command_line(cmdline.str().c_str());
+	  port = 8088 + portCount; // use portCount as offset
 
-      // redirect RACERs std{in,out,err} to /dev/null
-      ACE_HANDLE h = ACE_OS::open("/dev/null", O_RDWR);
-      opt.set_handles(h, h, h);
+	  cmdline << command 
+		  << " -http 0 " // turn off http requests
+		  << " -p "
+		  << port;
 
-      // start RACER process
-      racer = ACE_Process_Manager::instance()->spawn(opt);
-      ACE_OS::sleep(ACE_Time_Value(1)); // give RACER time to start
+	  if (!kb.empty())
+	    {
+	      cmdline << " -init " << kb;
+	    }
 
-      // check whether the spawn succeeded
-      ACE_exitcode ec;
-      pid_t check = ACE_Process_Manager::instance()->wait(racer,
-							  ACE_Time_Value(0,1),
-							  &ec);
+	  ACE_Process_Options opt;
+	  opt.command_line(cmdline.str().c_str());
 
-      // if ACE_Process_Manager::wait() returns 0, a timeout occurred
-      // while waiting for the process -> RACER is running.  Otherwise
-      // it returns the pid of RACER and handled its exit status ->
-      // RACER is not running.
-      if (check == 0)
-	{
-// 	  savePID();
-	  return;
-	}
-      else if (check == racer && ec != 0)
-	{
-	  racer = ACE_INVALID_PID;
+	  // redirect RACERs std{in,out,err} to /dev/null
+	  ACE_HANDLE h = ACE_OS::open("/dev/null", O_RDWR);
+	  opt.set_handles(h, h, h);
 
-// 	  std::ostringstream os;
-// 	  os << "Program "
-// 	     << command
-// 	     << " stopped with exit status "
-// 	     << ec;
+	  // start RACER process
+	  racer = ACE_Process_Manager::instance()->spawn(opt);
+	  ACE_OS::sleep(ACE_Time_Value(1)); // give RACER time to start
 
-// 	  throw RacerError(os.str());
-	}
-      else if (check == racer && ec == 0)
-	{
-	  racer = ACE_INVALID_PID;
+	  // check whether the spawn succeeded
+	  ACE_exitcode ec;
+	  pid_t check = ACE_Process_Manager::instance()->wait(racer,
+							      ACE_Time_Value(0,1),
+							      &ec);
 
-// 	  std::ostringstream os;
-// 	  os << "Couldn't start "
-// 	     << command
-// 	     << ", maybe another RACER instance is running"
-// 	     << " and I didn't succeed in stopping it.";
+	  // if ACE_Process_Manager::wait() returns 0, a timeout occurred
+	  // while waiting for the process -> RACER is running.  Otherwise
+	  // it returns the pid of RACER and handled its exit status ->
+	  // RACER is not running.
+	  if (check == 0)
+	    {
+	      // 	  savePID();
+	      return;
+	    }
+	  else if (check == racer && ec != 0)
+	    {
+	      racer = ACE_INVALID_PID;
+	      
+	      // 	  std::ostringstream os;
+	      // 	  os << "Program "
+	      // 	     << command
+	      // 	     << " stopped with exit status "
+	      // 	     << ec;
+	      
+	      // 	  throw RacerError(os.str());
+	    }
+	  else if (check == racer && ec == 0)
+	    {
+	      racer = ACE_INVALID_PID;
+	      
+	      // 	  std::ostringstream os;
+	      // 	  os << "Couldn't start "
+	      // 	     << command
+	      // 	     << ", maybe another RACER instance is running"
+	      // 	     << " and I didn't succeed in stopping it.";
 
-// 	  throw RacerError(os.str());
-	}
-      else
-	{
-	  throw RacerError("Unknown error while starting " + command);
+	      // 	  throw RacerError(os.str());
+	    }
+	  else
+	    {
+	      throw RacerError("Unknown error while starting " + command);
+	    }
 	}
     }
 }
