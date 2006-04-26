@@ -11,7 +11,7 @@
  */
 
 #include "RacerExtAtom.h"
-
+#include "RacerInterface.h"
 #include "RacerDirector.h"
 #include "RacerQuery.h"
 #include "RacerRunner.h"
@@ -42,8 +42,14 @@ RacerExtAtom::retrieve(const PluginAtom::Query& query,
 {
   try
     {
-      // just try to run RACER
-      RacerRunner::instance()->run();
+      if (!RacerRunner::instance()->isRunning())
+	{
+	  // just try to run RACER
+	  RacerRunner::instance()->run();
+	  // reset stream connection
+	  ACE_Singleton<RacerInterface, ACE_Null_Mutex>::instance()->getStream().setConnection
+	    ("localhost", RacerRunner::instance()->getPort());
+	}
 
       QueryCtx::shared_pointer qctx(new QueryCtx(query));
 
