@@ -17,6 +17,8 @@
 #include <streambuf>
 #include <iostream>
 
+#include <boost/shared_ptr.hpp>
+
 #include <ace/SOCK_Stream.h>
 #include <ace/SOCK_Connector.h>
 
@@ -53,7 +55,7 @@ namespace racer {
     /**
      * Allocates the buffers at initialization time.
      */
-    virtual void
+    void
     initBuffers();
 
 
@@ -137,24 +139,18 @@ namespace racer {
   {
   private:
     /// buffered IO
-    TCPStreamBuf sb;
+    boost::shared_ptr<std::streambuf> sb;
 
   public:
     /// Default Ctor
-    TCPIOStream(const std::string& host, unsigned port)
-      : std::iostream(&sb),
-	sb(host, port)
-    {
-      ///@todo hm, when we turn on exceptions the program terminates...
-      // exceptions(std::ios_base::badbit);
-    }
+    TCPIOStream(const std::string& host, unsigned port);
 
     /// Copy Ctor
-    TCPIOStream(const TCPIOStream& iostr)
-      : std::ios(),
-	std::iostream(&sb),
-	sb(iostr.sb)
-    { }
+    TCPIOStream(const TCPIOStream& iostr);
+
+    void
+    setConnection(const std::string& host = "localhost",
+		  unsigned port = 8088);
   };
 
 } // namespace racer

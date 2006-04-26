@@ -27,6 +27,31 @@ using namespace dlvhex::racer;
 
 
 
+TCPIOStream::TCPIOStream(const std::string& host, unsigned port)
+  : std::iostream(new TCPStreamBuf(host, port)),
+    sb(rdbuf()) // get rdbuf from our parent
+{
+  ///@todo hm, when we turn on exceptions the program terminates...
+  // exceptions(std::ios_base::badbit);
+}
+
+TCPIOStream::TCPIOStream(const TCPIOStream& iostr)
+  : std::ios(),
+    std::iostream(iostr.rdbuf()),
+    sb(iostr.sb)
+{ }
+
+void
+TCPIOStream::setConnection(const std::string& host,
+			   unsigned port)
+{
+  boost::shared_ptr<TCPStreamBuf> tmp(new TCPStreamBuf(host, port));
+  sb = tmp;
+  rdbuf(sb.get()); // set rdbuf for our parent iostream
+}
+
+
+
 
 TCPStreamBuf::TCPStreamBuf(const std::string& host,
 			   unsigned port,
@@ -41,7 +66,7 @@ TCPStreamBuf::TCPStreamBuf(const std::string& host,
   sigpipe.sig_add(SIGPIPE);
   ACE_Sig_Action siga(SIG_IGN, sigpipe);
 
-  initBuffers();
+  initBuffers(); // don't call virtual methods in the ctor
 }
 
 
@@ -52,7 +77,7 @@ TCPStreamBuf::TCPStreamBuf(const TCPStreamBuf& sb)
     stream(sb.stream),
     bufsize(sb.bufsize)
 {
-  initBuffers();
+  initBuffers(); // don't call virtual methods in the ctor
 }
 
 
