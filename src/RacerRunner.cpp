@@ -32,6 +32,7 @@ using namespace dlvhex::racer;
 
 RacerRunnerAdaptee::RacerRunnerAdaptee()
   : command(RACERPATH),
+    port(8088),
     kb(""),
     racer(ACE_INVALID_PID)
 {
@@ -49,11 +50,30 @@ RacerRunnerAdaptee::~RacerRunnerAdaptee()
   stop();
 }
 
+bool
+RacerRunnerAdaptee::isRunning() const
+{
+  return racer != ACE_INVALID_PID;
+}
+
 void
 RacerRunnerAdaptee::setKB(const std::string& kb)
 {
   this->kb = kb;
 }
+
+void
+RacerRunnerAdaptee::setPort(unsigned p)
+{
+  port = p;
+}
+
+unsigned
+RacerRunnerAdaptee::getPort() const
+{
+  return port;
+}
+
 
 void
 RacerRunnerAdaptee::cleanup()
@@ -87,7 +107,7 @@ RacerRunnerAdaptee::run()
 {
   if (racer == ACE_INVALID_PID)
     {
-      cleanup();
+//       cleanup();
 
       // register all "fatal" signals, so we can stop the running
       // RACER process
@@ -98,17 +118,20 @@ RacerRunnerAdaptee::run()
       sighandler.register_handler(SIGTERM, this);
       sighandler.register_handler(SIGABRT, this); // assert() raises SIGABRT
 
-      std::string cmdline(command);
+      std::ostringstream cmdline;
 
-      cmdline += " -http 0 "; // turn off http requests
+      cmdline << command 
+	      << " -http 0 " // turn off http requests
+	      << " -port "
+	      << port;
 
       if (!kb.empty())
 	{
-	  cmdline += " -init " + kb;
+	  cmdline << " -init " << kb;
 	}
 
       ACE_Process_Options opt;
-      opt.command_line(cmdline.c_str());
+      opt.command_line(cmdline.str().c_str());
 
       // redirect RACERs std{in,out,err} to /dev/null
       ACE_HANDLE h = ACE_OS::open("/dev/null", O_RDWR);
@@ -130,31 +153,32 @@ RacerRunnerAdaptee::run()
       // RACER is not running.
       if (check == 0)
 	{
-	  savePID();
+// 	  savePID();
+	  return;
 	}
       else if (check == racer && ec != 0)
 	{
 	  racer = ACE_INVALID_PID;
 
-	  std::ostringstream os;
-	  os << "Program "
-	     << command
-	     << " stopped with exit status "
-	     << ec;
+// 	  std::ostringstream os;
+// 	  os << "Program "
+// 	     << command
+// 	     << " stopped with exit status "
+// 	     << ec;
 
-	  throw RacerError(os.str());
+// 	  throw RacerError(os.str());
 	}
       else if (check == racer && ec == 0)
 	{
 	  racer = ACE_INVALID_PID;
 
-	  std::ostringstream os;
-	  os << "Couldn't start "
-	     << command
-	     << ", maybe another RACER instance is running"
-	     << " and I didn't succeed in stopping it.";
+// 	  std::ostringstream os;
+// 	  os << "Couldn't start "
+// 	     << command
+// 	     << ", maybe another RACER instance is running"
+// 	     << " and I didn't succeed in stopping it.";
 
-	  throw RacerError(os.str());
+// 	  throw RacerError(os.str());
 	}
       else
 	{

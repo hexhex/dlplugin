@@ -33,6 +33,7 @@ namespace racer {
   private:
     /// RACER command
     std::string command;
+    unsigned port;
     ///
     std::string kb;
     /// RACER process id
@@ -72,6 +73,15 @@ namespace racer {
     /// stop running RACER and remove pid-file
     virtual void
     stop();
+
+    virtual bool
+    isRunning() const;
+
+    virtual void
+    setPort(unsigned port);
+
+    virtual unsigned
+    getPort() const;
 
     /// transparently allow access from ACE_Singleton<>
     friend class ACE_Singleton<RacerRunnerAdaptee, ACE_Null_Mutex>;
