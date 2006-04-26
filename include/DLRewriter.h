@@ -19,6 +19,7 @@
 #include <dlvhex/Term.h>
 
 #include <iosfwd>
+#include <string>
 
 namespace dlvhex {
 namespace racer {
@@ -33,11 +34,36 @@ namespace racer {
     std::istream* in;
     std::ostream* out;
 
+    unsigned extAtomNo;
+
+    struct RewriteRule;
+
+    std::set<RewriteRule*> rules;
+
+    static const char* re;
+
+
   public:
+    void
+    rewriteLine(const std::string&);
+
+    void
+    rewriteConcept(const std::string&);
+
+    void
+    rewriteRole(const std::string&);
+
+
     DLRewriter(std::istream& i, std::ostream& o);
 
     void
     setStreams(std::istream* i, std::ostream* o);
+
+//     std::istream&
+//     getInput();
+
+//     std::ostream&
+//     getOutput();
 
     void
     setUri(const std::string& u);
