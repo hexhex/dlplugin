@@ -336,7 +336,7 @@ namespace racer {
   };
 
   /**
-   * @brief Enable data substrate mirroring.
+   * @brief Enable imports in KB DEFAULT, i.e. read all owl:imports.
    *
    * @see 
    */
