@@ -1,3 +1,25 @@
+2006-04-26  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+	
+	* src/DLRewriter.cpp: New file.
+	Some updates, currently non-working.
+	* include/DLRewriter.h: Likewise.
+
+	* src/RacerRunner.cpp (RacerRunner::isRunning)
+	(RacerRunner::setPort, RacerRunner::getPort): New methods.
+	(RacerRunner::run): Don't check for running Racer processes.
+	* include/RacerRunner.h: Likewise.
+
+	* include/TCPStream.h (TCPIOStream::setConnection): New method.
+	* src/TCPStream.cpp: Likewise.
+
+	* src/RacerInterface.cpp (RacerInterface::getStream): New method.
+	* include/RacerInterface.h: Likewise.
+
+	* src/RacerExtAtom.cpp: Add kb-ontologies command.
+	(RacerExtAtom::retrieve): Reset stream after starting Racer.
+	* include/RacerBuilder.h: Likewise.
+	Fix documentation.
+
 2006-04-25  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/Makefile.am (noinst_HEADERS): Add DLRewriter.h.
