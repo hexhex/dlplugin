@@ -88,6 +88,13 @@ RacerInterface::setOptions(int argc, char* argv[])
     }
 }
 
+TCPIOStream&
+RacerInterface::getStream()
+{
+  return stream;
+}
+ 
+
 extern "C" PluginInterface*
 PLUGINIMPORTFUNCTION()
 {

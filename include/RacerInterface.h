@@ -115,6 +115,10 @@ namespace racer {
      */
     virtual void
     setOptions(int argc, char *argv[]);
+
+
+    virtual TCPIOStream&
+    getStream();
   };
 
 } // namespace racer
