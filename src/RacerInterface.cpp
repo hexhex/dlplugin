@@ -40,8 +40,9 @@ RacerInterface::~RacerInterface()
 PluginRewriter*
 RacerInterface::createRewriter(std::istream& i, std::ostream& o)
 {
-  rewriter->setStreams(&i,&o);
-  return rewriter;
+//   rewriter->setStreams(&i,&o);
+//   return rewriter;
+  return 0;
 }
 
 void
