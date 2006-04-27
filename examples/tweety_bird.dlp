@@ -1,0 +1,34 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Tweety (1) -- The Bird Case     
+%
+% This is the formulation of the famous "birds fly by default" 
+% example from the non-monotonic reasoning literature where 
+% Tweety is known to be a bird.
+%
+% The OWL ontology contains the knowledge about Birds,
+% Penguins and Fliers, and that Tweety is a bird; the birds-fly-
+% by-default rule is formulated on top of the ontology by
+% nonmonotonic rules.
+% 
+% We then can query whether Tweety flies, and get the intuitive 
+% result.
+%
+% We don't use here strong negation ("-") on LP predicates in rules, 
+% since well-founded semantics for dl-programs is only defined-
+% in absence of "-". As for answer set semantics, just replace
+% "neg_" by "-".
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% By default, a bird doesn't fly:
+  flies(X) :- DL[Bird](X), not neg_flies(X).
+
+% Single out the non-fliers under default assumption:
+  neg_flies(X) :- DL[Flier += flies; -Flier](X).
+
+% Is the description logic KB inconsistent? 
+  inconsistent :- DL[Bird]("dummy"), DL[-Bird]("dummy").
+
+
