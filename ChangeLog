@@ -1,3 +1,17 @@
+2006-04-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/DLRewriter.cpp: Remove regexp code, let's do it ourselves.
+	* include/DLRewriter.h: Likewise.
+
+	* examples/Makefile.am: Add tweety_bird.owl, tweety_bird.dlp.
+
+	* testsuite/Makefile.am: Add TestDLRewriter.cpp, TestDLRewriter.h.
+
+	* examples/tweety_bird.dlp: New file.
+	* examples/tweety_bird.owl: Likewise.
+	* testsuite/TestDLRewriter.cpp: Likewise.
+	* testsuite/TestDLRewriter.h: Likewise.
+
 2006-04-26  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 	
 	* src/DLRewriter.cpp: New file.
