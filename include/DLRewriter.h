@@ -24,6 +24,7 @@
 namespace dlvhex {
 namespace racer {
 
+
   /**
    * @brief 
    */
@@ -39,8 +40,6 @@ namespace racer {
     struct RewriteRule;
 
     std::set<RewriteRule*> rules;
-
-    static const char* re;
 
 
   public:
@@ -59,11 +58,11 @@ namespace racer {
     void
     setStreams(std::istream* i, std::ostream* o);
 
-//     std::istream&
-//     getInput();
+    std::istream&
+    getInput() const;
 
-//     std::ostream&
-//     getOutput();
+    std::ostream&
+    getOutput() const;
 
     void
     setUri(const std::string& u);

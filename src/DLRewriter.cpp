@@ -16,8 +16,6 @@
 #include <algorithm>
 #include <iterator>
 
-// #include <boost/regex.hpp>
-
 using namespace dlvhex::racer;
 
 DLRewriter::DLRewriter(std::istream& i, std::ostream& o)
@@ -41,6 +39,17 @@ DLRewriter::setStreams(std::istream* i, std::ostream* o)
 }
 
 
+std::istream&
+DLRewriter::getInput() const
+{
+  return *in;
+}
+
+std::ostream&
+DLRewriter::getOutput() const
+{
+  return *out;
+}
 
 
 
@@ -58,14 +67,52 @@ struct RewriteRule
 void
 DLRewriter::rewriteConcept(const std::string& concept)
 {
-  
+  //  getOutput() << "&dlC[\"" << uri << "\",";
+  getOutput() << concept;
+
+  unsigned i = 3; // skip DL[
+
+  while (i < concept.length())
+    {
+      std::string::size_type pm = concept.find_first_of("=", i);
+
+      if (pm != std::string::npos)
+	{
+	  std::string lhs;
+	  std::string rhs;
+	  
+	  lhs = concept.substr(i, pm - i);
+	  std::string::size_type sc = concept.find(';');
+	  
+	  if (sc != std::string::npos)
+	    {
+	      rhs = concept.substr(pm, sc - pm);
+	      i = sc + 1;
+	    }
+	  else
+	    {
+	      std::string::size_type b = concept.find(']');
+	      rhs = concept.substr(pm, b - pm);
+	      i = b + 1;
+	    }
+	  
+	  std::cout << lhs << " " << rhs << std::endl;
+	}
+      else
+	{
+	  std::string::size_type b = concept.find(']');
+	  std::string query = concept.substr(i, b - i);
+	  std::cout << query << std::endl;
+	  i = concept.length();
+	}
+    }
 }
+
 
 void
 DLRewriter::rewriteRole(const std::string& role)
 {
-
-
+  getOutput() << role;
 }
 
 
@@ -79,12 +126,11 @@ DLRewriter::rewriteLine(const std::string& line)
       std::string::size_type begin = line.find("DL[", i);
       std::string::size_type end = line.find(")", begin);
 
-      if (begin != std::string::npos &&
-	  end != std::string::npos)
+      if (begin != std::string::npos && end != std::string::npos)
 	{
-	  *out << line.substr(i, begin);
+	  getOutput() << line.substr(i, begin - i); // output preceeding string
 
-	  std::string dlAtom = line.substr(begin,end);
+	  std::string dlAtom = line.substr(begin, end - begin + 1);
 	  
 	  if (dlAtom.find(',', dlAtom.find('(')) == std::string::npos)
 	    {
@@ -95,11 +141,11 @@ DLRewriter::rewriteLine(const std::string& line)
 	      rewriteRole(dlAtom);
 	    }
 
-	  i = end;
+	  i = end + 1;
 	}
       else
 	{
-	  *out << line.substr(i);
+	  getOutput() << line.substr(i);
 
 	  i = line.length();
 	}
@@ -107,44 +153,6 @@ DLRewriter::rewriteLine(const std::string& line)
 }
 
 
-// bool
-// regexCb(const boost::match_results<std::string::const_iterator>& what)
-// {
-//   int i = 0;
-
-//   for (boost::match_results<std::string::const_iterator>::const_iterator it = what.begin();
-//        it != what.end();
-//        it++, i++)
-//     {
-//       if (it->matched)
-// 	{
-// 	  switch(i)
-// 	    {
-// 	    case 1: // comment line
-// 	    case 4: // no dl-atom line
-// 	      *out << *it;
-// 	      return true;
-
-// 	    case 2: // DL-atom line
-// 	      rewriteAtoms(*it);
-// 	      return true;
-
-// 	    default: // skip what[0] and friends
-// 	      break;
-// 	    }
-// 	}
-//     }
-
-//    return true;
-// }
-
-const char* DLRewriter::re =
-// #1: comment lines
-  "(^[[:space:]]*%.*$)|"
-// #2+#3: lines with at least one DL-atom
-  "(.*DL\\[[\\w;_+-= \t]+\\]\\(\"?[\\w_]+\"?(,\"?[\\w_]+\"?)?\\).*)|"
-// #4: lines without an DL-atom
-  "(.*[^D][^L][^\\[].*)";
 
 void
 DLRewriter::rewrite()
@@ -155,8 +163,13 @@ DLRewriter::rewrite()
   OWLParser p(uri);
 
   p.parseNames(concepts, roles);
-  
-//   boost::regex expression(DLRewriter::re);
+
+  for (std::set<Term>::const_iterator it = concepts.begin();
+       it != concepts.end(); it++)
+    {
+      std::cout << it->getUnquotedString() << std::endl;
+    }
+
   std::string line;
   std::stringbuf sb;
 
@@ -165,7 +178,7 @@ DLRewriter::rewrite()
       // ignore newlines, they screw with in stream
       while (in->peek() == '\n')
 	{
-	  *out << std::endl;
+	  getOutput() << std::endl;
 	  in->ignore();
 	}
 
@@ -173,10 +186,36 @@ DLRewriter::rewrite()
       in->get(sb, '\n');
       line = sb.str();
 
-//       boost::sregex_iterator m1(line.begin(), line.end(), expression);
-//       boost::sregex_iterator m2;
+      std::string::size_type c = line.find('%');
 
-//       std::for_each(m1, m2, std::mem_fun(&DLRewriter::regexCb));
+      if (c != std::string::npos)
+	{
+	  if (line.substr(0, c - 1).find_first_not_of(" \t") != std::string::npos)
+	    {
+	      // comment line found
+	      getOutput() << line;
+	      continue;
+	    }
+	}
+
+      std::string::size_type d = line.find("DL[");
+
+      if (d != std::string::npos && c == std::string::npos)
+	{
+	  // there is a dl-atom in the line
+	  rewriteLine(line);
+	}
+      else if (d != std::string::npos && c != std::string::npos)
+	{
+	  // dl-atom found with comment at the end
+	  rewriteLine(line.substr(0, c));
+	  getOutput() << line.substr(c);
+	}
+      else
+	{
+	  // no dl-atom found
+	  getOutput() << line;
+	}
     }
 
   // output rules
