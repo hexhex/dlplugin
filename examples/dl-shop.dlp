@@ -1,0 +1,41 @@
+%
+% vendors we take into account
+%
+
+vendor("s1").
+vendor("s5").
+vendor("s9").
+%
+% parts needed
+%
+needed("cpu").
+needed("harddisk").
+needed("case").
+
+%
+% for the case, we already have a contract with a specific vendor
+%
+contract("s9","case").
+%
+% choosing rules:
+% avoid vendors that don't give a rebate
+% rebate corresponds to 'Discount'
+% consider vendors that sell things we need and that are not avoided
+%
+
+avoid(X) :- not rebate(X), vendor(X).
+rebate(X) :- DL[supplier += buy_cand, supplier += contract; Discount](X), vendor(X).
+buy_cand(X,Y) :- vendor(X), not avoid(X), DL[provides](X,Y), needed(Y), not e(Y).
+%
+% additional exclusion rules:
+% buy each part only from one vendor, and
+% don't search for parts we already have a contract for
+%
+
+e(Y) :- buy_cand(X,Y), buy_cand(Z,Y), X != Z, vendor(Z), needed(Y), vendor(X).
+e(Y) :- contract(Z,Y), vendor(Z), needed(Y).
+%
+% summarize result
+%
+
+supplied(X,Y) :- DL[supplier += buy_cand, supplier += contract; supplier](X,Y), needed(Y), vendor(X).
