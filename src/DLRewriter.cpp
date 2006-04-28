@@ -76,33 +76,50 @@ DLRewriter::rewriteConcept(const std::string& concept)
     {
       std::string::size_type pm = concept.find_first_of("=", i);
 
-      if (pm != std::string::npos)
+      if (pm != std::string::npos) // we have += or -= cmd
 	{
+	  char c = concept[pm - 1];
+
 	  std::string lhs;
 	  std::string rhs;
 	  
-	  lhs = concept.substr(i, pm - i);
+	  lhs = concept.substr(i, pm - i - 1); // skip '-' resp '+'
 	  std::string::size_type sc = concept.find(';');
 	  
 	  if (sc != std::string::npos)
 	    {
-	      rhs = concept.substr(pm, sc - pm);
+	      rhs = concept.substr(pm + 1, sc - pm - 1); // skip '='
 	      i = sc + 1;
 	    }
-	  else
+	  else // is this possible?
 	    {
 	      std::string::size_type b = concept.find(']');
-	      rhs = concept.substr(pm, b - pm);
+	      rhs = concept.substr(pm + 1, b - pm - 1);
 	      i = b + 1;
 	    }
-	  
-	  std::cout << lhs << " " << rhs << std::endl;
+
+	  // strip whitespace
+
+	  std::string::size_type skip = lhs.find_first_not_of(' ');
+	  lhs = lhs.substr(skip, lhs.find_first_of(' ', skip) - skip);
+
+	  skip = rhs.find_first_not_of(' ');
+	  rhs = rhs.substr(skip, lhs.find_first_of(' ', skip) - skip);
+
+	  std::cout << c << ": " << lhs << " " << rhs << std::endl;
 	}
       else
 	{
 	  std::string::size_type b = concept.find(']');
 	  std::string query = concept.substr(i, b - i);
+
+	  // strip whitespace
+
+	  std::string::size_type skip = query.find_first_not_of(' ');
+	  query = query.substr(skip, query.find_first_of(' ', skip) - skip);
+
 	  std::cout << query << std::endl;
+
 	  i = concept.length();
 	}
     }
