@@ -26,15 +26,29 @@ TestDLRewriter::setUp()
 void
 TestDLRewriter::runDLRewrite()
 {
-  std::fstream fs("../../examples/tweety_bird.dlp");
-  std::ostringstream os;
+ {
+   std::fstream fs("../../examples/tweety_bird.dlp");
+   std::ostringstream os;
+   
+   DLRewriter dr(fs, os);
+   dr.setUri("file:../../examples/tweety_bird.owl");
+   dr.setStreams(&fs,&os);
+   dr.rewrite();
+   
+   std::cout << "## " << os.str() << std::endl;
+ }
 
-  DLRewriter dr(fs, os);
-  dr.setUri("file:../../examples/tweety_bird.owl");
-  dr.setStreams(&fs,&os);
-  dr.rewrite();
-
-  std::cout << "## " << os.str() << std::endl;
+ {
+   std::fstream fs("../../examples/dl-shop.dlp");
+   std::ostringstream os;
+   
+   DLRewriter dr(fs, os);
+   dr.setUri("file:../../examples/shop.owl");
+   dr.setStreams(&fs,&os);
+   dr.rewrite();
+   
+   std::cout << "## " << os.str() << std::endl;
+ }
 }
 
 void
