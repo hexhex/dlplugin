@@ -16,6 +16,8 @@
 #include <algorithm>
 #include <iterator>
 
+#include <boost/shared_ptr.hpp>
+
 using namespace dlvhex::racer;
 
 DLRewriter::DLRewriter(std::istream& i, std::ostream& o)
@@ -52,84 +54,88 @@ DLRewriter::getOutput() const
 }
 
 
+namespace dlvhex {
+  namespace racer {
 
-struct RewriteRule
-{
-  unsigned extAtomNo;
-  char opChar;
-  std::string lhs;
-  std::string rhs;
-};
-
-
-
-
-void
-DLRewriter::rewriteConcept(const std::string& concept)
-{
-  //  getOutput() << "&dlC[\"" << uri << "\",";
-  getOutput() << concept;
-
-  unsigned i = 3; // skip DL[
-
-  while (i < concept.length())
+    struct DLRewriter::RewriteRule
     {
-      std::string::size_type pm = concept.find_first_of("=", i);
+      unsigned extAtomNo;
+      char opChar;
+      std::string lhs;
+      std::string rhs;
+    };
+
+
+    void
+    strip(std::string& s)
+    {
+      std::string::size_type skip = s.find_first_not_of(' ');
+      s = s.substr(skip, s.find_first_of(' ', skip) - skip);
+    }
+
+  }
+}
+
+
+std::string
+DLRewriter::filterInput(const std::string& inputStr)
+{
+  unsigned i = 3;
+
+  std::string::size_type brbegin = inputStr.rfind('(');
+
+  while (i < inputStr.length())
+    {
+      std::string::size_type pm = inputStr.find('=', i);
 
       if (pm != std::string::npos) // we have += or -= cmd
 	{
-	  char c = concept[pm - 1];
+	  char c = inputStr[pm - 1] == '+' ? 'p' : 'm';
 
 	  std::string lhs;
 	  std::string rhs;
 	  
-	  lhs = concept.substr(i, pm - i - 1); // skip '-' resp '+'
-	  std::string::size_type sc = concept.find(';');
+	  lhs = inputStr.substr(i, pm - i - 1); // skip '-' resp. '+'
+	  std::string::size_type sc = inputStr.find(',', i);
 	  
-	  if (sc != std::string::npos)
+	  if (sc != std::string::npos && sc < brbegin)
 	    {
-	      rhs = concept.substr(pm + 1, sc - pm - 1); // skip '='
+	      rhs = inputStr.substr(pm + 1, sc - pm - 1); // skip '='
 	      i = sc + 1;
 	    }
-	  else // is this possible?
+	  else
 	    {
-	      std::string::size_type b = concept.find(']');
-	      rhs = concept.substr(pm + 1, b - pm - 1);
+	      std::string::size_type b = inputStr.find(';', i);
+	      rhs = inputStr.substr(pm + 1, b - pm - 1);
 	      i = b + 1;
 	    }
 
 	  // strip whitespace
+	  strip(lhs);
+	  strip(rhs);
 
-	  std::string::size_type skip = lhs.find_first_not_of(' ');
-	  lhs = lhs.substr(skip, lhs.find_first_of(' ', skip) - skip);
+	  // append a new RewriteRule
+	  boost::shared_ptr<RewriteRule> r(new RewriteRule);
+	  r->opChar = c;
+	  r->extAtomNo = this->extAtomNo;
+	  r->lhs = lhs;
+	  r->rhs = rhs;
 
-	  skip = rhs.find_first_not_of(' ');
-	  rhs = rhs.substr(skip, lhs.find_first_of(' ', skip) - skip);
-
-	  std::cout << c << ": " << lhs << " " << rhs << std::endl;
+	  rules.push_back(r);
 	}
       else
 	{
-	  std::string::size_type b = concept.find(']');
-	  std::string query = concept.substr(i, b - i);
+	  std::string::size_type b = inputStr.find(']', i);
+	  std::string query = inputStr.substr(i, b - i);
 
 	  // strip whitespace
+	  strip(query);
 
-	  std::string::size_type skip = query.find_first_not_of(' ');
-	  query = query.substr(skip, query.find_first_of(' ', skip) - skip);
-
-	  std::cout << query << std::endl;
-
-	  i = concept.length();
+	  return "\"" + query + "\"";
 	}
     }
-}
 
-
-void
-DLRewriter::rewriteRole(const std::string& role)
-{
-  getOutput() << role;
+  return "";
 }
 
 
@@ -143,22 +149,49 @@ DLRewriter::rewriteLine(const std::string& line)
       std::string::size_type begin = line.find("DL[", i);
       std::string::size_type end = line.find(")", begin);
 
-      if (begin != std::string::npos && end != std::string::npos)
+      if (begin != std::string::npos && end != std::string::npos) // found dl-Atom
 	{
 	  getOutput() << line.substr(i, begin - i); // output preceeding string
 
 	  std::string dlAtom = line.substr(begin, end - begin + 1);
-	  
-	  if (dlAtom.find(',', dlAtom.find('(')) == std::string::npos)
+
+	  std::string::size_type obeg = dlAtom.rfind('(');
+
+	  if (dlAtom.find(',', obeg) == std::string::npos)
 	    {
-	      rewriteConcept(dlAtom);
+	      getOutput() << "&dlC";
 	    }
 	  else
 	    {
-	      rewriteRole(dlAtom);
+	      getOutput() << "&dlR";
 	    }
 
+
+	  // collect rules + get query string
+	  std::string query = filterInput(dlAtom);
+
+	  getOutput() << "[\"" 
+		      << uri 
+		      << "\",dl_pc_"
+		      << extAtomNo
+		      << ",dl_mc_"
+		      << extAtomNo
+		      << ",dl_pr_"
+		      << extAtomNo
+		      << ",dl_mr_"
+		      << extAtomNo
+		      << ","
+		      << query
+		      << "]";
+
+	  // now append output
+	  std::string::size_type oend = dlAtom.find(')', obeg);
+
+	  getOutput() << dlAtom.substr(obeg, oend - obeg + 1);
+
 	  i = end + 1;
+
+	  this->extAtomNo++;
 	}
       else
 	{
@@ -176,16 +209,11 @@ DLRewriter::rewrite()
 {
   std::set<Term> concepts;
   std::set<Term> roles;
+  Query q;
 
   OWLParser p(uri);
-
   p.parseNames(concepts, roles);
-
-  for (std::set<Term>::const_iterator it = concepts.begin();
-       it != concepts.end(); it++)
-    {
-      std::cout << it->getUnquotedString() << std::endl;
-    }
+  p.parseNamespace(q);
 
   std::string line;
   std::stringbuf sb;
@@ -236,4 +264,38 @@ DLRewriter::rewrite()
     }
 
   // output rules
+
+  for (std::vector<boost::shared_ptr<RewriteRule> >::const_iterator it = rules.begin();
+       it != rules.end(); it++)
+    {
+      std::string s = q.getNamespace() + (*it)->lhs;
+
+      if (concepts.find(Term(s)) != concepts.end())
+	{
+	  getOutput() << "dl_" << (*it)->opChar
+		      << "c_"
+		      << (*it)->extAtomNo
+		      << "(\""
+		      << (*it)->lhs
+		      << "\",X) :- "
+		      << (*it)->rhs
+		      << "(X)."
+		      << std::endl;
+	}
+      else
+	{
+	  getOutput() << "dl_" << (*it)->opChar
+		      << "r_"
+		      << (*it)->extAtomNo
+		      << "(\""
+		      << (*it)->lhs
+		      << "\",X,Y) :- "
+		      << (*it)->rhs
+		      << "(X,Y)."
+		      << std::endl;
+	}
+    }
+
+  extAtomNo = 0;
+  rules.clear();
 }

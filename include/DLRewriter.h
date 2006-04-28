@@ -21,6 +21,8 @@
 #include <iosfwd>
 #include <string>
 
+#include <boost/shared_ptr.hpp>
+
 namespace dlvhex {
 namespace racer {
 
@@ -39,19 +41,15 @@ namespace racer {
 
     struct RewriteRule;
 
-    std::set<RewriteRule*> rules;
+    std::vector<boost::shared_ptr<RewriteRule> > rules;
 
-
-  public:
     void
     rewriteLine(const std::string&);
 
-    void
-    rewriteConcept(const std::string&);
+    std::string
+    filterInput(const std::string&);
 
-    void
-    rewriteRole(const std::string&);
-
+  public:
 
     DLRewriter(std::istream& i, std::ostream& o);
 
