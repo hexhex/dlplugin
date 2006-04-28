@@ -31,12 +31,15 @@ namespace racer {
   private:
     CPPUNIT_TEST_SUITE(TestDLRewriter);
     CPPUNIT_TEST(runDLRewrite);
+    CPPUNIT_TEST(runDLNoRewrite);
     CPPUNIT_TEST_SUITE_END();
 
   public: 
     virtual void setUp();
 
     void runDLRewrite();    
+
+    void runDLNoRewrite();    
   };
 
 } // namespace racer

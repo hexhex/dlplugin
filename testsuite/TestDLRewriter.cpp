@@ -36,3 +36,22 @@ TestDLRewriter::runDLRewrite()
 
   std::cout << "## " << os.str() << std::endl;
 }
+
+void
+TestDLRewriter::runDLNoRewrite()
+{
+  std::fstream fs("../../examples/shop.dlp");
+  std::ostringstream os;
+
+  DLRewriter dr(fs, os);
+  dr.setUri("../../examples/shop.owl");
+  dr.setStreams(&fs,&os);
+  dr.rewrite();
+
+  std::fstream fs2("../../examples/shop.dlp");
+  std::stringbuf cmp;
+  fs2.get(cmp, 0);
+
+  // hex programs must stay the same
+  CPPUNIT_ASSERT(cmp.str() == os.str());
+}
