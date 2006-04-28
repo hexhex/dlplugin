@@ -1,4 +1,15 @@
+2006-04-28  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* testsuite/TestDLRewriter.cpp (TestDLRewriter::runDLNoRewrite):
+	DLRewriter must not rewrite HEX programs.
+	* testsuite/TestDLRewriter.h: Likewise.
+
+	* src/DLRewriter.cpp (DLRewriter::rewriteConcept): Strip whitespaces.
+
 2006-04-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerInterface.cpp (RacerInterface::createRewriter): Disable
+	DLRewriter.
 
 	* src/DLRewriter.cpp: Remove regexp code, let's do it ourselves.
 	* include/DLRewriter.h: Likewise.
