@@ -26,7 +26,7 @@ using namespace dlvhex::racer;
 
 RacerInterface::RacerInterface()
   : stream("localhost", 8088),
-    rewriter(new DLRewriter(std::cin,std::cout))
+    rewriter(new DLRewriter(std::cin, std::cout))
 { }
 
 RacerInterface::~RacerInterface()
@@ -40,9 +40,8 @@ RacerInterface::~RacerInterface()
 PluginRewriter*
 RacerInterface::createRewriter(std::istream& i, std::ostream& o)
 {
-//   rewriter->setStreams(&i,&o);
-//   return rewriter;
-  return 0;
+  rewriter->setStreams(&i, &o);
+  return rewriter;
 }
 
 void
@@ -82,8 +81,7 @@ RacerInterface::setOptions(int argc, char* argv[])
       
       if (s.find("--ontology=") != std::string::npos)
 	{
-	  std::string uri = s.substr(s.find("="));
-	  std::cout << uri << std::endl;
+	  std::string uri = s.substr(s.find('=') + 1);
 	  rewriter->setUri(uri);
 	}
     }
