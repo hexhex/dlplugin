@@ -1,3 +1,11 @@
+2006-04-29  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/DLRewriter.cpp: Improve documentation.
+
+	* src/RacerInterface.cpp (RacerInterface::createRewriter): Enable
+	rewriter.
+	(RacerInterface::setOptions): Fix --ontology parsing.
+
 2006-04-28  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* testsuite/TestDLRewriter.cpp (TestDLRewriter::runDLNoRewrite):
