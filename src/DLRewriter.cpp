@@ -59,13 +59,14 @@ namespace dlvhex {
 
     struct DLRewriter::RewriteRule
     {
-      unsigned extAtomNo;
-      char opChar;
-      std::string lhs;
-      std::string rhs;
+      unsigned extAtomNo;	/**< every external atom has its own number */
+      char opChar;		/**< either 'p'(lus) or 'm'(inus) operator */
+      std::string lhs;		/**< left term of operator */
+      std::string rhs;		/**< right term of operator */
     };
 
 
+    // strips leading and trailing space chars
     void
     strip(std::string& s)
     {
@@ -80,37 +81,41 @@ namespace dlvhex {
 std::string
 DLRewriter::filterInput(const std::string& inputStr)
 {
-  unsigned i = 3;
+  unsigned i = 3; // skip "DL["
 
+  // needed to distinguish ',' in input list vs. ',' in output list
   std::string::size_type brbegin = inputStr.rfind('(');
 
   while (i < inputStr.length())
     {
       std::string::size_type pm = inputStr.find('=', i);
 
-      if (pm != std::string::npos) // we have += or -= cmd
+      if (pm != std::string::npos) // we have a += or -= operator
 	{
 	  char c = inputStr[pm - 1] == '+' ? 'p' : 'm';
 
 	  std::string lhs;
 	  std::string rhs;
 	  
-	  lhs = inputStr.substr(i, pm - i - 1); // skip '-' resp. '+'
+	  lhs = inputStr.substr(i, pm - i - 1); // skip trailing '-' resp. '+'
 	  std::string::size_type sc = inputStr.find(',', i);
 	  
+	  // is comma inside input list?
 	  if (sc != std::string::npos && sc < brbegin)
 	    {
-	      rhs = inputStr.substr(pm + 1, sc - pm - 1); // skip '='
+	      rhs = inputStr.substr(pm + 1, sc - pm - 1); // skip leading '='
 	      i = sc + 1;
 	    }
 	  else
 	    {
+	      // ',' outside input list -> find query delimiter ';'
 	      std::string::size_type b = inputStr.find(';', i);
-	      rhs = inputStr.substr(pm + 1, b - pm - 1);
+	      rhs = inputStr.substr(pm + 1, b - pm - 1); // skip leading '='
 	      i = b + 1;
 	    }
 
 	  // strip whitespace
+	  // @todo use boost string algorithms?
 	  strip(lhs);
 	  strip(rhs);
 
@@ -123,7 +128,7 @@ DLRewriter::filterInput(const std::string& inputStr)
 
 	  rules.push_back(r);
 	}
-      else
+      else // no '=' found, we have a query now and are done
 	{
 	  std::string::size_type b = inputStr.find(']', i);
 	  std::string query = inputStr.substr(i, b - i);
@@ -135,6 +140,7 @@ DLRewriter::filterInput(const std::string& inputStr)
 	}
     }
 
+  // we should not end up here
   return "";
 }
 
@@ -146,6 +152,7 @@ DLRewriter::rewriteLine(const std::string& line)
 
   while (i < line.length())
     {
+      // from position i, get the beginning and the end of a dl-atom
       std::string::size_type begin = line.find("DL[", i);
       std::string::size_type end = line.find(")", begin);
 
@@ -155,8 +162,10 @@ DLRewriter::rewriteLine(const std::string& line)
 
 	  std::string dlAtom = line.substr(begin, end - begin + 1);
 
+	  // get beginning of output list
 	  std::string::size_type obeg = dlAtom.rfind('(');
 
+	  // either a concept or a role dl-atom
 	  if (dlAtom.find(',', obeg) == std::string::npos)
 	    {
 	      getOutput() << "&dlC";
@@ -166,10 +175,10 @@ DLRewriter::rewriteLine(const std::string& line)
 	      getOutput() << "&dlR";
 	    }
 
-
 	  // collect rules + get query string
 	  std::string query = filterInput(dlAtom);
 
+	  // output input list
 	  getOutput() << "[\"" 
 		      << uri 
 		      << "\",dl_pc_"
@@ -184,10 +193,15 @@ DLRewriter::rewriteLine(const std::string& line)
 		      << query
 		      << "]";
 
-	  // now append output
+	  // now append output list
 	  std::string::size_type oend = dlAtom.find(')', obeg);
 
 	  getOutput() << dlAtom.substr(obeg, oend - obeg + 1);
+
+	  //
+	  // now we are done, set new beginning position and increment
+	  // external atom counter
+	  //
 
 	  i = end + 1;
 
@@ -195,8 +209,9 @@ DLRewriter::rewriteLine(const std::string& line)
 	}
       else
 	{
+	  // no dl-atom found from position i, output rest of line
 	  getOutput() << line.substr(i);
-
+	  // we're done, stop scanning line
 	  i = line.length();
 	}
     }
@@ -237,7 +252,7 @@ DLRewriter::rewrite()
 	{
 	  if (line.substr(0, c - 1).find_first_not_of(" \t") != std::string::npos)
 	    {
-	      // comment line found
+	      // comment line found, hit and run
 	      getOutput() << line;
 	      continue;
 	    }
@@ -263,7 +278,7 @@ DLRewriter::rewrite()
 	}
     }
 
-  // output rules
+  // output found rules
 
   for (std::vector<boost::shared_ptr<RewriteRule> >::const_iterator it = rules.begin();
        it != rules.end(); it++)
