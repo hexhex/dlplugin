@@ -17,10 +17,7 @@
 #include <streambuf>
 #include <iostream>
 
-#include <boost/shared_ptr.hpp>
-
 #include <ace/SOCK_Stream.h>
-#include <ace/SOCK_Connector.h>
 
 namespace dlvhex {
 namespace racer {
@@ -137,17 +134,20 @@ namespace racer {
    */
   class TCPIOStream : public std::iostream
   {
-  private:
-    /// buffered IO
-    boost::shared_ptr<std::streambuf> sb;
-
   public:
     /// Default Ctor
     TCPIOStream(const std::string& host, unsigned port);
 
-    /// Copy Ctor
-    TCPIOStream(const TCPIOStream& iostr);
+    /// Dtor
+    virtual
+    ~TCPIOStream();
 
+    /** 
+     * Setup a new connection to host:port.
+     * 
+     * @param host defaults to "localhost"
+     * @param port defaults to 8088
+     */
     void
     setConnection(const std::string& host = "localhost",
 		  unsigned port = 8088);

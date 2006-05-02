@@ -28,26 +28,24 @@ using namespace dlvhex::racer;
 
 
 TCPIOStream::TCPIOStream(const std::string& host, unsigned port)
-  : std::iostream(new TCPStreamBuf(host, port)),
-    sb(rdbuf()) // get rdbuf from our parent
+  : std::iostream(new TCPStreamBuf(host, port))
 {
   ///@todo hm, when we turn on exceptions the program terminates...
   // exceptions(std::ios_base::badbit);
 }
 
-TCPIOStream::TCPIOStream(const TCPIOStream& iostr)
-  : std::ios(),
-    std::iostream(iostr.rdbuf()),
-    sb(iostr.sb)
-{ }
+
+TCPIOStream::~TCPIOStream()
+{
+  delete rdbuf();
+}
 
 void
 TCPIOStream::setConnection(const std::string& host,
 			   unsigned port)
 {
-  boost::shared_ptr<TCPStreamBuf> tmp(new TCPStreamBuf(host, port));
-  sb = tmp;
-  rdbuf(sb.get()); // set rdbuf for our parent iostream
+  delete rdbuf();		       // delete old streambuf
+  rdbuf(new TCPStreamBuf(host, port)); // set new streambuf
 }
 
 
@@ -204,11 +202,16 @@ TCPStreamBuf::underflow()
       // try to receive at most bufsize bytes
       ssize_t n = stream.recv(ibuf, bufsize, 0);
 
-      // nothing received or failure
+      // Nothing is received (n=0) when RACER query handling
+      // timeouts. In this case RACERs only answer is empty and we
+      // cannot use the stream any more, so just return EOF. Otherwise
+      // (n < 0), a failure occured while receiving from the stream
       if (n <= 0)
 	{
 	  return traits_type::eof();
 	}
+
+      //std::cerr << std::string(ibuf, n);
 
       setg(ibuf, ibuf, ibuf + n); // set new input buffer boundaries
     }
@@ -244,6 +247,8 @@ TCPStreamBuf::sync()
       // a MSG_NOSIGNAL flag which does the same, but isn't portable
       // enough...
       ssize_t n = stream.send_n(pbase(), pptr() - pbase());
+
+      //std::cerr << std::string(pbase(), pptr() - pbase());
 
       // reset output buffer right after sending to the stream
       ACE_OS::memset(obuf, 0, bufsize);
