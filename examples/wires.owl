@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE rdf:RDF []>
+<rdf:RDF
+  xmlns:owl="http://www.w3.org/2002/07/owl#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+  xmlns="http://wires#"
+  xml:base="http://wires">
+
+  <owl:Ontology rdf:ID="wires"/>
+
+  <owl:Class rdf:ID="Node"/>
+
+  <owl:Class rdf:ID="HighTrafficNode">
+    <rdfs:subClassOf rdf:resource="#Node" />
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="#wired"/>
+        <owl:minCardinality rdf:datatype="xsd:nonNegativeInteger">3</owl:minCardinality>
+      </owl:Restriction>
+    </owl:equivalentClass>
+  </owl:Class>
+
+  <owl:ObjectProperty rdf:ID="wired">
+    <rdfs:domain rdf:resource="#Node" />
+    <rdfs:range rdf:resource="#Node" />
+    <rdf:type rdf:resource="owl:SymmetricProperty" />
+  </owl:ObjectProperty>
+
+  <Node rdf:about="#n1">
+    <wired rdf:resource="#n2" />
+  </Node>
+  <Node rdf:about="#n2">
+    <wired rdf:resource="#n3" />
+    <wired rdf:resource="#n1" />
+  </Node>
+  <Node rdf:about="#n3">
+    <wired rdf:resource="#n4" />
+    <wired rdf:resource="#n1" />
+    <wired rdf:resource="#n2" />
+  </Node>
+  <Node rdf:about="#n4">
+    <wired rdf:resource="#n3" />
+  </Node>
+</rdf:RDF>
+
