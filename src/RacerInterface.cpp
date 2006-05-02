@@ -73,17 +73,29 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
 }
 
 void
-RacerInterface::setOptions(int argc, char* argv[])
+RacerInterface::setOptions(std::vector<std::string>& argv)
 {
-  for (int i = 0; i < argc; i++)
+  std::vector<std::string>::iterator found = argv.end();
+
+  for (std::vector<std::string>::iterator it = argv.begin();
+       it != argv.end();
+       it++)
     {
-      std::string s = argv[i];
-      
-      if (s.find("--ontology=") != std::string::npos)
+      std::string::size_type o = it->find("--ontology=");
+
+      if (o != std::string::npos)
 	{
-	  std::string uri = s.substr(s.find('=') + 1);
+	  std::string uri = it->substr(o + 11); // length of parameter = 11
 	  rewriter->setUri(uri);
+	  found = it;
 	}
+    }
+
+  // we handled it so we've got to remove it. do this right after the
+  // for-loop due to invalidation of the iterator in vector<>::erase()
+  if (found != argv.end())
+    {
+      argv.erase(found);
     }
 }
 

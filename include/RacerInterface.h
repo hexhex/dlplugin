@@ -110,11 +110,10 @@ namespace racer {
     /**
      * Set the command line arguments here.
      *
-     * @param argc
      * @param argv 
      */
     virtual void
-    setOptions(int argc, char *argv[]);
+    setOptions(std::vector<std::string>& argv);
 
 
     virtual TCPIOStream&
