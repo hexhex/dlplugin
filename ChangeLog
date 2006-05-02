@@ -1,5 +1,8 @@
 2006-05-02  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* src/DLRewriter.cpp (DLRewriter::rewrite): Don't rewrite if uri
+	is empty.
+
 	* examples/wires.owl: New file.
 
 	* examples/wires.hex: New file.
