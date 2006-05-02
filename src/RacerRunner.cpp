@@ -18,12 +18,14 @@
 #include "RacerError.h"
 
 #include <string>
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <csignal>
 
 #include <ace/Process_Manager.h>
 #include <ace/Signal.h>
+#include <ace/Pipe.h>
 
 using namespace dlvhex::racer;
 
@@ -127,6 +129,7 @@ RacerRunnerAdaptee::run()
 	  port = 8088 + portCount; // use portCount as offset
 
 	  cmdline << command 
+		  << " -t 0 "    // turn off timeout
 		  << " -http 0 " // turn off http requests
 		  << " -p "
 		  << port;
@@ -141,17 +144,49 @@ RacerRunnerAdaptee::run()
 
 	  // redirect RACERs std{in,out,err} to /dev/null
 	  ACE_HANDLE h = ACE_OS::open("/dev/null", O_RDWR);
-	  opt.set_handles(h, h, h);
+	  //opt.set_handles(h, h, h);
+
+	  ACE_Pipe p;
+	  p.open();
+	  opt.set_handles(h, p.write_handle(), p.write_handle());
 
 	  // start RACER process
 	  racer = ACE_Process_Manager::instance()->spawn(opt);
-	  ACE_OS::sleep(ACE_Time_Value(1)); // give RACER time to start
+	  //	  ACE_OS::sleep(ACE_Time_Value(1)); // give RACER time to start
+
+	  char buf[256];
+	  int n;
+	  std::ostringstream out;
+	  const ACE_Time_Value tv(3);
+
+	  do
+	    {
+	      n = ACE::recv(p.read_handle(), buf, 256, &tv);
+
+	      if (n > 0)
+		{
+		  std::string b(buf, n);
+		  out << b;
+		}
+	    }
+	  while (n > 0);
+
 
 	  // check whether the spawn succeeded
 	  ACE_exitcode ec;
 	  pid_t check = ACE_Process_Manager::instance()->wait(racer,
-							      ACE_Time_Value(0,1),
+							      ACE_Time_Value(0),
 							      &ec);
+
+// 	  std::cerr << "racer: " << racer << ' ' << check << ' ' << ec << std::endl;
+
+	  if (out.str().find("Local socket address already in use") != std::string::npos)
+	    {
+	      racer = ACE_INVALID_PID;
+	      continue;
+	    }
+
+
 
 	  // if ACE_Process_Manager::wait() returns 0, a timeout occurred
 	  // while waiting for the process -> RACER is running.  Otherwise
