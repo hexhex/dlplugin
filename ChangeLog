@@ -1,3 +1,18 @@
+2006-05-02  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/wires.owl: New file.
+
+	* examples/wires.hex: New file.
+
+	* src/RacerRunner.cpp (RacerRunnerAdaptee::run): Create pipe to
+	Racer and parse stdout,stderr for error messages.
+
+	* include/TCPStream.h (TCPIOStream): Use std::iostream::rdfbuf() for our streambuf.
+	* src/TCPStream.cpp (TCPIOStream): Likewise.
+
+	* include/RacerInterface.h (RacerInterface::setOptions): Use std::vector argv.
+	* src/RacerInterface.cpp (RacerInterface::setOptions): Likewise.
+
 2006-04-29  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/DLRewriter.cpp: Improve documentation.
@@ -8,11 +23,22 @@
 
 2006-04-28  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* src/dl-rewriter: Remove.
+	* src/Makefile.am: Remove dl-rewriter.
+
+	* examples/tweety_bird.owl: Use default namespace
+	http://www.kr.tuwien.ac.at/staff/roman/tweety_bird#.
+
+	* examples/dl-shop.dlp: New file.
+
 	* testsuite/TestDLRewriter.cpp (TestDLRewriter::runDLNoRewrite):
 	DLRewriter must not rewrite HEX programs.
+	(TestDLRewriter::runDLRewrite): Add dl-shop.dlp testcase.
 	* testsuite/TestDLRewriter.h: Likewise.
 
 	* src/DLRewriter.cpp (DLRewriter::rewriteConcept): Strip whitespaces.
+	(DLRewriter::filterInput): DL rewriting should work now.
+	* include/DLRewriter.h: Likewise.
 
 2006-04-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
