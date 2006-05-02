@@ -222,6 +222,17 @@ DLRewriter::rewriteLine(const std::string& line)
 void
 DLRewriter::rewrite()
 {
+  if (uri.empty())
+    {
+      // nothing to do, just swap rdbufs of input and output stream
+
+      std::streambuf* tmp = getInput().rdbuf();
+      getInput().rdbuf(getOutput().rdbuf());
+      getOutput().rdbuf(tmp);
+
+      return;
+    }
+
   std::set<Term> concepts;
   std::set<Term> roles;
   Query q;
