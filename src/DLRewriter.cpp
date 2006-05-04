@@ -22,8 +22,6 @@ using namespace dlvhex::racer;
 
 DLRewriter::DLRewriter(std::istream& i, std::ostream& o)
   : PluginRewriter(i,o),
-    in(&i),
-    out(&o),
     extAtomNo(0)
 { }
 
@@ -36,21 +34,8 @@ DLRewriter::setUri(const std::string& s)
 void
 DLRewriter::setStreams(std::istream* i, std::ostream* o)
 {
-  in = i;
-  out = o;
-}
-
-
-std::istream&
-DLRewriter::getInput() const
-{
-  return *in;
-}
-
-std::ostream&
-DLRewriter::getOutput() const
-{
-  return *out;
+  input = i;
+  output = o;
 }
 
 
@@ -150,6 +135,7 @@ DLRewriter::rewriteLine(const std::string& line)
 {
   std::string::size_type i = 0;
 
+  // replace each dl-atom found with the corresponding external atom
   while (i < line.length())
     {
       // from position i, get the beginning and the end of a dl-atom
@@ -158,7 +144,7 @@ DLRewriter::rewriteLine(const std::string& line)
 
       if (begin != std::string::npos && end != std::string::npos) // found dl-Atom
 	{
-	  getOutput() << line.substr(i, begin - i); // output preceeding string
+	  *output << line.substr(i, begin - i); // output preceeding string
 
 	  std::string dlAtom = line.substr(begin, end - begin + 1);
 
@@ -168,18 +154,18 @@ DLRewriter::rewriteLine(const std::string& line)
 	  // either a concept or a role dl-atom
 	  if (dlAtom.find(',', obeg) == std::string::npos)
 	    {
-	      getOutput() << "&dlC";
+	      *output << "&dlC";
 	    }
 	  else
 	    {
-	      getOutput() << "&dlR";
+	      *output << "&dlR";
 	    }
 
 	  // collect rules + get query string
 	  std::string query = filterInput(dlAtom);
 
 	  // output input list
-	  getOutput() << "[\"" 
+	  *output << "[\"" 
 		      << uri 
 		      << "\",dl_pc_"
 		      << extAtomNo
@@ -196,7 +182,7 @@ DLRewriter::rewriteLine(const std::string& line)
 	  // now append output list
 	  std::string::size_type oend = dlAtom.find(')', obeg);
 
-	  getOutput() << dlAtom.substr(obeg, oend - obeg + 1);
+	  *output << dlAtom.substr(obeg, oend - obeg + 1);
 
 	  //
 	  // now we are done, set new beginning position and increment
@@ -210,7 +196,7 @@ DLRewriter::rewriteLine(const std::string& line)
       else
 	{
 	  // no dl-atom found from position i, output rest of line
-	  getOutput() << line.substr(i);
+	  *output << line.substr(i);
 	  // we're done, stop scanning line
 	  i = line.length();
 	}
@@ -226,9 +212,9 @@ DLRewriter::rewrite()
     {
       // nothing to do, just swap rdbufs of input and output stream
 
-      std::streambuf* tmp = getInput().rdbuf();
-      getInput().rdbuf(getOutput().rdbuf());
-      getOutput().rdbuf(tmp);
+      std::streambuf* tmp = input->rdbuf();
+      input->rdbuf(output->rdbuf());
+      output->rdbuf(tmp);
 
       return;
     }
@@ -244,17 +230,19 @@ DLRewriter::rewrite()
   std::string line;
   std::stringbuf sb;
 
-  while (in->good())
+  // parse input until error or eof
+  while (input->good())
     {
-      // ignore newlines, they screw with in stream
-      while (in->peek() == '\n')
+      // ignore newlines, they screw with input streams get() method
+      while (input->peek() == '\n')
 	{
-	  getOutput() << std::endl;
-	  in->ignore();
+	  *output << std::endl;
+	  input->ignore();
 	}
 
+      // read a line
       sb.str("");
-      in->get(sb, '\n');
+      input->get(sb, '\n');
       line = sb.str();
 
       std::string::size_type c = line.find('%');
@@ -264,7 +252,7 @@ DLRewriter::rewrite()
 	  if (line.substr(0, c - 1).find_first_not_of(" \t") != std::string::npos)
 	    {
 	      // comment line found, hit and run
-	      getOutput() << line;
+	      *output << line;
 	      continue;
 	    }
 	}
@@ -280,12 +268,12 @@ DLRewriter::rewrite()
 	{
 	  // dl-atom found with comment at the end
 	  rewriteLine(line.substr(0, c));
-	  getOutput() << line.substr(c);
+	  *output << line.substr(c);
 	}
       else
 	{
 	  // no dl-atom found
-	  getOutput() << line;
+	  *output << line;
 	}
     }
 
@@ -298,30 +286,31 @@ DLRewriter::rewrite()
 
       if (concepts.find(Term(s)) != concepts.end())
 	{
-	  getOutput() << "dl_" << (*it)->opChar
-		      << "c_"
-		      << (*it)->extAtomNo
-		      << "(\""
-		      << (*it)->lhs
-		      << "\",X) :- "
-		      << (*it)->rhs
-		      << "(X)."
-		      << std::endl;
+	  *output << "dl_" << (*it)->opChar
+		  << "c_"
+		  << (*it)->extAtomNo
+		  << "(\""
+		  << (*it)->lhs
+		  << "\",X) :- "
+		  << (*it)->rhs
+		  << "(X)."
+		  << std::endl;
 	}
       else
 	{
-	  getOutput() << "dl_" << (*it)->opChar
-		      << "r_"
-		      << (*it)->extAtomNo
-		      << "(\""
-		      << (*it)->lhs
-		      << "\",X,Y) :- "
-		      << (*it)->rhs
-		      << "(X,Y)."
-		      << std::endl;
+	  *output << "dl_" << (*it)->opChar
+		  << "r_"
+		  << (*it)->extAtomNo
+		  << "(\""
+		  << (*it)->lhs
+		  << "\",X,Y) :- "
+		  << (*it)->rhs
+		  << "(X,Y)."
+		  << std::endl;
 	}
     }
 
+  // reset counter and parsed rules
   extAtomNo = 0;
   rules.clear();
 }

@@ -34,8 +34,6 @@ namespace racer {
   {
   private:
     std::string uri;
-    std::istream* in;
-    std::ostream* out;
 
     unsigned extAtomNo;
 
@@ -55,12 +53,6 @@ namespace racer {
 
     void
     setStreams(std::istream* i, std::ostream* o);
-
-    std::istream&
-    getInput() const;
-
-    std::ostream&
-    getOutput() const;
 
     void
     setUri(const std::string& u);
