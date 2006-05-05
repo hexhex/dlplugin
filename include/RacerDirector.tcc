@@ -28,8 +28,13 @@ namespace racer {
   RacerDirector<Builder, Parser>::query(QueryCtx::shared_pointer qctx)
     throw(RacerError)
   {
-    builder.buildCommand(qctx->getQuery());
-    parser.parse(qctx->getAnswer());
+    // just in case the builder has nothing to send, we cannot simply
+    // parse an answer since there is none. So forget about this
+    // command if builder returns false.
+    if (builder.buildCommand(qctx->getQuery()))
+      {
+	parser.parse(qctx->getAnswer());
+      }
     return qctx;
   }
 
