@@ -310,6 +310,19 @@ Query::createPremise() const
 	}
     }
 
+#if 1
+  if (v->empty())
+    {
+      // this is a preliminary workaround for the abox-cloning bug
+      ABoxInstance::shared_pointer foo(new ABoxInstance
+				       (new ABoxQueryConcept("foo"),
+					new ABoxQueryIndividual("bar")
+					)
+				       );
+      v->push_back(foo);
+    }
+#endif
+
   return v;
 }
 
