@@ -21,7 +21,6 @@
 #include <ace/INET_Addr.h>
 #include <ace/OS.h>
 #include <ace/Signal.h>
-#include <ace/Countdown_Time.h>
 
 using namespace dlvhex::racer;
 
@@ -119,13 +118,8 @@ TCPStreamBuf::open()
 
       ACE_Time_Value tv(0, 300000);
 
-      ACE_Time_Value timeout(3);
-
-      // retry at most timeout seconds for establishing a connection
-      // to the TCP server
-      for (ACE_Countdown_Time left(&timeout);
-	   timeout > ACE_Time_Value::zero;
-	   left.update())
+      // at most 3 seconds (approx. 10 rounds)
+      for (unsigned i = 0; i < 10; i++)
 	{
 	  close();
       
