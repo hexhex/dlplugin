@@ -38,7 +38,7 @@ RacerStateBuilder::RacerStateBuilder(std::ostream& s)
   : RacerBuilder(s)
 { }
 
-void
+bool
 RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
   //
@@ -54,12 +54,19 @@ RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
       std::auto_ptr<const std::vector<ABoxAssertion::shared_pointer> > v
 	(query.createPremise());
 
+      if (v->empty())
+	{
+	  return false; // nothing to sent, ignore this command
+	}
+
       stream << "(state " << *v << ")" << std::endl;
     }
   catch (std::exception& e)
     {
       throw RacerBuildingError(e.what());
     }
+
+  return true;
 }
 
 
@@ -69,7 +76,7 @@ RacerIsConceptMemberBuilder::RacerIsConceptMemberBuilder(std::ostream& s)
   : RacerBuilder(s)
 { }
 
-void
+bool
 RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
   const Term& q = query.getQuery();
@@ -97,6 +104,8 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingErro
     {
       throw RacerBuildingError(e.what());
     }
+
+  return true;
 }
 
 
@@ -105,7 +114,7 @@ RacerIsRoleMemberBuilder::RacerIsRoleMemberBuilder(std::ostream& s)
   : RacerBuilder(s)
 { }
 
-void
+bool
 RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
   const Term& q = query.getQuery();
@@ -137,6 +146,8 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
     {
       throw RacerBuildingError(e.what());
     }
+
+  return true;
 }
 
 
@@ -145,7 +156,7 @@ RacerIndividualFillersBuilder::RacerIndividualFillersBuilder(std::ostream& s)
   : RacerBuilder(s)
 { }
 
-void
+bool
 RacerIndividualFillersBuilder::buildCommand(Query& query)
   throw (RacerBuildingError)
 {
@@ -197,6 +208,8 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
     {
       throw RacerBuildingError(e.what());
     }
+
+  return true;
 }
 
 
@@ -207,7 +220,7 @@ RacerConceptInstancesBuilder::RacerConceptInstancesBuilder(std::ostream& s)
   : RacerBuilder(s)
 { }
 
-void
+bool
 RacerConceptInstancesBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
   const Term& q = query.getQuery();
@@ -237,6 +250,8 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (RacerBuildingErr
     {
       throw RacerBuildingError(e.what());
     }
+
+  return true;
 }
 
 
@@ -246,7 +261,7 @@ RacerRoleIndividualsBuilder::RacerRoleIndividualsBuilder(std::ostream& s)
   : RacerBuilder(s)
 { }
 
-void
+bool
 RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
   const Term& q = query.getQuery();
@@ -264,6 +279,8 @@ RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (RacerBuildingErro
     {
       throw RacerBuildingError(e.what());
     }
+
+  return true;
 }
 
 
@@ -271,7 +288,7 @@ RacerOpenOWLBuilder::RacerOpenOWLBuilder(std::ostream& s)
   : RacerBuilder(s)
 { }
 
-void
+bool
 RacerOpenOWLBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
   std::string doc = query.getOntology();
@@ -300,6 +317,8 @@ RacerOpenOWLBuilder::buildCommand(Query& query) throw (RacerBuildingError)
     {
       throw RacerBuildingError(e.what());
     }
+
+  return true;
 }
 
 
@@ -308,7 +327,7 @@ RacerIndividualDatatypeFillersBuilder::RacerIndividualDatatypeFillersBuilder(std
   : RacerBuilder(s)
 { }
 
-void
+bool
 RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
   throw (RacerBuildingError)
 {
@@ -354,4 +373,6 @@ RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
     {
       throw RacerBuildingError(e.what());
     }
+
+  return true;
 }
