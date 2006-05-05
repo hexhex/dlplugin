@@ -48,8 +48,11 @@ namespace racer {
      * Building method implemented by the children of RacerBuilder.
      *
      * @param q contains the information in order to create RACER commands
+     *
+     * @return true if command was built and sent into the stream,
+     * false otherwise.
      */
-    virtual void
+    virtual bool
     buildCommand(Query& q) = 0;
   };
 
@@ -68,9 +71,9 @@ namespace racer {
     /**
      * @brief Ignores its input.
      */
-    virtual void
+    virtual bool
     buildCommand(Query&)
-    { }
+    { return true; }
   };
 
 
@@ -90,8 +93,10 @@ namespace racer {
      * Calls various building methods in order to generate a state command.
      *
      * @param q use the Interpretation of Query to generate a state command 
+     *
+     * @return true if we could add something to the abox, false otherwise.
      */
-    virtual void
+    virtual bool
     buildCommand(Query& q) throw (RacerBuildingError);
   };
 
@@ -113,7 +118,7 @@ namespace racer {
      *
      * @param q use Query to get the individual and the concept name.
      */
-    virtual void
+    virtual bool
     buildCommand(Query& q) throw (RacerBuildingError);
   };
 
@@ -135,7 +140,7 @@ namespace racer {
      *
      * @param q use Query to get the pair and the role name.
      */
-    virtual void
+    virtual bool
     buildCommand(Query& q) throw (RacerBuildingError);
   };
 
@@ -151,7 +156,7 @@ namespace racer {
     explicit
     RacerConceptInstancesBuilder(std::ostream&);
 
-    virtual void
+    virtual bool
     buildCommand(Query& q) throw (RacerBuildingError);
   };
 
@@ -167,7 +172,7 @@ namespace racer {
     explicit
     RacerRoleIndividualsBuilder(std::ostream&);
 
-    virtual void
+    virtual bool
     buildCommand(Query& q) throw (RacerBuildingError);
   };
 
@@ -183,7 +188,7 @@ namespace racer {
     explicit
     RacerIndividualFillersBuilder(std::ostream&);
 
-    virtual void
+    virtual bool
     buildCommand(Query& q) throw (RacerBuildingError);
   };
 
@@ -201,7 +206,7 @@ namespace racer {
     explicit
     RacerIndividualDatatypeFillersBuilder(std::ostream&);
 
-    virtual void
+    virtual bool
     buildCommand(Query& q) throw (RacerBuildingError);
   };
 
@@ -218,7 +223,7 @@ namespace racer {
     explicit
     RacerOpenOWLBuilder(std::ostream&);
 
-    virtual void
+    virtual bool
     buildCommand(Query& q) throw (RacerBuildingError);
   };
 
@@ -242,10 +247,11 @@ namespace racer {
     /**
      * Just send a simple command to the stream.
      */
-    virtual void
+    virtual bool
     buildCommand(Query&)
     {
       stream << command << std::endl;
+      return true;
     }
   };
 
