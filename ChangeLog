@@ -1,5 +1,17 @@
 2006-05-05  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* src/RacerQuery.cpp (Query::createPremise): Add preliminary
+	workaround for Racer bug.
+
+	* include/RacerDirector.tcc
+	(RacerDirector<Builder,Parser>::query): Don't parse an answer if
+	Builder didn't build.
+
+	* include/RacerBuilder.h (RacerBuilder::buildCommand): Use bool
+	return value to indicate if we actually sent a command.
+	* src/RacerBuilder.cpp (RacerStateBuilder::buildCommand): Return
+	false if state command would be empty.
+
 	* src/TCPStream.cpp (TCPStreamBuf::open): Don't use
 	ACE_Countdown_Time.
 
