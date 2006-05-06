@@ -77,13 +77,20 @@ RacerAnswerDriver::~RacerAnswerDriver()
 void
 RacerAnswerDriver::parse(Answer &a) throw (RacerParsingError)
 {
-  if (!stream.eof())
+  try
     {
-      yy::RacerAnswerParser parser(*this, a);
-      parser.set_debug_level(false);
-      lexer->switch_streams(&stream, &std::cerr);
-      parser.parse();
-      syncStream();
+      if (!stream.eof())
+	{
+	  yy::RacerAnswerParser parser(*this, a);
+	  parser.set_debug_level(false);
+	  lexer->switch_streams(&stream, &std::cerr);
+	  parser.parse();
+	  syncStream();
+	}
+    }
+  catch (std::ios_base::failure& f)
+    {
+      throw RacerParsingError(f.what());
     }
 }
 
@@ -104,13 +111,21 @@ RacerIgnoreAnswer::parse(Answer&) throw (RacerParsingError)
   // we would end up with an additional empty tuple in the Answer
   // object.
 
-  char tmp[256];
-
-  while (!stream.eof() && !stream.fail())
+  try
     {
-      stream.read(tmp, 256);
+      char tmp[256];
+      
+      while (!stream.eof() && !stream.fail())
+	{
+	  stream.read(tmp, 256);
+	}
+
+      // reset stream so we can reutilize it
+      syncStream();
+    }
+  catch (std::ios_base::failure& f)
+    {
+      throw RacerParsingError(f.what());
     }
 
-  // reset stream so we can reutilize it
-  syncStream();
 }
