@@ -29,8 +29,7 @@ using namespace dlvhex::racer;
 TCPIOStream::TCPIOStream(const std::string& host, unsigned port)
   : std::iostream(new TCPStreamBuf(host, port))
 {
-  ///@todo hm, when we turn on exceptions the program terminates...
-  // exceptions(std::ios_base::badbit);
+  exceptions(std::ios_base::badbit); // let streambuf throw std::ios_base::failure
 }
 
 
@@ -202,7 +201,7 @@ TCPStreamBuf::underflow()
       // (n < 0), a failure occured while receiving from the stream
       if (n <= 0)
 	{
-	  return traits_type::eof();
+	  throw std::ios_base::failure("Peer prematurely closed connection.");
 	}
 
       //std::cerr << std::string(ibuf, n);
