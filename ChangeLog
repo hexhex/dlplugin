@@ -1,3 +1,13 @@
+2006-05-06  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/TCPStream.cpp (TCPIOStream::TCPIOStream): Turn on exception
+	handling.
+	(TCPStreamBuf::underflow): Throw std::ios_base::failure when peer
+	prematurely closes the connection.
+
+	* src/RacerAnswerDriver.cpp (RacerAnswerDriver::parse)
+	(RacerIgnoreAnswer::parse): Catch std::ios_base::failure.
+
 2006-05-05  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerQuery.cpp (Query::createPremise): Add preliminary
