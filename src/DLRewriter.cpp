@@ -283,12 +283,15 @@ DLRewriter::rewrite()
        it != rules.end(); it++)
     {
       std::string s = q.getNamespace() + (*it)->lhs;
+      std::ostringstream aux;
+
+      aux << "dl_" << (*it)->opChar;
 
       if (concepts.find(Term(s)) != concepts.end())
 	{
-	  *output << "dl_" << (*it)->opChar
-		  << "c_"
-		  << (*it)->extAtomNo
+	  aux << "c_" << (*it)->extAtomNo;
+
+	  *output << aux.str()
 		  << "(\""
 		  << (*it)->lhs
 		  << "\",X) :- "
@@ -298,9 +301,9 @@ DLRewriter::rewrite()
 	}
       else
 	{
-	  *output << "dl_" << (*it)->opChar
-		  << "r_"
-		  << (*it)->extAtomNo
+	  aux << "r_" << (*it)->extAtomNo;
+
+	  *output << aux.str()
 		  << "(\""
 		  << (*it)->lhs
 		  << "\",X,Y) :- "
@@ -308,6 +311,9 @@ DLRewriter::rewrite()
 		  << "(X,Y)."
 		  << std::endl;
 	}
+
+      // we don't want dl_XY_N to show up in the answer set
+      Term::registerAuxiliaryName(aux.str());
     }
 
   // reset counter and parsed rules
