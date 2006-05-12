@@ -15,6 +15,7 @@
 
 #include <streambuf>
 #include <iosfwd>
+#include <sstream>
 
 #include <ace/SOCK_Connector.h>
 #include <ace/SOCK_Stream.h>
@@ -133,7 +134,10 @@ TCPStreamBuf::open()
 	  ACE_OS::sleep(tv);
 	}
 
-      return false; // connection failed
+      // connection failed
+      std::ostringstream oss;
+      oss << "Couldn't open connection to " << host << ':' << port << '.';
+      throw std::ios_base::failure(oss.str());
     }
 
   return true;
@@ -249,7 +253,9 @@ TCPStreamBuf::sync()
 
       if (n <= 0 || errno == EPIPE) // EOF or failure
 	{
-	  return -1;
+	  std::ostringstream oss;
+	  oss << "Couldn't send to peer (errno = " << errno << ").";
+	  throw std::ios_base::failure(oss.str());
 	}
     }
   
