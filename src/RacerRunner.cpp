@@ -197,29 +197,39 @@ RacerRunnerAdaptee::run()
 	      // 	  savePID();
 	      return;
 	    }
+	  else if (check == racer && ec == 512)
+	    {
+	      racer = ACE_INVALID_PID;
+	      
+	      std::ostringstream os;
+	      os << "Couldn't execute program "
+		 << command;
+	      
+	      throw RacerError(os.str());
+	    }
 	  else if (check == racer && ec != 0)
 	    {
 	      racer = ACE_INVALID_PID;
 	      
-	      // 	  std::ostringstream os;
-	      // 	  os << "Program "
-	      // 	     << command
-	      // 	     << " stopped with exit status "
-	      // 	     << ec;
+// 	      std::ostringstream os;
+// 	      os << "Program "
+// 		 << command
+// 		 << " stopped with exit status "
+// 		 << ec;
 	      
-	      // 	  throw RacerError(os.str());
+// 	      throw RacerError(os.str());
 	    }
 	  else if (check == racer && ec == 0)
 	    {
 	      racer = ACE_INVALID_PID;
 	      
-	      // 	  std::ostringstream os;
-	      // 	  os << "Couldn't start "
-	      // 	     << command
-	      // 	     << ", maybe another RACER instance is running"
-	      // 	     << " and I didn't succeed in stopping it.";
+// 	      std::ostringstream os;
+// 	      os << "Couldn't start "
+// 		 << command
+// 		 << ", maybe another RACER instance is running"
+// 		 << " and I didn't succeed in stopping it.";
 
-	      // 	  throw RacerError(os.str());
+// 	      throw RacerError(os.str());
 	    }
 	  else
 	    {
