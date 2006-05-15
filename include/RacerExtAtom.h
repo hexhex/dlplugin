@@ -37,9 +37,11 @@ namespace racer {
     /// keep a reference to the iostream in order to create the
     /// director instances
     std::iostream& stream;
+
+    std::map<std::string, std::string>& properties;
     
     /// Ctor
-    RacerExtAtom(std::iostream&);
+    RacerExtAtom(std::iostream&, std::map<std::string,std::string>&);
 
     /// Dtor
     virtual
@@ -86,7 +88,9 @@ namespace racer {
     getCachedDirectors(RacerBaseDirector*) const;
 
   public:
-    RacerCachingAtom(std::iostream&, RacerCachingDirector::RacerCache&);
+    RacerCachingAtom(std::iostream&,
+		     RacerCachingDirector::RacerCache&,
+		     std::map<std::string,std::string>&);
   };
 
 
@@ -109,7 +113,9 @@ namespace racer {
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
-    RacerConcept(std::iostream&, RacerCachingDirector::RacerCache&);
+    RacerConcept(std::iostream&,
+		 RacerCachingDirector::RacerCache&,
+		 std::map<std::string,std::string>&);
   };
 
 
@@ -133,7 +139,9 @@ namespace racer {
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
-    RacerRole(std::iostream&, RacerCachingDirector::RacerCache&);
+    RacerRole(std::iostream&,
+	      RacerCachingDirector::RacerCache&,
+	      std::map<std::string,std::string>&);
   };
 
 
@@ -157,7 +165,8 @@ namespace racer {
 
   public:
     explicit
-    RacerConsistent(std::iostream&);
+    RacerConsistent(std::iostream&,
+		    std::map<std::string,std::string>&);
   };
 
 
@@ -181,7 +190,9 @@ namespace racer {
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
-    RacerDatatypeRole(std::iostream&, RacerCachingDirector::RacerCache&);
+    RacerDatatypeRole(std::iostream&,
+		      RacerCachingDirector::RacerCache&,
+		      std::map<std::string,std::string>&);
   };
 
 
