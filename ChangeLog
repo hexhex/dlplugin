@@ -1,3 +1,15 @@
+2006-05-15  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerInterface.cpp (RacerInterface::setOptions): Setup
+	property map for the atoms.
+	
+	* src/RacerExtAtom.cpp (RacerCachingAtom::getCachedDirectors):
+	Consult property map whether user wants verbose output.
+
+	* include/RacerExtAtom.h: Add a reference to a property map.
+
+	* include/RacerInterface.h: Add a property map.
+
 2006-05-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/DLRewriter.cpp (DLRewriter::rewrite): Register auxiliary names.
