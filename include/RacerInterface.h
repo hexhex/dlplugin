@@ -64,6 +64,8 @@
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
 
+#include <map>
+
 namespace dlvhex {
 namespace racer {
 
@@ -77,8 +79,10 @@ namespace racer {
     TCPIOStream stream;
     /// the cache for RACER queries
     RacerCachingDirector::RacerCache cache;
-
+    /// rewrites dl-programs to hex-programs
     DLRewriter* rewriter;
+    /// saves properties
+    std::map<std::string, std::string> properties;
 
   public:
     RacerInterface();
@@ -86,7 +90,9 @@ namespace racer {
     virtual
     ~RacerInterface();
 
-    /// not implemented yet
+    /**
+     * returns the rewriter.
+     */
     virtual PluginRewriter* 
     createRewriter(std::istream&, std::ostream&);
 
