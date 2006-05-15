@@ -28,8 +28,10 @@
 using namespace dlvhex::racer;
 
 
-RacerExtAtom::RacerExtAtom(std::iostream& s)
-  : stream(s)
+RacerExtAtom::RacerExtAtom(std::iostream& s,
+			   std::map<std::string,std::string>& props)
+  : stream(s),
+    properties(props)
 { }
 
 RacerExtAtom::~RacerExtAtom()
@@ -68,8 +70,9 @@ RacerExtAtom::retrieve(const PluginAtom::Query& query,
 
 
 RacerCachingAtom::RacerCachingAtom(std::iostream& s,
-				   RacerCachingDirector::RacerCache& c)
-  : RacerExtAtom(s),
+				   RacerCachingDirector::RacerCache& c,
+				   std::map<std::string,std::string>& props)
+  : RacerExtAtom(s, props),
     cache(c)
 { }
 
@@ -86,14 +89,11 @@ RacerCachingAtom::getCachedDirectors(RacerBaseDirector* cmd) const
 
   comp->add(cmd); // the actual command to send
 
-  const char* c = getenv("DEBUGCACHE");
+  std::map<std::string, std::string>::const_iterator verbose = properties.find("verbose");
 
-  if (c != 0) // found environment variable DEBUGCACHE
+  if (verbose != properties.end())
     {
-      int val;
-      std::istringstream(c) >> val;
-
-      if (val == 0) // no caching
+      if (verbose->second == "0") // no caching
 	{
 	  return comp;
 	}
@@ -113,8 +113,10 @@ RacerCachingAtom::getCachedDirectors(RacerBaseDirector* cmd) const
 
 
 
-RacerConcept::RacerConcept(std::iostream& s, RacerCachingDirector::RacerCache& c)
-  : RacerCachingAtom(s, c)
+RacerConcept::RacerConcept(std::iostream& s,
+			   RacerCachingDirector::RacerCache& c,
+			   std::map<std::string,std::string>& props)
+  : RacerCachingAtom(s, c, props)
 {
   //
   // &dlC[kb,plusC,minusC,plusR,minusR,query](X)
@@ -148,8 +150,10 @@ RacerConcept::getDirectors(const dlvhex::racer::Query& query) const
 }
 
 
-RacerRole::RacerRole(std::iostream& s, RacerCachingDirector::RacerCache& c)
-  : RacerCachingAtom(s, c)
+RacerRole::RacerRole(std::iostream& s,
+		     RacerCachingDirector::RacerCache& c,
+		     std::map<std::string,std::string>& props)
+  : RacerCachingAtom(s, c, props)
 {
   //
   // &dlR[kb,plusC,minusC,plusR,minusR,query](X,Y)
@@ -191,8 +195,9 @@ RacerRole::getDirectors(const dlvhex::racer::Query& query) const
 
 
 
-RacerConsistent::RacerConsistent(std::iostream& s)
-  : RacerExtAtom(s)
+RacerConsistent::RacerConsistent(std::iostream& s,
+				 std::map<std::string,std::string>& props)
+  : RacerExtAtom(s, props)
 {
   //
   // &dlConsistent[kb,plusC,minusC,plusR,minusR]()
@@ -226,8 +231,9 @@ RacerConsistent::getDirectors(const dlvhex::racer::Query&) const
 
 
 RacerDatatypeRole::RacerDatatypeRole(std::iostream& s,
-				     RacerCachingDirector::RacerCache& c)
-  : RacerCachingAtom(s, c)
+				     RacerCachingDirector::RacerCache& c,
+				     std::map<std::string,std::string>& props)
+  : RacerCachingAtom(s, c, props)
 {
   //
   // &dlDR[kb,plusC,minusC,plusR,minusR,query](X,Y)
