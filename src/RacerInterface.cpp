@@ -66,36 +66,56 @@ RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
 void
 RacerInterface::getAtoms(AtomFunctionMap& m)
 {
-  m["dlC"]          = new RacerConcept(stream, cache);
-  m["dlR"]          = new RacerRole(stream, cache);
-  m["dlConsistent"] = new RacerConsistent(stream);
-  m["dlDR"]         = new RacerDatatypeRole(stream, cache);
+  m["dlC"]          = new RacerConcept(stream, cache, properties);
+  m["dlR"]          = new RacerRole(stream, cache, properties);
+  m["dlConsistent"] = new RacerConsistent(stream, properties);
+  m["dlDR"]         = new RacerDatatypeRole(stream, cache, properties);
 }
 
 void
 RacerInterface::setOptions(std::vector<std::string>& argv)
 {
-  std::vector<std::string>::iterator found = argv.end();
+  /// @todo we want --verbose/--silent in argv...
+  const char* c = getenv("DEBUGCACHE");
+  if (c != 0)
+    {
+      properties["verbose"] = std::string(c);
+    }
+
+  std::vector<std::vector<std::string>::iterator> found;
 
   for (std::vector<std::string>::iterator it = argv.begin();
        it != argv.end();
        it++)
     {
-      std::string::size_type o = it->find("--ontology=");
+      std::string::size_type o;
+
+      o = it->find("--ontology=");
 
       if (o != std::string::npos)
 	{
 	  std::string uri = it->substr(o + 11); // length of parameter = 11
 	  rewriter->setUri(uri);
-	  found = it;
+	  found.push_back(it);
+
+	  properties["ontology"] = uri;
+	}
+
+      o = it->find("--nocache");
+
+      if (o != std::string::npos)
+	{
+	  properties["verbose"] = "0";
+	  found.push_back(it);
 	}
     }
 
   // we handled it so we've got to remove it. do this right after the
   // for-loop due to invalidation of the iterator in vector<>::erase()
-  if (found != argv.end())
+  for (std::vector<std::vector<std::string>::iterator>::const_iterator it = found.begin();
+       it != found.end(); it++)
     {
-      argv.erase(found);
+      argv.erase(*it);
     }
 }
 
