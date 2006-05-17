@@ -35,6 +35,38 @@ NUMBER          (\-)?[0-9]+
 STRING          [A-Za-z][A-Za-z0-9_\-\./%]*
 QUOTED_STRING   \\\"[^\"]*\\\"
 
+GENDELIMS       [\:\/\?\#\[\]\@]
+SUBDELIMS       [\!\$\&\'()\*\+\,\;\=]
+RESERVED        (({GENDELIMS})|({SUBDELIMS}))
+HEXDIG          [0-9a-fA-F]
+PCTENCODED      %{HEXDIG}{HEXDIG}
+UNRESERVED      [A-Za-z0-9\-\.\_\~]*
+REGNAME         (({UNRESERVED})|({PCTENCODED})|({SUBDELIMS}))*
+
+PORT            [0-9]*
+HOST            {REGNAME}
+USERINFO        (({UNRESERVED})|({PCTENCODED})|({SUBDELIMS})|(:))*
+AUTHORITY       ({USERINFO}@)?{HOST}(:{PORT})?
+
+PCHAR           (({UNRESERVED})|({PCTENCODED})|({SUBDELIMS})|(:)|(@))
+SEGMENT         ({PCHAR})*
+SEGMENTNZ       ({PCHAR})+
+SEGMENTNZNC     (({UNRESERVED})|({PCTENCODED})|({SUBDELIMS})|(@))+
+
+PATHEMPTY       ""
+PATHROOTLESS    {SEGMENTNZ}(\/{SEGMENT})*
+PATHNOSCHEME    {SEGMENTNZNC}(\/{SEGMENT})*
+PATHABSOLUTE    \/({SEGMENTNZ}(\/{SEGMENT})*)?
+PATHABEMPTY     (\/{SEGMENT})*
+
+PATH            (({PATHABEMPTY})|({PATHABSOLUTE})|({PATHNOSCHEME})|({PATHROOTLESS})|({PATHEMPTY}))
+
+FRAGMENT        (({PCHAR})|[\/\?])*
+QUERY           (({PCHAR})|[\/\?])*
+HIERPART        (\/\/{AUTHORITY}{PATHABEMPTY})|(\/{PATHABSOLUTE})|(\/{PATHROOTLESS})|(\/{PATHEMPTY})
+SCHEME          [A-Za-z][A-Za-z0-9+-.]*
+URI             {SCHEME}:{HIERPART}(\?{QUERY})?(\#{FRAGMENT})?
+
 %x racererror raceranswer eatanswerfudge answertrailer
 
 %{
@@ -75,7 +107,12 @@ yylloc->step();
   "T\""         BEGIN(answertrailer); return TRUE;
   "\""          BEGIN(answertrailer); yylloc->step();
 
-  [()|#$*?:/]   return *yytext;
+  {URI} {
+     yylval.sval = new std::string(yytext);
+     return URI;
+  }
+
+  [()|$*?]     return *yytext;
 
   {STRING} {
     yylval.sval = new std::string(yytext);
