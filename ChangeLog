@@ -1,3 +1,13 @@
+2006-05-17  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* testsuite/TestRacerParse.cpp: Use file:// instead of file:.
+
+	* src/RacerAnswerScanner.lpp: Resemble the URI ABNF given in
+	RFC3986.
+
+	* src/RacerAnswerParser.ypp: Accommodate grammar to use the new
+	URI token instead of the weak grammar for parsing an URI.
+
 2006-05-15  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerInterface.cpp (RacerInterface::setOptions): Setup
