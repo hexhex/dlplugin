@@ -29,13 +29,13 @@ TestRacerParse::runRacerSimpleAnswerTest()
 void
 TestRacerParse::runRacerAnswerListTest()
 {
-  std::istringstream ss(":answer 1 \"(|file:foobar#myfoo1| |file:foobar#myfoo2|)\" \"\"\n");
+  std::istringstream ss(":answer 1 \"(|file://foobar#myfoo1| |file://foobar#myfoo2|)\" \"\"\n");
   
   RacerAnswerDriver al(ss);
   Answer a;
 
   CPPUNIT_ASSERT_NO_THROW( al.parse(a) );
   
-  CPPUNIT_ASSERT((*a.getTuples())[0][0].getUnquotedString() == std::string("file:foobar#myfoo1"));
-  CPPUNIT_ASSERT((*a.getTuples())[1][0].getUnquotedString() == std::string("file:foobar#myfoo2"));
+  CPPUNIT_ASSERT((*a.getTuples())[0][0].getUnquotedString() == std::string("file://foobar#myfoo1"));
+  CPPUNIT_ASSERT((*a.getTuples())[1][0].getUnquotedString() == std::string("file://foobar#myfoo2"));
 }
