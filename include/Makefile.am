@@ -3,6 +3,7 @@ AUTOMAKE_OPTIONS = foreign
 # including headers for make dist
 noinst_HEADERS = \
                  DLRewriter.h \
+                 LogBuf.h \
                  OWLParser.h \
                  RacerBuilder.h \
                  RacerDirector.h \
