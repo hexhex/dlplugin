@@ -55,7 +55,6 @@
 #ifndef _RACERINTERFACE_H
 #define _RACERINTERFACE_H
 
-#include "RacerRunner.h"
 #include "RacerDirector.h"
 #include "TCPStream.h"
 #include "DLRewriter.h"
@@ -63,6 +62,9 @@
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
+
+#include <ace/Null_Mutex.h>
+#include <ace/Singleton.h>
 
 #include <map>
 
@@ -74,6 +76,9 @@ namespace racer {
    */
   class RacerInterface : public PluginInterface
   {
+  public:
+    typedef std::map<std::string,std::string> PropertyMap;
+
   private:
     /// the tcp streaming interface to the RACER server
     TCPIOStream stream;
@@ -82,7 +87,7 @@ namespace racer {
     /// rewrites dl-programs to hex-programs
     DLRewriter* rewriter;
     /// saves properties
-    std::map<std::string, std::string> properties;
+    PropertyMap properties;
 
   public:
     RacerInterface();
@@ -121,10 +126,20 @@ namespace racer {
     virtual void
     setOptions(std::vector<std::string>& argv);
 
+    /**
+     * Start RACER and setup the stream.
+     */
+    virtual void
+    startRacer();
 
-    virtual TCPIOStream&
-    getStream();
+    /// transparently allow access from ACE_Singleton<>
+    friend class ACE_Singleton<RacerInterface, ACE_Null_Mutex>;
   };
+
+  /// adapt RacerRunnerAdaptee to a singleton and register it to the
+  /// ACE_Object_Manager facility for automatic object deletion at
+  /// program exit time
+  typedef ACE_Singleton<RacerInterface, ACE_Null_Mutex> TheRacerInterface;
 
 } // namespace racer
 } // namespace dlvhex
