@@ -193,25 +193,25 @@ RacerDebugCachingDirector::RacerDebugCachingDirector(RacerCache& c,
 RacerCachingDirector::RacerCache::iterator
 RacerDebugCachingDirector::find(const QueryCtx::shared_pointer& query) const
 {
-  std::cout << "-----" << std::endl;
+  std::cerr << "-----" << std::endl;
 
   for (RacerCache::const_iterator it = cache.begin();
        it != cache.end(); it++)
     {
-      std::cout << "   " << (*it)->getQuery() << std::endl;
+      std::cerr << "   " << (*it)->getQuery() << std::endl;
     }
 
-  std::cout << "q: " << query->getQuery();
+  std::cerr << "q: " << query->getQuery();
 
   RacerCache::iterator found = RacerCachingDirector::find(query);
 
   if (found != cache.end())
     {
-      std::cout << " found in cache";
+      std::cerr << " found in cache";
     }
   else
     {
-      std::cout << std::endl;
+      std::cerr << std::endl;
     }
 
   return found;
@@ -224,11 +224,11 @@ RacerDebugCachingDirector::cacheHit(const QueryCtx& query, const QueryCtx& found
 
   if (ret)
     {
-      std::cout << " and is a cache-hit!" << std::endl;
+      std::cerr << " and is a cache-hit!" << std::endl;
     }
   else
     {
-      std::cout << std::endl;
+      std::cerr << std::endl;
     }
 
   return ret;
