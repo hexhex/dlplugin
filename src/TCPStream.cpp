@@ -208,7 +208,7 @@ TCPStreamBuf::underflow()
 	  throw std::ios_base::failure("Peer prematurely closed connection.");
 	}
 
-      //std::cerr << std::string(ibuf, n);
+      std::clog << "Received: " << std::string(ibuf, n) << std::flush;
 
       setg(ibuf, ibuf, ibuf + n); // set new input buffer boundaries
     }
@@ -245,7 +245,7 @@ TCPStreamBuf::sync()
       // enough...
       ssize_t n = stream.send_n(pbase(), pptr() - pbase());
 
-      //std::cerr << std::string(pbase(), pptr() - pbase());
+      std::clog << "Sent: " << std::string(pbase(), pptr() - pbase()) << std::flush;
 
       // reset output buffer right after sending to the stream
       ACE_OS::memset(obuf, 0, bufsize);

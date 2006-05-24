@@ -195,6 +195,7 @@ RacerRunnerAdaptee::run()
 	  if (check == 0)
 	    {
 	      // 	  savePID();
+	      std::clog << "Started RACER with pid " << racer << " and port " << port << std::flush;
 	      return;
 	    }
 	  else if (check == racer && ec == 512)
