@@ -18,6 +18,7 @@ stack.hh
 dlvhexlib_LTLIBRARIES = libdlvhexracer.la
 libdlvhexracer_la_SOURCES = \
 DLRewriter.cpp \
+LogBuf.cpp \
 OWLParser.cpp \
 RacerAnswerParser.ypp \
 RacerAnswerScanner.lpp \
@@ -43,7 +44,7 @@ UserDir.cpp
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src \
-	$(ACE_CPPFLAGS) \
+	$(ACE_CFLAGS) \
 	$(RAPTOR_CFLAGS) \
 	$(DLVHEX_CFLAGS)
 
