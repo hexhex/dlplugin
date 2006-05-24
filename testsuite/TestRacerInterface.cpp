@@ -9,6 +9,7 @@
  */
 
 #include "TestRacerInterface.h"
+#include "RacerInterface.h"
 
 using namespace dlvhex::racer;
 
@@ -18,6 +19,11 @@ CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerInterface);
 void
 TestRacerInterface::setUp()
 {
+  PluginInterface* pi = PLUGINIMPORTFUNCTION();
+  RacerInterface* ri = dynamic_cast<RacerInterface*>(pi);
+  std::vector<std::string> v;
+  ri->setOptions(v);
+
   const char* ex = getenv("EXAMPLES");
   if (ex)
     {
