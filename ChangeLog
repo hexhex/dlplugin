@@ -1,3 +1,43 @@
+2006-05-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerExtAtom.cpp: Use RacerInterface::startRacer() instead
+	of RacerRuner::run().
+	Use RacerInterface::PropertyMap.
+	* include/RacerExtAtom.h: Likewise.
+
+	* src/TCPStream.cpp: Use std::clog for logging sent/received
+	messages.
+	* src/RacerRunner.cpp: Likewise.
+
+	* src/RacerDirector.cpp (RacerDebugCachingDirector): Use std::cerr
+	instead of std::cout.
+
+	* README: Document ACE + autoconf scheme.
+	Add some installation hints for boost.
+
+	* configure.ac: Bail out if ACE is not found.
+	Use ACE.pc and fall back to ACE.m4 if we couldn't find it.
+
+	* m4/ace.m4: Add HAVE_ACE variable.
+	Use ACE_CFLAGS instead of ACE_CPPFLAGS.
+
+	* testsuite/TestRacerInterface.cpp: Call
+	RacerInterface::setOptions.
+
+	* include/RacerInterface.h (RacerInterface::startRacer): Run Racer
+	and setup stream.
+	Add PropertyMap.
+
+	* src/RacerInterface.cpp (RacerInterface::setOptions): Setup
+	std::clog for LogBuf logging.
+	(RacerInterface::startRacer): Run Racer and setup stream.
+	
+	* src/Makefile.am (libdlvhexracer_la_SOURCES): Add LogBuf.cpp.
+	* include/Makefile.am (noinst_HEADERS): Add LogBuf.h.
+
+	* include/LogBuf.h: New file.
+	* src/LogBuf.cpp: Likewise.
+
 2006-05-17  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* testsuite/TestRacerParse.cpp: Use file:// instead of file:.
