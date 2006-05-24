@@ -12,9 +12,11 @@
 
 #include "RacerInterface.h"
 
+#include "RacerRunner.h"
 #include "RacerExtAtom.h"
 #include "OWLParser.h"
 #include "DLRewriter.h"
+#include "LogBuf.h"
 
 #include <algorithm>
 #include <iterator>
@@ -80,6 +82,15 @@ RacerInterface::setOptions(std::vector<std::string>& argv)
   if (c != 0)
     {
       properties["verbose"] = std::string(c);
+
+      // use std::clogs rdbuf as output for the LogBuf
+      std::streambuf* logrdbuf = std::clog.rdbuf();
+      std::clog.rdbuf(new LogBuf(logrdbuf));
+    }
+  else
+    {
+      // turn off logging
+      std::clog.rdbuf(new LogBuf(0));
     }
 
   std::vector<std::vector<std::string>::iterator> found;
@@ -119,10 +130,14 @@ RacerInterface::setOptions(std::vector<std::string>& argv)
     }
 }
 
-TCPIOStream&
-RacerInterface::getStream()
+void
+RacerInterface::startRacer()
 {
-  return stream;
+  if (!RacerRunner::instance()->isRunning())
+    {
+      RacerRunner::instance()->run();
+      stream.setConnection("localhost", RacerRunner::instance()->getPort());
+    }
 }
  
 
@@ -132,5 +147,5 @@ PLUGINIMPORTFUNCTION()
   /// adapt RacerInterface to a singleton and register it to the
   /// ACE_Object_Manager facility for automatic object deletion at
   /// program exit time
-  return ACE_Singleton<RacerInterface, ACE_Null_Mutex>::instance();
+  return TheRacerInterface::instance();
 }
