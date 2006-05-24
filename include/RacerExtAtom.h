@@ -19,6 +19,7 @@
 #include <dlvhex/AtomSet.h>
 
 #include "RacerQuery.h"
+#include "RacerInterface.h"
 #include "RacerDirector.h"
 
 #include <iosfwd>
@@ -38,10 +39,11 @@ namespace racer {
     /// director instances
     std::iostream& stream;
 
-    std::map<std::string, std::string>& properties;
+    /// keep a reference to the property map
+    RacerInterface::PropertyMap& properties;
     
     /// Ctor
-    RacerExtAtom(std::iostream&, std::map<std::string,std::string>&);
+    RacerExtAtom(std::iostream&, RacerInterface::PropertyMap&);
 
     /// Dtor
     virtual
@@ -90,7 +92,7 @@ namespace racer {
   public:
     RacerCachingAtom(std::iostream&,
 		     RacerCachingDirector::RacerCache&,
-		     std::map<std::string,std::string>&);
+		     RacerInterface::PropertyMap&);
   };
 
 
@@ -115,7 +117,7 @@ namespace racer {
   public:
     RacerConcept(std::iostream&,
 		 RacerCachingDirector::RacerCache&,
-		 std::map<std::string,std::string>&);
+		 RacerInterface::PropertyMap&);
   };
 
 
@@ -141,7 +143,7 @@ namespace racer {
   public:
     RacerRole(std::iostream&,
 	      RacerCachingDirector::RacerCache&,
-	      std::map<std::string,std::string>&);
+	      RacerInterface::PropertyMap&);
   };
 
 
@@ -166,7 +168,7 @@ namespace racer {
   public:
     explicit
     RacerConsistent(std::iostream&,
-		    std::map<std::string,std::string>&);
+		    RacerInterface::PropertyMap&);
   };
 
 
@@ -192,7 +194,7 @@ namespace racer {
   public:
     RacerDatatypeRole(std::iostream&,
 		      RacerCachingDirector::RacerCache&,
-		      std::map<std::string,std::string>&);
+		      RacerInterface::PropertyMap&);
   };
 
 
