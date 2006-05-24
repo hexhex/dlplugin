@@ -9,12 +9,11 @@ http://www.kr.tuwien.ac.at/staff/roman/dlvhex/
 ** RACER
 http://www.racer-systems.com/
 
-** flex + bison
-http://www.gnu.org/software/flex/
-http://www.gnu.org/software/bison/
-
 ** ACE
 http://www.cs.wustl.edu/~schmidt/ACE.html
+
+** boost
+http://www.boost.org/
 
 ** libraptor
 http://librdf.org/raptor/
@@ -22,17 +21,14 @@ http://librdf.org/raptor/
 ** cppunit (optional)
 http://cppunit.sourceforge.net/
 
+** flex + bison (only in maintainer-mode)
+http://www.gnu.org/software/flex/
+http://www.gnu.org/software/bison/
+
 
 * Building and installing dlvhex-racerplugin
 
 ** Prerequisites
-
-*** flex + bison
-dlvhex-racerplugin uses relatively new features of flex and bison, so
-install the newest versions of flex + bison. dlvhex-racerplugin was
-tested with flex 2.5.33 and bison 2.1. For installation instruction
-see the corresponding INSTALL files of the source packages.
-
 
 *** dlvhex
 See dlvhex installation instructions.
@@ -46,10 +42,10 @@ location. dlvhex-racerplugin has been tested with RacerPro 1.8 and
 
 *** ACE
 Download the ACE library and proceed according to the ACE-INSTALL file
-found in the distribution tarball. To shortcut the configuration task
-for linux systems, apply following patch to a fresh unpacked
-ACE_wrappers directory:
-
+found in the distribution tarball. Fairly new ACE distributions
+(tested with 5.5.1) allow to build the library using an autoconf
+scheme. For older versions try one of the following patches for
+automatically configuring ACE :
 
 diff -Naur ACE_wrappers.orig/ace/config.h ACE_wrappers/ace/config.h
 --- ACE_wrappers.orig/ace/config.h      1970-01-01 01:00:00.000000000 +0100
@@ -120,8 +116,20 @@ diff -Naur ACE_wrappers-5.4.8/include/makeinclude/platform_macros.GNU ACE_wrappe
 Installing ACE is not needed. Just point ACE_ROOT and LD_LIBRARY_PATH
 to the ACE_wrappers resp. ACE_wrappers/ace
 directories. dlvhex-racerplugin has been tested with ACE 5.4.0 up to
-5.4.8.
+5.5.1.
 
+
+*** boost
+Follow the instructions of the INSTALL file found in the distributions
+tarball. Popular Linux and Unix distributions such as Fedora, Debian,
+and NetBSD include pre-built Boost packages.
+
+If you need to build boost by yourself, I suggest using bjam and stow:
+
+$ bjam "--prefix=/install/to/this/dir" "-sTOOLS=gcc" stage
+$ bjam "--prefix=/install/to/this/dir/stow/boost-VERSION" "-sTOOLS=gcc" install
+$ cd /path/to/stow/dir
+$ stow boost-VERSION
 
 
 *** libraptor
@@ -134,6 +142,12 @@ namespace parsing support.
 Follow the instructions of the INSTALL file found in the distributions
 tarball. dlvhex-racerplugin has been tested with cppunit 1.10.2.
 
+
+*** flex + bison
+dlvhex-racerplugin uses relatively new features of flex and bison, so
+install the newest versions of flex + bison. dlvhex-racerplugin was
+tested with flex 2.5.33 and bison 2.1. For installation instruction
+see the corresponding INSTALL files of the source packages.
 
 
 ** Configuration
