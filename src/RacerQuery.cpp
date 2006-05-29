@@ -14,6 +14,7 @@
 #include "RacerQuery.h"
 #include "RacerNRQL.h"
 #include "RacerQueryExpr.h"
+#include "RacerError.h"
 
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Atom.h>
@@ -463,8 +464,18 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
 
   // get namespace from owl document
   OWLParser p(ontostr);
-  p.parseNamespace(*q);
+  std::string defaultNS;
 
+  try
+    {
+      p.parseNamespace(defaultNS);
+    }
+  catch (RacerParsingError&)
+    {
+      // just ignore it
+    }
+
+  q->setNamespace(defaultNS);
   q->setInterpretation(query.getInterpretation());
   q->setPatternTuple(query.getPatternTuple());
   q->setPlusC(query.getInputTuple()[1]);

@@ -15,9 +15,10 @@
 #include "RacerDirector.h"
 #include "RacerQuery.h"
 
-#include <dlvhex/Atom.h>
-#include <dlvhex/Term.h>
-#include <dlvhex/AtomSet.h>
+#include "dlvhex/Atom.h"
+#include "dlvhex/Term.h"
+#include "dlvhex/AtomSet.h"
+#include "dlvhex/Error.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -56,7 +57,7 @@ RacerExtAtom::retrieve(const PluginAtom::Query& query,
     }
   catch (RacerError& e)
     {
-      throw PluginError(e.what());
+      throw PluginError(std::string(e.what()));
     }
 }
 

@@ -37,8 +37,6 @@ namespace racer {
     std::string shop;
     std::string test;
 
-    void output(const std::vector<Tuple>& tv);
-
   public:
     virtual void setUp();
 

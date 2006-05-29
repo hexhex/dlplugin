@@ -221,11 +221,18 @@ DLRewriter::rewrite()
 
   std::set<Term> concepts;
   std::set<Term> roles;
-  Query q;
+  std::string defaultNS;
 
-  OWLParser p(uri);
-  p.parseNames(concepts, roles);
-  p.parseNamespace(q);
+  try
+    {
+      OWLParser p(uri);
+      p.parseNames(concepts, roles);
+      p.parseNamespace(defaultNS);
+    }
+  catch (RacerParsingError&)
+    {
+      // as for now, just ignore it
+    }
 
   std::string line;
   std::stringbuf sb;
@@ -282,7 +289,7 @@ DLRewriter::rewrite()
   for (std::vector<boost::shared_ptr<RewriteRule> >::const_iterator it = rules.begin();
        it != rules.end(); it++)
     {
-      std::string s = q.getNamespace() + (*it)->lhs;
+      std::string s = defaultNS + (*it)->lhs;
       std::ostringstream aux;
 
       aux << "dl_" << (*it)->opChar;

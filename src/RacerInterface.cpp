@@ -50,19 +50,10 @@ void
 RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
 {
   OWLParser p(uri);
-  Answer a;
-  p.parseIndividuals(a);
-
-  ///@todo this is crap. we need a more flexible query container class
-  const std::vector<Tuple>* tv = a.getTuples();
+  std::set<Term> indvs;
+  p.parseIndividuals(indvs);
   std::insert_iterator<std::list<Term> > ins = std::inserter(uni, uni.begin());
-
-  for (std::vector<Tuple>::const_iterator it = tv->begin();
-       it != tv->end();
-       it++)
-    {
-      std::copy((*it).begin(), (*it).end(), ins);
-    }
+  std::copy(indvs.begin(), indvs.end(), ins);
 }
 
 void
