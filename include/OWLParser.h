@@ -13,11 +13,12 @@
 #ifndef _OWLPARSER_H
 #define _OWLPARSER_H
 
-#include "RacerQuery.h"
+#include "dlvhex/Term.h"
+#include "RacerError.h"
 
 #include <raptor.h>
-
 #include <string>
+#include <set>
 
 
 namespace dlvhex {
@@ -49,10 +50,17 @@ namespace racer {
     static const std::string owlObjectProperty;
     static const std::string owlInverseOf;
 
+    /**
+     * setup parser with userData and handler.
+     */
+    virtual void
+    parse(void *userData,
+	  raptor_statement_handler handler,
+	  raptor_namespace_handler nsHandler) throw (RacerParsingError);
 
   protected:
     /**
-     * The statement callback handler for libraptor.
+     * The individual handler for libraptor.
      *
      * @param userData a downcasted Answer object for adding the individuals
      *
@@ -60,8 +68,11 @@ namespace racer {
      * various other information
      */
     static void
-    statementHandler(void* userData, const raptor_statement* statement);
+    aboxHandler(void* userData, const raptor_statement* statement);
 
+    /**
+     * The concept and role name handler for libraptor.
+     */
     static void
     tboxHandler(void* userData, const raptor_statement* statement);
 
@@ -100,21 +111,24 @@ namespace racer {
     /**
      * get universe of OWL document
      *
-     * @param answer add individuals to this Answer object
+     * @param indvs add individuals to set
      */
     virtual void
-    parseIndividuals(Answer& answer);
+    parseIndividuals(std::set<Term>& indvs) throw (RacerParsingError);
 
     /**
      * get default namespace
      *
-     * @param query set namespace of this Query object
+     * @param ns set namespace to this string
      */
     virtual void
-    parseNamespace(Query& query);
+    parseNamespace(std::string& ns) throw (RacerParsingError);
 
+    /**
+     * get all possible concept and role names.
+     */
     virtual void
-    parseNames(std::set<Term>&,std::set<Term>&);
+    parseNames(std::set<Term>& concepts, std::set<Term>& roles) throw (RacerParsingError);
   };
 
 } // namespace racer

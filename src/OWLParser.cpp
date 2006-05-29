@@ -12,9 +12,9 @@
  */
 
 #include "OWLParser.h"
-
+#include "RacerError.h"
+#include <set>
 #include <string>
-
 #include <raptor.h>
 
 using namespace dlvhex::racer;
@@ -65,15 +65,14 @@ OWLParser::open(const std::string& uri)
 void
 OWLParser::namespaceHandler(void* userData, raptor_namespace* nspace)
 {
-  Query* query = (Query*) userData;
+  std::string* nsData = (std::string*) userData;
 
   const char* nsPrefix = (const char*) raptor_namespace_get_prefix(nspace);
 
   if (nsPrefix == 0) // default namespace
     {
       raptor_uri* ns = raptor_namespace_get_uri(nspace);
-      std::string nsUri((const char*) raptor_uri_as_string(ns));
-      query->setNamespace(nsUri);
+      nsData->assign((const char*) raptor_uri_as_string(ns));
     }
 }
 
@@ -115,9 +114,9 @@ OWLParser::tboxHandler(void* userData, const raptor_statement* statement)
 }
 
 void
-OWLParser::statementHandler(void* userData, const raptor_statement* statement)
+OWLParser::aboxHandler(void* userData, const raptor_statement* statement)
 {
-  Answer* answer = (Answer*) userData;
+  std::set<Term>* indvs = (std::set<Term>*) userData;
 
   std::string subj = (const char*) statement->subject;
   std::string pred = (const char*) statement->predicate;
@@ -142,66 +141,69 @@ OWLParser::statementHandler(void* userData, const raptor_statement* statement)
        )
       )
     {
-      Tuple t;
-      t.push_back(Term(subj, true));
-      answer->addTuple(t);
+      indvs->insert(Term(subj, true));
+    }
+}
+
+
+void
+OWLParser::parse(void* userData,
+		 raptor_statement_handler handler,
+		 raptor_namespace_handler nsHandler)
+  throw (RacerParsingError)
+{
+  bool error = false;
+
+  raptor_init();
+
+  raptor_parser* parser = raptor_new_parser("rdfxml");
+  raptor_uri* parseURI  = raptor_new_uri((const unsigned char*) uri.c_str());
+
+  if (handler)
+    {
+      raptor_set_statement_handler(parser, userData, handler);
+    }
+
+  if (nsHandler)
+    {
+      raptor_set_namespace_handler(parser, userData, nsHandler);
+    }
+
+  if (raptor_parse_uri(parser, parseURI, 0))
+    {
+      error = true;
+    }
+    
+  raptor_free_uri(parseURI);
+  raptor_free_parser(parser);
+
+  raptor_finish();
+
+  if (error)
+    {
+      throw RacerParsingError("Couldn't parse URI " + uri);
     }
 }
 
 void
-OWLParser::parseIndividuals(Answer& answer)
+OWLParser::parseIndividuals(std::set<Term>& indvs) throw (RacerParsingError)
 {
-  raptor_init();
-
-  raptor_parser* parser = raptor_new_parser("rdfxml");
-  raptor_uri* parseURI  = raptor_new_uri((const unsigned char*) uri.c_str());
-
-  raptor_set_statement_handler(parser, &answer, OWLParser::statementHandler);
-
-  raptor_parse_uri(parser, parseURI, 0);
-    
-  raptor_free_uri(parseURI);
-  raptor_free_parser(parser);
-
-  raptor_finish();
+  parse(&indvs, OWLParser::aboxHandler, 0);
 }
 
 void
-OWLParser::parseNamespace(Query& query)
+OWLParser::parseNamespace(std::string& ns) throw (RacerParsingError)
 {
-  raptor_init();
-
-  raptor_parser* parser = raptor_new_parser("rdfxml");
-  raptor_uri* parseURI  = raptor_new_uri((const unsigned char*) uri.c_str());
-
-  raptor_set_namespace_handler(parser, &query, OWLParser::namespaceHandler);
-
-  raptor_parse_uri(parser, parseURI, 0);
-    
-  raptor_free_uri(parseURI);
-  raptor_free_parser(parser);
-
-  raptor_finish();
+  parse(&ns, 0, OWLParser::namespaceHandler);
 }
 
 void
-OWLParser::parseNames(std::set<Term>& concepts,std::set<Term>& roles)
+OWLParser::parseNames(std::set<Term>& concepts, std::set<Term>& roles)
+  throw (RacerParsingError)
 {
   TBoxNames names;
   names.conceptNames = &concepts;
   names.roleNames = &roles;
 
-  raptor_init();
-
-  raptor_parser* parser = raptor_new_parser("rdfxml");
-  raptor_uri* parseURI  = raptor_new_uri((const unsigned char*) uri.c_str());
-
-  raptor_set_statement_handler(parser, &names, OWLParser::tboxHandler);
-
-  raptor_parse_uri(parser, parseURI, 0);
-    
-  raptor_free_uri(parseURI);
-  raptor_free_parser(parser);
-
-  raptor_finish();
+  parse(&names, OWLParser::tboxHandler, 0);
 }
