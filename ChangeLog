@@ -1,3 +1,15 @@
+2006-05-29  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/DLRewriter.cpp: Adapt to new OWLParser interface.
+	* src/RacerInterface.cpp: Likewise.
+	* src/RacerQuery.cpp: Likewise.
+	* testsuite/TestOWLParser.cpp: Likewise.
+	* testsuite/TestOWLParser.h: Likewise.
+
+	* include/OWLParser.h: Add exception support.
+	Decouple interface from Query and Answer.
+	* src/OWLParser.cpp: Likewise.
+
 2006-05-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerExtAtom.cpp: Use RacerInterface::startRacer() instead
