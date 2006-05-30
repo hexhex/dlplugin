@@ -17,6 +17,7 @@
 #include "OWLParser.h"
 #include "DLRewriter.h"
 #include "LogBuf.h"
+#include "Registry.h"
 
 #include <algorithm>
 #include <iterator>
@@ -59,29 +60,38 @@ RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
 void
 RacerInterface::getAtoms(AtomFunctionMap& m)
 {
-  m["dlC"]          = new RacerConcept(stream, cache, properties);
-  m["dlR"]          = new RacerRole(stream, cache, properties);
-  m["dlConsistent"] = new RacerConsistent(stream, properties);
-  m["dlDR"]         = new RacerDatatypeRole(stream, cache, properties);
+  m["dlC"]          = new RacerConcept(stream, cache, registry);
+  m["dlR"]          = new RacerRole(stream, cache, registry);
+  m["dlConsistent"] = new RacerConsistent(stream, registry);
+  m["dlDR"]         = new RacerDatatypeRole(stream, cache, registry);
 }
 
 void
 RacerInterface::setOptions(std::vector<std::string>& argv)
 {
+  // just in case we want verbose logging
+  std::streambuf* logrdbuf = std::clog.rdbuf();
+  // turn off logging
+  std::clog.rdbuf(new LogBuf(0));
+
   /// @todo we want --verbose/--silent in argv...
   const char* c = getenv("DEBUGCACHE");
   if (c != 0)
     {
-      properties["verbose"] = std::string(c);
+      unsigned level;
+      std::string s(c);
+      std::istringstream iss(s);
+      iss >> level;
 
-      // use std::clogs rdbuf as output for the LogBuf
-      std::streambuf* logrdbuf = std::clog.rdbuf();
-      std::clog.rdbuf(new LogBuf(logrdbuf));
-    }
-  else
-    {
-      // turn off logging
-      std::clog.rdbuf(new LogBuf(0));
+      registry.setVerbose(level);
+
+      if (level > 1)
+	{
+	  // get rid of null logger
+	  delete std::clog.rdbuf();
+	  // use std::clogs original rdbuf as output for the LogBuf
+	  std::clog.rdbuf(new LogBuf(logrdbuf));
+	}
     }
 
   std::vector<std::vector<std::string>::iterator> found;
@@ -99,15 +109,13 @@ RacerInterface::setOptions(std::vector<std::string>& argv)
 	  std::string uri = it->substr(o + 11); // length of parameter = 11
 	  rewriter->setUri(uri);
 	  found.push_back(it);
-
-	  properties["ontology"] = uri;
 	}
 
       o = it->find("--nocache");
 
       if (o != std::string::npos)
 	{
-	  properties["verbose"] = "0";
+	  registry.setVerbose(0);
 	  found.push_back(it);
 	}
     }

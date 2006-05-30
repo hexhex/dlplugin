@@ -58,6 +58,7 @@
 #include "RacerDirector.h"
 #include "TCPStream.h"
 #include "DLRewriter.h"
+#include "Registry.h"
 
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Atom.h>
@@ -76,9 +77,6 @@ namespace racer {
    */
   class RacerInterface : public PluginInterface
   {
-  public:
-    typedef std::map<std::string,std::string> PropertyMap;
-
   private:
     /// the tcp streaming interface to the RACER server
     TCPIOStream stream;
@@ -87,7 +85,7 @@ namespace racer {
     /// rewrites dl-programs to hex-programs
     DLRewriter* rewriter;
     /// saves properties
-    PropertyMap properties;
+    Registry registry;
 
   public:
     RacerInterface();

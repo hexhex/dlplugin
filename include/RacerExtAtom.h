@@ -21,6 +21,7 @@
 #include "RacerQuery.h"
 #include "RacerInterface.h"
 #include "RacerDirector.h"
+#include "Registry.h"
 
 #include <iosfwd>
 
@@ -40,14 +41,17 @@ namespace racer {
     std::iostream& stream;
 
     /// keep a reference to the property map
-    RacerInterface::PropertyMap& properties;
+    Registry& registry;
     
     /// Ctor
-    RacerExtAtom(std::iostream&, RacerInterface::PropertyMap&);
+    RacerExtAtom(std::iostream&, Registry&);
 
     /// Dtor
     virtual
     ~RacerExtAtom();
+
+    virtual RacerCompositeDirector::shared_pointer
+    getComposite(const dlvhex::racer::Query& query) const;
 
     /**
      * children of RacerExtAtom implement this method to create a
@@ -87,12 +91,12 @@ namespace racer {
 
     /// fill a composite and add a caching director
     RacerBaseDirector::shared_pointer
-    getCachedDirectors(RacerBaseDirector*) const;
+    getCachedDirectors(const dlvhex::racer::Query&, RacerBaseDirector*) const;
 
   public:
     RacerCachingAtom(std::iostream&,
 		     RacerCachingDirector::RacerCache&,
-		     RacerInterface::PropertyMap&);
+		     Registry&);
   };
 
 
@@ -117,7 +121,7 @@ namespace racer {
   public:
     RacerConcept(std::iostream&,
 		 RacerCachingDirector::RacerCache&,
-		 RacerInterface::PropertyMap&);
+		 Registry&);
   };
 
 
@@ -143,7 +147,7 @@ namespace racer {
   public:
     RacerRole(std::iostream&,
 	      RacerCachingDirector::RacerCache&,
-	      RacerInterface::PropertyMap&);
+	      Registry&);
   };
 
 
@@ -168,7 +172,7 @@ namespace racer {
   public:
     explicit
     RacerConsistent(std::iostream&,
-		    RacerInterface::PropertyMap&);
+		    Registry&);
   };
 
 
@@ -194,7 +198,7 @@ namespace racer {
   public:
     RacerDatatypeRole(std::iostream&,
 		      RacerCachingDirector::RacerCache&,
-		      RacerInterface::PropertyMap&);
+		      Registry&);
   };
 
 
