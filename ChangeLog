@@ -1,3 +1,22 @@
+2006-05-30  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/LogBuf.cpp (LogBuf::sync): Only write if buffer is non-empty.
+
+	* src/RacerExtAtom.cpp: Optimize command sequence, i.e. only load
+	an OWL if its not already loaded.
+	Use Registry.
+
+	* include/RacerInterface.h: Use Registry.
+	* include/RacerExtAtom.h: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+
+	* src/Registry.cpp: New file.
+	* include/Registry.h: Likewise.
+
+	* src/Makefile.am (libdlvhexracer_la_SOURCES): Add Registry.cpp.
+
+	* include/Makefile.am (noinst_HEADERS): Add Registry.h.
+
 2006-05-29  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/DLRewriter.cpp: Adapt to new OWLParser interface.
