@@ -68,6 +68,11 @@ LogBuf::sync()
 {
   if (obuf)
     {
+      if (sbuf.in_avail() == 0) // don't write anything if buffer is empty
+	{
+	  return 0;
+	}
+
       // get current time
       struct timeval tv;
       ::gettimeofday(&tv, 0);
@@ -81,7 +86,9 @@ LogBuf::sync()
 	  << std::setw(2) << std::setfill('0') << now.tm_sec << '.' 
 	  << std::setw(6) << std::setfill('0') << tv.tv_usec << ' ';
  
-      obuf->sputn(oss.str().c_str(), oss.str().length());
+      std::string time(oss.str());
+
+      obuf->sputn(time.c_str(), time.length());
 
       // now append get the current buffer
       std::string s = sbuf.str();
