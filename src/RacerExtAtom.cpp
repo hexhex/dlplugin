@@ -29,9 +29,9 @@ using namespace dlvhex::racer;
 
 
 RacerExtAtom::RacerExtAtom(std::iostream& s,
-			   RacerInterface::PropertyMap& props)
+			   Registry& regs)
   : stream(s),
-    properties(props)
+    registry(regs)
 { }
 
 RacerExtAtom::~RacerExtAtom()
@@ -57,60 +57,75 @@ RacerExtAtom::retrieve(const PluginAtom::Query& query,
     }
   catch (RacerError& e)
     {
-      throw PluginError(std::string(e.what()));
+      throw PluginError(e.what());
     }
 }
 
+RacerCompositeDirector::shared_pointer
+RacerExtAtom::getComposite(const dlvhex::racer::Query& query) const
+{
+  RacerCompositeDirector::shared_pointer comp(new RacerCompositeDirector(stream));
+
+  if (!registry.getUNA()) // only set UNA once
+    {
+      comp->add(new RacerUNA(stream));
+      registry.setUNA(true);
+    }
+
+  if (registry.getOpenURL() != query.getOntology()) // only load ontology if its new
+    {
+      comp->add(new RacerOpenOWL(stream));
+      comp->add(new RacerDirector<RacerImportOntologies,RacerIgnoreAnswer>(stream));
+      registry.setOpenURL(query.getOntology());
+    }
+
+  comp->add(new RacerTempABox(stream));
+  comp->add(new RacerConceptRolePM(stream));
+
+  return comp;
+}
 
 
 RacerCachingAtom::RacerCachingAtom(std::iostream& s,
 				   RacerCachingDirector::RacerCache& c,
-				   RacerInterface::PropertyMap& props)
-  : RacerExtAtom(s, props),
+				   Registry& regs)
+  : RacerExtAtom(s, regs),
     cache(c)
 { }
 
 RacerBaseDirector::shared_pointer
-RacerCachingAtom::getCachedDirectors(RacerBaseDirector* cmd) const
+RacerCachingAtom::getCachedDirectors(const dlvhex::racer::Query& q, RacerBaseDirector* cmd) const
 {
-  RacerCompositeDirector::shared_pointer comp(new RacerCompositeDirector(stream));
-
-  comp->add(new RacerUNA(stream));
-  comp->add(new RacerOpenOWL(stream));
-  comp->add(new RacerDirector<RacerImportOntologies,RacerIgnoreAnswer>(stream));
-  comp->add(new RacerTempABox(stream));
-  comp->add(new RacerConceptRolePM(stream));
+  RacerCompositeDirector::shared_pointer comp = getComposite(q);
 
   comp->add(cmd); // the actual command to send
 
-  std::map<std::string, std::string>::const_iterator verbose = properties.find("verbose");
+  unsigned level = registry.getVerbose();
 
-  if (verbose != properties.end())
+  if (level == 0) // no caching
     {
-      if (verbose->second == "0") // no caching
-	{
-	  return comp;
-	}
-      else // debug query caching
-	{
-	  return RacerBaseDirector::shared_pointer(new RacerDebugCachingDirector
-						   (cache, comp)
-						   );
-	}
+      return comp;
     }
-
-  // default action is query caching
-  return RacerBaseDirector::shared_pointer(new RacerCachingDirector
-					   (cache, comp)
-					   );
+  else if (level > 1) // debug caching
+    {
+      return RacerBaseDirector::shared_pointer(new RacerDebugCachingDirector
+					       (cache, comp)
+					       );
+    }
+  else // default action is query caching
+    {
+      return RacerBaseDirector::shared_pointer(new RacerCachingDirector
+					       (cache, comp)
+					       );
+    }
 }
 
 
 
 RacerConcept::RacerConcept(std::iostream& s,
 			   RacerCachingDirector::RacerCache& c,
-			   RacerInterface::PropertyMap& props)
-  : RacerCachingAtom(s, c, props)
+			   Registry& regs)
+  : RacerCachingAtom(s, c, regs)
 {
   //
   // &dlC[kb,plusC,minusC,plusR,minusR,query](X)
@@ -131,11 +146,11 @@ RacerConcept::getDirectors(const dlvhex::racer::Query& query) const
 {
   if (query.getType() == dlvhex::racer::Query::Retrieval) // retrieval mode
     {
-      return getCachedDirectors(new RacerConceptQuery(stream));
+      return getCachedDirectors(query, new RacerConceptQuery(stream));
     }
   else if (query.getType() == dlvhex::racer::Query::Boolean) // boolean query mode
     {
-      return getCachedDirectors(new RacerIsConceptQuery(stream));
+      return getCachedDirectors(query, new RacerIsConceptQuery(stream));
     }
   else
     {
@@ -146,8 +161,8 @@ RacerConcept::getDirectors(const dlvhex::racer::Query& query) const
 
 RacerRole::RacerRole(std::iostream& s,
 		     RacerCachingDirector::RacerCache& c,
-		     RacerInterface::PropertyMap& props)
-  : RacerCachingAtom(s, c, props)
+		     Registry& regs)
+  : RacerCachingAtom(s, c, regs)
 {
   //
   // &dlR[kb,plusC,minusC,plusR,minusR,query](X,Y)
@@ -168,16 +183,16 @@ RacerRole::getDirectors(const dlvhex::racer::Query& query) const
 {
   if (query.getType() == dlvhex::racer::Query::RelatedRetrieval) // retrieval mode
     {
-      return getCachedDirectors(new RacerRoleQuery(stream));
+      return getCachedDirectors(query, new RacerRoleQuery(stream));
     }
   else if (query.getType() == dlvhex::racer::Query::RelatedBoolean) // boolean query mode
     {
-      return getCachedDirectors(new RacerIsRoleQuery(stream));
+      return getCachedDirectors(query, new RacerIsRoleQuery(stream));
     }
   else if (query.getType() == dlvhex::racer::Query::LeftRetrieval
 	   || query.getType() == dlvhex::racer::Query::RightRetrieval) // pattern retrieval mode
     {
-      return getCachedDirectors(new RacerIndvFillersQuery(stream));
+      return getCachedDirectors(query, new RacerIndvFillersQuery(stream));
     }
   else
     {
@@ -190,8 +205,8 @@ RacerRole::getDirectors(const dlvhex::racer::Query& query) const
 
 
 RacerConsistent::RacerConsistent(std::iostream& s,
-				 RacerInterface::PropertyMap& props)
-  : RacerExtAtom(s, props)
+				 Registry& regs)
+  : RacerExtAtom(s, regs)
 {
   //
   // &dlConsistent[kb,plusC,minusC,plusR,minusR]()
@@ -207,15 +222,10 @@ RacerConsistent::RacerConsistent(std::iostream& s,
 }
 
 RacerBaseDirector::shared_pointer
-RacerConsistent::getDirectors(const dlvhex::racer::Query&) const
+RacerConsistent::getDirectors(const dlvhex::racer::Query& q) const
 {
-  RacerCompositeDirector::shared_pointer comp(new RacerCompositeDirector(stream));
+  RacerCompositeDirector::shared_pointer comp = getComposite(q);
 
-  comp->add(new RacerUNA(stream));
-  comp->add(new RacerOpenOWL(stream));
-  comp->add(new RacerDirector<RacerImportOntologies,RacerIgnoreAnswer>(stream));
-  comp->add(new RacerTempABox(stream));
-  comp->add(new RacerConceptRolePM(stream));
   comp->add(new RacerABoxConsistent(stream));
 
   return comp;
@@ -226,8 +236,8 @@ RacerConsistent::getDirectors(const dlvhex::racer::Query&) const
 
 RacerDatatypeRole::RacerDatatypeRole(std::iostream& s,
 				     RacerCachingDirector::RacerCache& c,
-				     RacerInterface::PropertyMap& props)
-  : RacerCachingAtom(s, c, props)
+				     Registry& regs)
+  : RacerCachingAtom(s, c, regs)
 {
   //
   // &dlDR[kb,plusC,minusC,plusR,minusR,query](X,Y)
@@ -251,9 +261,15 @@ RacerDatatypeRole::getDirectors(const dlvhex::racer::Query& query) const
     {
       ///@todo this is kind of a hack, maybe we should unify this stuff...
       RacerCompositeDirector* dir = new RacerCompositeDirector(stream);
-      dir->add(new RacerDirector<RacerDataSubstrateMirrorBuilder,RacerIgnoreAnswer>(stream));
+
+      if (!registry.getDataSubstrateMirroring())
+	{
+	  dir->add(new RacerDirector<RacerDataSubstrateMirrorBuilder,RacerIgnoreAnswer>(stream));
+	  registry.setDataSubstrateMirroring(true);
+	}
+
       dir->add(new RacerIndvDataFillersQuery(stream));
-      return getCachedDirectors(dir); 
+      return getCachedDirectors(query, dir); 
     }
   else
     {
