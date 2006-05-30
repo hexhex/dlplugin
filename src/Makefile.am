@@ -31,6 +31,7 @@ RacerNRQL.cpp \
 RacerRunner.cpp \
 RacerQuery.cpp \
 RacerQueryExpr.cpp \
+Registry.cpp \
 TCPStream.cpp \
 UserDir.cpp
 
