@@ -75,15 +75,32 @@ ABoxQueryVariable::output(std::ostream& s) const
 std::ostream&
 ABoxNegatedConcept::output(std::ostream& s) const
 {
-  return s << "(not " << *cExpr << ")";
+  return s << "(not " << *cExpr << ')';
 }
 
+
+std::ostream&
+ABoxQueryRole::output(std::ostream& s) const
+{
+  if (isDatatype)
+    {
+      s << "(:owl-datatype-role ";
+      ABoxQueryExpr::output(s);
+      s << ')';
+    }
+  else
+    {
+      ABoxQueryExpr::output(s);
+    }
+
+  return s;
+}
 
 
 std::ostream&
 ABoxInvertedRole::output(std::ostream& s) const
 {
-  return s << "(inv " << *rExpr << ")";
+  return s << "(inv " << *rExpr << ')';
 }
 
 
@@ -103,37 +120,44 @@ ABoxRelated::output(std::ostream& s) const
 {
   return s << "(related "
 	   << *i1Expr
-	   << " "
+	   << ' '
 	   << *i2Expr
-	   << " "
+	   << ' '
 	   << *rExpr
-	   << ")";
+	   << ')';
 }
 
 
 std::ostream&
 NegationQuery::output(std::ostream& s) const
 {
-  return s << "(not " << *atom << ")";
+  return s << "(not " << *atom << ')';
 }
 
 
 std::ostream&
 InvertedQuery::output(std::ostream& s) const
 {
-  return s << "(inv " << *atom << ")";
+  return s << "(inv " << *atom << ')';
 }
 
 
 std::ostream&
 ConceptQuery::output(std::ostream& s) const
 {
-  return s << "(" << *oExpr << " " << *cExpr << ")";
+  return s << '(' << *oExpr << ' ' << *cExpr << ')';
 }
 
 
 std::ostream&
 RoleQuery::output(std::ostream& s) const
 {
-  return s << "(" << *o1Expr << " " << *o2Expr << " "  << *rExpr << ")";
+  return s << '(' << *o1Expr << ' ' << *o2Expr << ' '  << *rExpr << ')';
+}
+
+
+std::ostream&
+SameAsQuery::output(std::ostream& s) const
+{
+  return s << "(same-as " << *o1Expr << ' ' << *o2Expr << ')';
 }

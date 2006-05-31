@@ -234,11 +234,19 @@ namespace racer {
    */
   class ABoxQueryRole : public ABoxRoleDescrExpr
   {
+  private:
+    bool isDatatype;
+
+    std::ostream&
+    output(std::ostream& s) const;
+
   public:
     explicit
     ABoxQueryRole(const std::string& name,
-		  const std::string& nsid = std::string())
-      : ABoxRoleDescrExpr(name, nsid)
+		  const std::string& nsid = std::string(),
+		  bool d = false)
+      : ABoxRoleDescrExpr(name, nsid),
+	isDatatype(d)
     { }
   };
 
@@ -417,6 +425,27 @@ namespace racer {
 	      ABoxQueryObject::const_pointer o1,
 	      ABoxQueryObject::const_pointer o2)
       : rExpr(r), o1Expr(o1), o2Expr(o2)
+    { }
+  };
+
+
+  /**
+   * the same-as query atom.
+   */
+  class SameAsQuery : public ABoxQueryAtom
+  {
+  private:
+    const ABoxQueryObject::shared_pointer o1Expr;
+    const ABoxQueryObject::shared_pointer o2Expr;
+
+  protected:
+    std::ostream&
+    output(std::ostream& s) const;
+
+  public:
+    SameAsQuery(ABoxQueryObject::const_pointer o1,
+		ABoxQueryObject::const_pointer o2)
+      : o1Expr(o1), o2Expr(o2)
     { }
   };
 
