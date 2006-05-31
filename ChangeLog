@@ -1,3 +1,14 @@
+2006-05-31  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerBuilder.cpp
+	(RacerIndividualDatatypeFillersBuilder::buildCommand): Use
+	NRQLRetrieve to get the datatype fillers.
+
+	* include/RacerQueryExpr.h (ABoxQueryRole): Add support for
+	owl-datatype roles.
+	(SameAsQuery): New query atom.
+	* src/RacerQueryExpr.cpp: Likewise.
+
 2006-05-30  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/LogBuf.cpp (LogBuf::sync): Only write if buffer is non-empty.
