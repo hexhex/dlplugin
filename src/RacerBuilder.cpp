@@ -59,7 +59,7 @@ RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 	  return false; // nothing to sent, ignore this command
 	}
 
-      stream << "(state " << *v << ")" << std::endl;
+      stream << "(state " << *v << ')' << std::endl;
     }
   catch (std::exception& e)
     {
@@ -93,11 +93,11 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingErro
 	     << ABoxQueryIndividual(indv[0].getUnquotedString(),
 				    query.getNamespace()
 				    )
-	     << " "
+	     << ' '
 	     << ABoxQueryConcept(q.getUnquotedString(),
 				 query.getNamespace()
 				 )
-	     << ")"
+	     << ')'
 	     << std::endl;
     }
   catch (std::exception& e)
@@ -131,15 +131,15 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 	     << ABoxQueryIndividual(indv[0].getUnquotedString(),
 				    query.getNamespace()
 				    )
-	     << " "
+	     << ' '
 	     << ABoxQueryIndividual(indv[1].getUnquotedString(),
 				    query.getNamespace()
 				    )
-	     << " "
+	     << ' '
 	     << ABoxQueryRole(q.getUnquotedString(),
 			      query.getNamespace()
 			      )
-	     << ")"
+	     << ')'
 	     << std::endl;
     }
   catch (std::exception& e)
@@ -202,7 +202,7 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
 		  );
 	}
 
-      stream << "(individual-fillers " << *i << " " << *r << ")" << std::endl;
+      stream << "(individual-fillers " << *i << ' ' << *r << ')' << std::endl;
     }
   catch (std::exception& e)
     {
@@ -244,7 +244,7 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (RacerBuildingErr
 		  );
 	}
 
-      stream << "(concept-instances " << *c << ")" << std::endl;
+      stream << "(concept-instances " << *c << ')' << std::endl;
     }
   catch (std::exception& e)
     {
@@ -272,7 +272,7 @@ RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (RacerBuildingErro
 	     << ABoxQueryRole(q.getUnquotedString(),
 			      query.getNamespace()
 			      )
-	     << ")"
+	     << ')'
 	     << std::endl;
     }
   catch (std::exception& e)
@@ -342,32 +342,52 @@ RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
 
   try
     {
-      stream << "(retrieve ";
+      NRQLRetrieve retrieve;
 
       if (query.getType() == Query::RightRetrieval) // (const,variable) pattern
 	{
+	  NRQLConjunction* body = new NRQLConjunction;
+	  
+	  body->addAtom(new NRQLQueryAtom
+			(new RoleQuery
+			 (new ABoxQueryRole(q.getUnquotedString(), query.getNamespace(), true),
+			  new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate),
+			  new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
+			  )
+			 )
+			);
+	  body->addAtom(new NRQLQueryAtom
+			(new SameAsQuery
+			 (new ABoxQueryVariable("X"),
+			  new ABoxQueryIndividual
+			  (indv[0].getUnquotedString(), query.getNamespace())
+			  )
+			 )
+			);
+	  
 	  // only retrieve the datatype, let Answer add the
 	  // corresponding individual
-	  stream << "($?*Y) (and (?*X $?*Y (:owl-datatype-role "
-		 << ABoxQueryRole(q.getUnquotedString(),
-				  query.getNamespace()
-				  )
-		 << ")) (same-as ?X "
- 		 << ABoxQueryIndividual(indv[0].getUnquotedString(),
-					query.getNamespace()
-					)
- 		 << "))";
+	  retrieve.addHead(new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate));
+
+	  retrieve.addBody(body);
 	}
       else // (variable,variable) pattern
 	{
-	  stream << "(?*X $?*Y) (?*X $?*Y (:owl-datatype-role "
-		 << ABoxQueryRole(q.getUnquotedString(),
-				  query.getNamespace()
-				  )
-		 << "))";
+	  const NRQLQueryAtom* body = new NRQLQueryAtom
+	    (new RoleQuery
+	     (new ABoxQueryRole(q.getUnquotedString(), query.getNamespace(), true),
+	      new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate),
+	      new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
+	      )
+	     );
+	  
+	  retrieve.addHead(new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate));
+	  retrieve.addHead(new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate));
+
+	  retrieve.addBody(body);
 	}
 
-      stream << ")" << std::endl;
+      stream << retrieve << std::endl;
     }
   catch (std::exception& e)
     {
