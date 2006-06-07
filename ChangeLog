@@ -1,3 +1,19 @@
+2006-06-07  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/RacerNRQL.h: Add support for specifying abox and tbox
+	name.
+	* src/RacerNRQL.cpp: Likewise.
+
+	* include/RacerDirector.h: Move Cache typedef to Cache.h.
+	* include/RacerExtAtom.h: Likewise.
+	* include/RacerInterface.h: Likewise.
+	* src/RacerExtAtom.cpp: Likewise.
+	* src/RacerDirector.cpp: Likewise.
+
+	* include/Cache.h: New file.
+
+	* include/Makefile.am (noinst_HEADERS): Add Cache.h.
+
 2006-05-31  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerBuilder.cpp
