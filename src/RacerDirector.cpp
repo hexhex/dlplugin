@@ -14,6 +14,7 @@
 
 #include "RacerError.h"
 #include "RacerQuery.h"
+#include "Cache.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -107,7 +108,7 @@ RacerCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
 
 
 
-RacerCachingDirector::RacerCachingDirector(RacerCache& c,
+RacerCachingDirector::RacerCachingDirector(Cache& c,
 					   RacerBaseDirector::shared_pointer d)
   : RacerBaseDirector(),
     director(d),
@@ -122,7 +123,7 @@ RacerCachingDirector::query(QueryCtx::shared_pointer qctx) throw(RacerError)
 {
   if (director.get() != 0)
     {
-      RacerCache::iterator found = find(qctx);
+      Cache::iterator found = find(qctx);
 
       if (found != cache.end())
 	{
@@ -147,7 +148,7 @@ RacerCachingDirector::query(QueryCtx::shared_pointer qctx) throw(RacerError)
 }
 
 
-RacerCachingDirector::RacerCache::iterator
+Cache::iterator
 RacerCachingDirector::find(const QueryCtx::shared_pointer& query) const
 {
   // is query cached?
@@ -185,17 +186,17 @@ RacerCachingDirector::cacheHit(const QueryCtx& query, const QueryCtx& found) con
 
 
 
-RacerDebugCachingDirector::RacerDebugCachingDirector(RacerCache& c,
+RacerDebugCachingDirector::RacerDebugCachingDirector(Cache& c,
 						     RacerBaseDirector::shared_pointer d)
   : RacerCachingDirector(c, d)
 { }
 
-RacerCachingDirector::RacerCache::iterator
+Cache::iterator
 RacerDebugCachingDirector::find(const QueryCtx::shared_pointer& query) const
 {
   std::cerr << "-----" << std::endl;
 
-  for (RacerCache::const_iterator it = cache.begin();
+  for (Cache::const_iterator it = cache.begin();
        it != cache.end(); it++)
     {
       std::cerr << "   " << (*it)->getQuery() << std::endl;
@@ -203,7 +204,7 @@ RacerDebugCachingDirector::find(const QueryCtx::shared_pointer& query) const
 
   std::cerr << "q: " << query->getQuery();
 
-  RacerCache::iterator found = RacerCachingDirector::find(query);
+  Cache::iterator found = RacerCachingDirector::find(query);
 
   if (found != cache.end())
     {

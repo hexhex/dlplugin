@@ -20,9 +20,9 @@
 #include "RacerQuery.h"
 #include "RacerAnswerDriver.h"
 #include "RacerBuilder.h"
+#include "Cache.h"
 
 #include <iosfwd>
-#include <set>
 
 namespace dlvhex {
 namespace racer {
@@ -178,29 +178,12 @@ namespace racer {
    */
   class RacerCachingDirector : public RacerBaseDirector
   {
-  public:
-    struct QueryCtxCompare
-      : public std::binary_function<const QueryCtx::shared_pointer,
-				    const QueryCtx::shared_pointer,
-				    bool>
-    {
-      bool
-      operator() (const QueryCtx::shared_pointer& a,
-		  const QueryCtx::shared_pointer& b) const
-      {
-	return a->getQuery() < b->getQuery();
-      }
-    };
-
-    /// caches QueryCtx::shared_pointer with help of a std::set
-    typedef std::set<QueryCtx::shared_pointer, QueryCtxCompare> RacerCache;
-
   protected:
     /// the underlying director, usually a RacerCompositeDirector
     RacerBaseDirector::shared_pointer director;
 
     /// reference to the cache of QueryCtx objects
-    RacerCache& cache;
+    Cache& cache;
 
     /**
      * checks if found is really a cache hit
@@ -221,12 +204,12 @@ namespace racer {
      *
      * @return the position of the cached QueryCtx::shared_pointer.
      */
-    virtual RacerCache::iterator
+    virtual Cache::iterator
     find(const QueryCtx::shared_pointer& query) const;
 
   public:
     explicit
-    RacerCachingDirector(RacerCache&, RacerBaseDirector::shared_pointer d);
+    RacerCachingDirector(Cache&, RacerBaseDirector::shared_pointer d);
 
     virtual
     ~RacerCachingDirector();
@@ -256,12 +239,12 @@ namespace racer {
     virtual bool
     cacheHit(const QueryCtx& query, const QueryCtx& found) const;
  
-    virtual RacerCache::iterator
+    virtual Cache::iterator
     find(const QueryCtx::shared_pointer& query) const;
 
   public:
     explicit
-    RacerDebugCachingDirector(RacerCache&, RacerBaseDirector::shared_pointer d);
+    RacerDebugCachingDirector(Cache&, RacerBaseDirector::shared_pointer d);
   };
 
 

@@ -22,6 +22,7 @@
 #include "RacerInterface.h"
 #include "RacerDirector.h"
 #include "Registry.h"
+#include "Cache.h"
 
 #include <iosfwd>
 
@@ -87,16 +88,14 @@ namespace racer {
   {
   protected:
     /// reference to the cache of QueryCtx objects
-    RacerCachingDirector::RacerCache& cache;
+    Cache& cache;
 
     /// fill a composite and add a caching director
     RacerBaseDirector::shared_pointer
     getCachedDirectors(const dlvhex::racer::Query&, RacerBaseDirector*) const;
 
   public:
-    RacerCachingAtom(std::iostream&,
-		     RacerCachingDirector::RacerCache&,
-		     Registry&);
+    RacerCachingAtom(std::iostream&, Cache&, Registry&);
   };
 
 
@@ -119,9 +118,7 @@ namespace racer {
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
-    RacerConcept(std::iostream&,
-		 RacerCachingDirector::RacerCache&,
-		 Registry&);
+    RacerConcept(std::iostream&, Cache&, Registry&);
   };
 
 
@@ -145,9 +142,7 @@ namespace racer {
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
-    RacerRole(std::iostream&,
-	      RacerCachingDirector::RacerCache&,
-	      Registry&);
+    RacerRole(std::iostream&, Cache&, Registry&);
   };
 
 
@@ -171,8 +166,7 @@ namespace racer {
 
   public:
     explicit
-    RacerConsistent(std::iostream&,
-		    Registry&);
+    RacerConsistent(std::iostream&, Registry&);
   };
 
 
@@ -196,9 +190,7 @@ namespace racer {
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
-    RacerDatatypeRole(std::iostream&,
-		      RacerCachingDirector::RacerCache&,
-		      Registry&);
+    RacerDatatypeRole(std::iostream&, Cache&, Registry&);
   };
 
 

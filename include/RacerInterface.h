@@ -59,6 +59,7 @@
 #include "TCPStream.h"
 #include "DLRewriter.h"
 #include "Registry.h"
+#include "Cache.h"
 
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Atom.h>
@@ -81,7 +82,7 @@ namespace racer {
     /// the tcp streaming interface to the RACER server
     TCPIOStream stream;
     /// the cache for RACER queries
-    RacerCachingDirector::RacerCache cache;
+    Cache cache;
     /// rewrites dl-programs to hex-programs
     DLRewriter* rewriter;
     /// saves properties
