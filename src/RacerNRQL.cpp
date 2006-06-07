@@ -86,6 +86,25 @@ NRQLUnion::addAtom(NRQLBody::const_pointer e)
 
 
 
+NRQLQuery::NRQLQuery(const std::string& a, const std::string &t)
+  : abox(a), tbox(t)
+{ }
+
+std::ostream&
+NRQLQuery::output(std::ostream& s) const
+{
+  if (!abox.empty())
+    {
+      s << " :abox " << abox;
+    }
+
+  if (!tbox.empty())
+    {
+      s << " :tbox " << tbox;
+    }
+
+  return s;
+}
 
 void
 NRQLQuery::addHead(ABoxQueryObject::const_pointer e)
@@ -102,40 +121,60 @@ NRQLQuery::addBody(NRQLBody::const_pointer e)
 }
 
 
+NRQLRetrieve::NRQLRetrieve(const std::string& abox)
+  : NRQLQuery(abox, "")
+{ }
 
 std::ostream&
 NRQLRetrieve::output(std::ostream& s) const
 {
-  return s << "(retrieve (" 
-	   << head
-	   << ") "
-	   << body
-	   << ")";
+  s << "(retrieve (" 
+    << head
+    << ") "
+    << body;
+  
+  NRQLQuery::output(s);
+
+  return s << ')';
 }
 
 
+
+NRQLTBoxRetrieve::NRQLTBoxRetrieve(const std::string& tbox)
+  : NRQLQuery("", tbox)
+{ }
 
 std::ostream&
 NRQLTBoxRetrieve::output(std::ostream& s) const
 {
-  return s << "(tbox-retrieve ("
-	   << head
-	   << ") "
-	   << body
-	   << ")";
+  s << "(tbox-retrieve ("
+    << head
+    << ") "
+    << body;
+
+  NRQLQuery::output(s);
+
+  return s << ')';
 }
 
+
+NRQLRetrieveUnderPremise::NRQLRetrieveUnderPremise(const std::string& abox)
+  : NRQLQuery(abox, "")
+{ }
 
 std::ostream&
 NRQLRetrieveUnderPremise::output(std::ostream& s) const
 {
-  return s << "(retrieve-under-premise ("
-	   << premise
- 	   << ") ("
-	   << head
- 	   << ") "
-	   << body
-	   << ")";
+  s << "(retrieve-under-premise ("
+    << premise
+    << ") ("
+    << head
+    << ") "
+    << body;
+
+  NRQLQuery::output(s);
+
+  return s << ')';
 }
 
 void

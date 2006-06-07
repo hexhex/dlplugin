@@ -129,10 +129,16 @@ namespace racer {
   class NRQLQuery : public NRQLBase
   {
   protected:
+    std::string abox;
+    std::string tbox;
+
     std::vector<ABoxQueryObject::shared_pointer> head; /**< query head */
     std::vector<NRQLBody::shared_pointer> body;	/**< query body */
 
-    NRQLQuery() {}
+    NRQLQuery(const std::string& a, const std::string& t);
+
+    virtual std::ostream&
+    output(std::ostream& s) const;
 
   public:
     void
@@ -155,6 +161,10 @@ namespace racer {
   private:
     std::ostream&
     output(std::ostream& s) const;
+
+  public:
+    explicit
+    NRQLRetrieve(const std::string& abox = "");
   };
 
 
@@ -166,6 +176,10 @@ namespace racer {
   private:
     std::ostream&
     output(std::ostream& s) const;
+
+  public:
+    explicit
+    NRQLTBoxRetrieve(const std::string& tbox = "");
   };
 
 
@@ -183,6 +197,9 @@ namespace racer {
   public:
     void
     addPremise(ABoxAssertion::const_pointer e);
+
+    explicit
+    NRQLRetrieveUnderPremise(const std::string& abox = "");
   };
 
 
