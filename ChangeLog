@@ -1,3 +1,15 @@
+2006-06-15  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerAnswerScanner.lpp: Adapt parser to bison 2.2/2.3. 
+	* src/RacerAnswerParser.ypp: Likewise.
+	* include/RacerFlexLexer.h: Likewise.
+	* include/RacerAnswerDriver.h: Likewise.
+
+	* src/Makefile.am: Check versions of bison and flex.
+
+	* testsuite/TestRacerTypes.cpp (TestRacerTypes::runRacerSetTest):
+	Fix testcase for AtomSet.
+
 2006-06-07  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/RacerNRQL.h: Add support for specifying abox and tbox
