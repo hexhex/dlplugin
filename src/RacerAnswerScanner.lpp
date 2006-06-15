@@ -17,12 +17,13 @@
 // for yy::location 
 #include "RacerAnswerParser.hpp"
 #include "RacerAnswerDriver.h"
+#include "RacerFlexLexer.h"
 
 using namespace std;
 
 // keep the RacerFlexLexer as close as possible to the C version
-#define yylval (*(YYSTYPE*)lexval)
-#define yylloc ((yy::location*)lexloc)
+#define yylval (*(yy::RacerAnswerParser::semantic_type*)lexval)
+#define yylloc ((yy::RacerAnswerParser::location_type*)lexloc)
 #define driver (*lexdrv)
 %}
 
@@ -81,9 +82,13 @@ URI             {SCHEME}:{HIERPART}(\?{QUERY})?(\#{FRAGMENT})?
 yylloc->step();
 %}
 
+%{
+  // abbreviate it as token
+  typedef yy::RacerAnswerParser::token token;
+%}
 
-^":error"  BEGIN(racererror); return ERROR;
-^":answer" BEGIN(eatanswerfudge); return ANSWER;
+^":error"  BEGIN(racererror); return token::ERROR;
+^":answer" BEGIN(eatanswerfudge); return token::ANSWER;
 
 
 <eatanswerfudge>{
@@ -97,36 +102,36 @@ yylloc->step();
 <racererror>[^\n]+ { /* get the error message until next \n */
     BEGIN(INITIAL);
     yylval.sval = new std::string(yytext);
-    return STRING;
+    return token::STRING;
  }
 
 
 <raceranswer>{
 
-  "NIL\""       BEGIN(answertrailer); return NIL;
-  "T\""         BEGIN(answertrailer); return TRUE;
+  "NIL\""       BEGIN(answertrailer); return token::NIL;
+  "T\""         BEGIN(answertrailer); return token::TRUE;
   "\""          BEGIN(answertrailer); yylloc->step();
 
   {URI} {
      yylval.sval = new std::string(yytext);
-     return URI;
+     return token::URI;
   }
 
-  [()|$*?]     return *yytext;
+  [()|$*?]     return yy::RacerAnswerParser::token_type(*yytext);
 
   {STRING} {
     yylval.sval = new std::string(yytext);
-    return STRING;
+    return token::STRING;
   }
 
   {QUOTED_STRING} {
     yylval.sval = new std::string(yytext + 2, yyleng - 4); // skip \"
-    return STRING;
+    return token::STRING;
   }
 
   {NUMBER} {
     std::istringstream(yytext) >> yylval.ival;
-    return NUMBER; 
+    return token::NUMBER; 
   }
 
 }
@@ -140,7 +145,7 @@ yylloc->step();
 
 <*>{BLANK}+       /* skip blanks */ yylloc->step();
 
-{NEWLINE}         yylloc->lines(yyleng); return '\n';
+{NEWLINE}         yylloc->lines(yyleng); return yy::RacerAnswerParser::token_type('\n');
 
 .                 driver.error(*yylloc, "invalid character");
 

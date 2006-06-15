@@ -13,6 +13,8 @@
 #ifndef _RACERFLEXLEXER_H
 #define _RACERFLEXLEXER_H
 
+#include "RacerAnswerParser.hpp"
+
 // put FlexLexer.h into its own include guards or yyFlexLexer gets
 // redefined
 #ifndef __FLEX_LEXER_H
@@ -22,12 +24,6 @@
 //
 // some forward declarations
 //
-
-namespace yy {
-  class location;
-} // namespace yy
-
-union YYSTYPE;
 
 namespace dlvhex {
 namespace racer {
@@ -46,8 +42,8 @@ namespace racer {
     RacerFlexLexer(dlvhex::racer::RacerBaseAnswerDriver* d) : lexdrv(d) { }
     virtual ~RacerFlexLexer() { }
     dlvhex::racer::RacerBaseAnswerDriver* lexdrv;
-    yy::location* lexloc;
-    YYSTYPE* lexval;
+    yy::RacerAnswerParser::location_type* lexloc;
+    yy::RacerAnswerParser::semantic_type* lexval;
     int yylex(); // implemented in RacerAnswerScanner.lpp
   };
 

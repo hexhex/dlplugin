@@ -14,11 +14,14 @@
 #ifndef _RACERANSWERDRIVER_H
 #define _RACERANSWERDRIVER_H
 
+#include "RacerAnswerParser.hpp"
 #include "RacerQuery.h"
-#include "RacerFlexLexer.h"
 #include "RacerError.h"
 
 #include <iosfwd>
+
+// forward declaration
+class RacerFlexLexer;
 
 namespace dlvhex {
 namespace racer {

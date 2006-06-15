@@ -17,20 +17,21 @@
 %file-prefix = "RacerAnswerParser"
 
 %{
+#include "dlvhex/Term.h"
+
+#include "RacerQuery.h"
 #include "RacerAnswerDriver.h"
 #include "RacerError.h"
 
 #include <string>
 
-#ifndef YY_DECL
-// Announce to bison the prototype we want for the lexing function
-#define YY_DECL								\
-  int yylex (YYSTYPE* yylval,						\
-	     yy::location* yylloc,					\
-	     dlvhex::racer::RacerAnswerDriver& driver)
-// declare YY_DECL function
-YY_DECL;
-#endif /* YY_DECL */
+  // why do we need this forward declaration?
+  namespace dlvhex {
+    namespace racer {
+      class RacerAnswerDriver;
+    }
+  }
+
 %}
 
 // this is the parsing context, passed as parameters to the
@@ -58,6 +59,23 @@ YY_DECL;
   Term* termval;
   Tuple* tupleval;
 }
+
+
+// define FlexLexer part *after* the definitions of the various types
+%{
+
+#include "RacerFlexLexer.h"
+
+#define YY_DECL \
+yy::RacerAnswerParser::token_type \
+yylex (yy::RacerAnswerParser::semantic_type* yylval, \
+       yy::RacerAnswerParser::location_type* yylloc, \
+       dlvhex::racer::RacerAnswerDriver& driver)
+
+// declare YY_DECL function
+YY_DECL;
+
+%}
 
 %type <termval> individual;
 %type <tupleval> tuple;
@@ -206,7 +224,8 @@ tuple: '(' variable individual ')'
        }
      | tuple '(' variable individual ')'
        {
-	 $1->push_back(*$4);
+	 $$ = $1;
+	 $$->push_back(*$4);
 	 delete $4;
        }
 ;
@@ -266,5 +285,5 @@ YY_DECL
   RacerFlexLexer* lex = driver.getLexer();
   lex->lexval = yylval; // set current semantic value
   lex->lexloc = yylloc; // and the current location,
-  return lex->yylex (); // finally call the drivers lexer
+  return (yy::RacerAnswerParser::token_type) lex->yylex (); // finally call the drivers lexer
 }
