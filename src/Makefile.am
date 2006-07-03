@@ -17,6 +17,7 @@ stack.hh
 
 dlvhexlib_LTLIBRARIES = libdlvhexracer.la
 libdlvhexracer_la_SOURCES = \
+Cache.cpp \
 DLRewriter.cpp \
 LogBuf.cpp \
 OWLParser.cpp \
