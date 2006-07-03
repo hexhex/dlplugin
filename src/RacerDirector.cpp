@@ -108,7 +108,7 @@ RacerCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
 
 
 
-RacerCachingDirector::RacerCachingDirector(Cache& c,
+RacerCachingDirector::RacerCachingDirector(BaseCache& c,
 					   RacerBaseDirector::shared_pointer d)
   : RacerBaseDirector(),
     director(d),
@@ -123,114 +123,20 @@ RacerCachingDirector::query(QueryCtx::shared_pointer qctx) throw(RacerError)
 {
   if (director.get() != 0)
     {
-      Cache::iterator found = find(qctx);
+      QueryCtx::shared_pointer found = cache.cacheHit(qctx);
 
-      if (found != cache.end())
+      if (found)
 	{
-	  if (cacheHit(*qctx, **found))
-	    {
-	      // delete qctx pointer and overwrite with found pointer
-	      qctx = *found;
-	      return qctx;
-	    }
-	  
-	  // there is no cache hit
-	  // -> invalidate cache entry and found QueryCtx::shared_pointer
-	  cache.erase(found);
+	  // delete qctx pointer and overwrite with found pointer
+	  qctx = found;
 	}
-      
-      // ask the director and add qctx pointer to the cache 
-      qctx = director->query(qctx);
-      cache.insert(qctx);
+      else
+	{
+	  // ask the director and add qctx pointer to the cache
+	  qctx = director->query(qctx);
+	  cache.insert(qctx);
+	}
     }
 
   return qctx;
-}
-
-
-Cache::iterator
-RacerCachingDirector::find(const QueryCtx::shared_pointer& query) const
-{
-  // is query cached?
-  return cache.find(query);
-}
-
-bool
-RacerCachingDirector::cacheHit(const QueryCtx& query, const QueryCtx& found) const
-{
-  Query::QueryType t = query.getQuery().getType();
-  const Query& q1 = query.getQuery();
-  const Query& q2 = found.getQuery();
-
-  if (t == Query::Boolean || t == Query::RelatedBoolean)
-    {
-      bool isPositive = found.getAnswer().getAnswer();
-
-      if (isPositive)
-	{
-	  return q2.isSubseteq(q1);
-	}
-      else // check if found is a superset of query
-	{
-	  return q2.isSuperseteq(q1);
-	}
-    }
-  else // retrieval modes
-    {
-      // is the set of ints in query equal to the set of ints in found?
-      return
-	q1.getInterpretation() == q2.getInterpretation();
-    }
-}
-
-
-
-
-RacerDebugCachingDirector::RacerDebugCachingDirector(Cache& c,
-						     RacerBaseDirector::shared_pointer d)
-  : RacerCachingDirector(c, d)
-{ }
-
-Cache::iterator
-RacerDebugCachingDirector::find(const QueryCtx::shared_pointer& query) const
-{
-  std::cerr << "-----" << std::endl;
-
-  for (Cache::const_iterator it = cache.begin();
-       it != cache.end(); it++)
-    {
-      std::cerr << "   " << (*it)->getQuery() << std::endl;
-    }
-
-  std::cerr << "q: " << query->getQuery();
-
-  Cache::iterator found = RacerCachingDirector::find(query);
-
-  if (found != cache.end())
-    {
-      std::cerr << " found in cache";
-    }
-  else
-    {
-      std::cerr << std::endl;
-    }
-
-  return found;
-}
-
-bool
-RacerDebugCachingDirector::cacheHit(const QueryCtx& query, const QueryCtx& found) const
-{
-  bool ret = RacerCachingDirector::cacheHit(query, found);
-
-  if (ret)
-    {
-      std::cerr << " and is a cache-hit!" << std::endl;
-    }
-  else
-    {
-      std::cerr << std::endl;
-    }
-
-  return ret;
 }

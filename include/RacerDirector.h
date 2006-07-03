@@ -168,13 +168,6 @@ namespace racer {
 
   /**
    * @brief Provides caching support for RACER Queries.
-   *
-   * @see Thomas Eiter, Giovambattista Ianni, Roman Schindlauer, and
-   * Hans Tompits. Nonmonotonic Description Logic Programs:
-   * Implementation and Experiments. In F. Baader and A. Voronkov,
-   * editors, Proceedings 12th International Conference on Logic for
-   * Programming Artificial Intelligence and Reasoning (LPAR 2004),
-   * 3452 in LNCS, pages 511-517. Springer, 2005.
    */
   class RacerCachingDirector : public RacerBaseDirector
   {
@@ -183,42 +176,20 @@ namespace racer {
     RacerBaseDirector::shared_pointer director;
 
     /// reference to the cache of QueryCtx objects
-    Cache& cache;
-
-    /**
-     * checks if found is really a cache hit
-     *
-     * @param query
-     * @param found
-     *
-     * @return true if found contains a reasonable answer for query,
-     * false otherwise.
-     */
-    virtual bool
-    cacheHit(const QueryCtx& query, const QueryCtx& found) const;
-
-    /**
-     * tries to find query in the cache.
-     *
-     * @param query
-     *
-     * @return the position of the cached QueryCtx::shared_pointer.
-     */
-    virtual Cache::iterator
-    find(const QueryCtx::shared_pointer& query) const;
+    BaseCache& cache;
 
   public:
     explicit
-    RacerCachingDirector(Cache&, RacerBaseDirector::shared_pointer d);
+    RacerCachingDirector(BaseCache&, RacerBaseDirector::shared_pointer d);
 
     virtual
     ~RacerCachingDirector();
 
     /**
-     * Tries to lookup the query in its cache and determines with help
-     * of cacheHit() if its really a cache-hit. Otherwise it delegates
-     * the querying to its underlying director and caches its QueryCtx
-     * object.
+     * Tries to lookup the query in its cache and determines
+     * BaseCache::cacheHit() if its really a cache-hit. Otherwise it
+     * delegates the querying to its underlying director and caches
+     * its QueryCtx object.
      *
      * @param qctx
      *
@@ -227,24 +198,6 @@ namespace racer {
      */
     virtual QueryCtx::shared_pointer
     query(QueryCtx::shared_pointer qctx) throw(RacerError);
-  };
-
-
-  /**
-   * @brief For debugging reasons.
-   */
-  class RacerDebugCachingDirector : public RacerCachingDirector
-  {
-  protected:
-    virtual bool
-    cacheHit(const QueryCtx& query, const QueryCtx& found) const;
- 
-    virtual Cache::iterator
-    find(const QueryCtx::shared_pointer& query) const;
-
-  public:
-    explicit
-    RacerDebugCachingDirector(Cache&, RacerBaseDirector::shared_pointer d);
   };
 
 
