@@ -1,3 +1,20 @@
+2006-07-03  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerExtAtom.cpp (RacerCachingAtom::getCachedDirectors):
+	Don't instantiate RacerDebugCachingDirector.
+
+	* src/Makefile.am (libdlvhexracer_la_SOURCES): Add Cache.cpp.
+
+	* include/Cache.h (BaseCache): New base class for caching classes.
+	* src/Cache.cpp: Likewise.
+
+	* include/RacerDirector.h (RacerDebugCachingDirector): Remove.
+	Use BaseCache as caching class.
+	Delegate cache checking to Cache and DebugCache.
+	* src/RacerDirector.cpp: Likewise.
+
+	* examples/Makefile.am (EXTRA_DIST): Fix typo.
+
 2006-06-15  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerAnswerScanner.lpp: Adapt parser to bison 2.2/2.3. 
