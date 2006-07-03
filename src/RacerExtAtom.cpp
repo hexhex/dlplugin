@@ -105,12 +105,6 @@ RacerCachingAtom::getCachedDirectors(const dlvhex::racer::Query& q, RacerBaseDir
     {
       return comp;
     }
-  else if (level > 1) // debug caching
-    {
-      return RacerBaseDirector::shared_pointer(new RacerDebugCachingDirector
-					       (cache, comp)
-					       );
-    }
   else // default action is query caching
     {
       return RacerBaseDirector::shared_pointer(new RacerCachingDirector
