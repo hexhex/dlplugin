@@ -6,4 +6,4 @@ EXTRA_DIST = \
              test.dlp \
              test.owl \
              tweety_bird.dlp \
-             tweeyt_bird.owl
+             tweety_bird.owl
