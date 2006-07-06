@@ -66,6 +66,9 @@ namespace dlvhex {
 std::string
 DLRewriter::filterInput(const std::string& inputStr)
 {
+  // we found a new DL Atom
+  dlAtoms[this->extAtomNo] = inputStr;
+
   unsigned i = 3; // skip "DL["
 
   // needed to distinguish ',' in input list vs. ',' in output list
@@ -294,7 +297,9 @@ DLRewriter::rewrite()
 
       aux << "dl_" << (*it)->opChar;
 
-      if (concepts.find(Term(s)) != concepts.end())
+      Term t(s);
+
+      if (concepts.find(t) != concepts.end())
 	{
 	  aux << "c_" << (*it)->extAtomNo;
 
@@ -306,7 +311,7 @@ DLRewriter::rewrite()
 		  << "(X)."
 		  << std::endl;
 	}
-      else
+      else if (roles.find(t) != roles.end())
 	{
 	  aux << "r_" << (*it)->extAtomNo;
 
@@ -317,6 +322,16 @@ DLRewriter::rewrite()
 		  << (*it)->rhs
 		  << "(X,Y)."
 		  << std::endl;
+	}
+      else
+	{
+	  std::ostringstream err;
+	  err << "Couldn't rewrite DL atom "
+	      << dlAtoms[(*it)->extAtomNo]
+	      << ", "
+	      << s
+	      << " is not a concept and not a role.";
+	  throw PluginError(err.str());
 	}
 
       // we don't want dl_XY_N to show up in the answer set
