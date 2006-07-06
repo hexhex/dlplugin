@@ -88,4 +88,9 @@ AM_CPPFLAGS = \
 	$(RAPTOR_CFLAGS) \
 	$(DLVHEX_CFLAGS)
 
-libdlvhexracer_la_LDFLAGS = $(ACE_LIBS) $(RAPTOR_LIBS) $(DLVHEX_LIBS)
+# -avoid-version: only create libdlvhexracer.so
+# -module: library will be dlopened
+libdlvhexracer_la_LDFLAGS = -avoid-version -module $(ACE_LIBS) $(RAPTOR_LIBS)
+
+libdlvhexracer-static.la: $(libdlvhexracer_la_OBJECTS)
+	$(CXXLINK) -rpath $(dlvhexlibdir) $(libdlvhexracer_la_OBJECTS)
