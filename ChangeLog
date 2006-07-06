@@ -1,3 +1,32 @@
+2006-07-06  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/DLRewriter.h: Add dlAtoms.
+	Add documentation.
+
+	* src/DLRewriter.cpp (DLRewriter::rewrite): Throw PluginError if
+	we couldn't rewrite a DL Atom.
+
+	* src/RacerRunner.cpp: Use log instead of std::clog.
+	* src/TCPStream.cpp: Likewise.
+
+	* src/RacerInterface.cpp: Instantiate DebugCache on demand.
+	Use log instead of std::clog.
+
+	* include/RacerExtAtom.h: Use BaseCache instead of Cache.
+	* src/RacerExtAtom.cpp: Likewise.
+	* include/RacerInterface.h: Likewise.
+
+	* src/LogBuf.cpp (log): New logging stream.
+	Encapsulate a stream instead of a streambuf.
+	* include/LogBuf.h: Likewise.
+
+	* src/Cache.cpp (DebugCache::cacheHit): Fixed a looping bug.
+
+	* configure.ac: Add AC_LIBTOOL_DLOPEN.
+
+	* src/Makefile.am (libdlvhexracer_la_LDFLAGS): Add -avoid-version
+	and -module, remove $(DLVHEX_LIBS).
+
 2006-07-03  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerExtAtom.cpp (RacerCachingAtom::getCachedDirectors):
