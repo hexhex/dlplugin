@@ -20,6 +20,8 @@
 
 #include <iosfwd>
 #include <string>
+#include <map>
+#include <vector>
 
 #include <boost/shared_ptr.hpp>
 
@@ -28,18 +30,23 @@ namespace racer {
 
 
   /**
-   * @brief 
+   * @brief rewrites DL programs to HEX programs.
    */
   class DLRewriter : public PluginRewriter
   {
   private:
-    std::string uri;
+    std::string uri; /// OWL URI
 
-    unsigned extAtomNo;
+    unsigned extAtomNo; /// counter for external atoms
 
+    /// forward declaration
     struct RewriteRule;
 
+    /// keep track of rewritten rules
     std::vector<boost::shared_ptr<RewriteRule> > rules;
+
+    /// keep track of dl atoms, just needed in case of an error
+    std::map<unsigned, std::string> dlAtoms;
 
     void
     rewriteLine(const std::string&);
