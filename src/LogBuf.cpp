@@ -23,10 +23,13 @@
 using namespace dlvhex::racer;
 
 
+/// global log ostream
+std::ostream dlvhex::racer::log(new LogBuf);
 
-LogBuf::LogBuf(std::streambuf* sb)
+
+LogBuf::LogBuf(std::ostream* stream)
   : std::streambuf(),
-    obuf(sb)
+    out(stream)
 {
 }
 
@@ -38,9 +41,10 @@ LogBuf::~LogBuf()
 std::streamsize
 LogBuf::xsputn(const std::streambuf::char_type* s, std::streamsize n)
 {
-  if (obuf)
+  if (out)
     {
-      return sbuf.sputn(s, n);
+      sstream.write(s,n);
+      return n;
     }
   else
     {
@@ -52,9 +56,10 @@ LogBuf::xsputn(const std::streambuf::char_type* s, std::streamsize n)
 std::streambuf::int_type
 LogBuf::overflow(std::streambuf::int_type c)
 {
-  if (obuf)
+  if (out)
     {
-      return sbuf.sputc(c);
+      sstream.put(c);
+      return c;
     }
   else
     {
@@ -66,9 +71,10 @@ LogBuf::overflow(std::streambuf::int_type c)
 std::streambuf::int_type
 LogBuf::sync()
 {
-  if (obuf)
+  if (out)
     {
-      if (sbuf.in_avail() == 0) // don't write anything if buffer is empty
+      // don't write anything if buffer is empty
+      if (sstream.rdbuf()->in_avail() == 0)
 	{
 	  return 0;
 	}
@@ -80,27 +86,23 @@ LogBuf::sync()
       ::localtime_r(&tv.tv_sec, &now);
 
       // first log current time
-      std::ostringstream oss;
-      oss << std::setw(2) << std::setfill('0') << now.tm_hour << ':'
-	  << std::setw(2) << std::setfill('0') << now.tm_min << ':'
-	  << std::setw(2) << std::setfill('0') << now.tm_sec << '.' 
-	  << std::setw(6) << std::setfill('0') << tv.tv_usec << ' ';
+      *out << std::setw(2) << std::setfill('0') << now.tm_hour << ':'
+	   << std::setw(2) << std::setfill('0') << now.tm_min << ':'
+	   << std::setw(2) << std::setfill('0') << now.tm_sec << '.' 
+	   << std::setw(6) << std::setfill('0') << tv.tv_usec << ' ';
  
-      std::string time(oss.str());
-
-      obuf->sputn(time.c_str(), time.length());
-
       // now append get the current buffer
-      std::string s = sbuf.str();
+      std::string s = sstream.str();
+      *out << s;
+
       if (*s.rbegin() != '\n')
 	{
-	  s += '\n';
+	  *out << std::endl;
 	}
-      obuf->sputn(s.c_str(), s.length());
-      sbuf.str("");
 
-      // and now write the content
-      return obuf->pubsync();
+      sstream.str("");
+
+      return 0;
     }
   else
     {

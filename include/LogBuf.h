@@ -29,10 +29,10 @@ namespace racer {
   {
   private:
     /// nested output stream
-    std::streambuf* obuf;
-    /// a stringbuffer for log information, dumped to obuf at sync()
+    std::ostream* out;
+    /// a stringbuffer for log information, dumped to out at sync()
     /// execution
-    std::stringbuf sbuf;
+    std::ostringstream sstream;
 
   protected:
     /**
@@ -63,13 +63,15 @@ namespace racer {
 
   public:
     explicit
-    LogBuf(std::streambuf* sb);
+    LogBuf(std::ostream* stream = 0);
 
     /// Dtor
     virtual
     ~LogBuf();
   };
 
+
+  extern std::ostream log;
 
 } // namespace racer
 } // namespace dlvhex
