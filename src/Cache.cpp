@@ -99,16 +99,14 @@ DebugCache::cacheHit(const QueryCtx::shared_pointer& query)
 
   std::cerr << "q: " << query->getQuery();
 
-  QueryCtx::shared_pointer found = DebugCache::cacheHit(query);
+  QueryCtx::shared_pointer found = Cache::cacheHit(query);
 
   if (found)
     {
       std::cerr << " found in cache and is a cache-hit";
     }
-  else
-    {
-      std::cerr << std::endl;
-    }
+
+  std::cerr << std::endl;
 
   return found;
 }
