@@ -82,7 +82,7 @@ namespace racer {
     /// the tcp streaming interface to the RACER server
     TCPIOStream stream;
     /// the cache for RACER queries
-    Cache cache;
+    BaseCache* cache;
     /// rewrites dl-programs to hex-programs
     DLRewriter* rewriter;
     /// saves properties

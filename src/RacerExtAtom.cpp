@@ -87,7 +87,7 @@ RacerExtAtom::getComposite(const dlvhex::racer::Query& query) const
 }
 
 
-RacerCachingAtom::RacerCachingAtom(std::iostream& s, Cache& c, Registry& regs)
+RacerCachingAtom::RacerCachingAtom(std::iostream& s, BaseCache& c, Registry& regs)
   : RacerExtAtom(s, regs),
     cache(c)
 { }
@@ -115,7 +115,7 @@ RacerCachingAtom::getCachedDirectors(const dlvhex::racer::Query& q, RacerBaseDir
 
 
 
-RacerConcept::RacerConcept(std::iostream& s, Cache& c, Registry& regs)
+RacerConcept::RacerConcept(std::iostream& s, BaseCache& c, Registry& regs)
   : RacerCachingAtom(s, c, regs)
 {
   //
@@ -150,7 +150,7 @@ RacerConcept::getDirectors(const dlvhex::racer::Query& query) const
 }
 
 
-RacerRole::RacerRole(std::iostream& s, Cache& c, Registry& regs)
+RacerRole::RacerRole(std::iostream& s, BaseCache& c, Registry& regs)
   : RacerCachingAtom(s, c, regs)
 {
   //
@@ -223,7 +223,7 @@ RacerConsistent::getDirectors(const dlvhex::racer::Query& q) const
 
 
 
-RacerDatatypeRole::RacerDatatypeRole(std::iostream& s, Cache& c, Registry& regs)
+RacerDatatypeRole::RacerDatatypeRole(std::iostream& s, BaseCache& c, Registry& regs)
   : RacerCachingAtom(s, c, regs)
 {
   //
