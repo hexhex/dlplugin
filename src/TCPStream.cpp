@@ -12,6 +12,7 @@
 
 
 #include "TCPStream.h"
+#include "LogBuf.h"
 
 #include <streambuf>
 #include <iosfwd>
@@ -208,7 +209,7 @@ TCPStreamBuf::underflow()
 	  throw std::ios_base::failure("Peer prematurely closed connection.");
 	}
 
-      std::clog << "Received: " << std::string(ibuf, n) << std::flush;
+      log << "Received: " << std::string(ibuf, n) << std::flush;
 
       setg(ibuf, ibuf, ibuf + n); // set new input buffer boundaries
     }
@@ -245,7 +246,7 @@ TCPStreamBuf::sync()
       // enough...
       ssize_t n = stream.send_n(pbase(), pptr() - pbase());
 
-      std::clog << "Sent: " << std::string(pbase(), pptr() - pbase()) << std::flush;
+      log << "Sent: " << std::string(pbase(), pptr() - pbase()) << std::flush;
 
       // reset output buffer right after sending to the stream
       ACE_OS::memset(obuf, 0, bufsize);
