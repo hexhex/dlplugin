@@ -64,9 +64,7 @@ RacerCompositeDirector::query(QueryCtx::shared_pointer qctx) throw(RacerError)
 QueryCtx::shared_pointer
 RacerCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
 {
-  Query::QueryType t = qctx->getQuery().getType();
-
-  if (t == Query::Nullary || t == Query::Boolean || t == Query::RelatedBoolean)
+  if (qctx->getQuery().isBoolean())
     {
       // querying is trivial now -> true
       qctx->getAnswer().setAnswer(true);
@@ -78,8 +76,11 @@ RacerCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
       RacerAllIndQuery all(stream);
       qctx = all.query(qctx);
 
-      // check if we need to generate all possible pairs
-      if (t == Query::RelatedRetrieval)
+      // check if we need to generate all possible pairs, i.e. only
+      // the first two bits of the typeflags are allowed to be true
+      if ((qctx->getQuery().getTypeFlags() &
+	   std::numeric_limits<unsigned long>::max()
+	   ) == 0x3)
 	{
 	  const std::vector<Tuple>* tuples = qctx->getAnswer().getTuples();
 	  std::vector<Tuple> pairs;

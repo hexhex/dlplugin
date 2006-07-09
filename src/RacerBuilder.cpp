@@ -82,7 +82,7 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingErro
   const Term& q = query.getQuery();
   const Tuple& indv = query.getPatternTuple();
 
-  if (query.getType() != Query::Boolean)
+  if (!(query.isBoolean() && indv.size() == 1))
     {
       throw RacerBuildingError("Incompatible pattern supplied.");
     }
@@ -120,7 +120,7 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
   const Term& q = query.getQuery();
   const Tuple& indv = query.getPatternTuple();
 
-  if (query.getType() != Query::RelatedBoolean)
+  if (!(query.isBoolean() && indv.size() == 2))
     {
       throw RacerBuildingError("Incompatible pattern supplied.");
     }
@@ -163,8 +163,9 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
   const Term& q = query.getQuery();
   const Tuple& indv = query.getPatternTuple();
 
-  if (query.getType() != Query::LeftRetrieval
-      && query.getType() != Query::RightRetrieval)
+  unsigned long type = query.getTypeFlags() & std::numeric_limits<unsigned long>::max();
+
+  if (!(type == 0x1 || type == 0x2) || indv.size() != 2)
     {
       throw RacerBuildingError("Incompatible pattern supplied.");
     }
@@ -174,7 +175,8 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
       std::auto_ptr<ABoxQueryIndividual> i;
       std::auto_ptr<ABoxRoleDescrExpr> r;
 
-      if (query.getType() == Query::RightRetrieval) // (const,variable) pattern
+      // for a (const,variable) pattern only the first bit is allowed to be true
+      if (type == 0x1)
 	{
 	  i.reset(new ABoxQueryIndividual(indv[0].getUnquotedString(),
 					  query.getNamespace()
@@ -334,8 +336,9 @@ RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
   const Term& q = query.getQuery();
   const Tuple& indv = query.getPatternTuple();
 
-  if (query.getType() != Query::RelatedRetrieval
-      && query.getType() != Query::RightRetrieval)
+  unsigned long type = query.getTypeFlags() & std::numeric_limits<unsigned long>::max();
+
+  if (!(type == 0x0 || type == 0x1) || indv.size() != 2)
     {
       throw RacerBuildingError("Incompatible pattern supplied.");
     }
@@ -344,7 +347,7 @@ RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
     {
       NRQLRetrieve retrieve;
 
-      if (query.getType() == Query::RightRetrieval) // (const,variable) pattern
+      if (type == 0x1) // (const,variable) pattern
 	{
 	  NRQLConjunction* body = new NRQLConjunction;
 	  

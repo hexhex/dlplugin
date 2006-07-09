@@ -197,6 +197,8 @@ TestRacerQuery::runRacerQueryLessThanTest()
   q2.setPlusR("foo");
   q2.setMinusR("foo");
 
+  CPPUNIT_ASSERT(q1.isBoolean());
+  CPPUNIT_ASSERT(q2.isBoolean());
   CPPUNIT_ASSERT( (q1 < q2) && !(q2 < q1) );
 
   q2.setQuery(pa);
@@ -220,7 +222,9 @@ TestRacerQuery::runRacerQueryLessThanTest()
   q1.setPatternTuple(pt1);
   q2.setPatternTuple(pt2);
 
-  CPPUNIT_ASSERT( (q1 < q2) && !(q2 < q1) );
+  CPPUNIT_ASSERT(q1.isMixed());
+  CPPUNIT_ASSERT(q2.isMixed());
+  CPPUNIT_ASSERT( !(q1 < q2) && (q2 < q1) );
 
   pt1.clear();
   pt2.clear();
@@ -234,6 +238,8 @@ TestRacerQuery::runRacerQueryLessThanTest()
   q1.setPatternTuple(pt1);
   q2.setPatternTuple(pt2);
 
+  CPPUNIT_ASSERT(q1.isRetrieval());
+  CPPUNIT_ASSERT(q2.isRetrieval());
   CPPUNIT_ASSERT( !(q1 < q2) && !(q2 < q1) );
 
   pt1.clear();
@@ -248,6 +254,8 @@ TestRacerQuery::runRacerQueryLessThanTest()
   q1.setPatternTuple(pt1);
   q2.setPatternTuple(pt2);
 
+  CPPUNIT_ASSERT(q1.isBoolean());
+  CPPUNIT_ASSERT(q2.isRetrieval());
   CPPUNIT_ASSERT( !(q1 < q2) && (q2 < q1) );
 
   pt1.clear();
@@ -262,5 +270,7 @@ TestRacerQuery::runRacerQueryLessThanTest()
   q1.setPatternTuple(pt1);
   q2.setPatternTuple(pt2);
 
+  CPPUNIT_ASSERT(q1.isMixed());
+  CPPUNIT_ASSERT(q2.isMixed());
   CPPUNIT_ASSERT( !(q1 < q2) && !(q2 < q1) );
 }

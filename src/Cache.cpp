@@ -33,13 +33,12 @@ Cache::cacheHit(const QueryCtx::shared_pointer& query)
 
   if (found != cache.end())
     {
-      Query::QueryType t = query->getQuery().getType();
       const Query& q1 = query->getQuery();
       const Query& q2 = (*found)->getQuery();
 
       bool isCacheHit = false;
 
-      if (t == Query::Boolean || t == Query::RelatedBoolean)
+      if (q1.isBoolean())
 	{
 	  bool isPositive = (*found)->getAnswer().getAnswer();
 	  
