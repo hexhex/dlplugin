@@ -1,3 +1,17 @@
+2006-07-10  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerExtAtom.cpp: Adapt to new Query interface.
+	* src/RacerDirector.cpp: Likewise.
+	* src/RacerBuilder.cpp: Likewise.
+	* src/Cache.cpp: Likewise.
+	* testsuite/TestRacerQuery.cpp: Likewise.
+
+	* include/RacerQuery.h: Prepare support for pattern tuples with
+	arity > 2.
+	* src/RacerQuery.cpp: Likewise.
+
+	* m4/doxygen.m4: Fix for newer autoconfs, see Debian Bug #368712.
+
 2006-07-06  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/DLRewriter.h: Add dlAtoms.
