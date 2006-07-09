@@ -22,56 +22,175 @@
 
 #include <cassert>
 
+#define SIZE_OFFSET 8*sizeof(unsigned long) - 5
+
 using namespace dlvhex::racer;
 
 
+namespace dlvhex {
+namespace racer {
+
+  std::ostream&
+  operator<< (std::ostream& os, const Query& q)
+  {
+    return os << q.getNamespace()
+	      << "DL["
+	      << q.getOntology()
+	      << ','
+	      << q.getPlusC()
+	      << ','
+	      << q.getMinusC()
+	      << ','
+	      << q.getPlusR()
+	      << ','
+	      << q.getMinusR()
+	      << ','
+	      << q.getQuery()
+	      << "]("
+	      << q.getPatternTuple()
+	      << ')';
+  }
+  
+  
+  bool
+  operator< (const Query& q1, const Query& q2)
+  {
+    // check each component of a query if its string representation is
+    // less than the components of the other query
+    bool lessthan =
+      q1.getNamespace()          < q2.getNamespace()          ? true :
+      q1.getOntology()           < q2.getOntology()           ? true :
+      q1.getPlusC().getString()  < q2.getPlusC().getString()  ? true :
+      q1.getMinusC().getString() < q2.getMinusC().getString() ? true :
+      q1.getPlusR().getString()  < q2.getPlusR().getString()  ? true :
+      q1.getMinusR().getString() < q2.getMinusR().getString() ? true :
+      q1.getQuery().getString()  < q2.getQuery().getString()  ? true : false;
+
+
+    // if q1 >= q2 we have to look at the query types in order to
+    // compute the < relation on them
+    if (!lessthan)
+      {
+	// check equality on q1 and q2
+	bool eq = q1 == q2;
+	
+	// if query types are equal we have to distinguish between the
+	// actual pattern tuples in a component-wise fashion
+	if (eq && (q1.getTypeFlags() == q2.getTypeFlags()))
+	  {
+	    unsigned long type = q1.getTypeFlags();
+	    
+	    const Tuple& p1 = q1.getPatternTuple();
+	    const Tuple& p2 = q2.getPatternTuple();
+
+	    Tuple::const_iterator it1 = p1.begin();
+	    Tuple::const_iterator it2 = p2.begin();
+	    unsigned long mask = 0x1;
+
+	    for (;
+		 it1 != p1.end() && it2 != p2.end();
+		 it1++, it2++, mask <<= 1
+		 )
+	      {
+		if ((type & mask) == mask)
+		  {
+		    if (*it1 < *it2)
+		      {
+			lessthan = true;
+			break;
+		      }
+		  }
+	      }
+	  }
+	else if (eq && (q1.getTypeFlags() < q2.getTypeFlags()))
+	  {
+	    // equal but types differ
+	    lessthan = true;
+	  }
+	else
+	  {
+	    // nothing to do, either q1 > q2, or q1 == q1 and
+	    // q1.getType() > q2.geType().
+	  }
+      }
+    
+    return lessthan;
+  }
+  
+  
+  bool
+  operator== (const Query& q1, const Query& q2)
+  {
+    return
+      q1.getNamespace() == q2.getNamespace()
+      && q1.getOntology() == q2.getOntology()
+      && q1.getPlusC() == q2.getPlusC()
+      && q1.getMinusC() == q2.getMinusC()
+      && q1.getPlusR() == q2.getPlusR()
+      && q1.getMinusR() == q2.getMinusR()
+      && q1.getQuery() == q2.getQuery();
+  }
+  
+  
+  bool
+  operator!= (const Query& q1, const Query& q2)
+  {
+    return !(q1 == q2);
+  }
+
+} // namespace racer
+} // namespace dlvhex
+
+
 Query::Query()
+  : typeFlags(0)
 { }
 
 Query::~Query()
 { }
 
-Query::QueryType
-Query::getType() const
+
+unsigned long
+Query::getTypeFlags() const
 {
-  const Tuple& pt = getPatternTuple();
-  unsigned size = pt.size();
-
-  if (size == 0)
-    {
-      return Query::Nullary;
-    }
-  else if (size == 1)
-    {
-      const Term& x = pt[0];
-
-      return x.isVariable() ? Query::Retrieval : Query::Boolean;
-    }
-  else if (size == 2)
-    {
-      const Term& x = pt[0];
-      const Term& y = pt[1];
-
-      if (x.isVariable() && y.isVariable())
-	{
-	  return Query::RelatedRetrieval;
-	}
-      else if (!x.isVariable() && !y.isVariable())
-	{
-	  return Query::RelatedBoolean;
-	}
-      else if (x.isVariable() && !y.isVariable())
-	{
-	  return Query::LeftRetrieval;
-	}
-      else if (!x.isVariable() && y.isVariable())
-	{
-	  return Query::RightRetrieval;
-	}
-    }
-
-  assert(false);
+  return typeFlags & ((1 << (SIZE_OFFSET)) - 1);
 }
+
+
+bool
+Query::isBoolean() const
+{
+  unsigned long size = typeFlags >> SIZE_OFFSET;
+
+  // shift a 1 size times to the left - 1 => bitmask selects the valid
+  // bits
+  unsigned long mask = (1 << size) - 1;
+
+  // if any flag in the negation of flags is true, i.e. we have a
+  // variable term in pattern, we don't have a purely boolean query
+  return (~typeFlags & mask) == 0;
+}
+
+
+bool
+Query::isRetrieval() const
+{
+  // if any flag is true, i.e. we have a ground term in pattern, we
+  // don't have a purely retrieval query
+  return (typeFlags >> SIZE_OFFSET) == 0 ? false : getTypeFlags() == 0;
+}
+
+
+bool
+Query::isMixed() const
+{
+  unsigned long flags = getTypeFlags();
+  
+  // if both flags and the negated flags are positive, we have a mixed
+  // query
+  return (typeFlags >> SIZE_OFFSET) == 0 ? false : flags > 0 && ~flags > 0;
+}
+
 
 void
 Query::setNamespace(const std::string& nspace)
@@ -112,7 +231,23 @@ Query::getQuery() const
 void
 Query::setPatternTuple(const Tuple& pattern)
 {
+  unsigned size = pattern.size();
+
+  assert(size <= SIZE_OFFSET);
+
   this->pattern = pattern;
+  this->typeFlags = size << SIZE_OFFSET; // last 5 bits encodes the size
+
+  unsigned long mask = 0x1;
+  for (Tuple::const_iterator it = pattern.begin();
+       it != pattern.end();
+       it++, mask <<= 1)
+    {
+      if (!it->isVariable()) // for every ground term we set a flag in typeFlags
+	{
+	  typeFlags |= mask;
+	}
+    }
 }
 
 const Tuple&
@@ -399,9 +534,11 @@ Answer::addTuple(const Tuple& out)
     }
   else
     {
-      Query::QueryType t = query->getType();
+      unsigned long type = query->getTypeFlags() & std::numeric_limits<unsigned long>::max();
+      
+      ///@todo we need to take care of arbitrary ground terms in the answer
 
-      if (t == Query::LeftRetrieval)
+      if (type == 0x2)
 	{
 	  Tuple tmp(out);
 
@@ -418,7 +555,7 @@ Answer::addTuple(const Tuple& out)
 
 	  PluginAtom::Answer::addTuple(tmp);
 	}
-      else if (t == Query::RightRetrieval)
+      else if (type == 0x1)
 	{
 	  Tuple tmp;
 

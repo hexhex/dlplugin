@@ -33,24 +33,6 @@ namespace racer {
    */
   class Query
   {
-  public:
-    /**
-     * The type of a RACER query.
-     *
-     * The members of the enum have to be in this order for
-     * operator<()!
-     */
-    enum QueryType
-      {
-	Nullary = 0,      // ()
-	Retrieval,        // (X)
-	Boolean,          // (a)
-	RelatedRetrieval, // (X,Y)
-	LeftRetrieval,    // (X,b)
-	RightRetrieval,   // (a,Y)
-	RelatedBoolean    // (a,b)
-      };
-
   private:
     /// use this string to prefix the individuals of the interpretation
     std::string nspace;
@@ -76,14 +58,26 @@ namespace racer {
     /// set of ground atoms
     Interpretation interpretation;
 
+    /// bitvector for quickly comparing the pattern tuple
+    unsigned long typeFlags;
+
   public:
     Query();
 
     virtual
     ~Query();
 
-    virtual QueryType
-    getType() const;
+    virtual unsigned long
+    getTypeFlags() const;
+
+    virtual bool
+    isBoolean() const;
+
+    virtual bool
+    isRetrieval() const;
+
+    virtual bool
+    isMixed() const;
 
     virtual void
     setNamespace(const std::string& nspace);
@@ -180,29 +174,8 @@ namespace racer {
    * @param q
    * @return os
    */
-  inline std::ostream&
-  operator<< (std::ostream& os, const Query& q)
-  {
-    os << q.getNamespace()
-       << "DL["
-       << q.getOntology()
-       << ','
-       << q.getPlusC()
-       << ','
-       << q.getMinusC()
-       << ','
-       << q.getPlusR()
-       << ','
-       << q.getMinusR()
-       << ','
-       << q.getQuery()
-       << "]("
-       << q.getPatternTuple()
-       << ')';
-
-    return os;
-  }
-
+  std::ostream&
+  operator<< (std::ostream& os, const Query& q);
 
   /**
    * @brief lexicographically compare q1 to q2 and check if q1 is less than q2
@@ -210,81 +183,8 @@ namespace racer {
    * @param q2
    * @return true if q1 < q2, false otherwise.
    */
-  inline bool
-  operator< (const Query& q1, const Query& q2)
-  {
-    std::ostringstream os1;
-    std::ostringstream os2;
-
-    // paste the string representation of the various Query members
-    // (without the query types) into the ostringstream in order to
-    // compare them
-
-    os1 << q1.getNamespace() << q1.getOntology()
-	<< q1.getPlusC() << q1.getMinusC() << q1.getPlusR() << q1.getMinusR()
-	<< q1.getQuery();
-
-    os2 << q2.getNamespace() << q2.getOntology()
-	<< q2.getPlusC() << q2.getMinusC() << q2.getPlusR() << q2.getMinusR()
-	<< q2.getQuery();
-
-    // check if q1 < q2 without looking at the query types
-    bool lessthan = os1.str() < os2.str();
-
-    // if q1 >= q2 we have to look at the query types in order to
-    // compute the < relation on them
-    if (!lessthan)
-      {
-	// check equality on q1 and q2
-	bool eq = q1 == q2;
-    
-	// if query types are equal we have to distinguish between the
-	// actual pattern tuples in a component-wise fashion
-	if (eq && (q1.getType() == q2.getType()))
-	  {
-	    Query::QueryType t = q1.getType();
-	
-	    const Tuple& p1 = q1.getPatternTuple();
-	    const Tuple& p2 = q2.getPatternTuple();
-
-	    if (t == Query::Boolean) // (a1) < (a2) ?
-	      {
-		lessthan = p1[0] < p2[0];
-	      }
-	    else if (t == Query::RelatedBoolean) // (a1,b1) < (a2,b2) ?
-	      {
-		lessthan = (p1[0] < p2[0]) || (p1[1] < p2[1]);
-	      }
-	    else if (t == Query::LeftRetrieval) // (X1,b1) < (X2,b2) ?
-	      {
-		lessthan = p1[1] < p2[1];
-	      }
-	    else if (t == Query::RightRetrieval) // (a1,Y1) < (a2,Y2) ?
-	      {
-		lessthan = p1[0] < p2[0];
-	      }
-	    else
-	      {
-		// both types are equal, i.e. we can't distinguish
-		// between the variables of Query::Retrieval and
-		// Query::RelatedRetrieval query types, or we have
-		// nullary queries
-		lessthan = false;
-	      }
-	  }
-	else if (eq && (q1.getType() < q2.getType())) // equal but types differ
-	  {
-	    lessthan = true;
-	  }
-	else
-	  {
-	    // nothing to do, either q1 > q2, or q1 == q1 and
-	    // q1.getType() > q2.geType().
-	  }
-      }
-
-    return lessthan;
-  }
+  bool
+  operator< (const Query& q1, const Query& q2);
 
   /**
    * @brief lexicographically compare q1 to q2 and check if both queries are equal
@@ -292,18 +192,8 @@ namespace racer {
    * @param q2
    * @return true if q1 equals q2, false otherwise.
    */
-  inline bool
-  operator== (const Query& q1, const Query& q2)
-  {
-    return
-      q1.getNamespace() == q2.getNamespace()
-      && q1.getOntology() == q2.getOntology()
-      && q1.getPlusC() == q2.getPlusC()
-      && q1.getMinusC() == q2.getMinusC()
-      && q1.getPlusR() == q2.getPlusR()
-      && q1.getMinusR() == q2.getMinusR()
-      && q1.getQuery() == q2.getQuery();
-  }
+  bool
+  operator== (const Query& q1, const Query& q2);
 
   /**
    * @brief converse of operator==
@@ -311,11 +201,9 @@ namespace racer {
    * @param q2
    * @return true if !(q1 == q2), false otherwise.
    */
-  inline bool
-  operator!= (const Query& q1, const Query& q2)
-  {
-    return !(q1 == q2);
-  }
+  bool
+  operator!= (const Query& q1, const Query& q2);
+
 
   /**
    * @brief The answer to a query.
