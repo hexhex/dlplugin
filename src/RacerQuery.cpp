@@ -22,7 +22,6 @@
 
 #include <cassert>
 
-#define SIZE_OFFSET 8*sizeof(unsigned long) - 5
 
 using namespace dlvhex::racer;
 
@@ -73,16 +72,18 @@ namespace racer {
       {
 	// check equality on q1 and q2
 	bool eq = q1 == q2;
+
+	const Tuple& p1 = q1.getPatternTuple();
+	const Tuple& p2 = q2.getPatternTuple();
 	
 	// if query types are equal we have to distinguish between the
 	// actual pattern tuples in a component-wise fashion
-	if (eq && (q1.getTypeFlags() == q2.getTypeFlags()))
+	if (eq &&
+	    q1.getTypeFlags() == q2.getTypeFlags() &&
+	    p1.size() == p2.size())
 	  {
 	    unsigned long type = q1.getTypeFlags();
 	    
-	    const Tuple& p1 = q1.getPatternTuple();
-	    const Tuple& p2 = q2.getPatternTuple();
-
 	    Tuple::const_iterator it1 = p1.begin();
 	    Tuple::const_iterator it2 = p2.begin();
 	    unsigned long mask = 0x1;
@@ -102,7 +103,13 @@ namespace racer {
 		  }
 	      }
 	  }
-	else if (eq && (q1.getTypeFlags() < q2.getTypeFlags()))
+	else if (eq && p1.size() < p2.size())
+	  {
+	    // equal but arity differs
+	    lessthan = true;
+	  }
+	else if (eq && p1.size() == p2.size() &&
+		 q1.getTypeFlags() < q2.getTypeFlags())
 	  {
 	    // equal but types differ
 	    lessthan = true;
@@ -110,7 +117,7 @@ namespace racer {
 	else
 	  {
 	    // nothing to do, either q1 > q2, or q1 == q1 and
-	    // q1.getType() > q2.geType().
+	    // typeFlags or sizes are >=
 	  }
       }
     
@@ -153,18 +160,16 @@ Query::~Query()
 unsigned long
 Query::getTypeFlags() const
 {
-  return typeFlags & ((1 << (SIZE_OFFSET)) - 1);
+  return typeFlags;
 }
 
 
 bool
 Query::isBoolean() const
 {
-  unsigned long size = typeFlags >> SIZE_OFFSET;
-
   // shift a 1 size times to the left - 1 => bitmask selects the valid
   // bits
-  unsigned long mask = (1 << size) - 1;
+  unsigned long mask = (1 << pattern.size()) - 1;
 
   // if any flag in the negation of flags is true, i.e. we have a
   // variable term in pattern, we don't have a purely boolean query
@@ -177,18 +182,16 @@ Query::isRetrieval() const
 {
   // if any flag is true, i.e. we have a ground term in pattern, we
   // don't have a purely retrieval query
-  return (typeFlags >> SIZE_OFFSET) == 0 ? false : getTypeFlags() == 0;
+  return pattern.empty() ? false : typeFlags == 0;
 }
 
 
 bool
 Query::isMixed() const
 {
-  unsigned long flags = getTypeFlags();
-  
   // if both flags and the negated flags are positive, we have a mixed
   // query
-  return (typeFlags >> SIZE_OFFSET) == 0 ? false : flags > 0 && ~flags > 0;
+  return pattern.empty() ? false : typeFlags > 0 && ~typeFlags > 0;
 }
 
 
@@ -231,19 +234,18 @@ Query::getQuery() const
 void
 Query::setPatternTuple(const Tuple& pattern)
 {
-  unsigned size = pattern.size();
-
-  assert(size <= SIZE_OFFSET);
+  assert(pattern.size() < 8 * sizeof(typeFlags));
 
   this->pattern = pattern;
-  this->typeFlags = size << SIZE_OFFSET; // last 5 bits encodes the size
+  this->typeFlags = 0;
 
   unsigned long mask = 0x1;
   for (Tuple::const_iterator it = pattern.begin();
        it != pattern.end();
        it++, mask <<= 1)
     {
-      if (!it->isVariable()) // for every ground term we set a flag in typeFlags
+      // for every ground term we set a flag in typeFlags
+      if (!it->isVariable())
 	{
 	  typeFlags |= mask;
 	}
