@@ -1,5 +1,15 @@
 2006-07-10  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* src/RacerQuery.cpp: Get rid of pattern tuple size in the
+	typeFlags.
+
+	* include/Cache.h: Fix doxygen documentation.
+	* include/RacerQueryExpr.h: Likewise.
+	* include/RacerQuery.h: Likewise.
+	* include/RacerNRQL.h: Likewise.
+	* include/RacerAnswerDriver.h: Likewise.
+	* src/RacerNRQL.cpp: Likewise.
+
 	* src/RacerExtAtom.cpp: Adapt to new Query interface.
 	* src/RacerDirector.cpp: Likewise.
 	* src/RacerBuilder.cpp: Likewise.
