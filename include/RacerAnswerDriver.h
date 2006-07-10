@@ -80,9 +80,8 @@ namespace racer {
     virtual
     ~RacerAnswerDriver();
 
-    // Handling the parser.
     virtual void
-    parse(Answer& a) throw (RacerParsingError);
+    parse(Answer& answer) throw (RacerParsingError);
   };
 
 

@@ -39,7 +39,7 @@ namespace racer {
     ~NRQLBase() {}
 
     friend std::ostream&
-    operator<< (std::ostream&, const NRQLBase&);
+    operator<< (std::ostream& s, const NRQLBase& b);
   };
 
 

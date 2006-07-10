@@ -86,10 +86,10 @@ namespace racer {
     ~Cache();
 
     virtual QueryCtx::shared_pointer
-    cacheHit(const QueryCtx::shared_pointer&);
+    cacheHit(const QueryCtx::shared_pointer& query);
 
     virtual void
-    insert(const QueryCtx::shared_pointer&);
+    insert(const QueryCtx::shared_pointer& query);
   };
 
 
@@ -103,10 +103,10 @@ namespace racer {
     ~DebugCache();
 
     virtual QueryCtx::shared_pointer
-    cacheHit(const QueryCtx::shared_pointer&);
+    cacheHit(const QueryCtx::shared_pointer& query);
 
     virtual void
-    insert(const QueryCtx::shared_pointer&);
+    insert(const QueryCtx::shared_pointer& query);
   };
 
 } // namespace racer

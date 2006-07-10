@@ -37,7 +37,7 @@ namespace racer {
     ~QueryExpr() {}
 
     friend std::ostream&
-    operator<< (std::ostream&, const QueryExpr&);
+    operator<< (std::ostream& s, const QueryExpr& e);
   };
 
 

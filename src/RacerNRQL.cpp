@@ -22,14 +22,6 @@ using namespace dlvhex::racer;
 namespace dlvhex {
 namespace racer {
 
-  /** 
-   * Calls b.output().
-   * 
-   * @param s 
-   * @param b 
-   * 
-   * @return the stream result of b.output().
-   */
   std::ostream&
   operator<< (std::ostream& s, const NRQLBase& b)
   {

@@ -155,16 +155,16 @@ namespace racer {
 
 
     friend std::ostream&
-    operator<< (std::ostream&, const Query&);
+    operator<< (std::ostream& os, const Query& q);
 
     friend bool
-    operator< (const Query&, const Query&);
+    operator< (const Query& q1, const Query& q2);
 
     friend bool
-    operator== (const Query&, const Query&);
+    operator== (const Query& q1, const Query& q2);
 
     friend bool
-    operator!= (const Query&, const Query&);
+    operator!= (const Query& q1, const Query& q2);
   };
 
 
