@@ -1,3 +1,10 @@
+2006-07-11  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/Makefile.am
+	(libdlvhexracer-static.la,install-static,uninstall-static): Build
+	libdlvhexracer-static.so with a statically linked libACE and
+	libraptor.
+
 2006-07-10  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerQuery.cpp: Get rid of pattern tuple size in the
