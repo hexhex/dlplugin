@@ -4,6 +4,7 @@
 	(libdlvhexracer-static.la,install-static,uninstall-static): Build
 	libdlvhexracer-static.so with a statically linked libACE and
 	libraptor.
+	(ACE_PATH,RAPTOR_PATH): Add path variables for ACE and raptor.
 
 2006-07-10  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
