@@ -96,8 +96,10 @@ libdlvhexracer_la_LDFLAGS = -avoid-version -module $(ACE_LIBS) $(RAPTOR_LIBS)
 #
 # adapt path and dependency libraries as needed
 #
-RAPTOR_STATIC_LIBS =  -lxml2 -lxslt -lcurl $(HOME)/local/lib/libraptor.a
-ACE_STATIC_LIBS = -lpthread -lrt $(HOME)/local/lib/libACE.a
+RAPTOR_PATH = $(HOME)/local/lib
+ACE_PATH = $(HOME)/local/lib
+RAPTOR_STATIC_LIBS =  -lxml2 -lxslt -lcurl $(RAPTOR_PATH)/libraptor.a
+ACE_STATIC_LIBS = -lpthread -lrt $(ACE_PATH)/libACE.a
 
 libdlvhexracer-static.la: $(libdlvhexracer_la_OBJECTS)
 	$(CXXLINK) -avoid-version -module -rpath $(dlvhexlibdir) $(libdlvhexracer_la_OBJECTS) $(RAPTOR_STATIC_LIBS) $(ACE_STATIC_LIBS)
@@ -106,4 +108,4 @@ install-static: libdlvhexracer-static.la
 	$(LIBTOOL) --mode=install $(INSTALL) -s libdlvhexracer-static.la $(DESTDIR)$(dlvhexlibdir)/libdlvhexracer-static.la
 
 uninstall-static:
-	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(dlvhexlibdir)/libdlvhexracer-static.la;
+	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(dlvhexlibdir)/libdlvhexracer-static.la
