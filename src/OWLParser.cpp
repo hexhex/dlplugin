@@ -76,11 +76,17 @@ OWLParser::namespaceHandler(void* userData, raptor_namespace* nspace)
     }
 }
 
-struct TBoxNames
-{
-  std::set<Term>* conceptNames;
-  std::set<Term>* roleNames;
-};
+namespace dlvhex {
+  namespace racer {
+
+    struct TBoxNames
+    {
+      std::set<Term>* conceptNames;
+      std::set<Term>* roleNames;
+    };
+
+  } // namespace racer
+} // namespace dlvhex
 
 void
 OWLParser::tboxHandler(void* userData, const raptor_statement* statement)
