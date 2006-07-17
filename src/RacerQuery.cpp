@@ -440,7 +440,29 @@ Query::createPremise() const
 	}
       else if (pred == getMinusR()) // minusR
 	{
-	  // dunno
+	  ABoxQueryIndividual::shared_pointer i
+	    (new ABoxQueryIndividual
+	     (a.getArgument(3).getUnquotedString(), getNamespace())
+	     );
+
+	  // -R(a,b) -> (instance a (not (some R (one-of b))))
+	  // does not work? seems like there is a bug in Racer
+	  ABoxInstance::shared_pointer sp
+	    (new ABoxInstance
+	     (new ABoxNegatedConcept
+	      (new ABoxSomeConcept
+	       (new ABoxQueryRole
+		(a.getArgument(1).getUnquotedString(), getNamespace()),
+		new ABoxOneOfConcept
+		(ABoxOneOfConcept::IndividualVector(1, i))
+		)
+	       ),
+	      new ABoxQueryIndividual
+	      (a.getArgument(2).getUnquotedString(), getNamespace())
+	      )
+	     );
+
+	  v->push_back(sp);
 	}
       else
 	{
