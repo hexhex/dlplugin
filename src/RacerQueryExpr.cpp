@@ -80,6 +80,20 @@ ABoxNegatedConcept::output(std::ostream& s) const
 
 
 std::ostream&
+ABoxSomeConcept::output(std::ostream& s) const
+{
+  return s << "(some " << *rExpr << ' ' << *cExpr << ')';
+}
+
+
+std::ostream&
+ABoxOneOfConcept::output(std::ostream& s) const
+{
+  return s << "(one-of " << list << ')';
+}
+
+
+std::ostream&
 ABoxQueryRole::output(std::ostream& s) const
 {
   if (isDatatype)

@@ -17,6 +17,7 @@
 
 #include <iosfwd>
 #include <string>
+#include <vector>
 
 namespace dlvhex {
 namespace racer {
@@ -133,9 +134,6 @@ namespace racer {
   };
 
 
-
-
-
   /**
    * A simple ABox individual expression.
    */
@@ -174,6 +172,23 @@ namespace racer {
   };
 
 
+  /**
+   * Base class for atomic and complex roles.
+   */
+  class ABoxRoleDescrExpr : public ABoxQueryExpr
+  {
+  protected:
+    ABoxRoleDescrExpr(const std::string& s, const std::string& n)
+      : ABoxQueryExpr(s, n)
+    { }
+
+    ABoxRoleDescrExpr() {}
+
+  public:
+    typedef ABoxRoleDescrExpr value_type;
+    typedef const value_type* const_pointer;
+    typedef boost::shared_ptr<const value_type> shared_pointer;
+  };
 
 
   /**
@@ -196,36 +211,57 @@ namespace racer {
   class ABoxNegatedConcept : public ABoxConceptDescrExpr
   {
   private:
-    ABoxQueryConcept::shared_pointer cExpr;
+    ABoxConceptDescrExpr::shared_pointer cExpr;
 
     std::ostream&
     output(std::ostream& s) const;
 
   public:
     explicit
-    ABoxNegatedConcept(ABoxQueryConcept::const_pointer c)
+    ABoxNegatedConcept(ABoxConceptDescrExpr::const_pointer c)
       : cExpr(c)
     { }
   };
 
 
-
   /**
-   * Base class for atomic and complex roles.
+   * An existential quantified concept expression.
    */
-  class ABoxRoleDescrExpr : public ABoxQueryExpr
+  class ABoxSomeConcept : public ABoxConceptDescrExpr
   {
-  protected:
-    ABoxRoleDescrExpr(const std::string& s, const std::string& n)
-      : ABoxQueryExpr(s, n)
-    { }
+  private:
+    ABoxRoleDescrExpr::shared_pointer rExpr;
+    ABoxConceptDescrExpr::shared_pointer cExpr;
 
-    ABoxRoleDescrExpr() {}
+    std::ostream&
+    output(std::ostream& s) const;
 
   public:
-    typedef ABoxRoleDescrExpr value_type;
-    typedef const value_type* const_pointer;
-    typedef boost::shared_ptr<const value_type> shared_pointer;
+    ABoxSomeConcept(ABoxRoleDescrExpr::const_pointer r,
+		    ABoxConceptDescrExpr::const_pointer c)
+      : rExpr(r), cExpr(c)
+    { }
+  };
+
+
+  /**
+   * An one-of concept expression.
+   */
+  class ABoxOneOfConcept : public ABoxConceptDescrExpr
+  {
+  public:
+    typedef std::vector<ABoxQueryIndividual::shared_pointer> IndividualVector;
+
+  private:
+    IndividualVector list;
+
+    std::ostream&
+    output(std::ostream& s) const;
+
+  public:
+    ABoxOneOfConcept(const IndividualVector& l)
+      : list(l)
+    { }
   };
 
 
@@ -252,7 +288,7 @@ namespace racer {
 
 
   /**
-   * A negated concept expression.
+   * An inverted role expression.
    */
   class ABoxInvertedRole : public ABoxRoleDescrExpr
   {
