@@ -88,7 +88,7 @@ PKG_CHECK_MODULES([ACE], [ACE >= 5.5.1], [:],
 # we need 1.4.8 for namespace parsing support
 PKG_CHECK_MODULES([RAPTOR], [raptor >= 1.4.8])
 
-PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 0.1])
+PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 1.0])
 
 
 AC_ARG_ENABLE(userinstall, 
