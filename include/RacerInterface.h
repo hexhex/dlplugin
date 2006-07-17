@@ -13,40 +13,44 @@
  * and their relationships and information flow.
  *
  * @verbatim
-     ________              ________________
-    |        |            |                | instantiates and maintains the
-    | DLVHEX | <========> | RacerInterface | TCP IOStream, the Racer Cache and
-    |________|            |________________| creates the external atoms.
-       |  ^
-       |  |
- Query |  | Answer
-       |  |
-    ___v__|__________
-   |                 | setup of Query objects and RacerDirectors, on-the-fly
-   | RacerExtAtom    | RACER process creation
-   |_________________|
-   |                 | represents a Racer command and provides caching and
-   | RacerDirector   | command chaining support as well as inconsistency handling
-   |            ^^   |
-   |__||________||___|
-   |  ||     |  ||   | RacerBuilder uses the Query to create RACER commands
-   |  vv     |       | 
-   | Racer   | Racer | RacerParse fills Answer with the corresponding reply
-   | Builder | Parse | of RACER
-   |_________|_______|
-   |                 | handles network connection
-   | TCP IOStream    |
-   |_________________|
+     ________             ________________
+    |        |           |                | instantiates and maintains the
+    | DLVHEX |<--------->| RacerInterface | TCP IOStream, the DL Cache and
+    |________|           |________________| creates the external atoms.
+       | ^ ^              ________________
+       | | |             |                | Rewrites DL programs to HEX
+       | | +------------>| DL Rewriter    | programs.
+       | |               |________________|
+       | |
+       | |
+ Query | | Answer
+       | |
+    ___v_|____________
+   |                  | setup of Query objects and RacerDirectors, on-the-fly
+   | RacerExtAtom     | RACER process creation
+   |__________________|
+   |                  | represents a Racer command and provides caching and
+   | RacerDirector    | command chaining support as well as inconsistency handling
+   |            ^^    |
+   |__||________||____|
+   |  ||     |  ||    | RacerBuilder uses the Query to create RACER commands
+   |  vv     |        | 
+   | Racer   | Racer  | RacerParser fills Answer with the corresponding reply
+   | Builder | Parser | of RACER
+   |_________|________|
+   |                  | handles network connection
+   | TCP IOStream     |
+   |__________________|
            ^^
  __________||___________ Process
  __________||___________ boundary
            ||
-    _______vv________
-   |                 |
-   |    RACER DL     |
-   |   Inference     |
-   |     Engine      |
-   |_________________|
+    _______vv_________
+   |                  |
+   |    RACER DL      |
+   |   Inference      |
+   |     Engine       |
+   |__________________|
    @endverbatim
  *
  *

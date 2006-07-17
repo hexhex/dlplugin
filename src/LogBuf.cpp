@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Mon May 22 13:04:33 2006
  * 
- * @brief  
+ * @brief  Logging facility.
  * 
  * 
  */

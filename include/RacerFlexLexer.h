@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Fri Mar 17 22:06:12 2006
  * 
- * @brief  
+ * @brief  A FlexLexer class for the generated flex scanner.
  * 
  * 
  */

@@ -5,7 +5,8 @@
  * @author Thomas Krennwallner
  * @date   Wed Apr 19 11:31:28 2006
  * 
- * @brief  
+ * @brief  Template implementation for operator<< on a std::vector
+ * filled with boost::shared_ptr.
  * 
  * 
  */

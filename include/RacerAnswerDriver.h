@@ -5,7 +5,8 @@
  * @author Thomas Krennwallner
  * @date   Fri Mar 17 22:26:20 2006
  * 
- * @brief  
+ * @brief Driver classes which encapsulates the bison parser and flex
+ * lexer.
  * 
  * 
  */

@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Mon May 22 13:00:46 2006
  * 
- * @brief  
+ * @brief  Logging facility.
  * 
  * 
  */
@@ -23,7 +23,7 @@ namespace dlvhex {
 namespace racer {
 
   /**
-   * @brief 
+   * @brief A std::streambuf for logging purposes.
    */
   class LogBuf : public std::streambuf
   {
@@ -71,6 +71,7 @@ namespace racer {
   };
 
 
+  /// a logging output stream
   extern std::ostream log;
 
 } // namespace racer

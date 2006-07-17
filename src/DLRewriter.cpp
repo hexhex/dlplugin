@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Tue Apr 25 13:48:38 2006
  * 
- * @brief  
+ * @brief  The plugins rewriting facility.
  * 
  * 
  */

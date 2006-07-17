@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Tue May 30 11:53:17 2006
  * 
- * @brief  
+ * @brief  Global state.
  * 
  * 
  */
