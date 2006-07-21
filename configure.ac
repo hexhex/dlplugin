@@ -1,5 +1,5 @@
 AC_PREREQ([2.59])
-AC_INIT([dlvhex-racerplugin],[0.1],[tkren@kr.tuwien.ac.at])
+AC_INIT([dlvhex-racerplugin],[0.2],[tkren@kr.tuwien.ac.at])
 AC_CONFIG_SRCDIR([src/RacerRunner.cpp])
 AC_CONFIG_HEADER([src/config.h])
 
@@ -53,8 +53,9 @@ AC_LANG_POP([C++])
 AC_HEADER_STDBOOL
 AC_C_CONST
 
-# Checks for library functions.
-AC_LIBTOOL_DLOPEN
+# Checks for libtool library functions.
+AC_LIBTOOL_DLOPEN # we build a module library
+AC_DISABLE_STATIC # we don't need a static library
 AC_PROG_LIBTOOL
 
 # doxygen stuff
@@ -88,6 +89,7 @@ PKG_CHECK_MODULES([ACE], [ACE >= 5.5.1], [:],
 # we need 1.4.8 for namespace parsing support
 PKG_CHECK_MODULES([RAPTOR], [raptor >= 1.4.8])
 
+# we want dlvhex
 PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 1.0])
 
 
