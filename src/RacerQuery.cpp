@@ -20,6 +20,8 @@
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
 
+#include <boost/tokenizer.hpp>
+
 #include <cassert>
 
 
@@ -232,6 +234,19 @@ Query::getQuery() const
 }
 
 void
+Query::setQuery(const AtomSet& query)
+{
+  this->conj = query;
+}
+
+const AtomSet&
+Query::getConjQuery() const
+{
+  return this->conj;
+}
+
+
+void
 Query::setPatternTuple(const Tuple& pattern)
 {
   assert(pattern.size() < 8 * sizeof(typeFlags));
@@ -351,45 +366,140 @@ Query::isSuperseteq(const Query& q2) const
 
 
 
-
-const std::vector<NRQLBody::shared_pointer>*
+///@todo take care of negated role and concept queries
+///@todo move createXXX methods to a QueryFactory?
+const NRQLBody::shared_pointer
 Query::createBody() const
 {
-  return new std::vector<NRQLBody::shared_pointer>;
+  NRQLConjunction::shared_pointer body(new NRQLConjunction);
+
+  for (AtomSet::const_iterator it = getConjQuery().begin();
+       it != getConjQuery().end();
+       it++)
+    {
+      switch (it->getArity())
+	{
+	case 3: // role query
+	  {
+	    const Term& t1 = it->getArgument(1);
+	    const Term& t2 = it->getArgument(2);
+	    ABoxQueryObject* o1 = 0;
+	    ABoxQueryObject* o2 = 0;
+
+	    if (t1.isVariable())
+	      {
+		o1 = new ABoxQueryVariable
+		  (t1.getVariable(),
+		   ABoxQueryVariable::VariableType::noninjective
+		   );
+	      }
+	    else
+	      {
+		o1 = new ABoxQueryIndividual
+		  (t1.getUnquotedString(),
+		   getNamespace()
+		   );
+	      }
+	    
+	    if (t2.isVariable())
+	      {
+		o2 = new ABoxQueryVariable
+		  (t2.getVariable(),
+		   ABoxQueryVariable::VariableType::noninjective
+		   );
+	      }
+	    else
+	      {
+		o2 = new ABoxQueryIndividual
+		  (t2.getUnquotedString(),
+		   getNamespace()
+		   );
+	      }
+	    
+	    body->addAtom(new NRQLQueryAtom
+			  (new RoleQuery
+			   (new ABoxQueryRole
+			    (it->getPredicate().getUnquotedString(),
+			     getNamespace()
+			     ), o1, o2
+			    )
+			   ));
+	  }
+	  break;
+
+	case 2: // concept query
+	  {
+	    const Term& t1 = it->getArgument(1);
+	    ABoxQueryObject* o1 = 0;
+
+	    if (t1.isVariable())
+	      {
+		o1 = new ABoxQueryVariable
+		  (t1.getVariable(),
+		   ABoxQueryVariable::VariableType::noninjective
+		   );
+	      }
+	    else
+	      {
+		o1 = new ABoxQueryIndividual
+		  (t1.getUnquotedString(),
+		   getNamespace()
+		   );
+	      }
+	    
+	    body->addAtom(new NRQLQueryAtom
+			  (new ConceptQuery
+			   (new ABoxQueryConcept
+			    (it->getPredicate().getUnquotedString(),
+			     getNamespace()
+			     ), o1
+			    )
+			   ));
+	  }
+	  break;
+
+	default: // bail out
+	  throw std::runtime_error("wrong arity in conjunctive query");
+	  break;
+	}
+    }
+
+  return body;
 }
 
 
-const std::vector<ABoxQueryObject::shared_pointer>*
+boost::shared_ptr<boost::ptr_vector<ABoxQueryObject> >
 Query::createHead() const
 {
-  std::vector<ABoxQueryObject::shared_pointer>* v =
-    new std::vector<ABoxQueryObject::shared_pointer>;
+  boost::shared_ptr<boost::ptr_vector<ABoxQueryObject> > v
+    (new boost::ptr_vector<ABoxQueryObject>);
 
   for (Tuple::const_iterator it = getPatternTuple().begin();
        it != getPatternTuple().end();
        ++it)
     {
-      ABoxQueryObject::shared_pointer sp;
-
       if (it->isVariable())
 	{
-	  sp.reset(new ABoxQueryVariable(it->getVariable()));
+	  v->push_back(new ABoxQueryVariable
+		       (it->getVariable(),
+			ABoxQueryVariable::VariableType::noninjective
+			)
+		       );
 	}
       else
 	{
-	  sp.reset(new ABoxQueryIndividual(it->getUnquotedString()));
+	  v->push_back(new ABoxQueryIndividual(it->getUnquotedString()));
 	}
-
-      v->push_back(sp);
     }
 
   return v;
 }
 
-const std::vector<ABoxAssertion::shared_pointer>*
+boost::shared_ptr<boost::ptr_vector<ABoxAssertion> >
 Query::createPremise() const
 {
-  std::vector<ABoxAssertion::shared_pointer>* v = new std::vector<ABoxAssertion::shared_pointer>;
+  boost::shared_ptr<boost::ptr_vector<ABoxAssertion> > v
+    (new boost::ptr_vector<ABoxAssertion>);
 
   for (AtomSet::const_iterator it = getInterpretation().begin();
        it != getInterpretation().end(); it++)
@@ -399,70 +509,78 @@ Query::createPremise() const
 
       if (pred == getPlusC()) // plusC
 	{
-	  ABoxInstance::shared_pointer sp
-	    (new ABoxInstance
-	     (new ABoxQueryConcept
-	      (a.getArgument(1).getUnquotedString(), getNamespace()),
-	      new ABoxQueryIndividual
-	      (a.getArgument(2).getUnquotedString(), getNamespace())
-	      )
-	     );
+	  if (a.getArity() < 3)
+	    {
+	      throw std::runtime_error(pred.getUnquotedString() + " has wrong arity.");
+	    }
 
-	  v->push_back(sp);
+	  v->push_back(new ABoxInstance
+		       (new ABoxQueryConcept
+			(a.getArgument(1).getUnquotedString(), getNamespace()),
+			new ABoxQueryIndividual
+			(a.getArgument(2).getUnquotedString(), getNamespace())
+			)
+		       );
 	}
       else if (pred == getMinusC()) // minusC
 	{
-	  ABoxInstance::shared_pointer sp
-	    (new ABoxInstance
-	     (new ABoxNegatedConcept
-	      (new ABoxQueryConcept
-	       (a.getArgument(1).getUnquotedString(), getNamespace())),
-	      new ABoxQueryIndividual
-	      (a.getArgument(2).getUnquotedString(), getNamespace())
-	      )
-	     );
+	  if (a.getArity() < 3)
+	    {
+	      throw std::runtime_error(pred.getUnquotedString() + " has wrong arity.");
+	    }
 
-	  v->push_back(sp);
+	  v->push_back(new ABoxInstance
+		       (new ABoxNegatedConcept
+			(new ABoxQueryConcept
+			 (a.getArgument(1).getUnquotedString(), getNamespace())),
+			new ABoxQueryIndividual
+			(a.getArgument(2).getUnquotedString(), getNamespace())
+			)
+		       );
 	}
       else if (pred == getPlusR()) // plusR
 	{
-	  ABoxRelated::shared_pointer sp
-	    (new ABoxRelated
-	     (new ABoxQueryRole
-	      (a.getArgument(1).getUnquotedString(), getNamespace()),
-	      new ABoxQueryIndividual
-	      (a.getArgument(2).getUnquotedString(), getNamespace()),
-	      new ABoxQueryIndividual
-	      (a.getArgument(3).getUnquotedString(), getNamespace())
-	      )
-	     );
-	  v->push_back(sp);
+	  if (a.getArity() < 4)
+	    {
+	      throw std::runtime_error(pred.getUnquotedString() + " has wrong arity.");
+	    }
+
+	  v->push_back(new ABoxRelated
+		       (new ABoxQueryRole
+			(a.getArgument(1).getUnquotedString(), getNamespace()),
+			new ABoxQueryIndividual
+			(a.getArgument(2).getUnquotedString(), getNamespace()),
+			new ABoxQueryIndividual
+			(a.getArgument(3).getUnquotedString(), getNamespace())
+			)
+		       );
 	}
       else if (pred == getMinusR()) // minusR
 	{
-	  ABoxQueryIndividual::shared_pointer i
-	    (new ABoxQueryIndividual
-	     (a.getArgument(3).getUnquotedString(), getNamespace())
-	     );
+	  if (a.getArity() < 4)
+	    {
+	      throw std::runtime_error(pred.getUnquotedString() + " has wrong arity.");
+	    }
+
+	  ABoxOneOfConcept::IndividualVector iv;
+	  iv.push_back(new ABoxQueryIndividual
+		       (a.getArgument(3).getUnquotedString(), getNamespace())
+		       );
 
 	  // -R(a,b) -> (instance a (not (some R (one-of b))))
 	  // does not work? seems like there is a bug in Racer
-	  ABoxInstance::shared_pointer sp
-	    (new ABoxInstance
-	     (new ABoxNegatedConcept
-	      (new ABoxSomeConcept
-	       (new ABoxQueryRole
-		(a.getArgument(1).getUnquotedString(), getNamespace()),
-		new ABoxOneOfConcept
-		(ABoxOneOfConcept::IndividualVector(1, i))
-		)
-	       ),
-	      new ABoxQueryIndividual
-	      (a.getArgument(2).getUnquotedString(), getNamespace())
-	      )
-	     );
-
-	  v->push_back(sp);
+	  v->push_back(new ABoxInstance
+		       (new ABoxNegatedConcept
+			(new ABoxSomeConcept
+			 (new ABoxQueryRole
+			  (a.getArgument(1).getUnquotedString(), getNamespace()),
+			  new ABoxOneOfConcept(iv)
+			  )
+			 ),
+			new ABoxQueryIndividual
+			(a.getArgument(2).getUnquotedString(), getNamespace())
+			)
+		       );
 	}
       else
 	{
@@ -470,16 +588,15 @@ Query::createPremise() const
 	}
     }
 
+  ///@todo this is a preliminary workaround for the abox-cloning bug
 #if 1
   if (v->empty())
     {
-      // this is a preliminary workaround for the abox-cloning bug
-      ABoxInstance::shared_pointer foo(new ABoxInstance
-				       (new ABoxQueryConcept("foo"),
-					new ABoxQueryIndividual("bar")
-					)
-				       );
-      v->push_back(foo);
+      v->push_back(new ABoxInstance
+		   (new ABoxQueryConcept("foo"),
+		    new ABoxQueryIndividual("bar")
+		    )
+		   );
     }
 #endif
 
@@ -610,23 +727,140 @@ QueryCtx::QueryCtx()
   : q(new Query), a(new Answer(q))
 { }
 
+
+
+namespace dlvhex {
+  namespace racer {
+
+    /**
+     * @brief A TokenizerFunc for boost::tokenizer<>, model of
+     * TokenizerFunction, tokenizes comma-separated atoms in a string.
+     *
+     * @see boost::tokenizer
+     * http://www.boost.org/libs/tokenizer/index.html
+     */
+    class AtomSeparator
+    {
+    private:
+      enum ScannerState
+	{
+	  INITIAL = 0,
+	  PARENOPEN = 1,
+	  PARENCLOSE = 2
+	};
+
+      /// internal state keeps track of opened/closed parentheses
+      ScannerState state;
+
+    public:
+      AtomSeparator() : state(INITIAL) { }
+      
+      template <typename InputIterator, typename Token>
+      bool
+      operator() (InputIterator& next, InputIterator end, Token& tok)
+      {
+	tok = Token();
+	
+	if (next == end)
+	  {
+	    if (state == PARENCLOSE) return false;
+	    else throw std::runtime_error("this is foo");
+	  }
+
+	bool unexpected = false;
+	
+	for (; next != end; ++next)
+	  {
+	    switch (*next)
+	      {
+	      case '(':
+		if (state == INITIAL) { state = PARENOPEN; tok += *next; }
+		else unexpected = true;
+		break;
+		
+	      case ')':
+		if (state == PARENOPEN) { state = PARENCLOSE; tok += *next; }
+		else unexpected = true;
+		break;
+		
+	      case ',':
+		if (state == PARENOPEN) { tok += *next; } // ignore
+		else if (state == PARENCLOSE) { reset(); ++next; return true; } // done
+		else unexpected = true;
+		break;
+
+	      default:
+		if (state == INITIAL || state == PARENOPEN) { tok += *next; }
+		else unexpected = true;
+		break;
+	      }
+
+	    if (unexpected)
+	      throw std::runtime_error("unexpected " + *next);
+	  }
+	
+	if (state == PARENCLOSE)
+	  {
+	    return true;
+	  }
+	
+	return false;
+      }
+
+      void
+      reset()
+      {
+	state = INITIAL;
+      }
+
+    };
+
+  }// namespace racer
+} //namespace dlvhex
+
+
 QueryCtx::QueryCtx(const PluginAtom::Query& query)
   : q(new Query), a(new Answer(q))
 {
+  const Tuple& inputtuple = query.getInputTuple();
+
   // inputtuple[0] contains the KB URI constant
-  std::string ontostr = query.getInputTuple()[0].getUnquotedString();
+  std::string ontostr = inputtuple[0].getUnquotedString();
   q->setOntology(ontostr);
 
-  // set query if input tuple contains a query atom
-  if (query.getInputTuple().size() > 5)
+  // setup the query if input tuple contains a query atom or a
+  // conjunctive query
+  if (inputtuple.size() > 5)
     {
-      q->setQuery(query.getInputTuple()[5]);
+      const std::string& qstr = inputtuple[5].getUnquotedString();
+
+      if (qstr.find('(') != std::string::npos) // parse conjunctive query
+	{
+	  AtomSet as;
+
+	  // tokenize the atoms of the query string
+	  boost::tokenizer<AtomSeparator> tok(qstr);
+
+	  for (boost::tokenizer<AtomSeparator>::iterator it = tok.begin();
+	       it != tok.end(); it++)
+	    {
+	      AtomPtr ap(new Atom(*it));
+	      as.insert(ap);
+	    }
+
+	  q->setQuery(as);
+	}
+      else // this is a plain query
+	{
+	  q->setQuery(inputtuple[5]);
+	}
     }
 
   // get namespace from owl document
   OWLParser p(ontostr);
   std::string defaultNS;
 
+  // get the ontology and parse the default namespace
   try
     {
       p.parseNamespace(defaultNS);
@@ -639,10 +873,10 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
   q->setNamespace(defaultNS);
   q->setInterpretation(query.getInterpretation());
   q->setPatternTuple(query.getPatternTuple());
-  q->setPlusC(query.getInputTuple()[1]);
-  q->setMinusC(query.getInputTuple()[2]);
-  q->setPlusR(query.getInputTuple()[3]);
-  q->setMinusR(query.getInputTuple()[4]);
+  q->setPlusC(inputtuple[1]);
+  q->setMinusC(inputtuple[2]);
+  q->setPlusR(inputtuple[3]);
+  q->setMinusR(inputtuple[4]);
 }
 
 QueryCtx::QueryCtx(const QueryCtx& qctx)

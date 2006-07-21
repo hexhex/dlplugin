@@ -21,9 +21,9 @@
 #include <dlvhex/Term.h>
 
 #include <string>
-#include <functional>
-#include <vector>
-#include <sstream>
+
+#include <boost/shared_ptr.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 namespace dlvhex {
 namespace racer {
@@ -43,6 +43,10 @@ namespace racer {
     Term query;
     /// tuple pattern
     Tuple pattern;
+
+    /// conjunctive query
+    AtomSet conj;
+
     /// term used to identify which individuals are used to extend
     /// positive concepts
     Term plusC;
@@ -94,8 +98,14 @@ namespace racer {
     virtual void
     setQuery(const Term& query);
 
+    virtual void
+    setQuery(const AtomSet& query);
+
     virtual const Term&
     getQuery() const;
+
+    virtual const AtomSet&
+    getConjQuery() const;
 
     virtual void
     setPatternTuple(const Tuple& pattern);
@@ -144,13 +154,13 @@ namespace racer {
     isSuperseteq(const Query& q2) const;
 
 
-    virtual const std::vector<NRQLBody::shared_pointer>*
+    virtual const NRQLBody::shared_pointer
     createBody() const;
 
-    virtual const std::vector<ABoxQueryObject::shared_pointer>*
+    virtual boost::shared_ptr<boost::ptr_vector<ABoxQueryObject> >
     createHead() const;
 
-    virtual const std::vector<ABoxAssertion::shared_pointer>*
+    virtual boost::shared_ptr<boost::ptr_vector<ABoxAssertion> >
     createPremise() const;
 
 
