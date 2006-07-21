@@ -3,11 +3,17 @@
 	* testsuite/run-dlvhex-tests.sh: Add dlvhex system test script.
 	* testsuite/Makefile.am: Likewise.
 
+	* examples/shop+test.dlp: Fix #namespace directive.
+
 	* examples/Makefile.am: Add files for dlvhex system tests.
 	* examples/mytests.test: Likewise.
 	* examples/tests/wires.out: Likewise.
 	* examples/tests/test.out: Likewise.
 	* examples/tests/shop.out: Likewise.
+	* examples/tests/shop-inconsistent.out: Likewise.
+	* examples/tests/shop-http.out: Likewise.
+	* examples/tests/shop-consistent.out: Likewise.
+	* examples/tests/shop+test.out: Likewise.
 	
 	* README: Small version number fixes.
 
