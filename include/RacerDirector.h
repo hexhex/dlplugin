@@ -215,7 +215,7 @@ namespace racer {
   typedef RacerDirector<RacerOpenOWLBuilder, RacerAnswerDriver> RacerOpenOWL;
   /// ask whether ABox is consistent
   typedef RacerDirector<RacerABoxConsistentBuilder, RacerAnswerDriver> RacerABoxConsistent;
-  ///
+  /// tell Racer not to check for inconsitency
   typedef RacerDirector<RacerCheckABoxConsistencyOffBuilder, RacerIgnoreAnswer> RacerABoxConsistencyOff;
 
   /// extend ABox by a given set of individuals/pairs
@@ -233,7 +233,9 @@ namespace racer {
   typedef RacerDirector<RacerIndividualFillersBuilder, RacerAnswerDriver> RacerIndvFillersQuery;
   /// request a list of datatype individuals which are fillers of a
   /// role for a specified individual
-  typedef RacerDirector<RacerIndividualDatatypeFillersBuilder,RacerAnswerDriver> RacerIndvDataFillersQuery;
+  typedef RacerDirector<RacerIndividualDatatypeFillersBuilder, RacerAnswerDriver> RacerIndvDataFillersQuery;
+  /// pose a conjunctive query
+  typedef RacerDirector<RacerNRQLBuilder, RacerAnswerDriver> RacerConjunctiveQuery;
 
 } // namespace racer
 } // namespace dlvhex
