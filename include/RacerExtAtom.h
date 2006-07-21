@@ -103,7 +103,7 @@ namespace racer {
    * @brief Implements the concept retrieving atom
    * &dlC[kb,plusC,minusC,plusR,minusR,query](X).
    */
-  class RacerConcept : public RacerCachingAtom
+  class RacerConceptAtom : public RacerCachingAtom
   {
   protected:
     /**
@@ -118,7 +118,7 @@ namespace racer {
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
-    RacerConcept(std::iostream&, BaseCache&, Registry&);
+    RacerConceptAtom(std::iostream&, BaseCache&, Registry&);
   };
 
 
@@ -126,7 +126,7 @@ namespace racer {
    * @brief Implements the role retrieving atom
    * &dlR[kb,plusC,minusC,plusR,minusR,query](X,Y).
    */
-  class RacerRole : public RacerCachingAtom
+  class RacerRoleAtom : public RacerCachingAtom
   {
   protected:
     /**
@@ -142,7 +142,7 @@ namespace racer {
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
-    RacerRole(std::iostream&, BaseCache&, Registry&);
+    RacerRoleAtom(std::iostream&, BaseCache&, Registry&);
   };
 
 
@@ -151,7 +151,7 @@ namespace racer {
    * @brief Implements the consistency checking atom
    * &dlConsistent[kb,plusC,minusC,plusR,minusR]().
    */
-  class RacerConsistent : public RacerExtAtom
+  class RacerConsistentAtom : public RacerExtAtom
   {
   protected:
     /**
@@ -166,7 +166,7 @@ namespace racer {
 
   public:
     explicit
-    RacerConsistent(std::iostream&, Registry&);
+    RacerConsistentAtom(std::iostream&, Registry&);
   };
 
 
@@ -174,7 +174,7 @@ namespace racer {
    * @brief Implements the datatype role retrieving atom
    * &dlDR[kb,plusC,minusC,plusR,minusR,query](X,Y).
    */
-  class RacerDatatypeRole : public RacerCachingAtom
+  class RacerDatatypeRoleAtom : public RacerCachingAtom
   {
   protected:
     /**
@@ -190,9 +190,31 @@ namespace racer {
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
-    RacerDatatypeRole(std::iostream&, BaseCache&, Registry&);
+    RacerDatatypeRoleAtom(std::iostream&, BaseCache&, Registry&);
   };
 
+
+  /**
+   * @brief Implements the conjunctive query atom
+   * &dlCQn[kb,plusC,minusC,plusR,minusR,query](X_1,...,X_n), where n
+   * is given at instantiation time.
+   */
+  class RacerCQAtom : public RacerCachingAtom
+  {
+  protected:
+    /**
+     * Create a conjunctive query director chain.
+     *
+     * @param query
+     *
+     * @return
+     */
+    virtual RacerBaseDirector::shared_pointer
+    getDirectors(const dlvhex::racer::Query& query) const;
+
+  public:
+    RacerCQAtom(std::iostream&, BaseCache&, Registry&, unsigned n);
+  };
 
 } // namespace racer
 } // namespace dlvhex

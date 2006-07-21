@@ -62,10 +62,22 @@ RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
 void
 RacerInterface::getAtoms(AtomFunctionMap& m)
 {
-  m["dlC"]          = new RacerConcept(stream, *cache, registry);
-  m["dlR"]          = new RacerRole(stream, *cache, registry);
-  m["dlConsistent"] = new RacerConsistent(stream, registry);
-  m["dlDR"]         = new RacerDatatypeRole(stream, *cache, registry);
+  m["dlC"]          = new RacerConceptAtom(stream, *cache, registry);
+  m["dlR"]          = new RacerRoleAtom(stream, *cache, registry);
+  m["dlConsistent"] = new RacerConsistentAtom(stream, registry);
+  m["dlDR"]         = new RacerDatatypeRoleAtom(stream, *cache, registry);
+
+  // register for each arity in range 0 to 32 a dedicated RacerCQAtom
+  // external atom with specified arity
+
+  std::ostringstream oss;
+
+  for (unsigned n = 0; n <= 32; n++)
+    {
+      oss << "dlCQ" << n;
+      m[oss.str()]  = new RacerCQAtom(stream, *cache, registry, n);
+      oss.str("");
+    }
 }
 
 void

@@ -23,7 +23,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <iterator>
 #include <iosfwd>
 
 using namespace dlvhex::racer;
@@ -115,7 +114,7 @@ RacerCachingAtom::getCachedDirectors(const dlvhex::racer::Query& q, RacerBaseDir
 
 
 
-RacerConcept::RacerConcept(std::iostream& s, BaseCache& c, Registry& regs)
+RacerConceptAtom::RacerConceptAtom(std::iostream& s, BaseCache& c, Registry& regs)
   : RacerCachingAtom(s, c, regs)
 {
   //
@@ -133,7 +132,7 @@ RacerConcept::RacerConcept(std::iostream& s, BaseCache& c, Registry& regs)
 }
 
 RacerBaseDirector::shared_pointer
-RacerConcept::getDirectors(const dlvhex::racer::Query& query) const
+RacerConceptAtom::getDirectors(const dlvhex::racer::Query& query) const
 {
   if (query.isRetrieval()) // retrieval mode
     {
@@ -150,7 +149,7 @@ RacerConcept::getDirectors(const dlvhex::racer::Query& query) const
 }
 
 
-RacerRole::RacerRole(std::iostream& s, BaseCache& c, Registry& regs)
+RacerRoleAtom::RacerRoleAtom(std::iostream& s, BaseCache& c, Registry& regs)
   : RacerCachingAtom(s, c, regs)
 {
   //
@@ -168,7 +167,7 @@ RacerRole::RacerRole(std::iostream& s, BaseCache& c, Registry& regs)
 }
 
 RacerBaseDirector::shared_pointer
-RacerRole::getDirectors(const dlvhex::racer::Query& query) const
+RacerRoleAtom::getDirectors(const dlvhex::racer::Query& query) const
 {
   if (query.isRetrieval()) // retrieval mode
     {
@@ -192,8 +191,7 @@ RacerRole::getDirectors(const dlvhex::racer::Query& query) const
 
 
 
-RacerConsistent::RacerConsistent(std::iostream& s,
-				 Registry& regs)
+RacerConsistentAtom::RacerConsistentAtom(std::iostream& s, Registry& regs)
   : RacerExtAtom(s, regs)
 {
   //
@@ -210,7 +208,7 @@ RacerConsistent::RacerConsistent(std::iostream& s,
 }
 
 RacerBaseDirector::shared_pointer
-RacerConsistent::getDirectors(const dlvhex::racer::Query& q) const
+RacerConsistentAtom::getDirectors(const dlvhex::racer::Query& q) const
 {
   RacerCompositeDirector::shared_pointer comp = getComposite(q);
 
@@ -222,7 +220,7 @@ RacerConsistent::getDirectors(const dlvhex::racer::Query& q) const
 
 
 
-RacerDatatypeRole::RacerDatatypeRole(std::iostream& s, BaseCache& c, Registry& regs)
+RacerDatatypeRoleAtom::RacerDatatypeRoleAtom(std::iostream& s, BaseCache& c, Registry& regs)
   : RacerCachingAtom(s, c, regs)
 {
   //
@@ -240,7 +238,7 @@ RacerDatatypeRole::RacerDatatypeRole(std::iostream& s, BaseCache& c, Registry& r
 }
 
 RacerBaseDirector::shared_pointer
-RacerDatatypeRole::getDirectors(const dlvhex::racer::Query& query) const
+RacerDatatypeRoleAtom::getDirectors(const dlvhex::racer::Query& query) const
 {
   if (query.isRetrieval() || query.isMixed())
     {
@@ -260,4 +258,36 @@ RacerDatatypeRole::getDirectors(const dlvhex::racer::Query& query) const
     {
       throw PluginError("Wrong query type");
     }
+}
+
+
+
+
+RacerCQAtom::RacerCQAtom(std::iostream& s, BaseCache& c, Registry& regs, unsigned n)
+  : RacerCachingAtom(s, c, regs)
+{
+  //
+  // &dlCQn[kb,plusC,minusC,plusR,minusR,query](X_1,...,X_n)
+  //
+
+  setOutputArity(n);
+
+  addInputConstant();  // kb URI
+  addInputPredicate(); // plusC
+  addInputPredicate(); // minusC
+  addInputPredicate(); // plusR
+  addInputPredicate(); // minusR
+  addInputConstant();  // query
+}
+
+RacerBaseDirector::shared_pointer
+RacerCQAtom::getDirectors(const dlvhex::racer::Query& query) const
+{
+  ///@todo right now we don't cache conjunctive queries
+
+  RacerCompositeDirector::shared_pointer comp = getComposite(query);
+
+  comp->add(new RacerConjunctiveQuery(stream));
+
+  return comp;
 }
