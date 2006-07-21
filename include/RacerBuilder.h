@@ -212,6 +212,22 @@ namespace racer {
 
 
   /**
+   * @brief Creates a nRQL retrieve command.
+   *
+   * @see retrieve function in RacerPro Reference manual
+   */
+  class RacerNRQLBuilder : public RacerBuilder
+  {
+  public:
+    explicit
+    RacerNRQLBuilder(std::ostream&);
+
+    virtual bool
+    buildCommand(Query& q) throw (RacerBuildingError);
+  };
+
+
+  /**
    * @brief Opens an OWL from file or URL as KB "DEFAULT".
    *
    * @see owl-read-file and owl-read-document functions in RacerPro

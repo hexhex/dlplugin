@@ -20,8 +20,10 @@
 #include <sstream>
 #include <iostream>
 #include <string>
-#include <functional>
 #include <memory>
+
+#include <boost/shared_ptr.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 using namespace dlvhex::racer;
 
@@ -51,7 +53,7 @@ RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 
   try
     {
-      std::auto_ptr<const std::vector<ABoxAssertion::shared_pointer> > v
+      boost::shared_ptr<const boost::ptr_vector<ABoxAssertion> > v
 	(query.createPremise());
 
       if (v->empty())
@@ -349,7 +351,7 @@ RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
 
       if (type == 0x1) // (const,variable) pattern
 	{
-	  NRQLConjunction* body = new NRQLConjunction;
+	  NRQLConjunction::shared_pointer body(new NRQLConjunction);
 	  
 	  body->addAtom(new NRQLQueryAtom
 			(new RoleQuery
@@ -372,24 +374,53 @@ RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
 	  // corresponding individual
 	  retrieve.addHead(new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate));
 
-	  retrieve.addBody(body);
+	  retrieve.setBody(body);
 	}
       else // (variable,variable) pattern
 	{
-	  const NRQLQueryAtom* body = new NRQLQueryAtom
-	    (new RoleQuery
-	     (new ABoxQueryRole(q.getUnquotedString(), query.getNamespace(), true),
-	      new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate),
-	      new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
+	  NRQLQueryAtom::shared_pointer body
+	    (new NRQLQueryAtom
+	     (new RoleQuery
+	      (new ABoxQueryRole(q.getUnquotedString(), query.getNamespace(), true),
+	       new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate),
+	       new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
+	       )
 	      )
 	     );
 	  
 	  retrieve.addHead(new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate));
 	  retrieve.addHead(new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate));
 
-	  retrieve.addBody(body);
+	  retrieve.setBody(body);
 	}
 
+      stream << retrieve << std::endl;
+    }
+  catch (std::exception& e)
+    {
+      throw RacerBuildingError(e.what());
+    }
+
+  return true;
+}
+
+
+RacerNRQLBuilder::RacerNRQLBuilder(std::ostream& s)
+: RacerBuilder(s)
+{ }
+
+
+bool
+RacerNRQLBuilder::buildCommand(Query& query) throw (RacerBuildingError)
+{
+  try
+    {
+      NRQLRetrieve retrieve;
+
+      retrieve.setBody(query.createBody());
+      
+      retrieve.setHead(query.createHead());
+  
       stream << retrieve << std::endl;
     }
   catch (std::exception& e)
