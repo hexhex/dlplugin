@@ -25,7 +25,7 @@ TestRacerNRQL::runRacerRetrieveTest()
   nrql.addHead(new ABoxQueryVariable("X"));
   nrql.addHead(new ABoxQueryVariable("Y"));
 
-  NRQLConjunction* c = new NRQLConjunction;
+  std::auto_ptr<NRQLConjunction> c(new NRQLConjunction);
   c->addAtom(new NRQLQueryAtom
 	     (new ConceptQuery
 	      (new ABoxQueryConcept("foo"),
@@ -42,7 +42,7 @@ TestRacerNRQL::runRacerRetrieveTest()
 	      )
 	     );
 
-  NRQLUnion* u = new NRQLUnion;
+  NRQLUnion::shared_pointer u(new NRQLUnion);
   u->addAtom(new NRQLQueryAtom
 	     (new NegationQuery
 	      (new ConceptQuery
@@ -53,21 +53,20 @@ TestRacerNRQL::runRacerRetrieveTest()
 	      )
 	     );
 
-  u->addAtom(c);
-  nrql.addBody(u);
+  u->addAtom(c.release());
+  nrql.setBody(u);
 
   sst << nrql;
      
   std::string s = sst.str();
 
-//   CPPUNIT_ASSERT(s == "(state (instance |file:shop#nic| |file:shop#Part|))\n");
-
-  std::cout << "### " << s << std::endl;
+  CPPUNIT_ASSERT(s == "(retrieve-under-premise () (?X ?Y) (union (not (?X fu)) (and (?X foo) (?X ?Y moo))))");
 }
     
 void
 TestRacerNRQL::runRacerTBoxRetrieveTest()
 {
+
 }
 
 
