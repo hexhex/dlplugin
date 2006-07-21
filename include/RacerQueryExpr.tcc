@@ -6,7 +6,7 @@
  * @date   Wed Apr 19 11:31:28 2006
  * 
  * @brief  Template implementation for operator<< on a std::vector
- * filled with boost::shared_ptr.
+ * filled with boost::shared_ptr<T> and boost::ptr_vector<T>.
  * 
  * 
  */
@@ -15,6 +15,7 @@
 #define _RACERQUERYEXPR_TCC
 
 #include <boost/shared_ptr.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 #include <iosfwd>
 #include <iterator>
@@ -52,7 +53,7 @@ namespace racer {
    * @todo feature: maybe some homebrewn manipulators for setting the
    * delimiter character?
    *
-   * @param s 
+   * @param s output content of v to this stream
    * @param v a vector of boost::shared_ptr<T>
    * 
    * @return s
@@ -71,6 +72,34 @@ namespace racer {
 		       );
 
 	s << *v.back();
+      }
+    
+    return s;
+  }
+
+  /** 
+   * Calls operator<< on every element of v, separated by a blank.
+   * 
+   * @todo feature: maybe some homebrewn manipulators for setting the
+   * delimiter character?
+   *
+   * @param s output content of v to this stream
+   * @param v a boost::ptr_vector<T>
+   * 
+   * @return s
+   */
+  template<typename T>
+  std::ostream&
+  operator<< (std::ostream& s, const boost::ptr_vector<T>& v)
+  {
+    if (!v.empty())
+      {
+	std::copy(v.begin(),
+		  v.end() - 1,
+		  std::ostream_iterator<T>(s, " ")
+		  );
+
+	s << v.back();
       }
     
     return s;

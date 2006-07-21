@@ -14,6 +14,7 @@
 #define _RACERQUERYEXPR_H
 
 #include <boost/shared_ptr.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 #include <iosfwd>
 #include <string>
@@ -60,8 +61,8 @@ namespace racer {
   class ABoxQueryExpr : public QueryExpr
   {
   protected:
-    std::string symbol;		/**< symbol string */
-    std::string nsid;		/**< namespace identifier */
+    std::string symbol; /// symbol string
+    std::string nsid;   /// namespace identifier
 
     virtual std::ostream&
     output(std::ostream& s) const;
@@ -120,8 +121,7 @@ namespace racer {
       };
 
   protected:
-    unsigned typeFlags;		/**< the type of this Query
-				   Variable */
+    unsigned typeFlags; /// the type of this nRQL query variable
 
     std::ostream&
     output(std::ostream& s) const;
@@ -250,7 +250,7 @@ namespace racer {
   class ABoxOneOfConcept : public ABoxConceptDescrExpr
   {
   public:
-    typedef std::vector<ABoxQueryIndividual::shared_pointer> IndividualVector;
+    typedef boost::ptr_vector<ABoxQueryIndividual> IndividualVector;
 
   private:
     IndividualVector list;
@@ -259,9 +259,11 @@ namespace racer {
     output(std::ostream& s) const;
 
   public:
-    ABoxOneOfConcept(const IndividualVector& l)
-      : list(l)
-    { }
+    ABoxOneOfConcept(IndividualVector& l)
+    {
+      // release the managed content of l and move it to list
+      list = l.release();
+    }
   };
 
 
@@ -271,7 +273,7 @@ namespace racer {
   class ABoxQueryRole : public ABoxRoleDescrExpr
   {
   private:
-    bool isDatatype;
+    bool isDatatype; /// flag takes care of datatype role querying
 
     std::ostream&
     output(std::ostream& s) const;

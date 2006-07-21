@@ -11,10 +11,10 @@
 
 #include "RacerNRQL.h"
 
-#include <boost/shared_ptr.hpp>
-
 #include <iosfwd>
-#include <vector>
+
+#include <boost/shared_ptr.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 using namespace dlvhex::racer;
 
@@ -56,8 +56,7 @@ NRQLConjunction::output(std::ostream& s) const
 void
 NRQLConjunction::addAtom(NRQLBody::const_pointer e)
 {
-  NRQLBody::shared_pointer sp(e);
-  list.push_back(sp);
+  list.push_back(const_cast<NRQLBody*>(e));
 }
 
 
@@ -72,8 +71,7 @@ NRQLUnion::output(std::ostream& s) const
 void
 NRQLUnion::addAtom(NRQLBody::const_pointer e)
 {
-  NRQLBody::shared_pointer sp(e);
-  list.push_back(sp);
+  list.push_back(const_cast<NRQLBody*>(e));
 }
 
 
@@ -99,17 +97,22 @@ NRQLQuery::output(std::ostream& s) const
 }
 
 void
-NRQLQuery::addHead(ABoxQueryObject::const_pointer e)
+NRQLQuery::setHead(boost::shared_ptr<boost::ptr_vector<ABoxQueryObject> > sp)
 {
-  ABoxQueryObject::shared_pointer sp(e);
-  head.push_back(sp);
+  // move ownership of the ABoxQueryObject list to head
+  head = sp->release();
 }
 
 void
-NRQLQuery::addBody(NRQLBody::const_pointer e)
+NRQLQuery::addHead(ABoxQueryObject::const_pointer e)
 {
-  NRQLBody::shared_pointer sp(e);
-  body.push_back(sp);
+  head.push_back(const_cast<ABoxQueryObject*>(e));
+}
+
+void
+NRQLQuery::setBody(NRQLBody::shared_pointer sp)
+{
+  body = sp;
 }
 
 
@@ -123,7 +126,7 @@ NRQLRetrieve::output(std::ostream& s) const
   s << "(retrieve (" 
     << head
     << ") "
-    << body;
+    << *body;
   
   NRQLQuery::output(s);
 
@@ -142,7 +145,7 @@ NRQLTBoxRetrieve::output(std::ostream& s) const
   s << "(tbox-retrieve ("
     << head
     << ") "
-    << body;
+    << *body;
 
   NRQLQuery::output(s);
 
@@ -162,7 +165,7 @@ NRQLRetrieveUnderPremise::output(std::ostream& s) const
     << ") ("
     << head
     << ") "
-    << body;
+    << *body;
 
   NRQLQuery::output(s);
 
@@ -172,6 +175,5 @@ NRQLRetrieveUnderPremise::output(std::ostream& s) const
 void
 NRQLRetrieveUnderPremise::addPremise(ABoxAssertion::const_pointer e)
 {
-  ABoxAssertion::shared_pointer sp(e);
-  premise.push_back(sp);
+  premise.push_back(const_cast<ABoxAssertion*>(e));
 }

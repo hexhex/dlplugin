@@ -15,9 +15,9 @@
 #include "RacerQueryExpr.h"
 
 #include <boost/shared_ptr.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 #include <iosfwd>
-#include <vector>
 
 namespace dlvhex {
 namespace racer {
@@ -76,6 +76,7 @@ namespace racer {
   class NRQLQueryAtom : public NRQLBody
   {
   private:
+    /// a managed ABoxQueryAtom 
     const ABoxQueryAtom::shared_pointer atom;
 
     std::ostream&
@@ -84,6 +85,10 @@ namespace racer {
   public:
     explicit
     NRQLQueryAtom(ABoxQueryAtom::const_pointer a);
+
+    typedef NRQLQueryAtom value_type;
+    typedef const value_type* const_pointer;
+    typedef boost::shared_ptr<const value_type> shared_pointer;
   };
 
 
@@ -94,7 +99,8 @@ namespace racer {
   class NRQLConjunction : public NRQLBody
   {
   private:
-    std::vector<NRQLBody::shared_pointer> list;
+    /// conjunction of NRQLBody expressions
+    boost::ptr_vector<NRQLBody> list;
 
     std::ostream&
     output(std::ostream& s) const;
@@ -102,6 +108,10 @@ namespace racer {
   public:
     void
     addAtom(NRQLBody::const_pointer e);
+
+    typedef NRQLConjunction value_type;
+    typedef const value_type* const_pointer;
+    typedef boost::shared_ptr<value_type> shared_pointer;
   };
 
 
@@ -112,7 +122,8 @@ namespace racer {
   class NRQLUnion : public NRQLBody
   {
   private:
-    std::vector<NRQLBody::shared_pointer> list;
+    /// union of NRQLBody expressions
+    boost::ptr_vector<NRQLBody> list;
 
     std::ostream&
     output(std::ostream& s) const;
@@ -120,6 +131,10 @@ namespace racer {
   public:
     void
     addAtom(NRQLBody::const_pointer e);
+
+    typedef NRQLUnion value_type;
+    typedef const value_type* const_pointer;
+    typedef boost::shared_ptr<value_type> shared_pointer;
   };
 
 
@@ -129,12 +144,18 @@ namespace racer {
   class NRQLQuery : public NRQLBase
   {
   protected:
-    std::string abox;
-    std::string tbox;
+    std::string abox; /// name of the ABox
+    std::string tbox; /// name of the TBox
 
-    std::vector<ABoxQueryObject::shared_pointer> head; /**< query head */
-    std::vector<NRQLBody::shared_pointer> body;	/**< query body */
+    boost::ptr_vector<ABoxQueryObject> head; /// query head
+    NRQLBody::shared_pointer body;	     /// query body
 
+    /** 
+     * Protected Ctor.
+     * 
+     * @param a ABox name
+     * @param t TBox name
+     */
     NRQLQuery(const std::string& a, const std::string& t);
 
     virtual std::ostream&
@@ -145,11 +166,14 @@ namespace racer {
     addHead(ABoxQueryObject::const_pointer e);
 
     void
-    addBody(NRQLBody::const_pointer e);
+    setHead(boost::shared_ptr<boost::ptr_vector<ABoxQueryObject> > sp);
+
+    void
+    setBody(NRQLBody::shared_pointer sp);
 
     typedef NRQLQuery value_type;
     typedef const value_type* const_pointer;
-    typedef boost::shared_ptr<const value_type> shared_pointer;
+    typedef boost::shared_ptr<value_type> shared_pointer;
   };
 
 
@@ -165,6 +189,10 @@ namespace racer {
   public:
     explicit
     NRQLRetrieve(const std::string& abox = "");
+
+    typedef NRQLRetrieve value_type;
+    typedef const value_type* const_pointer;
+    typedef boost::shared_ptr<value_type> shared_pointer;
   };
 
 
@@ -180,6 +208,10 @@ namespace racer {
   public:
     explicit
     NRQLTBoxRetrieve(const std::string& tbox = "");
+
+    typedef NRQLTBoxRetrieve value_type;
+    typedef const value_type* const_pointer;
+    typedef boost::shared_ptr<value_type> shared_pointer;
   };
 
 
@@ -189,7 +221,7 @@ namespace racer {
   class NRQLRetrieveUnderPremise : public NRQLQuery
   {
   private:
-    std::vector<ABoxAssertion::shared_pointer> premise;	/**< query premise */
+    boost::ptr_vector<ABoxAssertion> premise;	/// query premise
 
     std::ostream&
     output(std::ostream& s) const;
@@ -200,6 +232,10 @@ namespace racer {
 
     explicit
     NRQLRetrieveUnderPremise(const std::string& abox = "");
+
+    typedef NRQLRetrieveUnderPremise value_type;
+    typedef const value_type* const_pointer;
+    typedef boost::shared_ptr<value_type> shared_pointer;
   };
 
 
