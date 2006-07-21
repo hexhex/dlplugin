@@ -1,5 +1,31 @@
 2006-07-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* examples/wires2.hex: Add a hex program with conj. queries.
+
+	* testsuite/TestRacerNRQL.cpp: Assert outcome of a nRQL query.
+
+	* include/RacerQuery.h (Query): Add preliminary conjunctive query
+	support.
+	* src/RacerQuery.cpp: Likewise.
+
+	* include/RacerNRQL.h: Use boost::ptr_vector<> instead of
+	std::vector<boost::shared_ptr<> >.
+	* src/RacerNRQL.cpp: Likewise.
+	* include/RacerQueryExpr.h: Likewise.
+	* include/RacerQueryExpr.tcc: Likewise.
+
+	* include/RacerExtAtom.h (RacerCQAtom): Add conjunctive query
+	external atom.
+	Add Atom suffix to the external atoms.
+	* src/RacerExtAtom.cpp: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+
+	* include/RacerDirector.h (RacerConjunctiveQuery): Add typedef.
+
+	* include/RacerBuilder.h (RacerNRQLBuilder): Add nRQL retrieve
+	command builder.
+	* src/RacerBuilder.cpp: Likewise.
+
 	* testsuite/run-dlvhex-tests.sh: Add dlvhex system test script.
 	* testsuite/Makefile.am: Likewise.
 
