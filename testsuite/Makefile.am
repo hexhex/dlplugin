@@ -13,12 +13,13 @@ noinst_HEADERS = \
                  TestRacerStream.h \
                  TestRacerTypes.h
 
+EXTRA_DIST = run-dlvhex-tests.sh
 
-TESTS = TestSuite
+TESTS = TestSuite run-dlvhex-tests.sh
 
 TESTS_ENVIRONMENT = EXAMPLES=$(top_srcdir)/examples
 
-check_PROGRAMS = $(TESTS)
+check_PROGRAMS = TestSuite
 
 TestSuite_SOURCES = \
                     TestDLRewriter.cpp \
