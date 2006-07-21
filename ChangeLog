@@ -1,3 +1,19 @@
+2006-07-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* testsuite/run-dlvhex-tests.sh: Add dlvhex system test script.
+	* testsuite/Makefile.am: Likewise.
+
+	* examples/Makefile.am: Add files for dlvhex system tests.
+	* examples/mytests.test: Likewise.
+	* examples/tests/wires.out: Likewise.
+	* examples/tests/test.out: Likewise.
+	* examples/tests/shop.out: Likewise.
+	
+	* README: Small version number fixes.
+
+	* configure.ac: Bump version to 0.2.
+	Don't build libdlvhex-racerplugin.a.
+
 2006-07-17  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/Cache.h: Improve doxygen doc.
