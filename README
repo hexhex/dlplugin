@@ -18,10 +18,10 @@ http://www.boost.org/
 ** libraptor
 http://librdf.org/raptor/
 
-** cppunit (optional)
+** cppunit (optional, only used in make check)
 http://cppunit.sourceforge.net/
 
-** flex + bison (only in maintainer-mode)
+** flex + bison (optional, only used in maintainer-mode)
 http://www.gnu.org/software/flex/
 http://www.gnu.org/software/bison/
 
@@ -43,7 +43,7 @@ location. dlvhex-racerplugin has been tested with RacerPro 1.8 and
 *** ACE
 Download the ACE library and proceed according to the ACE-INSTALL file
 found in the distribution tarball. Fairly new ACE distributions
-(tested with 5.5.1) allow to build the library using an autoconf
+(tested with 5.5.2) allow to build the library using an autoconf
 scheme. For older versions try one of the following patches for
 automatically configuring ACE :
 
@@ -116,7 +116,7 @@ diff -Naur ACE_wrappers-5.4.8/include/makeinclude/platform_macros.GNU ACE_wrappe
 Installing ACE is not needed. Just point ACE_ROOT and LD_LIBRARY_PATH
 to the ACE_wrappers resp. ACE_wrappers/ace
 directories. dlvhex-racerplugin has been tested with ACE 5.4.0 up to
-5.5.1.
+5.5.2.
 
 
 *** boost
@@ -146,7 +146,7 @@ tarball. dlvhex-racerplugin has been tested with cppunit 1.10.2.
 *** flex + bison
 dlvhex-racerplugin uses relatively new features of flex and bison, so
 install the newest versions of flex + bison. dlvhex-racerplugin was
-tested with flex 2.5.33 and bison 2.1. For installation instruction
+tested with flex 2.5.33 and bison 2.3. For installation instruction
 see the corresponding INSTALL files of the source packages.
 
 
