@@ -1,0 +1,17 @@
+% -*- prolog -*-
+
+#namespace(w, "http://wires#")
+
+over(X) :- &dlC["wires.owl",a,b,c,d,"w:HighTrafficNode"](X).
+
+known(X) :- &dlC["wires.owl",a,b,c,d,"w:Node"](X).
+
+% we cannot parse cq terms with abbr. namespace -> use dl rewriter for that?
+tr("w:wired",X,Y) :- &dlCQ2["wires.owl",a,b,c,d, "http://wires#wired(X,Z),http://wires#wired(Z,Y)"](X,Y).
+tr("w:wired",X,Y) :- &dlCQ2["wires.owl",a,b,tr,d,"http://wires#wired(X,Z),http://wires#wired(Z,Y)"](X,Y), known(X), known(Y).
+tran(X,Y) :- tr(_,X,Y).
+
+foo(X,Y) :- &dlCQ2["wires.owl",a,b,tr,d,"http://wires#wired(X,Z),http://wires#wired(Z,Y),http://wires#HighTrafficNode(Z)"](X,Y).
+
+moo :- &dlCQ0["wires.owl",a,b,tr,d,"http://wires#wired(X,Y),http://wires#HighTrafficNode(X),http://wires#HighTrafficNode(Y)"].
+
