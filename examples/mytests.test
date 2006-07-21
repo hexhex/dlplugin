@@ -1,3 +1,7 @@
 shop.dlp tests/shop.out
 test.dlp tests/test.out
 wires.hex tests/wires.out
+shop+test.dlp tests/shop+test.out
+shop-consistent.dlp tests/shop-consistent.out
+shop-inconsistent.dlp tests/shop-inconsistent.out
+shop-http.dlp tests/shop-http.out

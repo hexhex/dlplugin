@@ -10,5 +10,9 @@ EXTRA_DIST = mytests.test \
              wires.hex \
              wires.owl \
              tests/shop.out \
+             tests/shop+test.out \
+             tests/shop-consistent.out \
+             tests/shop-inconsistent.out \
+             tests/shop-http.out \
              tests/test.out \
              tests/wires.out
