@@ -1,0 +1,3 @@
+shop.dlp tests/shop.out
+test.dlp tests/test.out
+wires.hex tests/wires.out
