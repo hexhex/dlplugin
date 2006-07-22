@@ -1,3 +1,13 @@
+2006-07-22    <djmaecki@ull.at>
+
+	* testsuite/run-dlvhex-tests.sh: Add code for recognizing a
+	changed ordering in the answersets.
+
+	* src/RacerQuery.cpp (Query::isConjQuery): New method.
+	(Answer::addTuple,Query::setPatternTuple): Take care of anonymous
+	variables.
+	* include/RacerQuery.h: Likewise.
+
 2006-07-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* examples/wires2.hex: Add a hex program with conj. queries.
