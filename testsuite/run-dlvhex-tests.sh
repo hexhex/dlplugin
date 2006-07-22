@@ -7,6 +7,7 @@ TMPFILE=$(mktemp)
 cd $EXAMPLES
 
 failed=0
+warned=0
 ntests=0
 
 echo ============ dlvhex tests start ============
@@ -23,15 +24,10 @@ do
 	then
 	    echo PASS: $HEXPROGRAM
 	else
-	    echo FAIL: $HEXPROGRAM 
-
 	    # and now check which answersets differ
 
 	    pasted=$(mktemp)
 	    paste $ANSWERSETS $TMPFILE > $pasted
-
-	    from=$(mktemp)
-	    to=$(mktemp)
 
 	    OLDIFS=$IFS
 	    IFS=" " # we need the tabs for cut
@@ -40,20 +36,37 @@ do
 
 	    while read
 	    do
-		echo $REPLY | cut -f1 > $from
-		echo $REPLY | cut -f2 > $to
-		if ! cmp -s $from $to
+		# translate both answersets to python lists
+		a1=$(echo $REPLY | cut -f1 | sed s/"{"/"['"/ | sed s/", "/"', '"/g | sed s/"}"/"']"/)
+		a2=$(echo $REPLY | cut -f2 | sed s/"{"/"['"/ | sed s/", "/"', '"/g | sed s/"}"/"']"/)
+
+		# now check if set difference yields incomparability
+		if cat <<EOF | python
+import sys, sets
+a1 = $a1
+a2 = $a2
+z1 = zip(a1,a2)
+z2 = zip(z1, range(len(z1)))
+z3 = [ e for e in z2 if e[0][0] != e[0][1] ]
+for e in z3: print 'In Answerset ' + str($nas) + ' (fact ' + str(e[1]) + '): ' + e[0][0] + ' vs. ' + e[0][1]
+s1 = sets.Set(a1)
+s2 = sets.Set(a2)
+sys.exit(len(s1 - s2))
+EOF
 		then
-		    echo    Answerset $nas differs
+		    echo "WARN: $HEXPROGRAM (answerset $nas has different ordering)"
+		    let warned++
+		else
+		    echo "FAIL: $HEXPROGRAM (answerset $nas differs)"
+		    let failed++
 		fi
+
 		let nas++
 	    done < $pasted # redirected pasted file to the while loop
 
 	    IFS=$OLDIFS
 
-	    rm -f $pasted $from $to
-
-	    let failed++
+	    rm -f $pasted
 	fi
     done < $t # redirect test file to the while loop
 done
@@ -64,7 +77,7 @@ rm -f $TMPFILE
 echo ========== dlvhex tests completed ==========
 
 echo Tested $ntests dlvhex programs
-echo Failed tests: $failed
+echo $failed failed tests, $warned warnings
 
 echo ============= dlvhex tests end =============
 
