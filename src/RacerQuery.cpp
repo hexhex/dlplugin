@@ -197,6 +197,12 @@ Query::isMixed() const
 }
 
 
+bool
+Query::isConjQuery() const
+{
+  return !conj.empty();
+}
+
 void
 Query::setNamespace(const std::string& nspace)
 {
@@ -260,7 +266,7 @@ Query::setPatternTuple(const Tuple& pattern)
        it++, mask <<= 1)
     {
       // for every ground term we set a flag in typeFlags
-      if (!it->isVariable())
+      if (!it->isVariable() && !it->isAnon())
 	{
 	  typeFlags |= mask;
 	}
@@ -474,11 +480,14 @@ Query::createHead() const
   boost::shared_ptr<boost::ptr_vector<ABoxQueryObject> > v
     (new boost::ptr_vector<ABoxQueryObject>);
 
+  // Iterate through the output list and build the conjunctive query
+  // head. Anonymous variables are ignored, they are going to be taken
+  // care of when we call Answer::addTuple().
   for (Tuple::const_iterator it = getPatternTuple().begin();
        it != getPatternTuple().end();
        ++it)
     {
-      if (it->isVariable())
+      if (it->isVariable()) // variable
 	{
 	  v->push_back(new ABoxQueryVariable
 		       (it->getVariable(),
@@ -486,7 +495,7 @@ Query::createHead() const
 			)
 		       );
 	}
-      else
+      else if (!it->isAnon()) // individual
 	{
 	  v->push_back(new ABoxQueryIndividual(it->getUnquotedString()));
 	}
@@ -669,17 +678,54 @@ Answer::getAnswer() const
 void
 Answer::addTuple(const Tuple& out)
 {
-  if (query == 0)
+  if (query == 0) // just in case we don't have a corresponding query
     {
       PluginAtom::Answer::addTuple(out);
     }
-  else
+  else if (query->isConjQuery()) // in conj. queries we only check for
+				 // anon. variables
+    {
+      if (out.size() == query->getPatternTuple().size())
+	{
+	  PluginAtom::Answer::addTuple(out);
+	}
+      else // take care of anonymous variables
+	{
+	  Tuple tmp;
+	  const Tuple& pt = query->getPatternTuple();
+	  Tuple::const_iterator pit = pt.begin();
+	  Tuple::const_iterator oit = out.begin();
+
+	  //
+	  // Iterate output list and look for anonymous variables. If
+	  // we find one, append the empty string constant Term to the
+	  // output tuple, otherwise add the corresponding Term in
+	  // out.
+	  //
+	  // e.g. pt = (_,X,Y,_,Z), out = (a1,a2,a3)
+	  //      -> tmp = ("",a1,a2,"",a3)
+	  //
+	  for (; pit != pt.end(); pit++)
+	    {
+	      if (pit->isAnon())
+		{
+		  tmp.push_back(Term("", true));
+		}
+	      else
+		{
+		  tmp.push_back(*oit);
+		  oit++;
+		}
+	    }
+
+	  PluginAtom::Answer::addTuple(tmp);
+	}
+    }
+  else // a non-conjunctive query needs special treatment
     {
       unsigned long type = query->getTypeFlags() & std::numeric_limits<unsigned long>::max();
       
-      ///@todo we need to take care of arbitrary ground terms in the answer
-
-      if (type == 0x2)
+      if (type == 0x2) // left retrieval
 	{
 	  Tuple tmp(out);
 
@@ -696,7 +742,7 @@ Answer::addTuple(const Tuple& out)
 
 	  PluginAtom::Answer::addTuple(tmp);
 	}
-      else if (type == 0x1)
+      else if (type == 0x1) // right retrieval
 	{
 	  Tuple tmp;
 
@@ -715,7 +761,7 @@ Answer::addTuple(const Tuple& out)
 
 	  PluginAtom::Answer::addTuple(tmp);
 	}
-      else
+      else // either a ground or a full retrieval query
 	{
 	  PluginAtom::Answer::addTuple(out);
 	}

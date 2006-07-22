@@ -83,6 +83,9 @@ namespace racer {
     virtual bool
     isMixed() const;
 
+    virtual bool
+    isConjQuery() const;
+
     virtual void
     setNamespace(const std::string& nspace);
 
