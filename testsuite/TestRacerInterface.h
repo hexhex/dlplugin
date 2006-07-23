@@ -30,6 +30,7 @@ namespace racer {
     CPPUNIT_TEST(runRacerIsRoleTest);
     CPPUNIT_TEST(runRacerRoleFillersTest);
     CPPUNIT_TEST(runRacerDatatypeRoleFillersTest);
+    CPPUNIT_TEST(runRacerConjQueryTest);
     CPPUNIT_TEST(runGetUniverseTest);
     CPPUNIT_TEST_SUITE_END();
 
@@ -49,6 +50,8 @@ namespace racer {
     void runRacerRoleFillersTest();
 
     void runRacerDatatypeRoleFillersTest();
+
+    void runRacerConjQueryTest();
 
     void runGetUniverseTest();    
   };

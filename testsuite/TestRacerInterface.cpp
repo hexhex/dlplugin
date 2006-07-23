@@ -418,6 +418,43 @@ TestRacerInterface::runRacerDatatypeRoleFillersTest()
 
 
 void
+TestRacerInterface::runRacerConjQueryTest()
+{
+  PluginInterface* pi = PLUGINIMPORTFUNCTION();
+
+  PluginInterface::AtomFunctionMap m;
+  pi->getAtoms(m);
+
+  AtomSet a1,a2,a3,a4;
+
+  Interpretation in;
+  in.insert(a1);
+  in.insert(a2);
+  in.insert(a3);
+  in.insert(a4);
+
+  Tuple parms;
+  parms.push_back(Term(examples + "/wires.owl"));
+  parms.push_back(Term("\"a\""));
+  parms.push_back(Term("\"b\""));
+  parms.push_back(Term("\"c\""));
+  parms.push_back(Term("\"d\""));
+  parms.push_back(Term("\"http://wires#wired(X,Z1),http://wires#wired(Z1,Z2),http://wires#wired(Z2,Z3),http://wires#wired(Z3,Y)\"", true));
+
+  Tuple pat;
+  pat.push_back(Term("X"));
+  pat.push_back(Term("Y"));
+
+  PluginAtom::Answer ans1;
+  PluginAtom::Query q1(in, parms, pat);
+
+  CPPUNIT_ASSERT_NO_THROW( m["dlCQ2"]->retrieve(q1, ans1) );
+  CPPUNIT_ASSERT( ans1.getTuples()->size() == 15);
+  
+  output(*ans1.getTuples());
+}
+
+void
 TestRacerInterface::runGetUniverseTest()
 {
   PluginInterface* pi = PLUGINIMPORTFUNCTION();
@@ -426,10 +463,15 @@ TestRacerInterface::runGetUniverseTest()
   
   pi->getUniverse(shopuri, lterm);
   
-  std::cout << "(";
-  std::copy(lterm.begin(), lterm.end(),
-	    std::ostream_iterator<Term>(std::cout, ") ("));
-  std::cout << ")" << std::endl;
+  if (!lterm.empty())
+    {
+      std::cout << "{";
+      std::copy(lterm.begin(),
+		--lterm.end(),
+		std::ostream_iterator<Term>(std::cout, ",")
+		);
+      std::cout << lterm.back() << "}" << std::endl;
+    }
 
   CPPUNIT_ASSERT( lterm.size() == 20 );
   
@@ -438,10 +480,15 @@ TestRacerInterface::runGetUniverseTest()
   std::string kruri = "http://www.kr.tuwien.ac.at/staff/roman/swlp/examples/shop.owl";
   pi->getUniverse(kruri, lterm);
   
-  std::cout << "(";
-  std::copy(lterm.begin(), lterm.end(),
-	    std::ostream_iterator<Term>(std::cout, ") ("));
-  std::cout << ")" << std::endl;
+  if (!lterm.empty())
+    {
+      std::cout << "{";
+      std::copy(lterm.begin(),
+		--lterm.end(),
+		std::ostream_iterator<Term>(std::cout, ",")
+		);
+      std::cout << lterm.back() << "}" << std::endl;
+    }
 
   CPPUNIT_ASSERT( lterm.size() == 20 );
 
