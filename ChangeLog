@@ -1,5 +1,18 @@
 2006-07-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* include/DLRewriter.h: Use boost::ptr_vector<RewriteRule> instead
+	of std::vector<boost::shared_ptr<RewriteRule> >.
+	* src/DLRewriter.cpp: Likewise.
+
+	* testsuite/TestSuite.cpp (TestSuite::output): Prettier output.
+	* testsuite/TestOWLParser.cpp: Likewise.
+
+	* testsuite/TestRacerInterface.cpp (TestRacerInterface::runRacerConjQueryTest):
+	New testcase for conjunctive queries.
+	* testsuite/TestRacerInterface.h: Likewise.
+
+	* examples/Makefile.am (EXTRA_DIST): Add shop+test.dlp.
+
 	* testsuite/TestSuite.h: Introduce TestSuite base class.
 	* testsuite/TestSuite.cpp: Likewise.
 	* testsuite/TestRacerTypes.h: Likewise.
