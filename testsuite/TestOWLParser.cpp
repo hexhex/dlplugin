@@ -30,10 +30,15 @@ TestOWLParser::runParserTest()
   std::set<Term> indvs;
   p.parseIndividuals(indvs);
 
-  std::cout << "(";
-  std::copy(indvs.begin(), indvs.end(),
-	    std::ostream_iterator<Term>(std::cout, ") ("));
-  std::cout << ")" << std::endl;
+  if (!indvs.empty())
+    {
+      std::cout << "{";
+      std::copy(indvs.begin(),
+		--indvs.end(),
+		std::ostream_iterator<Term>(std::cout, ",")
+		);
+      std::cout << *(--indvs.end()) << "}" << std::endl;
+    }
 
   p.parseNamespace(defaultNS);
   CPPUNIT_ASSERT(defaultNS == "http://www.kr.tuwien.ac.at/staff/roman/shop#");
@@ -43,10 +48,15 @@ TestOWLParser::runParserTest()
   defaultNS.clear();
   p2.parseIndividuals(indvs);
 
-  std::cout << "(";
-  std::copy(indvs.begin(), indvs.end(),
-	    std::ostream_iterator<Term>(std::cout, ") ("));
-  std::cout << ")" << std::endl;
+  if (!indvs.empty())
+    {
+      std::cout << "{";
+      std::copy(indvs.begin(),
+		--indvs.end(),
+		std::ostream_iterator<Term>(std::cout, ",")
+		);
+      std::cout << *(--indvs.end()) << "}" << std::endl;
+    }
 
   p2.parseNamespace(defaultNS);
   CPPUNIT_ASSERT(defaultNS == "http://www.test.com/test#");

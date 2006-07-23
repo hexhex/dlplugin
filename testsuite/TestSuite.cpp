@@ -37,17 +37,20 @@ TestSuite::TestSuite()
 void
 TestSuite::output(const std::vector<Tuple>& tv)
 {
-  std::cout << std::endl;
   for(std::vector<Tuple>::const_iterator it = tv.begin();
       it != tv.end();
       it++)
     {
-      Tuple t = *it;
-      std::cout << "(";
-      // copy all elements of t to cout
-      std::copy(t.begin(), t.end(),
-		std::ostream_iterator<Term>(std::cout, ") ("));
-      std::cout << ")" << std::endl;
+      // copy all elements of it to std::cout
+      if (!it->empty())
+	{
+	  std::cout << "(";
+	  std::copy(it->begin(),
+		    it->end() - 1,
+		    std::ostream_iterator<Term>(std::cout, ",")
+		    );
+	  std::cout << it->back() << ")" << std::endl;
+	}
     }
 }
 
