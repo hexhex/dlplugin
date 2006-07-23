@@ -1,6 +1,7 @@
 EXTRA_DIST = mytests.test \
              shop-consistent.dlp \
              shop-inconsistent.dlp \
+             shop+test.dlp \
              shop.dlp \
              shop.owl \
              test.dlp \
