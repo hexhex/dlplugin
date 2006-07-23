@@ -13,10 +13,10 @@
 #include "DLRewriter.h"
 #include "OWLParser.h"
 
+#include <boost/algorithm/string/trim.hpp>
+
 #include <algorithm>
 #include <iterator>
-
-#include <boost/shared_ptr.hpp>
 
 using namespace dlvhex::racer;
 
@@ -36,30 +36,6 @@ DLRewriter::setStreams(std::istream* i, std::ostream* o)
 {
   input = i;
   output = o;
-}
-
-
-namespace dlvhex {
-  namespace racer {
-
-    struct DLRewriter::RewriteRule
-    {
-      unsigned extAtomNo;	/**< every external atom has its own number */
-      char opChar;		/**< either 'p'(lus) or 'm'(inus) operator */
-      std::string lhs;		/**< left term of operator */
-      std::string rhs;		/**< right term of operator */
-    };
-
-
-    // strips leading and trailing space chars
-    void
-    strip(std::string& s)
-    {
-      std::string::size_type skip = s.find_first_not_of(' ');
-      s = s.substr(skip, s.find_first_of(' ', skip) - skip);
-    }
-
-  }
 }
 
 
@@ -103,18 +79,11 @@ DLRewriter::filterInput(const std::string& inputStr)
 	    }
 
 	  // strip whitespace
-	  // @todo use boost string algorithms?
-	  strip(lhs);
-	  strip(rhs);
+	  boost::trim(lhs);
+	  boost::trim(rhs);
 
 	  // append a new RewriteRule
-	  boost::shared_ptr<RewriteRule> r(new RewriteRule);
-	  r->opChar = c;
-	  r->extAtomNo = this->extAtomNo;
-	  r->lhs = lhs;
-	  r->rhs = rhs;
-
-	  rules.push_back(r);
+	  rules.push_back(new RewriteRule(this->extAtomNo, c, lhs, rhs));
 	}
       else // no '=' found, we have a query now and are done
 	{
@@ -122,7 +91,7 @@ DLRewriter::filterInput(const std::string& inputStr)
 	  std::string query = inputStr.substr(i, b - i);
 
 	  // strip whitespace
-	  strip(query);
+	  boost::trim(query);
 
 	  return "\"" + query + "\"";
 	}
@@ -169,18 +138,18 @@ DLRewriter::rewriteLine(const std::string& line)
 
 	  // output input list
 	  *output << "[\"" 
-		      << uri 
-		      << "\",dl_pc_"
-		      << extAtomNo
-		      << ",dl_mc_"
-		      << extAtomNo
-		      << ",dl_pr_"
-		      << extAtomNo
-		      << ",dl_mr_"
-		      << extAtomNo
-		      << ","
-		      << query
-		      << "]";
+		  << uri 
+		  << "\",dl_pc_"
+		  << extAtomNo
+		  << ",dl_mc_"
+		  << extAtomNo
+		  << ",dl_pr_"
+		  << extAtomNo
+		  << ",dl_mr_"
+		  << extAtomNo
+		  << ","
+		  << query
+		  << "]";
 
 	  // now append output list
 	  std::string::size_type oend = dlAtom.find(')', obeg);
@@ -289,37 +258,37 @@ DLRewriter::rewrite()
 
   // output found rules
 
-  for (std::vector<boost::shared_ptr<RewriteRule> >::const_iterator it = rules.begin();
+  for (boost::ptr_vector<RewriteRule>::const_iterator it = rules.begin();
        it != rules.end(); it++)
     {
-      std::string s = defaultNS + (*it)->lhs;
+      std::string s = defaultNS + it->lhs;
       std::ostringstream aux;
 
-      aux << "dl_" << (*it)->opChar;
+      aux << "dl_" << it->opChar;
 
       Term t(s);
 
       if (concepts.find(t) != concepts.end())
 	{
-	  aux << "c_" << (*it)->extAtomNo;
+	  aux << "c_" << it->extAtomNo;
 
 	  *output << aux.str()
 		  << "(\""
-		  << (*it)->lhs
+		  << it->lhs
 		  << "\",X) :- "
-		  << (*it)->rhs
+		  << it->rhs
 		  << "(X)."
 		  << std::endl;
 	}
       else if (roles.find(t) != roles.end())
 	{
-	  aux << "r_" << (*it)->extAtomNo;
+	  aux << "r_" << it->extAtomNo;
 
 	  *output << aux.str()
 		  << "(\""
-		  << (*it)->lhs
+		  << it->lhs
 		  << "\",X,Y) :- "
-		  << (*it)->rhs
+		  << it->rhs
 		  << "(X,Y)."
 		  << std::endl;
 	}
@@ -327,7 +296,7 @@ DLRewriter::rewrite()
 	{
 	  std::ostringstream err;
 	  err << "Couldn't rewrite DL atom "
-	      << dlAtoms[(*it)->extAtomNo]
+	      << dlAtoms[it->extAtomNo]
 	      << ", "
 	      << s
 	      << " is not a concept and not a role.";

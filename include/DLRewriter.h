@@ -21,9 +21,8 @@
 #include <iosfwd>
 #include <string>
 #include <map>
-#include <vector>
 
-#include <boost/shared_ptr.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 namespace dlvhex {
 namespace racer {
@@ -39,11 +38,23 @@ namespace racer {
 
     unsigned extAtomNo; /// counter for external atoms
 
-    /// forward declaration
-    struct RewriteRule;
+    /// some information for the rewritten rules
+    struct RewriteRule
+    {
+      unsigned extAtomNo;	/**< every external atom has its own number */
+      char opChar;		/**< either 'p'(lus) or 'm'(inus) operator */
+      std::string lhs;		/**< left term of operator */
+      std::string rhs;		/**< right term of operator */
 
+      RewriteRule(unsigned e, char o,
+		  const std::string& l,
+		  const std::string& r)
+	: extAtomNo(e), opChar(o), lhs(l), rhs(r)
+      { }
+    };
+ 
     /// keep track of rewritten rules
-    std::vector<boost::shared_ptr<RewriteRule> > rules;
+    boost::ptr_vector<RewriteRule> rules;
 
     /// keep track of dl atoms, just needed in case of an error
     std::map<unsigned, std::string> dlAtoms;
@@ -55,7 +66,6 @@ namespace racer {
     filterInput(const std::string&);
 
   public:
-
     DLRewriter(std::istream& i, std::ostream& o);
 
     void
