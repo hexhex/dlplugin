@@ -11,7 +11,8 @@ noinst_HEADERS = \
                  TestRacerQuery.h \
                  TestRacerRunner.h \
                  TestRacerStream.h \
-                 TestRacerTypes.h
+                 TestRacerTypes.h \
+                 TestSuite.h
 
 EXTRA_DIST = run-dlvhex-tests.sh
 
