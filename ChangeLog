@@ -1,4 +1,33 @@
-2006-07-22    <djmaecki@ull.at>
+2006-07-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* testsuite/TestSuite.h: Introduce TestSuite base class.
+	* testsuite/TestSuite.cpp: Likewise.
+	* testsuite/TestRacerTypes.h: Likewise.
+	* testsuite/TestRacerTypes.cpp: Likewise.
+	* testsuite/TestRacerStream.h: Likewise.
+	* testsuite/TestRacerStream.cpp: Likewise.
+	* testsuite/TestRacerRunner.h: Likewise.
+	* testsuite/TestRacerRunner.cpp: Likewise.
+	* testsuite/TestRacerQuery.h: Likewise.
+	* testsuite/TestRacerQuery.cpp: Likewise.
+	* testsuite/TestRacerParse.h: Likewise.
+	* testsuite/TestRacerParse.cpp: Likewise.
+	* testsuite/TestRacerNRQL.h: Likewise.
+	* testsuite/TestRacerNRQL.cpp: Likewise.
+	* testsuite/TestRacerInterface.h: Likewise.
+	* testsuite/TestRacerInterface.cpp: Likewise.
+	* testsuite/TestRacerDirector.h: Likewise.
+	* testsuite/TestRacerDirector.cpp: Likewise.
+	* testsuite/TestRacerBuilder.h: Likewise.
+	* testsuite/TestRacerBuilder.cpp: Likewise.
+	* testsuite/TestOWLParser.h: Likewise.
+	* testsuite/TestOWLParser.cpp: Likewise.
+	* testsuite/TestDLRewriter.h: Likewise.
+	* testsuite/TestDLRewriter.cpp: Likewise.
+
+	* testsuite/Makefile.am (noinst_HEADERS): Add TestSuite.h.
+
+2006-07-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* testsuite/run-dlvhex-tests.sh: Add code for recognizing a
 	changed ordering in the answersets.
