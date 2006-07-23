@@ -8,7 +8,13 @@
  * 
  */
 
+#include "RacerAnswerDriver.h"
+
 #include "TestRacerParse.h"
+
+#include <sstream>
+#include <iosfwd>
+#include <string>
 
 using namespace dlvhex::racer;
 

@@ -8,6 +8,8 @@
  * 
  */
 
+#include "RacerRunner.h"
+
 #include "TestRacerRunner.h"
 
 using namespace dlvhex::racer;

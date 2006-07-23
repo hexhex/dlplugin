@@ -8,30 +8,22 @@
  * 
  */
 
+#include "RacerDirector.h"
+#include "RacerRunner.h"
+#include "TCPStream.h"
+
 #include "TestRacerDirector.h"
+
+#include <iostream>
+#include <string>
+#include <functional>
+#include <iterator>
+
 
 using namespace dlvhex::racer;
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerDirector);
-
-
-void
-TestRacerDirector::output(const std::vector<Tuple>& tv)
-{
-  std::cout << std::endl;
-  for(std::vector<Tuple>::const_iterator it = tv.begin();
-      it != tv.end();
-      it++)
-    {
-      Tuple t = *it;
-      std::cout << "(";
-      // copy all elements of t to cout
-      std::copy(t.begin(), t.end(),
-		std::ostream_iterator<Term>(std::cout, ") ("));
-      std::cout << ")" << std::endl;
-    }
-}
 
 void
 TestRacerDirector::setUp()

@@ -3,19 +3,13 @@
 #ifndef _TESTRACERINTERFACE_H
 #define _TESTRACERINTERFACE_H
 
-#include <sstream>
-#include <iostream>
-#include <string>
-#include <map>
-#include <iterator>
-
 #include <cppunit/TestCase.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "RacerInterface.h"
+#include "TestSuite.h"
 
 namespace dlvhex {
 namespace racer {
@@ -26,9 +20,8 @@ namespace racer {
    *
    * @test Imports the callback functions and runs some tests on them.
    */
-  class TestRacerInterface : public CppUnit::TestFixture
+  class TestRacerInterface : public TestSuite
   {
-  private:
     CPPUNIT_TEST_SUITE(TestRacerInterface);
     CPPUNIT_TEST(runRacerConsistentTest);
     CPPUNIT_TEST(runRacerConceptTest);
@@ -39,13 +32,6 @@ namespace racer {
     CPPUNIT_TEST(runRacerDatatypeRoleFillersTest);
     CPPUNIT_TEST(runGetUniverseTest);
     CPPUNIT_TEST_SUITE_END();
-
-    std::string shop;
-    std::string shopuri;
-    std::string test;
-    std::string testuri;
-
-    void output(const std::vector<Tuple>& tv);
 
   public: 
     virtual void setUp();

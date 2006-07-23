@@ -19,32 +19,27 @@ using namespace dlvhex::racer;
 CPPUNIT_TEST_SUITE_REGISTRATION(TestDLRewriter);
 
 void
-TestDLRewriter::setUp()
-{
-}
-
-void
 TestDLRewriter::runDLRewrite()
 {
  {
-   std::fstream fs("../../examples/tweety_bird.dlp");
+   std::fstream fs((examples + "/tweety_bird.dlp").c_str());
    std::ostringstream os;
    
    DLRewriter dr(fs, os);
-   dr.setUri("file:../../examples/tweety_bird.owl");
-   dr.setStreams(&fs,&os);
+   dr.setUri("file:" + examples + "/tweety_bird.owl");
+   dr.setStreams(&fs, &os);
    dr.rewrite();
    
    std::cout << "## " << os.str() << std::endl;
  }
 
  {
-   std::fstream fs("../../examples/dl-shop.dlp");
+   std::fstream fs((examples + "/dl-shop.dlp").c_str());
    std::ostringstream os;
    
    DLRewriter dr(fs, os);
-   dr.setUri("file:../../examples/shop.owl");
-   dr.setStreams(&fs,&os);
+   dr.setUri(shopuri);
+   dr.setStreams(&fs, &os);
    dr.rewrite();
    
    std::cout << "## " << os.str() << std::endl;
@@ -54,15 +49,15 @@ TestDLRewriter::runDLRewrite()
 void
 TestDLRewriter::runDLNoRewrite()
 {
-  std::fstream fs("../../examples/shop.dlp");
+  std::fstream fs((examples + "/shop.dlp").c_str());
   std::ostringstream os;
 
   DLRewriter dr(fs, os);
-  dr.setUri("../../examples/shop.owl");
-  dr.setStreams(&fs,&os);
+  dr.setUri(shop);
+  dr.setStreams(&fs, &os);
   dr.rewrite();
 
-  std::fstream fs2("../../examples/shop.dlp");
+  std::fstream fs2((examples + "/shop.dlp").c_str());
   std::stringbuf cmp;
   fs2.get(cmp, 0);
 

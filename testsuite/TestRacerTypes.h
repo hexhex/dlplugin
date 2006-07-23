@@ -3,18 +3,13 @@
 #ifndef _TESTRACERTYPES_H
 #define _TESTRACERTYPES_H
 
-#include <iostream>
-#include <string>
-#include <iterator>
-
 #include <cppunit/TestCase.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <dlvhex/Atom.h>
-#include <dlvhex/AtomSet.h>
+#include "TestSuite.h"
 
 namespace dlvhex {
 namespace racer {
@@ -24,13 +19,13 @@ namespace racer {
    *
    * @test Tests types like Atom and AtomSet
    */
-  class TestRacerTypes : public CppUnit::TestFixture
+  class TestRacerTypes : public TestSuite
   {
     CPPUNIT_TEST_SUITE(TestRacerTypes);
     CPPUNIT_TEST(runRacerSetTest);
     CPPUNIT_TEST_SUITE_END();
 
-  public: 
+  public:
     void runRacerSetTest();   
   };
 

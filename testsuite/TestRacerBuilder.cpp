@@ -8,7 +8,14 @@
  * 
  */
 
+#include "RacerBuilder.h"
+
 #include "TestRacerBuilder.h"
+
+#include <sstream>
+#include <iostream>
+#include <string>
+
 
 using namespace dlvhex::racer;
 

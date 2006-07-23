@@ -3,18 +3,13 @@
 #ifndef _TESTRACERQUERY_H
 #define _TESTRACERQUERY_H
 
-#include <iostream>
-#include <string>
-#include <functional>
-#include <iterator>
-
 #include <cppunit/TestCase.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "RacerQuery.h"
+#include "TestSuite.h"
 
 namespace dlvhex {
 namespace racer {
@@ -25,7 +20,7 @@ namespace racer {
    * @test Tests Query methods.
    *
    */
-  class TestRacerQuery : public CppUnit::TestFixture
+  class TestRacerQuery : public TestSuite
   {
     CPPUNIT_TEST_SUITE(TestRacerQuery);
     CPPUNIT_TEST(runRacerQueryEqualityTest);

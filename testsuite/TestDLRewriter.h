@@ -15,6 +15,8 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
+#include "TestSuite.h"
+
 #include "DLRewriter.h"
 
 namespace dlvhex {
@@ -24,19 +26,16 @@ namespace racer {
   /**
    * @brief TestCases for DLRewriter. 
    *
-   * @test
+   * @test Tests the DL Rewriter facility.
    */
-  class TestDLRewriter : public CppUnit::TestFixture
+  class TestDLRewriter : public TestSuite
   {
-  private:
     CPPUNIT_TEST_SUITE(TestDLRewriter);
     CPPUNIT_TEST(runDLRewrite);
     CPPUNIT_TEST(runDLNoRewrite);
     CPPUNIT_TEST_SUITE_END();
 
   public: 
-    virtual void setUp();
-
     void runDLRewrite();    
 
     void runDLNoRewrite();    

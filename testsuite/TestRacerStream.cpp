@@ -8,7 +8,12 @@
  * 
  */
 
+#include "TCPStream.h"
+#include "RacerRunner.h"
+
 #include "TestRacerStream.h"
+
+#include <iosfwd>
 
 using namespace dlvhex::racer;
 

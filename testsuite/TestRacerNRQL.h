@@ -3,18 +3,13 @@
 #ifndef _TESTRACERNRQL_H
 #define _TESTRACERNRQL_H
 
-#include <sstream>
-#include <iostream>
-#include <string>
-
 #include <cppunit/TestCase.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "RacerNRQL.h"
-
+#include "TestSuite.h"
 
 namespace dlvhex {
 namespace racer {
@@ -25,7 +20,7 @@ namespace racer {
    *
    * @test Builds various RACER commands and checks if they are valid.
    */
-  class TestRacerNRQL : public CppUnit::TestFixture
+  class TestRacerNRQL : public TestSuite
   { 
     CPPUNIT_TEST_SUITE(TestRacerNRQL);
     CPPUNIT_TEST(runRacerRetrieveTest);
@@ -39,7 +34,6 @@ namespace racer {
     void runRacerTBoxRetrieveTest();
 
     void runRacerPremiseRetrieveTest();
-    
   };
 
 } // namespace racer

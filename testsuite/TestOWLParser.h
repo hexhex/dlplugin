@@ -3,18 +3,13 @@
 #ifndef _TESTOWLPARSER_H
 #define _TESTOWLPARSER_H
 
-#include <iostream>
-#include <string>
-#include <functional>
-#include <iterator>
-
 #include <cppunit/TestCase.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "OWLParser.h"
+#include "TestSuite.h"
 
 
 namespace dlvhex {
@@ -25,21 +20,13 @@ namespace racer {
    *
    * @test Tests parsing an OWL document.
    */
-  class TestOWLParser : public CppUnit::TestFixture
+  class TestOWLParser : public TestSuite
   {
-  private:
-
     CPPUNIT_TEST_SUITE(TestOWLParser);
     CPPUNIT_TEST(runParserTest);
     CPPUNIT_TEST_SUITE_END();
 
-
-    std::string shop;
-    std::string test;
-
   public:
-    virtual void setUp();
-
     void runParserTest();
   };
 

@@ -8,8 +8,16 @@
  * 
  */
 
-#include "TestRacerInterface.h"
 #include "RacerInterface.h"
+
+#include "TestRacerInterface.h"
+
+#include <sstream>
+#include <iostream>
+#include <string>
+#include <map>
+#include <iterator>
+
 
 using namespace dlvhex::racer;
 
@@ -23,44 +31,6 @@ TestRacerInterface::setUp()
   RacerInterface* ri = dynamic_cast<RacerInterface*>(pi);
   std::vector<std::string> v;
   ri->setOptions(v);
-
-  const char* ex = getenv("EXAMPLES");
-  if (ex)
-    {
-      shop =
-	std::string(ex) +
-	std::string("/shop.owl");
-      shopuri = "file:" + std::string(ex) + "/shop.owl";
-
-      test =
-	std::string(ex) +
-	std::string("/test.owl");
-      testuri = "file:" + std::string(ex) + "/test.owl";
-    }
-  else
-    {
-      shop = std::string("./shop.owl");
-      shopuri = std::string("file:shop.owl");
-      test = std::string("./test.owl");
-      testuri = std::string("file:test.owl");
-    }
-}
-
-void
-TestRacerInterface::output(const std::vector<Tuple>& tv)
-{
-  std::cout << std::endl;
-  for(std::vector<Tuple>::const_iterator it = tv.begin();
-      it != tv.end();
-      it++)
-    {
-      Tuple t = *it;
-      std::cout << "(";
-      // copy all elements of t to cout
-      std::copy(t.begin(), t.end(),
-		std::ostream_iterator<Term>(std::cout, ") ("));
-      std::cout << ")" << std::endl;
-    }
 }
 
 void

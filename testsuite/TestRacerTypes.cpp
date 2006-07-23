@@ -8,8 +8,11 @@
  * 
  */
 
+#include <dlvhex/Atom.h>
+#include <dlvhex/AtomSet.h>
+
 #include "TestRacerTypes.h"
-#include <iterator>
+
 using namespace dlvhex::racer;
 
 // Registers the fixture into the 'registry'

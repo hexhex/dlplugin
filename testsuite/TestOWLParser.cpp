@@ -8,29 +8,19 @@
  * 
  */
 
+#include "OWLParser.h"
+
 #include "TestOWLParser.h"
+
+#include <iosfwd>
+#include <string>
+#include <functional>
+#include <iterator>
 
 using namespace dlvhex::racer;
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TestOWLParser);
-
-
-void
-TestOWLParser::setUp()
-{
-  const char* ex = getenv("EXAMPLES");
-  if (ex)
-    {
-      shop = std::string(ex) + std::string("/shop.owl");
-      test = std::string(ex) + std::string("/test.owl");
-    }
-  else
-    {
-      shop = "shop.owl";
-      test = "test.owl";
-    }
-}
 
 void
 TestOWLParser::runParserTest()

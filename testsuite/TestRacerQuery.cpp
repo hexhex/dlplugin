@@ -8,6 +8,8 @@
  * 
  */
 
+#include "RacerQuery.h"
+
 #include "TestRacerQuery.h"
 
 using namespace dlvhex::racer;

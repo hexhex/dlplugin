@@ -3,17 +3,13 @@
 #ifndef _TESTRACERSTREAM_H
 #define _TESTRACERSTREAM_H
 
-#include <iostream>
-#include <string>
-
 #include <cppunit/TestCase.h>
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "TCPStream.h"
-#include "RacerRunner.h"
+#include "TestSuite.h"
 
 namespace dlvhex {
 namespace racer {
@@ -25,7 +21,7 @@ namespace racer {
    * TCPIOStream and TCPStreamBuf and checks whether we receive an
    * answer.
    */
-  class TestRacerStream : public CppUnit::TestFixture
+  class TestRacerStream : public TestSuite
   { 
     CPPUNIT_TEST_SUITE(TestRacerStream);
     CPPUNIT_TEST(runRacerStreamBufTest);
