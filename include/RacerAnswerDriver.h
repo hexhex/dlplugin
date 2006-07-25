@@ -65,7 +65,7 @@ namespace racer {
     error(const std::string& m) throw (RacerParsingError);
 
     RacerFlexLexer*
-    getLexer();
+    getLexer() const;
   };
 
 

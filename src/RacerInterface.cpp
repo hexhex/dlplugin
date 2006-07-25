@@ -15,7 +15,7 @@
 #include "RacerRunner.h"
 #include "RacerExtAtom.h"
 #include "OWLParser.h"
-#include "DLRewriter.h"
+#include "HexDLRewriterDriver.h"
 #include "LogBuf.h"
 #include "Registry.h"
 
@@ -30,7 +30,7 @@ using namespace dlvhex::racer;
 RacerInterface::RacerInterface()
   : stream("localhost", 8088),
     cache(new Cache),
-    rewriter(new DLRewriter(std::cin, std::cout))
+    rewriter(new HexDLRewriterDriver(std::cin, std::cout))
 { }
 
 RacerInterface::~RacerInterface()
