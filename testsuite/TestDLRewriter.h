@@ -17,8 +17,6 @@
 
 #include "TestSuite.h"
 
-#include "DLRewriter.h"
-
 namespace dlvhex {
 namespace racer {
 

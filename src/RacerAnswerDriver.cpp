@@ -32,7 +32,7 @@ RacerBaseAnswerDriver::~RacerBaseAnswerDriver()
 }
 
 RacerFlexLexer*
-RacerBaseAnswerDriver::getLexer()
+RacerBaseAnswerDriver::getLexer() const
 {
   return lexer;
 }

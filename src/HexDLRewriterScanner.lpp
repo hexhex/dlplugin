@@ -1,0 +1,74 @@
+/* -*- C++ -*- */
+
+/**
+ * @file   HexDLRewriterScanner.lpp
+ * @author Thomas Krennwallner
+ * @date   Tue Jul 25 07:37:43 2006
+ * 
+ * @brief  Defines HexDLRewriterFlexLexer::yylex() method.
+ * 
+ * 
+ */
+
+%{
+//#include "HexDLRewriterParser.hpp"
+#include "HexDLRewriterDriver.h"
+#include "HexDLRewriterFlexLexer.h"
+
+// keep the HexDLRewriterFlexLexer as close as possible to the C version
+//#define yylval (*(yy::HexDLRewriterParser::semantic_type*)lexval)
+//#define yylloc ((yy::HexDLRewriterParser::location_type*)lexloc)
+#define driver (*lexdrv)
+%}
+
+%option c++ noyywrap nounput batch debug
+%option yyclass="HexDLRewriterFlexLexer"
+%option prefix="zz"
+
+NEWLINE         \r?\n
+BLANK           [ \t]
+NUMBER          (\-)?[0-9]+
+STRING          [A-Za-z][A-Za-z0-9_\-\./]*
+QUOTED_STRING   \\\"[^\"]*\\\"
+
+COMMENT         {BLANK}*%.*\n
+
+DLATOM          DL\[[^\]]+\]\([^\)]*\)
+
+%{
+// advance the end location after each tokenizing step
+//#define YY_USER_ACTION  yylloc->columns(yyleng);
+%}
+
+%%
+
+%{
+// set begin location to the end location
+//yylloc->step();
+%}
+
+%{
+// abbreviate it as token
+//typedef yy::HexDLRewriterParser::token token;
+%}
+
+{COMMENT} {
+  driver.getOutput() << yytext;
+}
+
+{DLATOM} {
+  driver.getOutput() << driver.rewriteDLAtom(std::string(yytext));
+}
+
+%{
+// {NEWLINE} {
+//   driver.getOutput() << *yytext;
+// }
+
+// . {
+//   driver.getOutput() << *yytext;
+// }
+%}
+
+%%
+

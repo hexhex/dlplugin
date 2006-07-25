@@ -61,7 +61,7 @@
 
 #include "RacerDirector.h"
 #include "TCPStream.h"
-#include "DLRewriter.h"
+#include "HexDLRewriterDriver.h"
 #include "Registry.h"
 #include "Cache.h"
 
@@ -87,8 +87,8 @@ namespace racer {
     TCPIOStream stream;
     /// the cache for RACER queries
     BaseCache* cache;
-    /// rewrites dl-programs to hex-programs
-    DLRewriter* rewriter;
+    /// DL Rewriter facility
+    HexDLRewriterDriver* rewriter;
     /// saves properties
     Registry registry;
 

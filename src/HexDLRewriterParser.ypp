@@ -1,0 +1,167 @@
+/* -*- C++ -*- */
+
+/**
+ * @file   HexDLRewriterParser.ypp
+ * @author Thomas Krennwallner
+ * @date   Tue Jul 25 07:44:58 2006
+ * 
+ * @brief  A bison C++ parser.
+ * 
+ * 
+ */
+
+
+//
+// select the C++ parser LALR(1) skeleton
+//
+%skeleton "lalr1.cc"
+
+//
+// overwrite bison default class name "parser":
+//
+%define "parser_class_name" "HexDLRewriterParser"
+
+//
+// produce header file for the scanner
+//
+%defines
+
+//
+// Specify a prefix to use for all bison output file names
+//
+%file-prefix = "HexDLRewriterParser"
+
+%{
+#include "HexDLRewriterParserDriver.h"
+
+#include <iosfwd>
+#include <string>
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+%}
+
+// this is the parsing context, passed as parameters to the
+// yy::HexDLRewriterParser ctor
+%parse-param { dlvhex::racer::HexDLRewriterParserDriver& driver }
+
+
+// bison passes the driver as additional parameter to the lexer
+// function YY_DECL, so we can abuse the driver to get the real lexer
+// object and call the yylex() method
+%lex-param   { dlvhex::racer::HexDLRewriterParserDriver& driver }
+
+// use a yy::location object to keep track of the location information
+%locations
+
+// debug parser
+//%debug
+//%error-verbose
+//%verbose /* really verbose output */
+
+// this is YYSTYPE, the semantics
+%union {
+    std::string*      string;
+    int*              integ;
+    AtomPtr*          atom;
+    Term*             term;
+    Tuple*            terms;
+    ExternalAtom*     extatom;
+    Literal*          literal;
+    RuleHead_t*       disjunction;
+    RuleBody_t*       body;
+    Rule*             rule;
+    WeakConstraint*   wconstraint;
+    BuiltinPredicate* builtin;
+    }
+
+
+// define FlexLexer part *after* the definitions of the various types
+%{
+
+#include "HexDLRewriterFlexLexer.h"
+
+// Announce to bison the prototype we want for the lexing function
+#define YY_DECL                                                 \
+yy::HexDLRewriterParser::token_type                             \
+yylex (yy::HexDLRewriterParser::semantic_type* yylval,          \
+       yy::HexDLRewriterParser::location_type* yylloc,          \
+       dlvhex::racer::HexDLRewriterParserDriver& driver)
+
+// declare YY_DECL function for the parser
+YY_DECL;
+
+%}
+
+
+
+%start input
+
+// automagically delete all dynamically allocated objects after the
+// parsing process (but keep those identifier terms, they are passed
+// on to the individuals)
+//
+// doesn't work!
+//
+//%destructor { delete $$; } ident
+
+// in debugging mode output the content of the corresponding terminal
+// symbol
+//%printer    { debug_stream() << *$$; } STRING
+//%printer    { debug_stream() << $$; } NUMBER
+
+%%
+
+hex: /* empty */
+   | hex line
+   ;
+
+
+line: dlrule
+    | namespace
+    | ignore
+    ;
+
+ignore: /* FIXME */
+      ;
+
+namespace: NAMESPACE '(' STRING ',' STRING ')'
+         ;
+
+
+rule: rule
+    | constraint
+    ;
+
+term: STRING
+    | QUOTED_STRING
+    | NUMBER
+    | '_'
+    ;
+
+%%
+
+
+//
+// error method of bison parser -> call error method of the
+// corresponding driver
+//
+void
+yy::HexDLRewriterParser::error(const yy::HexDLRewriterParser::location_type& l,
+			       const std::string& m)
+{
+  driver->error(l, m);
+}
+
+
+//
+// abuse YY_DECL as bison callback for a pure C++ parsing engine
+//
+YY_DECL
+{
+  HexDLRewriterFlexLexer* lex = driver->getLexer();
+  lex->lexval = yylval; // set current semantic value
+  lex->lexloc = yylloc; // and the current location,
+  return (yy::HexDLRewriterParser::token_type) lex->yylex (); // finally call the drivers lexer
+} 

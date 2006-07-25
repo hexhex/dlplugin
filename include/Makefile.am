@@ -3,7 +3,8 @@ AUTOMAKE_OPTIONS = foreign
 # including headers for make dist
 noinst_HEADERS = \
                  Cache.h \
-                 DLRewriter.h \
+                 HexDLRewriterDriver.h \
+                 HexDLRewriterFlexLexer.h \
                  LogBuf.h \
                  OWLParser.h \
                  RacerBuilder.h \
