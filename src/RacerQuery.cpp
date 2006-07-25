@@ -861,7 +861,7 @@ namespace dlvhex {
 
     };
 
-  }// namespace racer
+  } // namespace racer
 } //namespace dlvhex
 
 
@@ -887,7 +887,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
 	  // tokenize the atoms of the query string
 	  boost::tokenizer<AtomSeparator> tok(qstr);
 
-	  for (boost::tokenizer<AtomSeparator>::iterator it = tok.begin();
+	  for (boost::tokenizer<AtomSeparator>::const_iterator it = tok.begin();
 	       it != tok.end(); it++)
 	    {
 	      AtomPtr ap(new Atom(*it));
