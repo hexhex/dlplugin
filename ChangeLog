@@ -1,3 +1,27 @@
+2006-07-25  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerAnswerDriver.cpp (RacerBaseAnswerDriver::getLexer): Add
+	const modifier.
+	* include/RacerAnswerDriver.h: Likewise.
+
+	* src/RacerQuery.cpp (QueryCtx::QueryCtx): Use const_iterator
+	instead of iterator.
+
+	* include/DLRewriter.h: Remove.
+	* src/DLRewriter.cpp: Likewise.
+
+	* src/HexDLRewriterDriver.cpp: Move DLRewriter to HexDLRewriter
+	and use flex / boost::tokenizer<> for the actual parsing process.
+	* src/HexDLRewriterScanner.lpp: Likewise.
+	* src/Makefile.am: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+	* include/Makefile.am: Likewise.
+	* include/HexDLRewriterFlexLexer.h: Likewise.
+	* include/HexDLRewriterDriver.h: Likewise.
+	* include/RacerInterface.h: Likewise.
+	* testsuite/TestDLRewriter.cpp: Likewise.
+	* testsuite/TestDLRewriter.h: Likewise.
+
 2006-07-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/DLRewriter.h: Use boost::ptr_vector<RewriteRule> instead
