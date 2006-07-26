@@ -18,6 +18,7 @@
 
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/erase.hpp>
 
 using namespace dlvhex::racer;
 
@@ -34,6 +35,16 @@ HexDLRewriterDriver::HexDLRewriterDriver(std::istream& i, std::ostream& o)
 HexDLRewriterDriver::~HexDLRewriterDriver()
 {
   delete lexer;
+}
+
+
+void
+HexDLRewriterDriver::reset()
+{
+  // reset counter and rewritten dl-atoms / input dl-atoms
+  extAtomNo = 0;
+  rewrittenDLAtoms.clear();
+  dlAtoms.clear();
 }
 
 
@@ -70,16 +81,25 @@ HexDLRewriterDriver::setStreams(std::istream* i, std::ostream* o)
 void
 HexDLRewriterDriver::rewrite()
 {
+  //
+  // parse and rewrite that thing
+  //
+
+  while (getLexer()->yylex() != 0) { /* no-op */ }
+
+  //
+  // if we don't have an URI, we skip the dl-atom rewriting
+  //
+  
   if (uri.empty())
     {
-      // nothing to do, just swap rdbufs of input and output stream
-
-      std::streambuf* tmp = input->rdbuf();
-      input->rdbuf(output->rdbuf());
-      output->rdbuf(tmp);
-
       return;
     }
+
+  //
+  // otherwise we get all concept and role names and add the
+  // corresponding additional rules to the HEX program
+  //
 
   std::set<Term> concepts;
   std::set<Term> roles;
@@ -95,12 +115,6 @@ HexDLRewriterDriver::rewrite()
     {
       // as for now, just ignore it
     }
-
-
-  // and now parse that thing
-
-  while (getLexer()->yylex() != 0) { /* no-op */ }
-
 
   // output rewritten dl-atoms
 
@@ -153,10 +167,7 @@ HexDLRewriterDriver::rewrite()
       Term::registerAuxiliaryName(aux.str());
     }
 
-  // reset counter and rewritten dl-atoms / input dl-atoms
-  extAtomNo = 0;
-  rewrittenDLAtoms.clear();
-  dlAtoms.clear();
+  reset();
 }
 
 
@@ -169,14 +180,13 @@ HexDLRewriterDriver::rewriteDLAtom(const std::string& dlAtom)
   // needed to distinguish ',' in input list vs. ',' in output list
   std::string::size_type brbegin = dlAtom.rfind(']');
 
-  // std::cerr << "l: " << dlAtom << ' ' << dlAtom.substr(3, brbegin - 3) << std::endl;
+  // input list separator
+  boost::char_separator<char> sep(",;");
 
   // tokenize the input list of the dl-atom string, i.e. start from
   // position 3 (skip "DL[") up to position brbegin
   boost::tokenizer<boost::char_separator<char> > tok
-    (dlAtom.substr(3, brbegin - 3),
-     boost::char_separator<char>(",;") // input list separator
-     );
+    (dlAtom.substr(3, brbegin - 3), sep);
 
   // the query string
   std::string query;
@@ -198,8 +208,6 @@ HexDLRewriterDriver::rewriteDLAtom(const std::string& dlAtom)
 	  boost::trim(lhs);
 	  boost::trim(rhs);
 
-	  // std::cerr << "eq: " << extAtomNo << ' ' << c << ' ' << lhs << ' ' << rhs << std::endl;
-
 	  // append a fresh RewriteRule
 	  rewrittenDLAtoms.push_back
 	    (new RewriteDLAtom(this->extAtomNo, c, lhs, rhs)
@@ -209,12 +217,8 @@ HexDLRewriterDriver::rewriteDLAtom(const std::string& dlAtom)
 	{
 	  query = *it;
 
-	  // std::cerr << "q: " << query << ' ' << *it << std::endl;
-
 	  // strip whitespace
 	  boost::trim(query);
-
-	  // std::cerr << "q: " << query << ' ' << *it << std::endl;
 
 	  break;
 	}
@@ -257,6 +261,44 @@ HexDLRewriterDriver::rewriteDLAtom(const std::string& dlAtom)
   //
 
   this->extAtomNo++;
+
+  return extAtom.str();
+}
+
+
+
+std::string
+HexDLRewriterDriver::rewriteCQAtom(const std::string& cqAtom)
+{
+  //
+  // count the ',' in the output list so we can append the output
+  // arity to get the correct external atom
+  //
+  
+  std::string::size_type brend = cqAtom.rfind(']');
+
+  //
+  // but first we have to distinguish between nullary and n-ary atoms,
+  // so we throw away all spaces and check what is left
+  //
+
+  std::string output = cqAtom.substr(brend + 1);
+  boost::erase_all(output, " "); 
+
+  unsigned n;
+
+  if (output == "" || output == "()") // nullary
+    {
+      n = 0;
+    }
+  else // n-ary
+    {
+      n = std::count(output.begin(), output.end(), ',') + 1;
+    }
+
+  std::ostringstream extAtom;
+
+  extAtom << "&dlCQ" << n << cqAtom.substr(5);
 
   return extAtom.str();
 }

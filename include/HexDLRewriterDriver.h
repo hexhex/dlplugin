@@ -61,6 +61,10 @@ namespace racer {
     /// keep track of dl atoms, just needed in case of an error
     std::map<unsigned, std::string> dlAtoms;
 
+    /// reset counter and other stuff
+    void
+    reset();
+
   public:
     HexDLRewriterDriver(std::istream& i, std::ostream& o);
 
@@ -82,9 +86,13 @@ namespace racer {
     void
     rewrite();
 
-    /// callback for the parser/scanner
+    /// callback for dl-atoms
     std::string
     rewriteDLAtom(const std::string&);
+
+    /// callback for cq-atoms
+    std::string
+    rewriteCQAtom(const std::string&);
   };
 
 } // namespace racer
