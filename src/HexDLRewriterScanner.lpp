@@ -35,6 +35,8 @@ COMMENT         {BLANK}*%.*\n
 
 DLATOM          DL\[[^\]]+\]\([^\)]*\)
 
+CQATOM          &dlCQ\[[^\]]+\](\([^\)]*\))?
+
 %{
 // advance the end location after each tokenizing step
 //#define YY_USER_ACTION  yylloc->columns(yyleng);
@@ -53,22 +55,19 @@ DLATOM          DL\[[^\]]+\]\([^\)]*\)
 %}
 
 {COMMENT} {
-  driver.getOutput() << yytext;
+  // we take care of comments ourselves since we don't want to rewrite
+  // commented out dl/cq-atoms
+  ECHO;
 }
 
 {DLATOM} {
   driver.getOutput() << driver.rewriteDLAtom(std::string(yytext));
 }
 
-%{
-// {NEWLINE} {
-//   driver.getOutput() << *yytext;
-// }
+{CQATOM} {
+  driver.getOutput() << driver.rewriteCQAtom(std::string(yytext));
+}
 
-// . {
-//   driver.getOutput() << *yytext;
-// }
-%}
 
 %%
 
