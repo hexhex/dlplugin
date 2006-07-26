@@ -1,3 +1,24 @@
+2006-07-26  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerExtAtom.cpp (RacerExtAtom::retrieve): Catch
+	std::exception instead of RacerError.
+
+	* examples/wires2.hex: Use the convinient syntax for &dlCQ
+	external atoms.
+
+	* src/RacerQuery.cpp (QueryCtx::QueryCtx): Determine the namespace
+	prefix in CQs and exchange the abbreviated names by the
+	corresponding fully-fledged URI.
+	(AtomSeparator::operator()): Parse whitespaces.
+
+	* testsuite/TestDLRewriter.cpp: Add CQ rewriter testcase.
+
+	* src/HexDLRewriterDriver.cpp (HexDLRewriterDriver::rewriteCQAtom):
+	New callback for the scanner.
+	* include/HexDLRewriterDriver.h: Likewise.
+
+	* src/HexDLRewriterScanner.lpp: Add &dlCQ atom rewriter.
+
 2006-07-25  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerAnswerDriver.cpp (RacerBaseAnswerDriver::getLexer): Add
