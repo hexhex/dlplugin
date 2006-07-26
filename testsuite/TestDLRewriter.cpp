@@ -32,7 +32,7 @@ TestDLRewriter::runDLRewrite()
    dr.setStreams(&fs, &os);
    dr.rewrite();
    
-   std::cout << "## " << os.str() << std::endl;
+   std::cout << "## " << std::endl << os.str() << std::endl;
  }
 
  {
@@ -44,7 +44,22 @@ TestDLRewriter::runDLRewrite()
    dr.setStreams(&fs, &os);
    dr.rewrite();
    
-   std::cout << "## " << os.str() << std::endl;
+   std::cout << "## " << std::endl << os.str() << std::endl;
+ }
+
+ {
+   std::istringstream is("p(X,Y) :- &dlCQ[\"my.owl\",a,b,c,d,\"Q1(X),Q2(Y)\"](X, Y), &dlCQ[\"my.owl\",a,b,c,d,\"Q3(Y),Q4(Z)\"](Y,Z).");
+   std::ostringstream os;
+   
+   HexDLRewriterDriver dr(is, os);
+   dr.setStreams(&is, &os);
+   dr.rewrite();
+
+   std::string s = os.str();
+   
+   std::cout << "## " << std::endl << s << std::endl;
+
+   CPPUNIT_ASSERT("p(X,Y) :- &dlCQ2[\"my.owl\",a,b,c,d,\"Q1(X),Q2(Y)\"](X, Y), &dlCQ2[\"my.owl\",a,b,c,d,\"Q3(Y),Q4(Z)\"](Y,Z)." == s);
  }
 }
 
