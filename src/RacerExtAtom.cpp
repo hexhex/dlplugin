@@ -55,7 +55,7 @@ RacerExtAtom::retrieve(const PluginAtom::Query& query,
 
       answer = qctx->getAnswer();
     }
-  catch (RacerError& e)
+  catch (std::exception& e)
     {
       throw PluginError(e.what());
     }
