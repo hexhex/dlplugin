@@ -21,6 +21,7 @@
 #include <dlvhex/Term.h>
 
 #include <boost/tokenizer.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 #include <cassert>
 
@@ -374,6 +375,7 @@ Query::isSuperseteq(const Query& q2) const
 
 ///@todo take care of negated role and concept queries
 ///@todo move createXXX methods to a QueryFactory?
+///@todo get rid of std::runtime_error
 const NRQLBody::shared_pointer
 Query::createBody() const
 {
@@ -504,6 +506,8 @@ Query::createHead() const
   return v;
 }
 
+
+///@todo get rid of std::runtime_error
 boost::shared_ptr<boost::ptr_vector<ABoxAssertion> >
 Query::createPremise() const
 {
@@ -801,6 +805,7 @@ namespace dlvhex {
     public:
       AtomSeparator() : state(INITIAL) { }
       
+      ///@todo get rid of std::runtime_error
       template <typename InputIterator, typename Token>
       bool
       operator() (InputIterator& next, InputIterator end, Token& tok)
@@ -833,6 +838,11 @@ namespace dlvhex {
 		if (state == PARENOPEN) { tok += *next; } // ignore
 		else if (state == PARENCLOSE) { reset(); ++next; return true; } // done
 		else unexpected = true;
+		break;
+
+	      case ' ':
+	      case '\t':
+		tok += *next; // always ignore whitespaces
 		break;
 
 	      default:
@@ -883,6 +893,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
       if (qstr.find('(') != std::string::npos) // parse conjunctive query
 	{
 	  AtomSet as;
+	  Tuple tup;
 
 	  // tokenize the atoms of the query string
 	  boost::tokenizer<AtomSeparator> tok(qstr);
@@ -890,7 +901,53 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
 	  for (boost::tokenizer<AtomSeparator>::const_iterator it = tok.begin();
 	       it != tok.end(); it++)
 	    {
-	      AtomPtr ap(new Atom(*it));
+	      tup.clear();
+
+	      boost::escaped_list_separator<char> esc("\\", ",()", "\"");
+	      boost::tokenizer<boost::escaped_list_separator<char> > atomizer(*it, esc);
+
+	      for (boost::tokenizer<boost::escaped_list_separator<char> >::const_iterator t = atomizer.begin();
+		   t != atomizer.end(); t++)
+		{
+		  if (!t->empty())
+		    {
+		      std::string term = *t;
+
+		      boost::trim(term);
+
+		      std::string::size_type cbegin = term.find(':');
+		      std::string::size_type octothorpe = term.find('#');
+
+		      //
+		      // determine the namespace prefix and replace
+		      // every abbr. name by the corresponding
+		      // fully-fledged namespace which can be found in
+		      // Term::namespaces
+		      //
+		      if (cbegin != std::string::npos &&
+			  octothorpe == std::string::npos)
+			{
+			  std::string prefix = term.substr(0, cbegin);
+			  std::string name = term.substr(cbegin + 1);
+
+			  for (std::vector<std::pair<std::string,std::string> >::iterator ns = Term::namespaces.begin();
+			       ns != Term::namespaces.end();
+			       ns++)
+			    {
+			      if (prefix == ns->second)
+				{
+				  term = ns->first + name;
+				  break;
+				}
+			    }
+			}
+
+		      tup.push_back(Term(term));
+		    }
+		}
+
+	      AtomPtr ap(new Atom(tup));
+
 	      as.insert(ap);
 	    }
 
