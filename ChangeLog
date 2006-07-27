@@ -1,3 +1,29 @@
+2006-07-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/Makefile.am (libdlvhexracer_la_SOURCES): Add
+	RacerNRQLBuilder.cpp.
+
+	* include/RacerNRQLBuilder.h: Move NRQL code from RacerQuery to
+	RacerNRQLBuilder.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* include/RacerQuery.h: Likewise.
+	* src/RacerQuery.cpp: Likewise.
+
+	* include/RacerNRQL.h: Refactor to RacerNRQLBuilder.
+	* include/RacerNRQL.tcc: Likewise.
+	* src/RacerNRQL.cpp: Likewise.
+	* src/RacerBuilder.cpp: Likewise.
+	* testsuite/TestRacerNRQL.cpp: Likewise.
+
+	* include/Makefile.am (noinst_HEADERS): Add RacerNRQLBuilder.h and
+	RacerNRQL.tcc.
+
+	* include/RacerQueryExpr.tcc: Use boost::indirect_iterator<>
+	instead of homemade Dereference functor.
+
+	* src/RacerQuery.cpp (QueryCtx::QueryCtx): Always quote predicate
+	names in conjunctive queries.
+
 2006-07-26  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerExtAtom.cpp (RacerExtAtom::retrieve): Catch
