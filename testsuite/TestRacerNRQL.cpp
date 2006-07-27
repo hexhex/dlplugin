@@ -27,47 +27,29 @@ TestRacerNRQL::runRacerRetrieveTest()
 {
   std::stringstream sst;
 
-  NRQLRetrieveUnderPremise nrql;
+  Query q;
 
-  nrql.addHead(new ABoxQueryVariable("X"));
-  nrql.addHead(new ABoxQueryVariable("Y"));
+  Tuple tup;
+  tup.push_back(Term("X"));
+  tup.push_back(Term("Y"));
+  q.setPatternTuple(tup);
 
-  std::auto_ptr<NRQLConjunction> c(new NRQLConjunction);
-  c->addAtom(new NRQLQueryAtom
-	     (new ConceptQuery
-	      (new ABoxQueryConcept("foo"),
-	       new ABoxQueryVariable("X")
-	       )
-	      )
-	     );
-  c->addAtom(new NRQLQueryAtom
-	     (new RoleQuery
-	      (new ABoxQueryRole("moo"),
-	       new ABoxQueryVariable("X"),
-	       new ABoxQueryVariable("Y")
-	       )
-	      )
-	     );
+  AtomSet as;
+  AtomPtr ap1(new Atom("foo(X)"));
+  AtomPtr ap2(new Atom("moo(X,Y)"));
+  as.insert(ap1);
+  as.insert(ap2);
+  q.setQuery(as);
 
-  NRQLUnion::shared_pointer u(new NRQLUnion);
-  u->addAtom(new NRQLQueryAtom
-	     (new NegationQuery
-	      (new ConceptQuery
-	       (new ABoxQueryConcept("fu"),
-		new ABoxQueryVariable("X")
-		)
-	       )
-	      )
-	     );
-
-  u->addAtom(c.release());
-  nrql.setBody(u);
+  NRQLRetrieve<NRQLConjunctionBuilder> nrql(q);
 
   sst << nrql;
      
   std::string s = sst.str();
+ 
+  std::cout << s << std::endl;
 
-  CPPUNIT_ASSERT(s == "(retrieve-under-premise () (?X ?Y) (union (not (?X fu)) (and (?X foo) (?X ?Y moo))))");
+  CPPUNIT_ASSERT(s == "(retrieve ($?X $?Y) (and ($?X $?Y moo) ($?X foo)))");
 }
     
 void

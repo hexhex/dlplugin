@@ -13,6 +13,7 @@
 #define _RACERNRQL_H
 
 #include "RacerQueryExpr.h"
+#include "RacerQuery.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
@@ -141,46 +142,32 @@ namespace racer {
   /**
    * Base class for the nRQL queries.
    */
+  template <class Builder>
   class NRQLQuery : public NRQLBase
   {
   protected:
-    std::string abox; /// name of the ABox
-    std::string tbox; /// name of the TBox
+    Builder builder;
 
-    boost::ptr_vector<ABoxQueryObject> head; /// query head
-    NRQLBody::shared_pointer body;	     /// query body
-
-    /** 
-     * Protected Ctor.
-     * 
-     * @param a ABox name
-     * @param t TBox name
-     */
-    NRQLQuery(const std::string& a, const std::string& t);
+    const Query& query;
 
     virtual std::ostream&
     output(std::ostream& s) const;
 
   public:
-    void
-    addHead(ABoxQueryObject::const_pointer e);
-
-    void
-    setHead(boost::shared_ptr<boost::ptr_vector<ABoxQueryObject> > sp);
-
-    void
-    setBody(NRQLBody::shared_pointer sp);
-
-    typedef NRQLQuery value_type;
-    typedef const value_type* const_pointer;
-    typedef boost::shared_ptr<value_type> shared_pointer;
+    /** 
+     * Ctor.
+     * 
+     * @param q
+     */
+    NRQLQuery(const Query& q);
   };
 
 
   /**
    * A retrieve query.
    */
-  class NRQLRetrieve : public NRQLQuery
+  template <class Builder>
+  class NRQLRetrieve : public NRQLQuery<Builder>
   {
   private:
     std::ostream&
@@ -188,18 +175,15 @@ namespace racer {
 
   public:
     explicit
-    NRQLRetrieve(const std::string& abox = "");
-
-    typedef NRQLRetrieve value_type;
-    typedef const value_type* const_pointer;
-    typedef boost::shared_ptr<value_type> shared_pointer;
+    NRQLRetrieve(const Query& q);
   };
 
 
   /**
    * A tbox-retrieve query.
    */
-  class NRQLTBoxRetrieve : public NRQLQuery
+  template <class Builder>
+  class NRQLTBoxRetrieve : public NRQLQuery<Builder>
   {
   private:
     std::ostream&
@@ -207,40 +191,32 @@ namespace racer {
 
   public:
     explicit
-    NRQLTBoxRetrieve(const std::string& tbox = "");
-
-    typedef NRQLTBoxRetrieve value_type;
-    typedef const value_type* const_pointer;
-    typedef boost::shared_ptr<value_type> shared_pointer;
+    NRQLTBoxRetrieve(const Query& q);
   };
 
 
   /**
    * A retrieve-under-premise query.
    */
-  class NRQLRetrieveUnderPremise : public NRQLQuery
+  template <class Builder>
+  class NRQLRetrieveUnderPremise : public NRQLQuery<Builder>
   {
   private:
-    boost::ptr_vector<ABoxAssertion> premise;	/// query premise
-
     std::ostream&
     output(std::ostream& s) const;
 
   public:
-    void
-    addPremise(ABoxAssertion::const_pointer e);
-
     explicit
-    NRQLRetrieveUnderPremise(const std::string& abox = "");
-
-    typedef NRQLRetrieveUnderPremise value_type;
-    typedef const value_type* const_pointer;
-    typedef boost::shared_ptr<value_type> shared_pointer;
+    NRQLRetrieveUnderPremise(const Query& q);
   };
-
 
 
 } // namespace racer
 } // namespace dlvhex
+
+
+// include the template implementation
+#include "RacerNRQL.tcc"
+
 
 #endif /* _RACERNRQL_H */
