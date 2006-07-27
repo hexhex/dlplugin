@@ -32,6 +32,7 @@ RacerDirector.cpp \
 RacerExtAtom.cpp \
 RacerInterface.cpp \
 RacerNRQL.cpp \
+RacerNRQLBuilder.cpp \
 RacerRunner.cpp \
 RacerQuery.cpp \
 RacerQueryExpr.cpp \
