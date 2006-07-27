@@ -22,4 +22,6 @@ noinst_HEADERS = \
                  UserDir.h \
                  RacerAnswerDriver.h \
                  RacerFlexLexer.h \
-                 RacerNRQL.h
+                 RacerNRQL.h \
+                 RacerNRQL.tcc \
+                 RacerNRQLBuilder.h
