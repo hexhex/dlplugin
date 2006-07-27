@@ -22,6 +22,7 @@
 
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 #include <cassert>
 
@@ -455,6 +456,7 @@ Query::createBody() const
 		   );
 	      }
 	    
+	    ///@todo negated concept expressions
 	    body->addAtom(new NRQLQueryAtom
 			  (new ConceptQuery
 			   (new ABoxQueryConcept
@@ -615,7 +617,6 @@ Query::createPremise() const
 
   return v;
 }
-
 
 
 
@@ -884,6 +885,23 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
   std::string ontostr = inputtuple[0].getUnquotedString();
   q->setOntology(ontostr);
 
+  // get namespace from owl document
+  OWLParser p(ontostr);
+  std::string defaultNS;
+
+  // get the ontology and parse the default namespace
+  try
+    {
+      p.parseNamespace(defaultNS);
+    }
+  catch (RacerParsingError&)
+    {
+      ///@todo why should we ignore this?
+    }
+
+  q->setNamespace(defaultNS);
+
+
   // setup the query if input tuple contains a query atom or a
   // conjunctive query
   if (inputtuple.size() > 5)
@@ -903,50 +921,50 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
 	    {
 	      tup.clear();
 
-	      boost::escaped_list_separator<char> esc("\\", ",()", "\"");
-	      boost::tokenizer<boost::escaped_list_separator<char> > atomizer(*it, esc);
+	      std::string atom = *it;
 
-	      for (boost::tokenizer<boost::escaped_list_separator<char> >::const_iterator t = atomizer.begin();
-		   t != atomizer.end(); t++)
+	      //
+	      // determine the namespace prefix and replace every
+	      // abbr. name by the corresponding fully-fledged
+	      // namespace which can be found in Term::namespaces
+	      //
+	      for (std::vector<std::pair<std::string,std::string> >::iterator ns = Term::namespaces.begin();
+		   ns != Term::namespaces.end();
+		   ns++)
 		{
-		  if (!t->empty())
-		    {
-		      std::string term = *t;
-
-		      boost::trim(term);
-
-		      std::string::size_type cbegin = term.find(':');
-		      std::string::size_type octothorpe = term.find('#');
-
-		      //
-		      // determine the namespace prefix and replace
-		      // every abbr. name by the corresponding
-		      // fully-fledged namespace which can be found in
-		      // Term::namespaces
-		      //
-		      if (cbegin != std::string::npos &&
-			  octothorpe == std::string::npos)
-			{
-			  std::string prefix = term.substr(0, cbegin);
-			  std::string name = term.substr(cbegin + 1);
-
-			  for (std::vector<std::pair<std::string,std::string> >::iterator ns = Term::namespaces.begin();
-			       ns != Term::namespaces.end();
-			       ns++)
-			    {
-			      if (prefix == ns->second)
-				{
-				  term = ns->first + name;
-				  break;
-				}
-			    }
-			}
-
-		      tup.push_back(Term(term));
-		    }
+		  boost::replace_all(atom, ns->second + ":", ns->first);
 		}
 
-	      AtomPtr ap(new Atom(tup));
+	      std::string::size_type pred = atom.find('(');
+	      std::string::size_type t1 = atom.find(',');
+	      std::string::size_type t2 = atom.find(')');
+
+	      // predicate is always quoted, otherwise we would end up
+	      // in a higher-order atom if concept or role name is
+	      // uppercase
+	      std::string predicate = atom.substr(0, pred);
+	      boost::trim(predicate);
+	      predicate = "\"" + predicate + "\"";
+
+	      if (t1 != std::string::npos)
+		{
+		  std::string a1 = atom.substr(pred + 1, t1 - pred - 1);
+		  std::string a2 = atom.substr(t1 + 1, t2 - t1 - 1);
+
+		  boost::trim(a1);
+		  boost::trim(a2);
+
+		  tup.push_back(Term(a1));
+		  tup.push_back(Term(a2));
+		}
+	      else
+		{
+		  std::string a1 = atom.substr(pred + 1, t2 - pred - 1);
+		  boost::trim(a1);
+		  tup.push_back(Term(a1));
+		}
+
+	      AtomPtr ap(new Atom(predicate, tup));
 
 	      as.insert(ap);
 	    }
@@ -959,21 +977,6 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
 	}
     }
 
-  // get namespace from owl document
-  OWLParser p(ontostr);
-  std::string defaultNS;
-
-  // get the ontology and parse the default namespace
-  try
-    {
-      p.parseNamespace(defaultNS);
-    }
-  catch (RacerParsingError&)
-    {
-      // just ignore it
-    }
-
-  q->setNamespace(defaultNS);
   q->setInterpretation(query.getInterpretation());
   q->setPatternTuple(query.getPatternTuple());
   q->setPlusC(inputtuple[1]);
