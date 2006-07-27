@@ -13,9 +13,6 @@
 #ifndef _RACERQUERY_H
 #define _RACERQUERY_H
 
-#include "RacerNRQL.h"
-#include "RacerQueryExpr.h"
-
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
@@ -23,7 +20,6 @@
 #include <string>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
 
 namespace dlvhex {
 namespace racer {
@@ -155,16 +151,6 @@ namespace racer {
     ///interpretation, false otherwise
     virtual bool
     isSuperseteq(const Query& q2) const;
-
-
-    virtual const NRQLBody::shared_pointer
-    createBody() const;
-
-    virtual boost::shared_ptr<boost::ptr_vector<ABoxQueryObject> >
-    createHead() const;
-
-    virtual boost::shared_ptr<boost::ptr_vector<ABoxAssertion> >
-    createPremise() const;
 
 
     friend std::ostream&
