@@ -16,6 +16,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/iterator/indirect_iterator.hpp>
 
 #include <iosfwd>
 #include <iterator>
@@ -24,27 +25,6 @@
 
 namespace dlvhex {
 namespace racer {
-
-
-  /**
-   * Dereferences a boost::shared_ptr.
-   */
-  struct Dereference
-  {
-    /** 
-     * Returns a reference to the object contained in ptr.
-     *
-     * @param ptr
-     * 
-     * @return ptr.operator*()
-     */
-    template<typename T>
-    T&
-    operator() (const boost::shared_ptr<T>& ptr) const
-    {
-      return *ptr;
-    }
-  };
 
 
   /** 
@@ -65,11 +45,10 @@ namespace racer {
   {
     if (!v.empty())
       {
-	std::transform(v.begin(),
-		       v.end() - 1,
-		       std::ostream_iterator<T>(s, " "),
-		       Dereference()
-		       );
+	std::copy(boost::make_indirect_iterator(v.begin()), 
+		  boost::make_indirect_iterator(v.end() - 1),
+		  std::ostream_iterator<T>(s, " ")
+		  );
 
 	s << *v.back();
       }
