@@ -62,10 +62,10 @@ RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
 void
 RacerInterface::getAtoms(AtomFunctionMap& m)
 {
-  m["dlC"]          = new RacerConceptAtom(stream, *cache, registry);
-  m["dlR"]          = new RacerRoleAtom(stream, *cache, registry);
-  m["dlConsistent"] = new RacerConsistentAtom(stream, registry);
-  m["dlDR"]         = new RacerDatatypeRoleAtom(stream, *cache, registry);
+  m["dlC"]          = new RacerConceptAtom(stream, *cache);
+  m["dlR"]          = new RacerRoleAtom(stream, *cache);
+  m["dlConsistent"] = new RacerConsistentAtom(stream);
+  m["dlDR"]         = new RacerDatatypeRoleAtom(stream, *cache);
 
   // register for each arity in range 0 to 32 a dedicated RacerCQAtom
   // external atom with specified arity
@@ -75,35 +75,21 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
   for (unsigned n = 0; n <= 32; n++)
     {
       oss << "dlCQ" << n;
-      m[oss.str()]  = new RacerCQAtom(stream, *cache, registry, n);
+      m[oss.str()]  = new RacerCQAtom(stream, *cache, n);
       oss.str("");
     }
 }
 
 void
-RacerInterface::setOptions(std::vector<std::string>& argv)
+RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ostream& out)
 {
-  /// @todo we want --verbose/--silent in argv...
-  const char* c = getenv("DEBUGCACHE");
-  if (c != 0)
+  if (doHelp)
     {
-      unsigned level;
-      std::string s(c);
-      std::istringstream iss(s);
-      iss >> level;
-
-      registry.setVerbose(level);
-
-      if (level > 1)
-	{
-	  // get rid of null logger
-	  delete log.rdbuf();
-	  // use std::cerr as output for the LogBuf
-	  log.rdbuf(new LogBuf(&std::cerr));
-	}
-
-      delete cache;
-      cache = new DebugCache;
+      out << "DL-plugin: " << std::endl << std::endl;
+      out << " --ontology=URI       Use URI as ontology for dl-atoms." << std::endl;
+      out << " --nocache            Turn off dl-caching." << std::endl;
+      out << " --debug=LEVEL        Set debug log level to LEVEL." << std::endl;
+      return;
     }
 
   std::vector<std::vector<std::string>::iterator> found;
@@ -127,7 +113,32 @@ RacerInterface::setOptions(std::vector<std::string>& argv)
 
       if (o != std::string::npos)
 	{
-	  registry.setVerbose(0);
+	  Registry::setVerbose(0);
+	  found.push_back(it);
+	}
+
+      o = it->find("--debug=");
+
+      if (o != std::string::npos)
+	{
+	  unsigned level;
+	  std::string s = it->substr(o + 8); // length of --debug= is 8
+	  std::istringstream iss(s);
+	  iss >> level;
+
+	  Registry::setVerbose(level);
+
+	  if (level > 1)
+	    {
+	      // get rid of null logger
+	      delete log.rdbuf();
+	      // use std::cerr as output for the LogBuf
+	      log.rdbuf(new LogBuf(&std::cerr));
+	    }
+
+	  delete cache;
+	  cache = new DebugCache;
+
 	  found.push_back(it);
 	}
     }

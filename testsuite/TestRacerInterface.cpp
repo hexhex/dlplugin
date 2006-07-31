@@ -30,7 +30,7 @@ TestRacerInterface::setUp()
   PluginInterface* pi = PLUGINIMPORTFUNCTION();
   RacerInterface* ri = dynamic_cast<RacerInterface*>(pi);
   std::vector<std::string> v;
-  ri->setOptions(v);
+  ri->setOptions(false, v, std::cout);
 }
 
 void

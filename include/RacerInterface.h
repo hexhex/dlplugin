@@ -89,8 +89,6 @@ namespace racer {
     BaseCache* cache;
     /// DL Rewriter facility
     HexDLRewriterDriver* rewriter;
-    /// saves properties
-    Registry registry;
 
   public:
     RacerInterface();
@@ -124,10 +122,12 @@ namespace racer {
     /**
      * Set the command line arguments here.
      *
+     * @param doHelp
      * @param argv 
+     * @param out
      */
     virtual void
-    setOptions(std::vector<std::string>& argv);
+    setOptions(bool doHelp, std::vector<std::string>& argv, std::ostream& out);
 
     /**
      * Start RACER and setup the stream.
