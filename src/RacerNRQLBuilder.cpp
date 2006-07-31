@@ -15,16 +15,9 @@
 #include "RacerQuery.h"
 #include "RacerError.h"
 
-#include <boost/ptr_container/ptr_vector.hpp>
-
 #include <iosfwd>
 
 using namespace dlvhex::racer;
-
-
-///
-/// @todo remove unneeded vector code
-///
 
 
 NRQLBuilder::~NRQLBuilder()
@@ -43,32 +36,38 @@ bool
 NRQLBuilder::createHead(std::ostream& stream, const Query& query) const
   throw(RacerBuildingError)
 {
-  boost::ptr_vector<ABoxQueryObject> v;
+  const Tuple& pat = query.getPatternTuple();
+  bool isEmpty = true;
 
-  // Iterate through the output list and build the conjunctive query
-  // head. Anonymous variables are ignored, they are going to be taken
-  // care of when we call Answer::addTuple().
-  for (Tuple::const_iterator it = query.getPatternTuple().begin();
-       it != query.getPatternTuple().end();
-       ++it)
+  // Iterate through the output list and build a nRQL head. Anonymous
+  // variables are ignored, they are going to be taken care of when we
+  // call Answer::addTuple().
+  for (Tuple::const_iterator it = pat.begin(); it != pat.end(); ++it)
     {
+      if (!isEmpty) // this skips the beginning of the output
+	{
+	  stream << ' ';
+	}
+      
       if (it->isVariable()) // variable
 	{
-	  v.push_back(new ABoxQueryVariable
-		      (it->getVariable(),
-		       ABoxQueryVariable::VariableType::noninjective
-		       )
-		      );
+	  isEmpty = false;
+
+	  stream <<
+	    ABoxQueryVariable
+	    (it->getVariable(),
+	     ABoxQueryVariable::VariableType::noninjective
+	     );
 	}
       else if (!it->isAnon()) // individual
 	{
-	  v.push_back(new ABoxQueryIndividual(it->getUnquotedString()));
+	  isEmpty = false;
+
+	  stream << ABoxQueryIndividual(it->getUnquotedString());
 	}
     }
 
-  stream << v;
-
-  return true;
+  return !isEmpty;
 }
 
 
@@ -76,11 +75,16 @@ bool
 NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
   throw(RacerBuildingError)
 {
-  boost::ptr_vector<ABoxAssertion> v;
+  const AtomSet& ints = query.getInterpretation();
+  bool isEmpty = true;
 
-  for (AtomSet::const_iterator it = query.getInterpretation().begin();
-       it != query.getInterpretation().end(); it++)
+  for (AtomSet::const_iterator it = ints.begin(); it != ints.end(); it++)
     {
+      if (!isEmpty) // this skips the beginning of the output
+	{
+	  stream << ' ';
+	}
+
       const Atom& a = *it;
       const Term pred = a.getArgument(0);
 
@@ -91,15 +95,17 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
 	      throw RacerBuildingError(pred.getUnquotedString() + " has wrong arity.");
 	    }
 
-	  v.push_back(new ABoxInstance
-		      (new ABoxQueryConcept
-		       (a.getArgument(1).getUnquotedString(),
-			query.getNamespace()),
-		       new ABoxQueryIndividual
-		       (a.getArgument(2).getUnquotedString(),
-			query.getNamespace())
-		       )
-		      );
+	  isEmpty = false;
+
+	  stream <<
+	    ABoxInstance
+	    (new ABoxQueryConcept
+	     (a.getArgument(1).getUnquotedString(),
+	      query.getNamespace()),
+	     new ABoxQueryIndividual
+	     (a.getArgument(2).getUnquotedString(),
+	      query.getNamespace())
+	     );
 	}
       else if (pred == query.getMinusC()) // minusC
 	{
@@ -108,17 +114,19 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
 	      throw RacerBuildingError(pred.getUnquotedString() + " has wrong arity.");
 	    }
 
-	  v.push_back(new ABoxInstance
-		      (new ABoxNegatedConcept
-		       (new ABoxQueryConcept
-			(a.getArgument(1).getUnquotedString(),
-			 query.getNamespace())
-			),
-		       new ABoxQueryIndividual
-		       (a.getArgument(2).getUnquotedString(),
-			query.getNamespace())
-		       )
-		      );
+	  isEmpty = false;
+
+	  stream <<
+	    ABoxInstance
+	    (new ABoxNegatedConcept
+	     (new ABoxQueryConcept
+	      (a.getArgument(1).getUnquotedString(),
+	       query.getNamespace())
+	      ),
+	     new ABoxQueryIndividual
+	     (a.getArgument(2).getUnquotedString(),
+	      query.getNamespace())
+	     );
 	}
       else if (pred == query.getPlusR()) // plusR
 	{
@@ -127,18 +135,20 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
 	      throw RacerBuildingError(pred.getUnquotedString() + " has wrong arity.");
 	    }
 
-	  v.push_back(new ABoxRelated
-		      (new ABoxQueryRole
-		       (a.getArgument(1).getUnquotedString(),
-			query.getNamespace()),
-		       new ABoxQueryIndividual
-		       (a.getArgument(2).getUnquotedString(),
-			query.getNamespace()),
-		       new ABoxQueryIndividual
-		       (a.getArgument(3).getUnquotedString(),
-			query.getNamespace())
-		       )
-		      );
+	  isEmpty = false;
+
+	  stream << 
+	    ABoxRelated
+	    (new ABoxQueryRole
+	     (a.getArgument(1).getUnquotedString(),
+	      query.getNamespace()),
+	     new ABoxQueryIndividual
+	     (a.getArgument(2).getUnquotedString(),
+	      query.getNamespace()),
+	     new ABoxQueryIndividual
+	     (a.getArgument(3).getUnquotedString(),
+	      query.getNamespace())
+	     );
 	}
       else if (pred == query.getMinusR()) // minusR
 	{
@@ -146,6 +156,8 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
 	    {
 	      throw RacerBuildingError(pred.getUnquotedString() + " has wrong arity.");
 	    }
+
+	  isEmpty = false;
 
 	  ABoxOneOfConcept::IndividualVector iv;
 	  iv.push_back(new ABoxQueryIndividual
@@ -155,20 +167,20 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
 
 	  // -R(a,b) -> (instance a (not (some R (one-of b))))
 	  // does not work? seems like there is a bug in Racer
-	  v.push_back(new ABoxInstance
-		      (new ABoxNegatedConcept
-		       (new ABoxSomeConcept
-			(new ABoxQueryRole
-			 (a.getArgument(1).getUnquotedString(),
-			  query.getNamespace()),
-			 new ABoxOneOfConcept(iv)
-			 )
-			),
-		       new ABoxQueryIndividual
-		       (a.getArgument(2).getUnquotedString(),
-			query.getNamespace())
-		       )
-		      );
+	  stream << 
+	    ABoxInstance
+	    (new ABoxNegatedConcept
+	     (new ABoxSomeConcept
+	      (new ABoxQueryRole
+	       (a.getArgument(1).getUnquotedString(),
+		query.getNamespace()),
+	       new ABoxOneOfConcept(iv)
+	       )
+	      ),
+	     new ABoxQueryIndividual
+	     (a.getArgument(2).getUnquotedString(),
+	      query.getNamespace())
+	     );
 	}
       else
 	{
@@ -176,35 +188,35 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
 	}
     }
 
-  ///@todo this is a preliminary workaround for the abox-cloning bug
+  ///@todo this is a preliminary workaround for the Racer abox-cloning bug 
 #if 1
-  if (v.empty())
+  if (isEmpty)
     {
-      v.push_back(new ABoxInstance
-		  (new ABoxQueryConcept("foo"),
-		   new ABoxQueryIndividual("bar")
-		   )
-		  );
+      isEmpty = false;
+
+      stream << 
+	ABoxInstance
+	(new ABoxQueryConcept("foo"),
+	 new ABoxQueryIndividual("bar")
+	 );
     }
 #endif
 
-  stream << v;
-
-  return true;
+  return !isEmpty;
 }
 
 
 
-///@todo take care of negated role and concept queries
+///@todo take care of negated role(?) and concept queries
 bool
 NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) const
   throw(RacerBuildingError)
 {
-  NRQLConjunction::shared_pointer body(new NRQLConjunction);
+  const AtomSet& as = query.getConjQuery();
 
-  for (AtomSet::const_iterator it = query.getConjQuery().begin();
-       it != query.getConjQuery().end();
-       it++)
+  NRQLConjunction body;
+
+  for (AtomSet::const_iterator it = as.begin(); it != as.end(); it++)
     {
       switch (it->getArity())
 	{
@@ -245,14 +257,15 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 		   );
 	      }
 	    
-	    body->addAtom(new NRQLQueryAtom
-			  (new RoleQuery
-			   (new ABoxQueryRole
-			    (it->getPredicate().getUnquotedString(),
-			     query.getNamespace()
-			     ), o1, o2
-			    )
-			   ));
+	    body.addAtom(new NRQLQueryAtom
+			 (new RoleQuery
+			  (new ABoxQueryRole
+			   (it->getPredicate().getUnquotedString(),
+			    query.getNamespace()
+			    ), o1, o2
+			   )
+			  )
+			 );
 	  }
 	  break;
 
@@ -277,14 +290,15 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 	      }
 	    
 	    ///@todo negated concept expressions
-	    body->addAtom(new NRQLQueryAtom
-			  (new ConceptQuery
-			   (new ABoxQueryConcept
-			    (it->getPredicate().getUnquotedString(),
-			     query.getNamespace()
-			     ), o1
-			    )
-			   ));
+	    body.addAtom(new NRQLQueryAtom
+			 (new ConceptQuery
+			  (new ABoxQueryConcept
+			   (it->getPredicate().getUnquotedString(),
+			    query.getNamespace()
+			    ), o1
+			   )
+			  )
+			 );
 	  }
 	  break;
 
@@ -294,7 +308,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 	}
     }
 
-  stream << *body;
+  stream << body;
 
   return true;
 }
@@ -304,7 +318,16 @@ bool
 NRQLDatatypeBuilder::createHead(std::ostream& stream, const Query& query) const
   throw(RacerBuildingError)
 {
-  if (query.getTypeFlags() == 0x1) // (const,variable) pattern
+  const Tuple& pat = query.getPatternTuple();
+
+  unsigned long type = query.getTypeFlags() & std::numeric_limits<unsigned long>::max();
+
+  if (!(type == 0x0 || type == 0x1) || pat.size() != 2)
+    {
+      throw RacerBuildingError("Incompatible pattern supplied.");
+    }
+
+  if (type == 0x1) // (const,variable) pattern
     {
       // only retrieve the datatype, let Answer add the
       // corresponding individual
@@ -312,15 +335,14 @@ NRQLDatatypeBuilder::createHead(std::ostream& stream, const Query& query) const
 				  ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate
 				  );
     }
- else if (query.getTypeFlags() == 0x0) // (variable,variable) pattern
-   {
-     stream << ABoxQueryVariable("X",
-				 ABoxQueryVariable::VariableType::substrate)
-	    << ' '
-	    << ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate
-				 );
-
-   }
+  else if (type == 0x0) // (variable,variable) pattern
+    {
+      stream << ABoxQueryVariable("X",
+				  ABoxQueryVariable::VariableType::substrate)
+	     << ' '
+	     << ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate
+				  );
+    }
 
   return true;
 }
@@ -331,46 +353,50 @@ NRQLDatatypeBuilder::createBody(std::ostream& stream, const Query& query) const
   throw(RacerBuildingError)
 {
   const Term& q = query.getQuery();
-  const Tuple& indv = query.getPatternTuple();
+  const Tuple& pat = query.getPatternTuple();
 
-  if (query.getTypeFlags() == 0x1) // (const,variable) pattern
+  unsigned long type = query.getTypeFlags() & std::numeric_limits<unsigned long>::max();
+
+  if (!(type == 0x0 || type == 0x1) || pat.size() != 2)
     {
-      NRQLConjunction::shared_pointer body(new NRQLConjunction);
-	  
-      body->addAtom(new NRQLQueryAtom
-		    (new RoleQuery
-		     (new ABoxQueryRole(q.getUnquotedString(),
-					query.getNamespace(),
-					true),
-		      new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate),
-		      new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
-		      )
-		     )
-		    );
-      body->addAtom(new NRQLQueryAtom
-		    (new SameAsQuery
-		     (new ABoxQueryVariable("X"),
-		      new ABoxQueryIndividual
-		      (indv[0].getUnquotedString(), query.getNamespace())
-		      )
-		     )
-		    );
-
-      stream << *body;
+      throw RacerBuildingError("Incompatible pattern supplied.");
     }
-  else if (query.getTypeFlags() == 0x0) // (variable,variable) pattern
+
+  if (type == 0x1) // (const,variable) pattern
     {
-      NRQLQueryAtom::shared_pointer body
-	(new NRQLQueryAtom
-	 (new RoleQuery
-	  (new ABoxQueryRole(q.getUnquotedString(), query.getNamespace(), true),
-	   new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate),
-	   new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
-	   )
+      NRQLConjunction body;
+	  
+      body.addAtom(new NRQLQueryAtom
+		   (new RoleQuery
+		    (new ABoxQueryRole(q.getUnquotedString(),
+				       query.getNamespace(),
+				       true),
+		     new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate),
+		     new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
+		     )
+		    )
+		   );
+      body.addAtom(new NRQLQueryAtom
+		   (new SameAsQuery
+		    (new ABoxQueryVariable("X"),
+		     new ABoxQueryIndividual
+		     (pat[0].getUnquotedString(), query.getNamespace())
+		     )
+		    )
+		   );
+
+      stream << body;
+    }
+  else if (type == 0x0) // (variable,variable) pattern
+    {
+      stream <<
+	NRQLQueryAtom
+	(new RoleQuery
+	 (new ABoxQueryRole(q.getUnquotedString(), query.getNamespace(), true),
+	  new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate),
+	  new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
 	  )
 	 );
-	  
-      stream << *body;
     }
 
   return true;

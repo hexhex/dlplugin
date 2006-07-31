@@ -24,8 +24,6 @@
 #include <string>
 #include <memory>
 
-#include <boost/shared_ptr.hpp>
-
 using namespace dlvhex::racer;
 
 
@@ -335,15 +333,6 @@ bool
 RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
   throw (RacerBuildingError)
 {
-  const Tuple& indv = query.getPatternTuple();
-
-  unsigned long type = query.getTypeFlags() & std::numeric_limits<unsigned long>::max();
-
-  if (!(type == 0x0 || type == 0x1) || indv.size() != 2)
-    {
-      throw RacerBuildingError("Incompatible pattern supplied.");
-    }
-
   try
     {
       stream << NRQLRetrieve<NRQLDatatypeBuilder>(query) << std::endl;
@@ -358,7 +347,7 @@ RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
 
 
 RacerNRQLBuilder::RacerNRQLBuilder(std::ostream& s)
-: RacerBuilder(s)
+  : RacerBuilder(s)
 { }
 
 
