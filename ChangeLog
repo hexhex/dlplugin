@@ -1,3 +1,42 @@
+2006-07-31  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/HexDLRewriterParser.ypp: Add support for rewriting
+	dl-atoms/cq-atoms.
+	* src/HexDLRewriterScanner.lpp: Likewise.
+	* testsuite/TestDLRewriter.cpp: Likewise.
+
+	* include/HexDLRewriterDriver.h: Let the HexDLRewriter bison
+	parser rewrite those dl-atoms/cq-atoms.
+	* src/HexDLRewriterDriver.cpp: Likewise.
+
+	* src/Makefile.am (EXTRA_DIST): Add generated HexDLRewriter
+	scanner and parser.
+	(libdlvhexracer_la_SOURCES): Add HexDLRewriterParser.ypp.
+
+	* include/RacerInterface.h (RacerInterface::setOptions): Add
+	support for help and debug output.
+	Remove Registry member.
+	* src/RacerInterface.cpp: Likewise.
+	* testsuite/TestRacerInterface.cpp: Likewise.
+
+	* include/Registry.h (Registry): Use static methods.
+	* include/RacerExtAtom.h: Likewise.
+	* src/RacerAnswerDriver.cpp: Likewise.
+	* src/RacerExtAtom.cpp: Likewise.
+	* src/Registry.cpp: Likewise.
+
+	* include/RacerFlexLexer.h: Use yyRacerFlexLexer instead of
+	yyFlexLexer.
+	* src/RacerAnswerScanner.lpp: Likewise.
+
+	* include/HexDLRewriterFlexLexer.h: Use yyHexFlexLexer instead of
+	zzFlexLexer.
+
+	* include/RacerNRQLBuilder.h: Add documentation.
+
+	* src/RacerNRQLBuilder.cpp: Stream the queries at once.
+	* src/RacerBuilder.cpp: Likewise.
+
 2006-07-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/Makefile.am (libdlvhexracer_la_SOURCES): Add
