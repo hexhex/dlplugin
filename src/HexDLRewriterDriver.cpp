@@ -13,6 +13,7 @@
 #include "HexDLRewriterDriver.h"
 #include "HexDLRewriterFlexLexer.h"
 #include "OWLParser.h"
+#include "Registry.h"
 
 #include <iosfwd>
 
@@ -41,10 +42,9 @@ HexDLRewriterDriver::~HexDLRewriterDriver()
 void
 HexDLRewriterDriver::reset()
 {
-  // reset counter and rewritten dl-atoms / input dl-atoms
+  // reset counter and rewritten dl-atoms
   extAtomNo = 0;
   rewrittenDLAtoms.clear();
-  dlAtoms.clear();
 }
 
 
@@ -85,7 +85,16 @@ HexDLRewriterDriver::rewrite()
   // parse and rewrite that thing
   //
 
-  while (getLexer()->yylex() != 0) { /* no-op */ }
+  try
+    {
+      yy::HexDLRewriterParser parser(*this);
+      parser.set_debug_level(Registry::getVerbose() > 2 ? true : false);
+      parser.parse();
+    }
+  catch (RacerParsingError& e)
+    {
+      throw PluginError(e.what());
+    }
 
   //
   // if we don't have an URI, we skip the dl-atom rewriting
@@ -111,9 +120,9 @@ HexDLRewriterDriver::rewrite()
       p.parseNames(concepts, roles);
       p.parseNamespace(defaultNS);
     }
-  catch (RacerParsingError&)
+  catch (RacerParsingError& e)
     {
-      // as for now, just ignore it
+      throw PluginError(e.what());
     }
 
   // output rewritten dl-atoms
@@ -156,7 +165,7 @@ HexDLRewriterDriver::rewrite()
 	{
 	  std::ostringstream err;
 	  err << "Couldn't rewrite DL atom "
-	      << dlAtoms[it->extAtomNo]
+	      << it->extAtomNo
 	      << ", "
 	      << s
 	      << " is not a concept and not a role.";
@@ -171,71 +180,29 @@ HexDLRewriterDriver::rewrite()
 }
 
 
-std::string
-HexDLRewriterDriver::rewriteDLAtom(const std::string& dlAtom)
+
+void
+HexDLRewriterDriver::registerDLOp(char op, const std::string& lhs, const std::string& rhs)
 {
-  // we found a new DL Atom
-  dlAtoms[this->extAtomNo] = dlAtom;
-
-  // needed to distinguish ',' in input list vs. ',' in output list
-  std::string::size_type brbegin = dlAtom.rfind(']');
-
-  // input list separator
-  boost::char_separator<char> sep(",;");
-
-  // tokenize the input list of the dl-atom string, i.e. start from
-  // position 3 (skip "DL[") up to position brbegin
-  boost::tokenizer<boost::char_separator<char> > tok
-    (dlAtom.substr(3, brbegin - 3), sep);
-
-  // the query string
-  std::string query;
-
-  // get each item from the input list
-  for (boost::tokenizer<boost::char_separator<char> >::const_iterator it = tok.begin();
-       it != tok.end(); it++)
+  if (op != 'p' && op != 'm')
     {
-      std::string::size_type pm = it->find('=');
-
-      if (pm != std::string::npos) // we have a += or -= operator
-	{
-	  char c = (*it)[pm - 1] == '+' ? 'p' : 'm';
-
-	  std::string lhs = it->substr(0, pm - 1); // skip trailing '-' resp. '+'
-	  std::string rhs = it->substr(pm + 1);    // skip preceding '='
-
-	  // strip whitespace
-	  boost::trim(lhs);
-	  boost::trim(rhs);
-
-	  // append a fresh RewriteRule
-	  rewrittenDLAtoms.push_back
-	    (new RewriteDLAtom(this->extAtomNo, c, lhs, rhs)
-	     );
-	}
-      else // no '=' found, we have got a query and are done
-	{
-	  query = *it;
-
-	  // strip whitespace
-	  boost::trim(query);
-
-	  break;
-	}
+      return;
     }
+
+  // append a fresh RewriteRule
+  rewrittenDLAtoms.push_back(new RewriteDLAtom(this->extAtomNo, op, lhs, rhs));
+}
+
+
+std::string
+HexDLRewriterDriver::rewriteDLAtom(const std::string& query, const std::string& t1)
+{
+  ///@todo let the HexDLRewriter bison parser rewrite the dl-atoms
 
   // first commandment: stream thy strings
   std::ostringstream extAtom;
 
-  // either a concept or a role external dl-atom
-  if (dlAtom.find(',', brbegin) == std::string::npos)
-    {
-      extAtom << "&dlC";
-    }
-  else
-    {
-      extAtom << "&dlR";
-    }
+  extAtom << "&dlC";
 
   // output external atoms input list
   extAtom << "[\"" 
@@ -248,12 +215,12 @@ HexDLRewriterDriver::rewriteDLAtom(const std::string& dlAtom)
 	  << extAtomNo
 	  << ",dl_mr_"
 	  << extAtomNo
-	  << ",\""
-	  << query
-	  << "\"]";
+	  << ','
+	  << (query[0] != '"' ? "\"" + query + "\"" : query)
+	  << ']';
 
   // append output list of the ext. atom
-  extAtom << dlAtom.substr(brbegin + 1);
+  extAtom << '(' << t1 << ')';
 
   //
   // now we are done, increment external atom counter and return the
@@ -266,39 +233,53 @@ HexDLRewriterDriver::rewriteDLAtom(const std::string& dlAtom)
 }
 
 
-
 std::string
-HexDLRewriterDriver::rewriteCQAtom(const std::string& cqAtom)
+HexDLRewriterDriver::rewriteDLAtom(const std::string& query,
+				   const std::string& t1,
+				   const std::string& t2)
 {
-  //
-  // count the ',' in the output list so we can append the output
-  // arity to get the correct external atom
-  //
-  
-  std::string::size_type brend = cqAtom.rfind(']');
+  ///@todo let the HexDLRewriter bison parser rewrite the dl-atoms
 
-  //
-  // but first we have to distinguish between nullary and n-ary atoms,
-  // so we throw away all spaces and check what is left
-  //
-
-  std::string output = cqAtom.substr(brend + 1);
-  boost::erase_all(output, " "); 
-
-  unsigned n;
-
-  if (output == "" || output == "()") // nullary
-    {
-      n = 0;
-    }
-  else // n-ary
-    {
-      n = std::count(output.begin(), output.end(), ',') + 1;
-    }
-
+  // first commandment: stream thy strings
   std::ostringstream extAtom;
 
-  extAtom << "&dlCQ" << n << cqAtom.substr(5);
+  extAtom << "&dlR";
+
+  // output external atoms input list
+  extAtom << "[\"" 
+	  << uri 
+	  << "\",dl_pc_"
+	  << extAtomNo
+	  << ",dl_mc_"
+	  << extAtomNo
+	  << ",dl_pr_"
+	  << extAtomNo
+	  << ",dl_mr_"
+	  << extAtomNo
+	  << ','
+	  << (query[0] != '"' ? "\"" + query + "\"" : query)
+	  << ']';
+
+  // append output list of the ext. atom
+  extAtom << '(' << t1 << ',' << t2 << ')';
+
+  //
+  // now we are done, increment external atom counter and return the
+  // external atom
+  //
+
+  this->extAtomNo++;
 
   return extAtom.str();
+}
+
+
+void
+HexDLRewriterDriver::error(const yy::location& l,
+			   const std::string& m) throw (RacerParsingError)
+{
+  std::ostringstream s;
+  s << "Parsing error at " << l << ": " << m;
+
+  throw RacerParsingError(s.str());
 }

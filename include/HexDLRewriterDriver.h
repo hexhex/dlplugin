@@ -22,6 +22,9 @@
 
 #include <boost/ptr_container/ptr_vector.hpp>
 
+#include "HexDLRewriterParser.hpp"
+#include "RacerError.h"
+
 // some forward declaration 
 class HexDLRewriterFlexLexer;
 
@@ -58,9 +61,6 @@ namespace racer {
     /// keep track of rewritten dl-atoms
     boost::ptr_vector<RewriteDLAtom> rewrittenDLAtoms;
 
-    /// keep track of dl atoms, just needed in case of an error
-    std::map<unsigned, std::string> dlAtoms;
-
     /// reset counter and other stuff
     void
     reset();
@@ -86,13 +86,20 @@ namespace racer {
     void
     rewrite();
 
+    void
+    error(const yy::location& l, const std::string& m) throw (RacerParsingError);
+
     /// callback for dl-atoms
     std::string
-    rewriteDLAtom(const std::string&);
+    rewriteDLAtom(const std::string& query, const std::string& t1);
 
-    /// callback for cq-atoms
+    /// callback for dl-atoms
     std::string
-    rewriteCQAtom(const std::string&);
+    rewriteDLAtom(const std::string& query, const std::string& t1, const std::string& t2);
+
+    /// callback for dl-atoms
+    void
+    registerDLOp(char op, const std::string& lhs, const std::string& rhs);
   };
 
 } // namespace racer
