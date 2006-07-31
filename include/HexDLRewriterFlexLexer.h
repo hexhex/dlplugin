@@ -13,21 +13,19 @@
 #ifndef _HEXDLREWRITERFLEXLEXER
 #define _HEXDLREWRITERFLEXLEXER
 
-//#include "HexDLRewriterParser.hpp"
-
 // put FlexLexer.h into its own include guards or yyFlexLexer gets
 // redefined
 #ifndef __FLEX_LEXER_H
 #undef yyFlexLexer
-#define yyFlexLexer zzFlexLexer
+#define yyFlexLexer yyHexFlexLexer
 #include <FlexLexer.h>
 #endif
 
 /// forward declaration
 namespace dlvhex {
-namespace racer {
-  class HexDLRewriterDriver;
-} // namespace racer
+  namespace racer {
+    class HexDLRewriterDriver;
+  } // namespace racer
 } // namespace dlvhex
 
 /**
@@ -36,14 +34,13 @@ namespace racer {
  * Sad but true, we can't put HexDLRewriterFlexLexer into the
  * dlvhex::racer namespace, flex is not aware of namespaces.
  */
-class HexDLRewriterFlexLexer : public zzFlexLexer
+struct HexDLRewriterFlexLexer : public yyHexFlexLexer
 {
-public:
   HexDLRewriterFlexLexer(dlvhex::racer::HexDLRewriterDriver* d) : lexdrv(d) { }
   virtual ~HexDLRewriterFlexLexer() { }
   dlvhex::racer::HexDLRewriterDriver* lexdrv;
-//   yy::HexParser::location_type* lexloc;
-//   yy::HexParser::semantic_type* lexval;
+  yy::HexDLRewriterParser::location_type* lexloc;
+  yy::HexDLRewriterParser::semantic_type* lexval;
   int yylex(); // implemented in HexDLRewriterScanner.lpp
 };
 
