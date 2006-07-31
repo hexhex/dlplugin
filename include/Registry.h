@@ -22,46 +22,43 @@ namespace racer {
   class Registry
   {
   private:
-    unsigned verbose;
-    bool una;
-    bool datasubstrate;
-    std::string kbName;
-    std::string openURL;
+    static unsigned verbose;
+    static bool una;
+    static bool datasubstrate;
+    static std::string kbName;
+    static std::string openURL;
 
-  public:
     Registry();
 
-    virtual
-    ~Registry();
+  public:
+    static unsigned
+    getVerbose();
 
-    unsigned
-    getVerbose() const;
-
-    void
+    static void
     setVerbose(unsigned);
 
-    std::string
-    getKBName() const;
+    static std::string
+    getKBName();
 
-    void
+    static void
     setKBName(const std::string&);
 
-    std::string
-    getOpenURL() const;
+    static std::string
+    getOpenURL();
 
-    void
+    static void
     setOpenURL(const std::string&);
 
-    bool
-    getUNA() const;
+    static bool
+    getUNA();
 
-    void
+    static void
     setUNA(bool);
 
-    bool
-    getDataSubstrateMirroring() const;
+    static bool
+    getDataSubstrateMirroring();
 
-    void
+    static void
     setDataSubstrateMirroring(bool);
   };
 

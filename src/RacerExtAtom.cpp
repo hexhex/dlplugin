@@ -15,6 +15,7 @@
 #include "RacerDirector.h"
 #include "RacerQuery.h"
 #include "Cache.h"
+#include "Registry.h"
 
 #include "dlvhex/Atom.h"
 #include "dlvhex/Term.h"
@@ -28,10 +29,8 @@
 using namespace dlvhex::racer;
 
 
-RacerExtAtom::RacerExtAtom(std::iostream& s,
-			   Registry& regs)
-  : stream(s),
-    registry(regs)
+RacerExtAtom::RacerExtAtom(std::iostream& s)
+  : stream(s)
 { }
 
 RacerExtAtom::~RacerExtAtom()
@@ -66,17 +65,17 @@ RacerExtAtom::getComposite(const dlvhex::racer::Query& query) const
 {
   RacerCompositeDirector::shared_pointer comp(new RacerCompositeDirector(stream));
 
-  if (!registry.getUNA()) // only set UNA once
+  if (!Registry::getUNA()) // only set UNA once
     {
       comp->add(new RacerUNA(stream));
-      registry.setUNA(true);
+      Registry::setUNA(true);
     }
 
-  if (registry.getOpenURL() != query.getOntology()) // only load ontology if its new
+  if (Registry::getOpenURL() != query.getOntology()) // only load ontology if its new
     {
       comp->add(new RacerOpenOWL(stream));
       comp->add(new RacerDirector<RacerImportOntologies,RacerIgnoreAnswer>(stream));
-      registry.setOpenURL(query.getOntology());
+      Registry::setOpenURL(query.getOntology());
     }
 
   comp->add(new RacerTempABox(stream));
@@ -86,8 +85,8 @@ RacerExtAtom::getComposite(const dlvhex::racer::Query& query) const
 }
 
 
-RacerCachingAtom::RacerCachingAtom(std::iostream& s, BaseCache& c, Registry& regs)
-  : RacerExtAtom(s, regs),
+RacerCachingAtom::RacerCachingAtom(std::iostream& s, BaseCache& c)
+  : RacerExtAtom(s),
     cache(c)
 { }
 
@@ -98,7 +97,7 @@ RacerCachingAtom::getCachedDirectors(const dlvhex::racer::Query& q, RacerBaseDir
 
   comp->add(cmd); // the actual command to send
 
-  unsigned level = registry.getVerbose();
+  unsigned level = Registry::getVerbose();
 
   if (level == 0) // no caching
     {
@@ -114,8 +113,8 @@ RacerCachingAtom::getCachedDirectors(const dlvhex::racer::Query& q, RacerBaseDir
 
 
 
-RacerConceptAtom::RacerConceptAtom(std::iostream& s, BaseCache& c, Registry& regs)
-  : RacerCachingAtom(s, c, regs)
+RacerConceptAtom::RacerConceptAtom(std::iostream& s, BaseCache& c)
+  : RacerCachingAtom(s, c)
 {
   //
   // &dlC[kb,plusC,minusC,plusR,minusR,query](X)
@@ -149,8 +148,8 @@ RacerConceptAtom::getDirectors(const dlvhex::racer::Query& query) const
 }
 
 
-RacerRoleAtom::RacerRoleAtom(std::iostream& s, BaseCache& c, Registry& regs)
-  : RacerCachingAtom(s, c, regs)
+RacerRoleAtom::RacerRoleAtom(std::iostream& s, BaseCache& c)
+  : RacerCachingAtom(s, c)
 {
   //
   // &dlR[kb,plusC,minusC,plusR,minusR,query](X,Y)
@@ -191,8 +190,8 @@ RacerRoleAtom::getDirectors(const dlvhex::racer::Query& query) const
 
 
 
-RacerConsistentAtom::RacerConsistentAtom(std::iostream& s, Registry& regs)
-  : RacerExtAtom(s, regs)
+RacerConsistentAtom::RacerConsistentAtom(std::iostream& s)
+  : RacerExtAtom(s)
 {
   //
   // &dlConsistent[kb,plusC,minusC,plusR,minusR]()
@@ -220,8 +219,8 @@ RacerConsistentAtom::getDirectors(const dlvhex::racer::Query& q) const
 
 
 
-RacerDatatypeRoleAtom::RacerDatatypeRoleAtom(std::iostream& s, BaseCache& c, Registry& regs)
-  : RacerCachingAtom(s, c, regs)
+RacerDatatypeRoleAtom::RacerDatatypeRoleAtom(std::iostream& s, BaseCache& c)
+  : RacerCachingAtom(s, c)
 {
   //
   // &dlDR[kb,plusC,minusC,plusR,minusR,query](X,Y)
@@ -245,10 +244,10 @@ RacerDatatypeRoleAtom::getDirectors(const dlvhex::racer::Query& query) const
       ///@todo this is kind of a hack, maybe we should unify this stuff...
       RacerCompositeDirector* dir = new RacerCompositeDirector(stream);
 
-      if (!registry.getDataSubstrateMirroring())
+      if (!Registry::getDataSubstrateMirroring())
 	{
 	  dir->add(new RacerDirector<RacerDataSubstrateMirrorBuilder,RacerIgnoreAnswer>(stream));
-	  registry.setDataSubstrateMirroring(true);
+	  Registry::setDataSubstrateMirroring(true);
 	}
 
       dir->add(new RacerIndvDataFillersQuery(stream));
@@ -263,8 +262,8 @@ RacerDatatypeRoleAtom::getDirectors(const dlvhex::racer::Query& query) const
 
 
 
-RacerCQAtom::RacerCQAtom(std::iostream& s, BaseCache& c, Registry& regs, unsigned n)
-  : RacerCachingAtom(s, c, regs)
+RacerCQAtom::RacerCQAtom(std::iostream& s, BaseCache& c, unsigned n)
+  : RacerCachingAtom(s, c)
 {
   //
   // &dlCQn[kb,plusC,minusC,plusR,minusR,query](X_1,...,X_n)

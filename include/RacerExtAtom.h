@@ -21,7 +21,6 @@
 #include "RacerQuery.h"
 #include "RacerInterface.h"
 #include "RacerDirector.h"
-#include "Registry.h"
 #include "Cache.h"
 
 #include <iosfwd>
@@ -41,11 +40,8 @@ namespace racer {
     /// director instances
     std::iostream& stream;
 
-    /// keep a reference to the property map
-    Registry& registry;
-    
     /// Ctor
-    RacerExtAtom(std::iostream&, Registry&);
+    RacerExtAtom(std::iostream&);
 
     /// Dtor
     virtual
@@ -95,7 +91,7 @@ namespace racer {
     getCachedDirectors(const dlvhex::racer::Query&, RacerBaseDirector*) const;
 
   public:
-    RacerCachingAtom(std::iostream&, BaseCache&, Registry&);
+    RacerCachingAtom(std::iostream&, BaseCache&);
   };
 
 
@@ -118,7 +114,7 @@ namespace racer {
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
-    RacerConceptAtom(std::iostream&, BaseCache&, Registry&);
+    RacerConceptAtom(std::iostream&, BaseCache&);
   };
 
 
@@ -142,7 +138,7 @@ namespace racer {
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
-    RacerRoleAtom(std::iostream&, BaseCache&, Registry&);
+    RacerRoleAtom(std::iostream&, BaseCache&);
   };
 
 
@@ -166,7 +162,7 @@ namespace racer {
 
   public:
     explicit
-    RacerConsistentAtom(std::iostream&, Registry&);
+    RacerConsistentAtom(std::iostream&);
   };
 
 
@@ -190,7 +186,7 @@ namespace racer {
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
-    RacerDatatypeRoleAtom(std::iostream&, BaseCache&, Registry&);
+    RacerDatatypeRoleAtom(std::iostream&, BaseCache&);
   };
 
 
@@ -213,7 +209,7 @@ namespace racer {
     getDirectors(const dlvhex::racer::Query& query) const;
 
   public:
-    RacerCQAtom(std::iostream&, BaseCache&, Registry&, unsigned n);
+    RacerCQAtom(std::iostream&, BaseCache&, unsigned n);
   };
 
 } // namespace racer

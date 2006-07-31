@@ -16,6 +16,7 @@
 #include "RacerAnswerParser.hpp"
 #include "RacerQuery.h"
 #include "RacerError.h"
+#include "Registry.h"
 
 using namespace dlvhex::racer;
 
@@ -83,7 +84,7 @@ RacerAnswerDriver::parse(Answer &a) throw (RacerParsingError)
       if (!stream.eof())
 	{
 	  yy::RacerAnswerParser parser(*this, a);
-	  parser.set_debug_level(false);
+	  parser.set_debug_level(Registry::getVerbose() > 2 ? true : false);
 	  lexer->switch_streams(&stream, &std::cerr);
 	  parser.parse();
 	  syncStream();

@@ -16,73 +16,74 @@
 
 using namespace dlvhex::racer;
 
+
+unsigned Registry::verbose(1);
+bool Registry::una(false);
+bool Registry::datasubstrate(false);
+std::string Registry::kbName;
+std::string Registry::openURL;
+
+
 Registry::Registry()
-  : verbose(1),
-    una(false),
-    datasubstrate(false)
-{}
-
-
-Registry::~Registry()
-{}
+{ }
 
 
 unsigned
-Registry::getVerbose() const
+Registry::getVerbose()
 {
-  return verbose;
+  return Registry::verbose;
 }
 
 void
 Registry::setVerbose(unsigned v)
 {
-  verbose = v;
+  Registry::verbose = v;
 }
 
 std::string
-Registry::getKBName() const
+Registry::getKBName()
 {
-  return kbName;
+  return Registry::kbName;
 }
 
 void
 Registry::setKBName(const std::string& k)
 {
-  kbName = k;
+  Registry::kbName = k;
 }
 
 std::string
-Registry::getOpenURL() const
+Registry::getOpenURL()
 {
-  return openURL;
+  return Registry::openURL;
 }
 
 void
 Registry::setOpenURL(const std::string& o)
 {
-  openURL = o;
+  Registry::openURL = o;
 }
 
 bool
-Registry::getUNA() const
+Registry::getUNA()
 {
-  return una;
+  return Registry::una;
 }
 
 void
 Registry::setUNA(bool u)
 {
-  una = u;
+  Registry::una = u;
 }
 
 bool
-Registry::getDataSubstrateMirroring() const
+Registry::getDataSubstrateMirroring()
 {
-  return datasubstrate;
+  return Registry::datasubstrate;
 }
 
 void
 Registry::setDataSubstrateMirroring(bool d)
 {
-  datasubstrate = d;
+  Registry::datasubstrate = d;
 }
