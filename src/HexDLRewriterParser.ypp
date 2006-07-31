@@ -11,71 +11,65 @@
  */
 
 
-//
-// select the C++ parser LALR(1) skeleton
-//
 %skeleton "lalr1.cc"
-
-//
-// overwrite bison default class name "parser":
-//
 %define "parser_class_name" "HexDLRewriterParser"
-
-//
-// produce header file for the scanner
-//
 %defines
-
-//
-// Specify a prefix to use for all bison output file names
-//
 %file-prefix = "HexDLRewriterParser"
 
 %{
-#include "HexDLRewriterParserDriver.h"
+#include "HexDLRewriterDriver.h"
+
+#include "dlvhex/Term.h"
 
 #include <iosfwd>
 #include <string>
+#include <iterator>
 
+#include <boost/ptr_container/ptr_vector.hpp>
 
-//////////////////////////////////////////////////////////////////////////////
+  // why do we need this forward declaration?
+  namespace dlvhex {
+    namespace racer {
+      class HexDLRewriterDriver;
+    }
+  }
 
 %}
 
 // this is the parsing context, passed as parameters to the
 // yy::HexDLRewriterParser ctor
-%parse-param { dlvhex::racer::HexDLRewriterParserDriver& driver }
+%parse-param { dlvhex::racer::HexDLRewriterDriver& driver }
 
 
 // bison passes the driver as additional parameter to the lexer
 // function YY_DECL, so we can abuse the driver to get the real lexer
 // object and call the yylex() method
-%lex-param   { dlvhex::racer::HexDLRewriterParserDriver& driver }
+%lex-param   { dlvhex::racer::HexDLRewriterDriver& driver }
 
 // use a yy::location object to keep track of the location information
 %locations
 
 // debug parser
-//%debug
-//%error-verbose
-//%verbose /* really verbose output */
+%debug
+%error-verbose
+%verbose /* really verbose output */
 
 // this is YYSTYPE, the semantics
 %union {
-    std::string*      string;
-    int*              integ;
-    AtomPtr*          atom;
-    Term*             term;
-    Tuple*            terms;
-    ExternalAtom*     extatom;
-    Literal*          literal;
-    RuleHead_t*       disjunction;
-    RuleBody_t*       body;
-    Rule*             rule;
-    WeakConstraint*   wconstraint;
-    BuiltinPredicate* builtin;
-    }
+  std::string* sval;
+  int ival;
+  boost::ptr_vector<std::string>* bodylist;
+  Term* termval;
+  Tuple* tupleval;
+}
 
+%token <sval> STRING LITERAL
+%token <ival> NUMBER
+%token DLATOM CQATOM
+%type <bodylist> body
+%type <sval> dlquery cqatom dlatom literal
+%type <termval> term
+%type <tupleval> terms output
 
 // define FlexLexer part *after* the definitions of the various types
 %{
@@ -87,58 +81,218 @@
 yy::HexDLRewriterParser::token_type                             \
 yylex (yy::HexDLRewriterParser::semantic_type* yylval,          \
        yy::HexDLRewriterParser::location_type* yylloc,          \
-       dlvhex::racer::HexDLRewriterParserDriver& driver)
+       dlvhex::racer::HexDLRewriterDriver& driver)
 
 // declare YY_DECL function for the parser
 YY_DECL;
 
 %}
 
-
-
-%start input
-
 // automagically delete all dynamically allocated objects after the
-// parsing process (but keep those identifier terms, they are passed
-// on to the individuals)
-//
-// doesn't work!
-//
-//%destructor { delete $$; } ident
+// parsing process
+%destructor { delete $$; } STRING body
 
 // in debugging mode output the content of the corresponding terminal
 // symbol
-//%printer    { debug_stream() << *$$; } STRING
-//%printer    { debug_stream() << $$; } NUMBER
+%printer    { debug_stream() << *$$; } STRING LITERAL dlquery dlatom cqatom literal
 
 %%
 
-hex: /* empty */
-   | hex line
+prog: /* empty */
+    | prog rule
+    ;
+
+
+// we only parse the body of a rule
+rule: body '.'
+      {
+	driver.getOutput() << ' ';
+
+	std::copy($1->begin(), $1->end() - 1,
+		  std::ostream_iterator<std::string>(driver.getOutput(), ", ")
+		  );
+	driver.getOutput() << $1->back();
+
+	driver.getOutput() << '.';
+
+	delete $1;
+      }
+    ;
+
+
+// the body contains literals
+body: literal
+      {
+	$$ = new boost::ptr_vector<std::string>;
+	$$->push_back($1);
+      }
+    | body ',' literal
+      {
+	$$ = $1;
+	$$->push_back($3);
+      }
+    ;
+
+
+// a literal is either an expression we don't care about,
+// i.e. anything but dl-atoms and cq-atoms, or a cq-atom/dl-atom
+literal: LITERAL
+         {
+	   $$ = $1;
+ 	 }
+       | cqatom
+         {
+	   $$ = $1;
+ 	 }
+       | dlatom
+         {
+	   $$ = $1;
+	 }
+       ;
+
+
+// a cq-atom is the external atom &dlCQ[uri,a,b,c,d,q](X_1,...X_n), we
+// rewrite it to &dlCQn[uri,a,b,c,d,q](X_1,...,X_n)
+cqatom: CQATOM '[' terms ']' output
+        {
+	  std::ostringstream oss;
+
+	  // rewrite external atom
+
+	  oss << "&dlCQ" << $5->size() << '[';
+
+	  // append input list
+
+	  std::copy($3->begin(), $3->end() - 1,
+		    std::ostream_iterator<Term>(oss, ",")
+		    );
+
+	  oss << $3->back() << ']';
+
+	  // append output list
+
+	  if (!$5->empty())
+	    {
+	      oss << '(';
+	      
+	      std::copy($5->begin(), $5->end() - 1,
+			std::ostream_iterator<Term>(oss, ",")
+			);
+	      
+	      oss << $5->back() << ')';
+	    }
+	  
+	  $$ = new std::string(oss.str());
+
+	  delete $3;
+	  delete $5;
+	}
+      ;
+
+
+// the output list
+output: /* empty */
+        {
+	  $$ = new Tuple;
+	}
+      | '(' ')'
+        {
+	  $$ = new Tuple;
+	}
+      | '(' terms ')'
+        {
+	  $$ = $2;
+	}
+      ;
+
+
+// list of terms
+terms: term
+       {
+	 $$ = new Tuple(1, *$1);
+	 delete $1;
+       }
+     | terms ',' term
+       {
+	 $$ = $1;
+	 $$->push_back(*$3);
+	 delete $3;
+       }
+     ;
+
+
+// a term is either a string, a number or an anonymous variable
+term: STRING
+      {
+	$$ = new Term(*$1);
+	delete $1;
+      }
+    | NUMBER
+      {
+	$$ = new Term($1);
+      }
+    | '_'
+      {
+	$$ = new Term;
+      }
+    ;
+
+
+// we rewrite dl-atoms to &dlC/&dlR external atoms
+dlatom: DLATOM dlquery '(' STRING ')'
+        {
+	  $$ = new std::string(driver.rewriteDLAtom(*$2, *$4));
+
+	  delete $2;
+	  delete $4;
+	}
+      | DLATOM dlquery '(' STRING ',' STRING ')'
+        {
+	  $$ = new std::string(driver.rewriteDLAtom(*$2, *$4, *$6));
+
+	  delete $2;
+	  delete $4;
+	  delete $6;
+	}
+      ;
+
+
+// a dlquery is either an input list with operations and a query or
+// just a query
+dlquery: '[' ops ';' STRING ']'
+         {
+	   $$ = $4;
+	 }
+       | '[' STRING ']'
+         {
+	   $$ = $2;
+	 }
+       ;
+
+
+// list of operations
+ops: op
+   | ops ',' op
    ;
 
 
-line: dlrule
-    | namespace
-    | ignore
-    ;
+// an operation is either lhs += rhs or lhs -= rhs. We register them
+// at so we can append the rewritten rules for the input of the
+// dl-atoms after the parsing process.
+op: STRING '+' '=' STRING
+    {
+      driver.registerDLOp('p', *$1, *$4);
+      delete $1;
+      delete $4;
+    }
+  | STRING '-' '=' STRING
+    {
+      driver.registerDLOp('m', *$1, *$4);
+      delete $1;
+      delete $4;
+    }
+  ;
 
-ignore: /* FIXME */
-      ;
-
-namespace: NAMESPACE '(' STRING ',' STRING ')'
-         ;
-
-
-rule: rule
-    | constraint
-    ;
-
-term: STRING
-    | QUOTED_STRING
-    | NUMBER
-    | '_'
-    ;
 
 %%
 
@@ -151,7 +305,7 @@ void
 yy::HexDLRewriterParser::error(const yy::HexDLRewriterParser::location_type& l,
 			       const std::string& m)
 {
-  driver->error(l, m);
+  driver.error(l, m);
 }
 
 
@@ -160,7 +314,7 @@ yy::HexDLRewriterParser::error(const yy::HexDLRewriterParser::location_type& l,
 //
 YY_DECL
 {
-  HexDLRewriterFlexLexer* lex = driver->getLexer();
+  HexDLRewriterFlexLexer* lex = driver.getLexer();
   lex->lexval = yylval; // set current semantic value
   lex->lexloc = yylloc; // and the current location,
   return (yy::HexDLRewriterParser::token_type) lex->yylex (); // finally call the drivers lexer

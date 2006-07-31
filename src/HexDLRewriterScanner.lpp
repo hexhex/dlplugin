@@ -11,63 +11,135 @@
  */
 
 %{
-//#include "HexDLRewriterParser.hpp"
+#include "HexDLRewriterParser.hpp"
 #include "HexDLRewriterDriver.h"
 #include "HexDLRewriterFlexLexer.h"
 
 // keep the HexDLRewriterFlexLexer as close as possible to the C version
-//#define yylval (*(yy::HexDLRewriterParser::semantic_type*)lexval)
-//#define yylloc ((yy::HexDLRewriterParser::location_type*)lexloc)
+#define yylval (*(yy::HexDLRewriterParser::semantic_type*)lexval)
+#define yylloc ((yy::HexDLRewriterParser::location_type*)lexloc)
 #define driver (*lexdrv)
 %}
 
 %option c++ noyywrap nounput batch debug
 %option yyclass="HexDLRewriterFlexLexer"
-%option prefix="zz"
+%option prefix="yyHex"
 
 NEWLINE         \r?\n
 BLANK           [ \t]
+STRING          (\-)?[A-Za-z][A-Za-z_0-9]*
+QUOTED_STRING   \"[^\"]*\"
 NUMBER          (\-)?[0-9]+
-STRING          [A-Za-z][A-Za-z0-9_\-\./]*
-QUOTED_STRING   \\\"[^\"]*\\\"
 
-COMMENT         {BLANK}*%.*\n
+COMMENT         {BLANK}*%.*{NEWLINE}
 
-DLATOM          DL\[[^\]]+\]\([^\)]*\)
+CONS            (:-|<-)
 
-CQATOM          &dlCQ\[[^\]]+\](\([^\)]*\))?
+INPUTLIST       \[[^\]]+\]
+OUTPUTLIST      \([^\)]*\)
+
+DLATOM          DL{INPUTLIST}{OUTPUTLIST}
+CQATOM          &dlCQ{INPUTLIST}({OUTPUTLIST})?
+
+LITERAL         (("not"|"non"){BLANK}+)?({STRING}|{QUOTED_STRING})({OUTPUTLIST})?
+EXTATOM         &{STRING}{INPUTLIST}({OUTPUTLIST})?
+INFIXATOM       {STRING}{BLANK}*("="|"!="|"<>"|"=="|"<"|">"|"<="|">="){BLANK}*({STRING}|{NUMBER})({BLANK}*("+"|"-"|"*"|"/"){BLANK}*({STRING}|{NUMBER}))?
+AGGREGATE       #{STRING}{OUTPUTLIST}
+
+%x body atom list
 
 %{
 // advance the end location after each tokenizing step
-//#define YY_USER_ACTION  yylloc->columns(yyleng);
+#define YY_USER_ACTION  yylloc->columns(yyleng);
 %}
 
 %%
 
 %{
 // set begin location to the end location
-//yylloc->step();
+yylloc->step();
 %}
 
 %{
 // abbreviate it as token
-//typedef yy::HexDLRewriterParser::token token;
+typedef yy::HexDLRewriterParser::token token;
 %}
 
-{COMMENT} {
+
+<*>{COMMENT} {
+  yylloc->lines(1);
   // we take care of comments ourselves since we don't want to rewrite
   // commented out dl/cq-atoms
   ECHO;
 }
 
-{DLATOM} {
-  driver.getOutput() << driver.rewriteDLAtom(std::string(yytext));
+
+<body,atom>"." {
+  // start over again when the body of a rule is done
+  BEGIN(INITIAL);
+  return yy::HexDLRewriterParser::token_type(*yytext);
 }
 
-{CQATOM} {
-  driver.getOutput() << driver.rewriteCQAtom(std::string(yytext));
+
+<body,atom>"," {
+  BEGIN(body);
+  return yy::HexDLRewriterParser::token_type(*yytext);
 }
 
+
+{CONS}        BEGIN(body); ECHO;
+
+
+<body,atom,list>{BLANK}+    yylloc->step();
+
+
+<body>{
+
+  {DLATOM} {
+    yyless(2); // skip DL, but rescan the input/output list
+    BEGIN(atom);
+    return token::DLATOM;
+  }
+
+  {CQATOM} {
+    yyless(5); // skip &dlCQ, but rescan the input/output list
+    BEGIN(atom);
+    return token::CQATOM;
+  }
+
+  ({EXTATOM}|{INFIXATOM}|{AGGREGATE}|{LITERAL}) {
+    yylval.sval = new std::string(yytext);
+    return token::LITERAL;
+  }
+
+}
+
+
+<atom>[\(\[]  BEGIN(list); return yy::HexDLRewriterParser::token_type(*yytext);
+
+
+<list>{
+
+  ({STRING}|{QUOTED_STRING}) {
+    yylval.sval = new std::string(yytext);
+    return token::STRING;
+  }
+
+  {NUMBER} {
+    std::istringstream(yytext) >> yylval.ival;
+    return token::NUMBER; 
+  }
+
+  [\)\]]      BEGIN(atom); return yy::HexDLRewriterParser::token_type(*yytext);
+
+  [\_+-=,]    return yy::HexDLRewriterParser::token_type(*yytext);
+
+}
+
+
+<*>{NEWLINE}  yylloc->lines(yyleng); ECHO;
+
+<*>.          ECHO;
 
 %%
 
