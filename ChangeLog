@@ -1,4 +1,24 @@
+2006-08-01  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/HexDLRewriterFlexLexer.h: Fix documentation.
+	* include/RacerFlexLexer.h: Likewise.
+	* include/RacerQuery.h: Likewise.
+
+	* src/RacerQuery.cpp: Add support for negated concept expressions.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	
+	* include/RacerInterface.h: Move plugin overview to
+	documentation.dox.
+	* documentation.dox: Likewise.
+
+	* Makefile.am (EXTRA_DIST): Add documentation.dox.
+
+	* doxygen.cfg: Use *.dox file for documentation purposes.
+
 2006-07-31  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/Makefile.am (EXTRA_DIST): Add dl-shop.dlp and
+	shop-http.dlp.
 
 	* src/HexDLRewriterParser.ypp: Add support for rewriting
 	dl-atoms/cq-atoms.
