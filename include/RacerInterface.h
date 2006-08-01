@@ -7,52 +7,6 @@
  * 
  * @brief  Interface to the RACER plugin.
  * 
- * @defgroup PluginOverview Overview of the Racer plugin 
- *
- * This is a brief overview of the Racer plugin with its components
- * and their relationships and information flow.
- *
- * @verbatim
-     ________             ________________
-    |        |           |                | instantiates and maintains the
-    | DLVHEX |<--------->| RacerInterface | TCP IOStream, the DL Cache and
-    |________|           |________________| creates the external atoms.
-       | ^ ^              ________________
-       | | |             |                | Rewrites DL programs to HEX
-       | | +------------>| DL Rewriter    | programs.
-       | |               |________________|
-       | |
-       | |
- Query | | Answer
-       | |
-    ___v_|____________
-   |                  | setup of Query objects and RacerDirectors, on-the-fly
-   | RacerExtAtom     | RACER process creation
-   |__________________|
-   |                  | represents a Racer command and provides caching and
-   | RacerDirector    | command chaining support as well as inconsistency handling
-   |            ^^    |
-   |__||________||____|
-   |  ||     |  ||    | RacerBuilder uses the Query to create RACER commands
-   |  vv     |        | 
-   | Racer   | Racer  | RacerParser fills Answer with the corresponding reply
-   | Builder | Parser | of RACER
-   |_________|________|
-   |                  | handles network connection
-   | TCP IOStream     |
-   |__________________|
-           ^^
- __________||___________ Process
- __________||___________ boundary
-           ||
-    _______vv_________
-   |                  |
-   |    RACER DL      |
-   |   Inference      |
-   |     Engine       |
-   |__________________|
-   @endverbatim
- *
  *
  */
 
