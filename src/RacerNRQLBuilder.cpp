@@ -207,7 +207,6 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
 
 
 
-///@todo take care of negated role(?) and concept queries
 bool
 NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) const
   throw(RacerBuildingError)
@@ -288,17 +287,33 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 		   query.getNamespace()
 		   );
 	      }
-	    
-	    ///@todo negated concept expressions
-	    body.addAtom(new NRQLQueryAtom
-			 (new ConceptQuery
-			  (new ABoxQueryConcept
-			   (it->getPredicate().getUnquotedString(),
-			    query.getNamespace()
-			    ), o1
-			   )
-			  )
-			 );
+
+	    if (it->isStronglyNegated())
+	      {
+		body.addAtom(new NRQLQueryAtom
+			     (new ConceptQuery
+			      (new ABoxNegatedConcept
+			       (new ABoxQueryConcept
+				(it->getPredicate().getUnquotedString(),
+				 query.getNamespace()
+				 )
+				), o1
+			       )
+			      )
+			     );
+	      }
+	    else
+	      {
+		body.addAtom(new NRQLQueryAtom
+			     (new ConceptQuery
+			      (new ABoxQueryConcept
+			       (it->getPredicate().getUnquotedString(),
+				query.getNamespace()
+				), o1
+			       )
+			      )
+			     );
+	      }
 	  }
 	  break;
 

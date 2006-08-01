@@ -10,8 +10,9 @@
  * 
  */
 
-#include "OWLParser.h"
 #include "RacerQuery.h"
+
+#include "OWLParser.h"
 #include "RacerError.h"
 
 #include <dlvhex/PluginInterface.h>
@@ -525,6 +526,8 @@ Answer::addTuple(const Tuple& out)
 }
 
 
+
+
 QueryCtx::QueryCtx()
   : q(new Query), a(new Answer(q))
 { }
@@ -557,17 +560,27 @@ namespace dlvhex {
     public:
       AtomSeparator() : state(INITIAL) { }
       
-      ///@todo get rid of std::runtime_error
+      /** 
+       * Tokenizes list of atoms found in next and appends each atom
+       * to tok.
+       *
+       * @param next
+       * @param end
+       * @param tok
+       * 
+       * @return true if a full atom could be parsed, false otherwise.
+       */
       template <typename InputIterator, typename Token>
       bool
       operator() (InputIterator& next, InputIterator end, Token& tok)
+	throw (RacerParsingError)
       {
 	tok = Token();
 	
 	if (next == end)
 	  {
 	    if (state == PARENCLOSE) return false;
-	    else throw std::runtime_error("this is foo");
+	    else throw RacerParsingError("this is foo");
 	  }
 
 	bool unexpected = false;
@@ -604,7 +617,7 @@ namespace dlvhex {
 	      }
 
 	    if (unexpected)
-	      throw std::runtime_error("unexpected " + *next);
+	      throw RacerParsingError("unexpected " + *next);
 	  }
 	
 	if (state == PARENCLOSE)
@@ -647,7 +660,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
     }
   catch (RacerParsingError&)
     {
-      ///@todo why should we ignore this?
+      ///@todo should we ignore this?
     }
 
   q->setNamespace(defaultNS);
@@ -695,7 +708,17 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
 	      // uppercase
 	      std::string predicate = atom.substr(0, pred);
 	      boost::trim(predicate);
-	      predicate = "\"" + predicate + "\"";
+
+	      bool isNegated = predicate[0] == '-' ? true : false;
+
+	      if (isNegated)
+		{
+		  predicate = "\"" + predicate.substr(1) + "\"";
+		}
+	      else
+		{
+		  predicate = "\"" + predicate + "\"";
+		}
 
 	      if (t1 != std::string::npos)
 		{
@@ -715,7 +738,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
 		  tup.push_back(Term(a1));
 		}
 
-	      AtomPtr ap(new Atom(predicate, tup));
+	      AtomPtr ap(new Atom(predicate, tup, isNegated));
 
 	      as.insert(ap);
 	    }
@@ -736,17 +759,22 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
   q->setMinusR(inputtuple[4]);
 }
 
+
 QueryCtx::QueryCtx(const QueryCtx& qctx)
 {
   setQuery(qctx.q);
   setAnswer(qctx.a);
+
+  this->a->setQuery(this->q);
 }
+
 
 QueryCtx::~QueryCtx()
 {
-  delete q;
-  delete a;
+  if (q) delete q;
+  if (a) delete a;
 }
+
 
 void
 QueryCtx::setQuery(Query* q)
@@ -762,12 +790,14 @@ QueryCtx::setQuery(Query* q)
     }
 }
 
+
 Query&
 QueryCtx::getQuery() const
 {
   assert(this->q != 0);
   return *this->q;
 }
+
 
 void
 QueryCtx::setAnswer(Answer* a)
@@ -782,6 +812,7 @@ QueryCtx::setAnswer(Answer* a)
       this->a->setQuery(this->q);
     }
 }
+
 
 Answer&
 QueryCtx::getAnswer() const
