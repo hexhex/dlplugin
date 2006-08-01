@@ -21,9 +21,9 @@
 #include <FlexLexer.h>
 #endif
 
-/// forward declaration
 namespace dlvhex {
   namespace racer {
+    // forward declaration
     class HexDLRewriterDriver;
   } // namespace racer
 } // namespace dlvhex

@@ -261,12 +261,19 @@ namespace racer {
   class QueryCtx
   {
   private:
-    Query* q;
-    Answer* a;
+    Query* q;  /// the Query object
+    Answer* a; /// the Answer object
 
   public:
+    /// Ctor
     QueryCtx();
 
+    /** 
+     * Ctor which utilizes PluginAtom::Query to fill the members of
+     * @see{q} and creates @see{a} with a reference to @see{q}.
+     * 
+     * @param query 
+     */
     explicit
     QueryCtx(const PluginAtom::Query& query);
 
