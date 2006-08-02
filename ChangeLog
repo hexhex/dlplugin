@@ -1,3 +1,20 @@
+2006-08-02  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/RacerQuery.h: Add support for Racer warning messages.
+	* src/RacerExtAtom.cpp: Likewise.
+	* src/RacerAnswerScanner.lpp: Likewise.
+
+	* src/RacerQuery.cpp (Answer::addTuple): In case of boolean
+	answers we add the pattern tuple as output.
+
+	* src/RacerNRQLBuilder.cpp (NRQLBuilder::createHead): Always
+	create individuals with namespace.
+
+	* src/RacerAnswerParser.ypp: Add workaround for a Racer bug in
+	nRQL answers.
+	In case of a boolean answers we just add an empty Tuple and let
+	Answer handle it.
+	
 2006-08-01  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/HexDLRewriterFlexLexer.h: Fix documentation.
