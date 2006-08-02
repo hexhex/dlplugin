@@ -100,19 +100,24 @@ YY_DECL;
 
 %%
 
-racer: ANSWER message '\n'
-     | ERROR STRING '\n'
+racer: ANSWER message STRING '\n'
        {
-	 std::string err(*$2);
+	 answer.setWarningMessage(*$3);
+	 delete $3;
+       }
+     | ERROR STRING STRING '\n'
+       {
+	 answer.setErrorMessage(*$2);
 	 delete $2;
 
-	 answer.setErrorMessage(err);
+	 answer.setWarningMessage(*$3);
+	 delete $3;
 
 	 // Racer returns "ABox XXX is incoherent." for 'old' Racer
 	 // queries, and "ABox XXX is inconsistent! Querying denied."
 	 // for nRQL queries.
-	 if (err.find("incoherent") != std::string::npos ||
-	     err.find("inconsistent") != std::string::npos)
+	 if (answer.getErrorMessage().find("incoherent") != std::string::npos ||
+	     answer.getErrorMessage().find("inconsistent") != std::string::npos)
 	   {
 	     // if kb gets inconsistent just return without error and
 	     // set incoherent flag
@@ -120,7 +125,7 @@ racer: ANSWER message '\n'
 	   }
 	 else
 	   {
-	     throw dlvhex::racer::RacerParsingError(err);
+	     throw dlvhex::racer::RacerParsingError(answer.getErrorMessage());
 	   }
        }
 ;
@@ -133,7 +138,7 @@ message: boolean | list | status
 boolean: TRUE
          {
 	   answer.setAnswer(true);
-	   answer.setTuples(std::vector<Tuple>(1));
+ 	   answer.addTuple(Tuple());
 	 }
        | NIL
          {
@@ -248,6 +253,12 @@ individual: '|' URI '|'
 	    }
 ;
 
+/// @todo the 5th variable type is just a workaround for a Racer bug
+/// in nRQL queries like (retrieve (|http://foo#moo|)
+/// (|http://foo#moo| *TOP*)), where we get answer pairs like
+/// (|$?http://foo#moo| |http://foo#moo|) instead of
+/// ($?|http://foo#moo| |http://foo#moo|)
+
 // Racer has 4 types of variables
 variable: '?' STRING
           {
@@ -262,6 +273,10 @@ variable: '?' STRING
 	    delete $3;
 	  }
         | '$' '?' '*' STRING
+          {
+	    delete $4;
+	  }
+        | '|' '$' '?' URI '|'
           {
 	    delete $4;
 	  }
