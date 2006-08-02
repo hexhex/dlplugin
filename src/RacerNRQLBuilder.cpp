@@ -63,7 +63,7 @@ NRQLBuilder::createHead(std::ostream& stream, const Query& query) const
 	{
 	  isEmpty = false;
 
-	  stream << ABoxQueryIndividual(it->getUnquotedString());
+	  stream << ABoxQueryIndividual(it->getUnquotedString(), query.getNamespace());
 	}
     }
 
