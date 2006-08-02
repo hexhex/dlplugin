@@ -421,6 +421,18 @@ Answer::getErrorMessage() const
 }
 
 void
+Answer::setWarningMessage(const std::string& warningMsg)
+{
+  this->warningMsg = warningMsg;
+}
+
+const std::string&
+Answer::getWarningMessage() const
+{
+  return this->warningMsg;
+}
+
+void
 Answer::setAnswer(bool answer)
 {
   this->answer = answer;
@@ -480,13 +492,14 @@ Answer::addTuple(const Tuple& out)
     }
   else // a non-conjunctive query needs special treatment
     {
+      const Tuple& pat = query->getPatternTuple();
       unsigned long type = query->getTypeFlags() & std::numeric_limits<unsigned long>::max();
       
       if (type == 0x2) // left retrieval
 	{
 	  Tuple tmp(out);
 
-	  std::string p = query->getPatternTuple()[1].getUnquotedString();
+	  std::string p = pat[1].getUnquotedString();
 
 	  if (p.find('#') == std::string::npos)
 	    {
@@ -503,7 +516,7 @@ Answer::addTuple(const Tuple& out)
 	{
 	  Tuple tmp;
 
-	  std::string p = query->getPatternTuple()[0].getUnquotedString();
+	  std::string p = pat[0].getUnquotedString();
 
 	  if (p.find('#') == std::string::npos)
 	    {
@@ -518,7 +531,11 @@ Answer::addTuple(const Tuple& out)
 
 	  PluginAtom::Answer::addTuple(tmp);
 	}
-      else // either a ground or a full retrieval query
+      else if (query->isBoolean()) // ground query
+	{
+	  PluginAtom::Answer::addTuple(pat);
+	}
+      else // full retrieval query
 	{
 	  PluginAtom::Answer::addTuple(out);
 	}
