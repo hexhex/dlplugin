@@ -52,6 +52,11 @@ RacerExtAtom::retrieve(const PluginAtom::Query& query,
 
       qctx = dirs->query(qctx);
 
+      if (Registry::getVerbose() > 0 && !qctx->getAnswer().getWarningMessage().empty())
+	{
+	  std::cerr << "Warning: " << qctx->getAnswer().getWarningMessage() << std::endl;
+	}
+
       answer = qctx->getAnswer();
     }
   catch (std::exception& e)

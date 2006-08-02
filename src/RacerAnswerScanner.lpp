@@ -69,7 +69,7 @@ HIERPART        (\/\/{AUTHORITY}{PATHABEMPTY})|(\/{PATHABSOLUTE})|(\/{PATHROOTLE
 SCHEME          [A-Za-z][A-Za-z0-9+-.]*
 URI             {SCHEME}:{HIERPART}(\?{QUERY})?(\#{FRAGMENT})?
 
-%x racererror raceranswer eatanswerfudge answertrailer
+%x racererror raceranswer eatanswerfudge eaterrorfudge answertrailer
 
 %{
 // advance the end location after each tokenizing step
@@ -88,7 +88,7 @@ yylloc->step();
   typedef yy::RacerAnswerParser::token token;
 %}
 
-^":error"  BEGIN(racererror); return token::ERROR;
+^":error"  BEGIN(eaterrorfudge); return token::ERROR;
 ^":answer" BEGIN(eatanswerfudge); return token::ANSWER;
 
 
@@ -100,25 +100,39 @@ yylloc->step();
 }
 
 
-<racererror>[^\n]+ { /* get the error message until next \n */
-    BEGIN(INITIAL);
+<eaterrorfudge>{
+
+  [0-9 ]*         /* eat all numbers and blanks */ yylloc->step();
+  [^0-9 ]         BEGIN(racererror); yyless(0);
+
+}
+
+
+<racererror>{
+
+  [^\"]* {
+    // this is the error message
     yylval.sval = new std::string(yytext);
     return token::STRING;
- }
+  }
+
+  "\""            BEGIN(answertrailer); yyless(0);
+
+}
 
 
 <raceranswer>{
 
-  "NIL\""       BEGIN(answertrailer); return token::NIL;
-  "T\""         BEGIN(answertrailer); return token::TRUE;
-  "\""          BEGIN(answertrailer); yylloc->step();
+  "NIL\""         BEGIN(answertrailer); return token::NIL;
+  "T\""           BEGIN(answertrailer); return token::TRUE;
+  "\""            BEGIN(answertrailer); yylloc->step();
 
   {URI} {
      yylval.sval = new std::string(yytext);
      return token::URI;
   }
 
-  [()|$*?]     return yy::RacerAnswerParser::token_type(*yytext);
+  [()|$*?]        return yy::RacerAnswerParser::token_type(*yytext);
 
   {STRING} {
     yylval.sval = new std::string(yytext);
@@ -138,15 +152,21 @@ yylloc->step();
 }
 
 
-<answertrailer>[^\n]+ { /* ignore rest of answer */
-  BEGIN(INITIAL);
-  yylloc->step();
- }
+<answertrailer>{
+
+  \"[^\"]*\" {
+    // get the warning message
+    BEGIN(INITIAL);
+    yylval.sval = new std::string(yytext + 1, yyleng - 2); // skip "
+    return token::STRING;
+  }
+
+}
 
 
 <*>{BLANK}+       /* skip blanks */ yylloc->step();
 
-{NEWLINE}         yylloc->lines(yyleng); return yy::RacerAnswerParser::token_type('\n');
+{NEWLINE}         yylloc->lines(yyleng); return yy::RacerAnswerParser::token_type(*yytext);
 
 .                 driver.error(*yylloc, "invalid character");
 

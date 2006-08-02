@@ -212,6 +212,8 @@ namespace racer {
   private:
     /// a RACER error message 
     std::string errorMsg;
+    /// a RACER warning message
+    std::string warningMsg;
     /// ABox is inconsistent
     bool isIncoherent;
     /// a boolean answer
@@ -242,6 +244,12 @@ namespace racer {
 
     virtual const std::string&
     getErrorMessage() const;
+
+    virtual void
+    setWarningMessage(const std::string& warningMsg);
+
+    virtual const std::string&
+    getWarningMessage() const;
 
     virtual void
     setAnswer(bool answer);
