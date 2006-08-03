@@ -22,12 +22,15 @@ stack.hh
 
 dlvhexlib_LTLIBRARIES = libdlvhexracer.la
 libdlvhexracer_la_SOURCES = \
+Answer.cpp \
 Cache.cpp \
 HexDLRewriterParser.ypp \
 HexDLRewriterScanner.lpp \
 HexDLRewriterDriver.cpp \
 LogBuf.cpp \
 OWLParser.cpp \
+Query.cpp \
+QueryCtx.cpp \
 RacerAnswerParser.ypp \
 RacerAnswerScanner.lpp \
 RacerAnswerDriver.cpp \
@@ -38,7 +41,6 @@ RacerInterface.cpp \
 RacerNRQL.cpp \
 RacerNRQLBuilder.cpp \
 RacerRunner.cpp \
-RacerQuery.cpp \
 RacerQueryExpr.cpp \
 Registry.cpp \
 TCPStream.cpp \
