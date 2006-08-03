@@ -2,18 +2,20 @@ AUTOMAKE_OPTIONS = foreign
 
 # including headers for make dist
 noinst_HEADERS = \
+                 Answer.h \
                  Cache.h \
                  HexDLRewriterDriver.h \
                  HexDLRewriterFlexLexer.h \
                  LogBuf.h \
                  OWLParser.h \
+                 Query.h \
+                 QueryCtx.h \
                  RacerBuilder.h \
                  RacerDirector.h \
                  RacerDirector.tcc \
                  RacerError.h \
                  RacerExtAtom.h \
                  RacerInterface.h \
-                 RacerQuery.h \
                  RacerQueryExpr.h \
                  RacerQueryExpr.tcc \
                  RacerRunner.h \
