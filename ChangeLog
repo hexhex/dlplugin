@@ -1,3 +1,42 @@
+2006-08-03  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/Makefile.am (noinst_HEADERS): Add Answer.h, Query.h and
+	QueryCtx.h.
+
+	* src/Makefile.am (libdlvhexracer_la_SOURCES): Add Answer.cpp,
+	Query.cpp and QueryCtx.cpp.
+
+	* include/RacerQuery.h: Remove.
+	* src/RacerQuery.cpp: Likewise.
+
+	* include/Answer.h: Split RacerQuery into Answer, Query, DLQuery and
+	QueryCtx.
+	* include/Query.h: Likewise.
+	* include/QueryCtx.h: Likewise.
+	* include/RacerNRQLBuilder.h: Likewise.
+	* include/RacerNRQL.tcc: Likewise.
+	* include/RacerNRQL.h: Likewise.
+	* include/RacerExtAtom.h: Likewise.
+	* include/RacerDirector.h: Likewise.
+	* include/RacerBuilder.h: Likewise.
+	* include/RacerAnswerDriver.h: Likewise.
+	* include/Cache.h: Likewise.
+	* src/QueryCtx.cpp: Likewise.
+	* src/Query.cpp: Likewise.
+	* src/Answer.cpp: Likewise.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* src/RacerExtAtom.cpp: Likewise.
+	* src/RacerDirector.cpp: Likewise.
+	* src/RacerBuilder.cpp: Likewise.
+	* src/RacerAnswerParser.ypp: Likewise.
+	* src/RacerAnswerDriver.cpp: Likewise.
+	* src/Cache.cpp: Likewise.
+	* testsuite/TestRacerQuery.cpp: Likewise.
+	* testsuite/TestRacerParse.cpp: Likewise.
+	* testsuite/TestRacerNRQL.cpp: Likewise.
+	* testsuite/TestRacerDirector.cpp: Likewise.
+	* testsuite/TestRacerBuilder.cpp: Likewise.
+
 2006-08-02  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/RacerQuery.h: Add support for Racer warning messages.
