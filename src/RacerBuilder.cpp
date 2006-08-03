@@ -14,7 +14,7 @@
 
 #include "RacerNRQL.h"
 #include "RacerNRQLBuilder.h"
-#include "RacerQuery.h"
+#include "Query.h"
 
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
@@ -33,6 +33,23 @@ RacerBuilder::RacerBuilder(std::ostream& s)
 
 RacerBuilder::~RacerBuilder()
 { }
+
+
+
+RacerSimpleCommandBuilder::RacerSimpleCommandBuilder(std::ostream& s,
+						     const std::string& cmd)
+  : RacerBuilder(s),
+    command(cmd)
+{ }
+
+
+bool
+RacerSimpleCommandBuilder::buildCommand(Query&)
+{
+  stream << command << std::endl;
+  return true;
+}
+
 
 
 RacerStateBuilder::RacerStateBuilder(std::ostream& s)
@@ -79,10 +96,11 @@ RacerIsConceptMemberBuilder::RacerIsConceptMemberBuilder(std::ostream& s)
 bool
 RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
-  const Term& q = query.getQuery();
-  const Tuple& indv = query.getPatternTuple();
+  const DLQuery dlq = query.getDLQuery();
+  const Term& q = dlq.getQuery();
+  const Tuple& indv = dlq.getPatternTuple();
 
-  if (!(query.isBoolean() && indv.size() == 1))
+  if (!(dlq.isBoolean() && indv.size() == 1))
     {
       throw RacerBuildingError("Incompatible pattern supplied.");
     }
@@ -117,10 +135,11 @@ RacerIsRoleMemberBuilder::RacerIsRoleMemberBuilder(std::ostream& s)
 bool
 RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
-  const Term& q = query.getQuery();
-  const Tuple& indv = query.getPatternTuple();
+  const DLQuery dlq = query.getDLQuery();
+  const Term& q = dlq.getQuery();
+  const Tuple& indv = dlq.getPatternTuple();
 
-  if (!(query.isBoolean() && indv.size() == 2))
+  if (!(dlq.isBoolean() && indv.size() == 2))
     {
       throw RacerBuildingError("Incompatible pattern supplied.");
     }
@@ -160,10 +179,11 @@ bool
 RacerIndividualFillersBuilder::buildCommand(Query& query)
   throw (RacerBuildingError)
 {
-  const Term& q = query.getQuery();
-  const Tuple& indv = query.getPatternTuple();
+  const DLQuery dlq = query.getDLQuery();
+  const Term& q = dlq.getQuery();
+  const Tuple& indv = dlq.getPatternTuple();
 
-  unsigned long type = query.getTypeFlags() & std::numeric_limits<unsigned long>::max();
+  unsigned long type = dlq.getTypeFlags() & std::numeric_limits<unsigned long>::max();
 
   if (!(type == 0x1 || type == 0x2) || indv.size() != 2)
     {
@@ -225,7 +245,8 @@ RacerConceptInstancesBuilder::RacerConceptInstancesBuilder(std::ostream& s)
 bool
 RacerConceptInstancesBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
-  const Term& q = query.getQuery();
+  const DLQuery dlq = query.getDLQuery();
+  const Term& q = dlq.getQuery();
   std::string concept = q.getUnquotedString();
 
   try
@@ -266,7 +287,8 @@ RacerRoleIndividualsBuilder::RacerRoleIndividualsBuilder(std::ostream& s)
 bool
 RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
-  const Term& q = query.getQuery();
+  const DLQuery dlq = query.getDLQuery();
+  const Term& q = dlq.getQuery();
 
   try
     {

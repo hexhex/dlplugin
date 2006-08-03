@@ -14,13 +14,15 @@
 #define _RACERBUILDER_H
 
 #include "RacerError.h"
-#include "RacerQuery.h"
 
 #include <iosfwd>
 #include <string>
 
 namespace dlvhex {
 namespace racer {
+
+  // fwd decl
+  class Query;
 
   /**
    * @brief Base Builder for building RACER commands.
@@ -254,21 +256,13 @@ namespace racer {
     std::string command;
 
   public:
-    RacerSimpleCommandBuilder(std::ostream& s,
-			      const std::string& cmd)
-      : RacerBuilder(s),
-	command(cmd)
-    { }
+    RacerSimpleCommandBuilder(std::ostream& s, const std::string& cmd);
 
     /**
      * Just send a simple command to the stream.
      */
     virtual bool
-    buildCommand(Query&)
-    {
-      stream << command << std::endl;
-      return true;
-    }
+    buildCommand(Query&);
   };
 
 

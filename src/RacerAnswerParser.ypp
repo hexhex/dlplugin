@@ -19,7 +19,7 @@
 %{
 #include "dlvhex/Term.h"
 
-#include "RacerQuery.h"
+#include "Answer.h"
 #include "RacerAnswerDriver.h"
 #include "RacerError.h"
 

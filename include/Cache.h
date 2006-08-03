@@ -14,7 +14,8 @@
 #ifndef _CACHE_H
 #define _CACHE_H
 
-#include "RacerQuery.h"
+#include "QueryCtx.h"
+#include "Query.h"
 
 #include <set>
 

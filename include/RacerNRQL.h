@@ -13,7 +13,6 @@
 #define _RACERNRQL_H
 
 #include "RacerQueryExpr.h"
-#include "RacerQuery.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
@@ -23,6 +22,8 @@
 namespace dlvhex {
 namespace racer {
 
+  // fwd decl
+  class Query;
 
 
   /**

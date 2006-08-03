@@ -12,7 +12,7 @@
 
 #include "RacerNRQLBuilder.h"
 #include "RacerNRQL.h"
-#include "RacerQuery.h"
+#include "Query.h"
 #include "RacerError.h"
 
 #include <iosfwd>
@@ -36,7 +36,8 @@ bool
 NRQLBuilder::createHead(std::ostream& stream, const Query& query) const
   throw(RacerBuildingError)
 {
-  const Tuple& pat = query.getPatternTuple();
+  const DLQuery& dlq = query.getDLQuery();
+  const Tuple& pat = dlq.getPatternTuple();
   bool isEmpty = true;
 
   // Iterate through the output list and build a nRQL head. Anonymous
@@ -211,7 +212,8 @@ bool
 NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) const
   throw(RacerBuildingError)
 {
-  const AtomSet& as = query.getConjQuery();
+  const DLQuery& dlq = query.getDLQuery();
+  const AtomSet& as = dlq.getConjQuery();
 
   NRQLConjunction body;
 
@@ -333,9 +335,10 @@ bool
 NRQLDatatypeBuilder::createHead(std::ostream& stream, const Query& query) const
   throw(RacerBuildingError)
 {
-  const Tuple& pat = query.getPatternTuple();
+  const DLQuery& dlq = query.getDLQuery();
+  const Tuple& pat = dlq.getPatternTuple();
 
-  unsigned long type = query.getTypeFlags() & std::numeric_limits<unsigned long>::max();
+  unsigned long type = dlq.getTypeFlags() & std::numeric_limits<unsigned long>::max();
 
   if (!(type == 0x0 || type == 0x1) || pat.size() != 2)
     {
@@ -367,10 +370,11 @@ bool
 NRQLDatatypeBuilder::createBody(std::ostream& stream, const Query& query) const
   throw(RacerBuildingError)
 {
-  const Term& q = query.getQuery();
-  const Tuple& pat = query.getPatternTuple();
+  const DLQuery& dlq = query.getDLQuery();
+  const Term& q = dlq.getQuery();
+  const Tuple& pat = dlq.getPatternTuple();
 
-  unsigned long type = query.getTypeFlags() & std::numeric_limits<unsigned long>::max();
+  unsigned long type = dlq.getTypeFlags() & std::numeric_limits<unsigned long>::max();
 
   if (!(type == 0x0 || type == 0x1) || pat.size() != 2)
     {

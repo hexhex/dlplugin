@@ -12,9 +12,9 @@
 #include <iostream>
 
 #include "RacerAnswerDriver.h"
+#include "Answer.h"
 #include "RacerFlexLexer.h"
 #include "RacerAnswerParser.hpp"
-#include "RacerQuery.h"
 #include "RacerError.h"
 #include "Registry.h"
 

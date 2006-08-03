@@ -13,7 +13,7 @@
 #include "RacerExtAtom.h"
 #include "RacerInterface.h"
 #include "RacerDirector.h"
-#include "RacerQuery.h"
+#include "QueryCtx.h"
 #include "Cache.h"
 #include "Registry.h"
 
@@ -138,11 +138,13 @@ RacerConceptAtom::RacerConceptAtom(std::iostream& s, BaseCache& c)
 RacerBaseDirector::shared_pointer
 RacerConceptAtom::getDirectors(const dlvhex::racer::Query& query) const
 {
-  if (query.isRetrieval()) // retrieval mode
+  const DLQuery& dlq = query.getDLQuery();
+
+  if (dlq.isRetrieval()) // retrieval mode
     {
       return getCachedDirectors(query, new RacerConceptQuery(stream));
     }
-  else if (query.isBoolean()) // boolean query mode
+  else if (dlq.isBoolean()) // boolean query mode
     {
       return getCachedDirectors(query, new RacerIsConceptQuery(stream));
     }
@@ -173,15 +175,17 @@ RacerRoleAtom::RacerRoleAtom(std::iostream& s, BaseCache& c)
 RacerBaseDirector::shared_pointer
 RacerRoleAtom::getDirectors(const dlvhex::racer::Query& query) const
 {
-  if (query.isRetrieval()) // retrieval mode
+  const DLQuery& dlq = query.getDLQuery();
+
+  if (dlq.isRetrieval()) // retrieval mode
     {
       return getCachedDirectors(query, new RacerRoleQuery(stream));
     }
-  else if (query.isBoolean()) // boolean query mode
+  else if (dlq.isBoolean()) // boolean query mode
     {
       return getCachedDirectors(query, new RacerIsRoleQuery(stream));
     }
-  else if (query.isMixed()) // pattern retrieval mode
+  else if (dlq.isMixed()) // pattern retrieval mode
     {
       return getCachedDirectors(query, new RacerIndvFillersQuery(stream));
     }
@@ -244,7 +248,9 @@ RacerDatatypeRoleAtom::RacerDatatypeRoleAtom(std::iostream& s, BaseCache& c)
 RacerBaseDirector::shared_pointer
 RacerDatatypeRoleAtom::getDirectors(const dlvhex::racer::Query& query) const
 {
-  if (query.isRetrieval() || query.isMixed())
+  const DLQuery& dlq = query.getDLQuery();
+
+  if (dlq.isRetrieval() || dlq.isMixed())
     {
       ///@todo this is kind of a hack, maybe we should unify this stuff...
       RacerCompositeDirector* dir = new RacerCompositeDirector(stream);

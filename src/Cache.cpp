@@ -12,7 +12,9 @@
 
 
 #include "Cache.h"
-
+#include "QueryCtx.h"
+#include "Query.h"
+#include "Answer.h"
 
 using namespace dlvhex::racer;
 
@@ -38,7 +40,7 @@ Cache::cacheHit(const QueryCtx::shared_pointer& query)
 
       bool isCacheHit = false;
 
-      if (q1.isBoolean())
+      if (q1.getDLQuery().isBoolean())
 	{
 	  bool isPositive = (*found)->getAnswer().getAnswer();
 	  

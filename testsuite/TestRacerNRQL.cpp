@@ -9,7 +9,7 @@
  */
 
 #include "RacerNRQL.h"
-
+#include "Query.h"
 #include "TestRacerNRQL.h"
 
 #include <sstream>
@@ -27,19 +27,17 @@ TestRacerNRQL::runRacerRetrieveTest()
 {
   std::stringstream sst;
 
-  Query q;
-
   Tuple tup;
   tup.push_back(Term("X"));
   tup.push_back(Term("Y"));
-  q.setPatternTuple(tup);
 
   AtomSet as;
   AtomPtr ap1(new Atom("foo(X)"));
   AtomPtr ap2(new Atom("moo(X,Y)"));
   as.insert(ap1);
   as.insert(ap2);
-  q.setQuery(as);
+
+  Query q("","",Term(""),Term(""),Term(""),Term(""),DLQuery(as,tup),Interpretation());
 
   NRQLRetrieve<NRQLConjunctionBuilder> nrql(q);
 

@@ -12,10 +12,7 @@
 #ifndef _RACERNRQL_TCC
 #define _RACERNRQL_TCC
 
-#include "RacerQuery.h"
 #include "RacerNRQLBuilder.h"
-
-#include <iosfwd>
 
 namespace dlvhex {
 namespace racer {

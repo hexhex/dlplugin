@@ -18,7 +18,6 @@
 #include <dlvhex/Term.h>
 #include <dlvhex/AtomSet.h>
 
-#include "RacerQuery.h"
 #include "RacerInterface.h"
 #include "RacerDirector.h"
 #include "Cache.h"
@@ -27,6 +26,10 @@
 
 namespace dlvhex {
 namespace racer {
+
+  // fwd decl
+  class Query;
+
 
   /**
    * @brief Base class for RACER external atoms.

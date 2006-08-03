@@ -14,14 +14,15 @@
 #ifndef _RACERNRQLBUILDER_H
 #define _RACERNRQLBUILDER_H
 
-#include "RacerNRQL.h"
-#include "RacerQuery.h"
 #include "RacerError.h"
 
 #include <iosfwd>
 
 namespace dlvhex {
 namespace racer {
+
+  // fwd decl
+  class Query;
 
   /**
    * @brief Base class for all the NRQL Builders.

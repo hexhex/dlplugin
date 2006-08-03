@@ -13,7 +13,8 @@
 #include "RacerDirector.h"
 
 #include "RacerError.h"
-#include "RacerQuery.h"
+#include "QueryCtx.h"
+#include "Answer.h"
 #include "Cache.h"
 
 #include <boost/shared_ptr.hpp>
@@ -64,7 +65,9 @@ RacerCompositeDirector::query(QueryCtx::shared_pointer qctx) throw(RacerError)
 QueryCtx::shared_pointer
 RacerCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
 {
-  if (qctx->getQuery().isBoolean())
+  const DLQuery& dlq = qctx->getQuery().getDLQuery();
+
+  if (dlq.isBoolean())
     {
       // querying is trivial now -> true
       qctx->getAnswer().setAnswer(true);
@@ -78,9 +81,7 @@ RacerCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
 
       // check if we need to generate all possible pairs, i.e. only
       // the first two bits of the typeflags are allowed to be true
-      if ((qctx->getQuery().getTypeFlags() &
-	   std::numeric_limits<unsigned long>::max()
-	   ) == 0x3)
+      if ((dlq.getTypeFlags() & std::numeric_limits<unsigned long>::max()) == 0x3)
 	{
 	  const std::vector<Tuple>* tuples = qctx->getAnswer().getTuples();
 	  std::vector<Tuple> pairs;

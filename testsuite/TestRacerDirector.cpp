@@ -11,7 +11,7 @@
 #include "RacerDirector.h"
 #include "RacerRunner.h"
 #include "TCPStream.h"
-
+#include "QueryCtx.h"
 #include "TestRacerDirector.h"
 
 #include <iostream>
@@ -38,16 +38,22 @@ TestRacerDirector::runRacerPlusConceptTest()
       
   RacerConceptRolePM pcd(rsIO);
   
-  QueryCtx::shared_pointer q(new QueryCtx);
-  q->getQuery().setNamespace("http://www.kr.tuwien.ac.at/staff/roman/shop#");
-  
   AtomSet pc;
   AtomPtr ap(new Atom("plusC(\"Part\",\"foo\")"));
   pc.insert(ap);
   Interpretation ints(pc);
   
-  q->getQuery().setInterpretation(ints);
-  q->getQuery().setPlusC(Term("plusC"));
+  Tuple in;
+  in.push_back(Term(shop));
+  in.push_back(Term("plusC"));
+  in.push_back(Term(""));
+  in.push_back(Term(""));
+  in.push_back(Term(""));
+  in.push_back(Term(""));
+
+  Tuple out;
+
+  QueryCtx::shared_pointer q(new QueryCtx(PluginAtom::Query(ints, in, out)));
   
   CPPUNIT_ASSERT_NO_THROW( q = pcd.query(q) );
 }

@@ -16,7 +16,6 @@
 #define _RACERANSWERDRIVER_H
 
 #include "RacerAnswerParser.hpp"
-#include "RacerQuery.h"
 #include "RacerError.h"
 
 #include <iosfwd>
@@ -26,6 +25,9 @@ class RacerFlexLexer;
 
 namespace dlvhex {
 namespace racer {
+
+  // fwd decl
+  class Answer;
 
   /**
    * @brief Base class for the parsers.

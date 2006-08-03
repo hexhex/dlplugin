@@ -9,6 +9,7 @@
  */
 
 #include "RacerBuilder.h"
+#include "Query.h"
 
 #include "TestRacerBuilder.h"
 
@@ -32,12 +33,9 @@ TestRacerBuilder::runRacerPosIndBuilderTest()
   pc.insert(ap);
   Interpretation ints(pc);
 
-  Query q;
+  Query q("foo.owl","file:shop#",Term("plusC"),Term(""),Term(""),Term(""),
+	  DLQuery(Term(),Tuple()), ints);
 
-  q.setInterpretation(ints);
-  q.setPlusC(Term("plusC"));
-  q.setNamespace("file:shop#");
-  
   RacerStateBuilder pib(sst);
   pib.buildCommand(q);
       
@@ -56,12 +54,9 @@ TestRacerBuilder::runRacerNegIndBuilderTest()
   mc.insert(ap);
   Interpretation ints(mc);
 
-  Query q;
+  Query q("foo.owl","file:shop#",Term(""),Term("minusC"),Term(""),Term(""),
+	  DLQuery(Term(),Tuple()), ints);
       
-  q.setInterpretation(ints);
-  q.setMinusC(Term("minusC"));
-  q.setNamespace("file:shop#");
-
   RacerStateBuilder pib(sst);
   pib.buildCommand(q);
       
@@ -80,12 +75,9 @@ TestRacerBuilder::runRacerPosPairBuilderTest()
   pr.insert(ap);
   Interpretation ints(pr);
 
-  Query q;
+  Query q("foo.owl","file:shop#",Term(""),Term(""),Term("plusR"),Term(""),
+	  DLQuery(Term(),Tuple()), ints);
 
-  q.setInterpretation(ints);
-  q.setPlusR(Term("plusR"));
-  q.setNamespace("file:shop#");
-      
   RacerStateBuilder pib(sst);
   pib.buildCommand(q);
       
