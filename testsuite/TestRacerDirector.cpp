@@ -41,7 +41,7 @@ TestRacerDirector::runRacerPlusConceptTest()
   AtomSet pc;
   AtomPtr ap(new Atom("plusC(\"Part\",\"foo\")"));
   pc.insert(ap);
-  Interpretation ints(pc);
+  AtomSet ints(pc);
   
   Tuple in;
   in.push_back(Term(shop));

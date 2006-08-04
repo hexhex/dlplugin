@@ -28,7 +28,7 @@ TestRacerQuery::runRacerQueryEqualityTest()
   is1.insert(ap11);
   is1.insert(ap12);
   is1.insert(ap13);
-  Interpretation ints1(is1);
+  AtomSet ints1(is1);
 
   AtomPtr ap21(new Atom("p(b,y)"));
   AtomPtr ap22(new Atom("p(a,x)"));
@@ -37,7 +37,7 @@ TestRacerQuery::runRacerQueryEqualityTest()
   is2.insert(ap21);
   is2.insert(ap22);
   is2.insert(ap23);
-  Interpretation ints2(is2);
+  AtomSet ints2(is2);
 
   Tuple pt1;
   Tuple pt2;
@@ -62,7 +62,7 @@ TestRacerQuery::runRacerQuerySubsetTest()
   AtomSet is1;
   is1.insert(ap11);
   is1.insert(ap12);
-  Interpretation ints1(is1);
+  AtomSet ints1(is1);
   
   AtomPtr ap21(new Atom("p(a,x)"));
   AtomPtr ap22(new Atom("p(b,y)"));
@@ -71,7 +71,7 @@ TestRacerQuery::runRacerQuerySubsetTest()
   is2.insert(ap21);
   is2.insert(ap22);
   is2.insert(ap23);
-  Interpretation ints2(is2);
+  AtomSet ints2(is2);
 
   Tuple pt1;
   Tuple pt2;
@@ -98,14 +98,14 @@ TestRacerQuery::runRacerQuerySupersetTest()
   is1.insert(ap11);
   is1.insert(ap12);
   is1.insert(ap13);
-  Interpretation ints1(is1);
+  AtomSet ints1(is1);
   
   AtomPtr ap21(new Atom("p(b,y)"));
   AtomPtr ap22(new Atom("q(c,z)"));
   AtomSet is2;
   is2.insert(ap21);
   is2.insert(ap22);
-  Interpretation ints2(is2);
+  AtomSet ints2(is2);
   
   Tuple pt1;
   Tuple pt2;

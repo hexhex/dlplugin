@@ -41,7 +41,7 @@ TestRacerInterface::runRacerConsistentTest()
   PluginInterface::AtomFunctionMap m;
   pi->getAtoms(m);
   
-  Interpretation in;
+  AtomSet in;
   
   Tuple parms;
   parms.push_back(Term(shop));
@@ -100,7 +100,7 @@ TestRacerInterface::runRacerConceptTest()
   AtomPtr pr0(new Atom("\"plusR\"(\"provides\",\"s1\",\"moo4\")"));
   a3.insert(pr0);
   
-  Interpretation in;
+  AtomSet in;
   in.insert(a1);
   in.insert(a2);
   in.insert(a3);
@@ -151,7 +151,7 @@ TestRacerInterface::runRacerRoleTest()
   AtomPtr pr0(new Atom("\"plusR\"(\"provides\",\"s1\",\"moo4\")"));
   a3.insert(pr0);
   
-  Interpretation in;
+  AtomSet in;
   in.insert(a1);
   in.insert(a2);
   in.insert(a3);
@@ -203,7 +203,7 @@ TestRacerInterface::runRacerIsConceptTest()
   AtomPtr pr0(new Atom("\"plusR\"(\"provides\",\"s1\",\"moo4\")"));
   a3.insert(pr0);
   
-  Interpretation in;
+  AtomSet in;
   in.insert(a1);
   in.insert(a2);
   in.insert(a3);
@@ -256,7 +256,7 @@ TestRacerInterface::runRacerIsRoleTest()
   AtomPtr pr0(new Atom("\"plusR\"(\"provides\",\"s1\",\"moo4\")"));
   a3.insert(pr0);
   
-  Interpretation in;
+  AtomSet in;
   in.insert(a1);
   in.insert(a2);
   in.insert(a3);
@@ -310,7 +310,7 @@ TestRacerInterface::runRacerRoleFillersTest()
   AtomPtr pr0(new Atom("\"plusR\"(\"provides\",\"s1\",\"moo4\")"));
   a3.insert(pr0);
 
-  Interpretation in;
+  AtomSet in;
   in.insert(a1);
   in.insert(a2);
   in.insert(a3);
@@ -375,7 +375,7 @@ TestRacerInterface::runRacerDatatypeRoleFillersTest()
 
   AtomSet a1,a2,a3,a4;
 
-  Interpretation in;
+  AtomSet in;
   in.insert(a1);
   in.insert(a2);
   in.insert(a3);
@@ -427,7 +427,7 @@ TestRacerInterface::runRacerConjQueryTest()
 
   AtomSet a1,a2,a3,a4;
 
-  Interpretation in;
+  AtomSet in;
   in.insert(a1);
   in.insert(a2);
   in.insert(a3);

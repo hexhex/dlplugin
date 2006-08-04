@@ -37,7 +37,7 @@ TestRacerNRQL::runRacerRetrieveTest()
   as.insert(ap1);
   as.insert(ap2);
 
-  Query q("","",Term(""),Term(""),Term(""),Term(""),DLQuery(as,tup),Interpretation());
+  Query q("","",Term(""),Term(""),Term(""),Term(""),DLQuery(as,tup),AtomSet());
 
   NRQLRetrieve<NRQLConjunctionBuilder> nrql(q);
 

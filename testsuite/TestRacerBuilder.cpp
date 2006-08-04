@@ -31,7 +31,7 @@ TestRacerBuilder::runRacerPosIndBuilderTest()
   AtomSet pc;
   AtomPtr ap(new Atom("plusC(\"Part\",\"nic\")"));
   pc.insert(ap);
-  Interpretation ints(pc);
+  AtomSet ints(pc);
 
   Query q("foo.owl","file:shop#",Term("plusC"),Term(""),Term(""),Term(""),
 	  DLQuery(Term(),Tuple()), ints);
@@ -52,7 +52,7 @@ TestRacerBuilder::runRacerNegIndBuilderTest()
   AtomSet mc;
   AtomPtr ap(new Atom("minusC(\"Part\",\"nic\")"));
   mc.insert(ap);
-  Interpretation ints(mc);
+  AtomSet ints(mc);
 
   Query q("foo.owl","file:shop#",Term(""),Term("minusC"),Term(""),Term(""),
 	  DLQuery(Term(),Tuple()), ints);
@@ -73,7 +73,7 @@ TestRacerBuilder::runRacerPosPairBuilderTest()
   AtomSet pr;
   AtomPtr ap(new Atom("plusR(\"Part\",\"nic\",\"sic\")"));
   pr.insert(ap);
-  Interpretation ints(pr);
+  AtomSet ints(pr);
 
   Query q("foo.owl","file:shop#",Term(""),Term(""),Term("plusR"),Term(""),
 	  DLQuery(Term(),Tuple()), ints);
