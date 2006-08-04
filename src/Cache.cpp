@@ -16,64 +16,81 @@
 #include "Query.h"
 #include "Answer.h"
 
+#include <iterator>
+#include <boost/iterator/indirect_iterator.hpp>
+
 using namespace dlvhex::racer;
 
 
 BaseCache::~BaseCache()
+{ }
+
+
+QueryCtx::shared_pointer
+Cache::find(const QueryCtx::shared_pointer& q)
 {
+  CacheSet::const_iterator found = cache.find(q);
+
+  if (found != cache.end())
+    {
+      return *found;
+    }
+  
+  return QueryCtx::shared_pointer();
 }
 
 
-Cache::~Cache()
+bool
+Cache::isValid(const QueryCtx::shared_pointer& query, const QueryCtx::shared_pointer& found)
 {
+  const Query& q1 = query->getQuery();
+  const Query& q2 = found->getQuery();
+
+  bool isCacheHit = false;
+
+  if (q1.getDLQuery().isBoolean())
+    {
+      bool isPositive = found->getAnswer().getAnswer();
+	  
+      if (isPositive)
+	{
+	  isCacheHit = q2.isSubseteq(q1);
+	}
+      else // check if found is a superset of query
+	{
+	  isCacheHit = q2.isSuperseteq(q1);
+	}
+    }
+  else // retrieval modes
+    {
+      // is the set of ints in query equal to the set of ints in found?
+      isCacheHit = q1.getProjectedInterpretation() == q2.getProjectedInterpretation();
+    }
+
+  if (!isCacheHit)
+    {
+      // there is no cache hit
+      // -> invalidate cache entry and found QueryCtx::shared_pointer
+      cache.erase(found);
+    }
+
+  return isCacheHit;
 }
+
 
 QueryCtx::shared_pointer
 Cache::cacheHit(const QueryCtx::shared_pointer& query)
 {
-  CacheSet::const_iterator found = cache.find(query);
+  QueryCtx::shared_pointer found = find(query);
 
-  if (found != cache.end())
+  if (found && isValid(query, found))
     {
-      const Query& q1 = query->getQuery();
-      const Query& q2 = (*found)->getQuery();
-
-      bool isCacheHit = false;
-
-      if (q1.getDLQuery().isBoolean())
-	{
-	  bool isPositive = (*found)->getAnswer().getAnswer();
-	  
-	  if (isPositive)
-	    {
-	      isCacheHit = q2.isSubseteq(q1);
-	    }
-	  else // check if found is a superset of query
-	    {
-	      isCacheHit = q2.isSuperseteq(q1);
-	    }
-	}
-      else // retrieval modes
-	{
-	  // is the set of ints in query equal to the set of ints in found?
-	  isCacheHit = q1.getInterpretation() == q2.getInterpretation();
-	}
-
-      // only return found if we've got a cache hit
-      if (isCacheHit)
-	{
-	  return *found;
-	}
-      else
-	{
-	  // there is no cache hit
-	  // -> invalidate cache entry and found QueryCtx::shared_pointer
-	  cache.erase(found);
-	}
+      return found;
     }
 
   return QueryCtx::shared_pointer(); // return empty shared_ptr
 }
+
 
 void
 Cache::insert(const QueryCtx::shared_pointer& qctx)
@@ -82,38 +99,39 @@ Cache::insert(const QueryCtx::shared_pointer& qctx)
 }
 
 
-
-DebugCache::~DebugCache()
-{
-}
-
 QueryCtx::shared_pointer
 DebugCache::cacheHit(const QueryCtx::shared_pointer& query)
 {
-  std::cerr << "-----" << std::endl;
+  std::cerr << "===== cache content:" << std::endl;
 
-  for (CacheSet::const_iterator it = cache.begin();
-       it != cache.end(); it++)
-    {
-      std::cerr << "   " << (*it)->getQuery() << std::endl;
-    }
+  std::transform(boost::make_indirect_iterator(cache.begin()),
+		 boost::make_indirect_iterator(cache.end()),
+		 std::ostream_iterator<Query>(std::cerr, "\n"),
+		 std::mem_fun_ref(&QueryCtx::getQuery)
+		 );
 
-  std::cerr << "q: " << query->getQuery();
+  std::cerr << "----- now looking for: " << query->getQuery() << std::endl;
 
-  QueryCtx::shared_pointer found = Cache::cacheHit(query);
+  QueryCtx::shared_pointer found = Cache::find(query);
 
   if (found)
     {
-      std::cerr << " found in cache and is a cache-hit";
+      std::cerr << "----- found in cache: " << found->getQuery() << std::endl;
+
+      if (Cache::isValid(query, found))
+	{
+	  std::cerr << "===== cache-hit" << std::endl;
+	  return found;
+	}
+      else
+	{
+	  std::cerr << "===== NOT a cache-hit" << std::endl;
+	}
+    }
+  else
+    {
+      std::cerr << "===== NOT found in cache" << std::endl;
     }
 
-  std::cerr << std::endl;
-
-  return found;
-}
-
-void
-DebugCache::insert(const QueryCtx::shared_pointer& qctx)
-{
-  Cache::insert(qctx);
+  return QueryCtx::shared_pointer();
 }
