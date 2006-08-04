@@ -1,3 +1,30 @@
+2006-08-04  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* testsuite/TestRacerQuery.cpp: Use AtomSet instead of Interpretation. 
+	* testsuite/TestRacerNRQL.cpp: Likewise. 
+	* testsuite/TestRacerInterface.cpp: Likewise. 
+	* testsuite/TestRacerDirector.cpp: Likewise. 
+	* testsuite/TestRacerBuilder.cpp: Likewise. 
+
+	* src/HexDLRewriterScanner.lpp: Add support for naf extatoms.
+	* src/HexDLRewriterParser.ypp: Likewise.
+
+	* src/RacerDirector.cpp (RacerCompositeDirector): Use
+	boost::ptr_vector<> instead of std::vector<>.
+	* include/RacerDirector.h: Likewise.
+
+	* src/QueryCtx.cpp (QueryCtx::QueryCtx): Always insert namespace
+	into query term.
+
+	* include/Query.h (Query::getProjectedInterpretation): New method.
+	
+	* src/Query.cpp (Query::isSubseteq): Use projected interpretation.
+	Fix operator< and operator==.
+
+	* include/Cache.h: Better debugging output.
+
+	* src/Cache.cpp: Use projected interpretation.
+	
 2006-08-03  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/Makefile.am (noinst_HEADERS): Add Answer.h, Query.h and
