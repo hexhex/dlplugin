@@ -24,6 +24,9 @@
 
 #include <iosfwd>
 
+#include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/shared_ptr.hpp>
+
 namespace dlvhex {
 namespace racer {
 
@@ -108,11 +111,8 @@ namespace racer {
     typedef boost::shared_ptr<value_type> shared_pointer;
 
   protected:
-    /// managed RacerBaseDirector pointers
-    typedef std::vector<RacerBaseDirector*> DirectorList;
-
     /// holds a list of RacerBaseDirector objects
-    DirectorList dirs;
+    boost::ptr_vector<RacerBaseDirector> dirs;
 
     /// keep a reference to the iostream just in case we need to
     /// create a dedicated director

@@ -18,6 +18,7 @@
 #include "Cache.h"
 
 #include <boost/shared_ptr.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 using namespace dlvhex::racer;
 
@@ -28,12 +29,7 @@ RacerCompositeDirector::RacerCompositeDirector(std::iostream& s)
 { }
 
 RacerCompositeDirector::~RacerCompositeDirector()
-{
-  for (DirectorList::iterator it = dirs.begin(); it != dirs.end(); it++)
-    {
-      delete (*it);
-    }
-}
+{ }
 
 void
 RacerCompositeDirector::add(RacerBaseDirector* d)
@@ -48,9 +44,10 @@ RacerCompositeDirector::add(RacerBaseDirector* d)
 QueryCtx::shared_pointer
 RacerCompositeDirector::query(QueryCtx::shared_pointer qctx) throw(RacerError)
 {
-  for (DirectorList::iterator it = dirs.begin(); it != dirs.end(); it++)
+  for (boost::ptr_vector<RacerBaseDirector>::iterator it = dirs.begin();
+       it != dirs.end(); it++)
     {
-      qctx = (*it)->query(qctx);
+      qctx = it->query(qctx);
 
       if (qctx->getAnswer().getIncoherent())
 	{
