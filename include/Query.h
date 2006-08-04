@@ -158,7 +158,9 @@ namespace racer {
     /// negative roles
     Term minusR;
     /// set of ground atoms
-    Interpretation interpretation;
+    AtomSet interpretation;
+    /// projected interpretation
+    AtomSet proj;
 
     /// the dl-query
     DLQuery query;
@@ -168,10 +170,21 @@ namespace racer {
 
     /// setup interpretation
     void
-    setInterpretation(const Interpretation& ints);
-
+    setInterpretation(const AtomSet& ints);
 
   public:
+    /** 
+     * Ctor.
+     * 
+     * @param uri ontology
+     * @param nspace namespace
+     * @param pc plus concept
+     * @param mc minus concept
+     * @param pr plus role
+     * @param mr minus role
+     * @param q dl-query
+     * @param i interpretation
+     */
     Query(const std::string& uri,
 	  const std::string& nspace,
 	  const Term& pc,
@@ -179,7 +192,7 @@ namespace racer {
 	  const Term& pr,
 	  const Term& mr,
 	  const DLQuery& q,
-	  const Interpretation& i);
+	  const AtomSet& i);
 
     virtual
     ~Query();
@@ -193,8 +206,11 @@ namespace racer {
     virtual const DLQuery&
     getDLQuery() const;
 
-    virtual const Interpretation&
+    virtual const AtomSet&
     getInterpretation() const;
+
+    virtual const AtomSet&
+    getProjectedInterpretation() const;
 
     virtual const Term&
     getPlusC() const;
