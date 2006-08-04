@@ -252,19 +252,45 @@ namespace racer {
   std::ostream&
   operator<< (std::ostream& os, const Query& q)
   {
-    return os << q.getNamespace()
-	      << "DL: "
-	      << q.getOntology()
-	      << ','
-	      << q.getPlusC()
-	      << ','
-	      << q.getMinusC()
-	      << ','
-	      << q.getPlusR()
-	      << ','
-	      << q.getMinusR()
-	      << ','
-	      << q.getDLQuery();
+    if (q.getDLQuery().isConjQuery())
+      {
+	os << "&dlCQ: ";
+      }
+    else if (q.getDLQuery().getPatternTuple().size() == 1)
+      {
+	os << "&dlC: ";
+      }
+    else
+      {
+	os << "&dlR: ";
+      }
+
+    os << q.getOntology()
+       << ','
+       << q.getPlusC()
+       << ','
+       << q.getMinusC()
+       << ','
+       << q.getPlusR()
+       << ','
+       << q.getMinusR()
+       << ','
+       << q.getDLQuery()
+       << " {";
+
+    const AtomSet& pint = q.getProjectedInterpretation();
+    AtomSet::const_iterator it = pint.begin();
+
+    while (it != pint.end())
+      {
+	os << *it;
+	if (++it != pint.end())
+	  {
+	    os << ", ";
+	  }
+      }
+
+    return os << '}';
   }
   
   
@@ -274,13 +300,9 @@ namespace racer {
     // check each component of a query if its string representation is
     // less than the components of the other query
     return
-      q1.getNamespace()          < q2.getNamespace()          ? true :
-      q1.getOntology()           < q2.getOntology()           ? true :
-      q1.getPlusC().getString()  < q2.getPlusC().getString()  ? true :
-      q1.getMinusC().getString() < q2.getMinusC().getString() ? true :
-      q1.getPlusR().getString()  < q2.getPlusR().getString()  ? true :
-      q1.getMinusR().getString() < q2.getMinusR().getString() ? true :
-      q1.getDLQuery()            < q2.getDLQuery()              ? true : false;
+      q1.getNamespace() < q2.getNamespace() ? true :
+      q1.getOntology()  < q2.getOntology()  ? true :
+      q1.getDLQuery()   < q2.getDLQuery()   ? true : false;
   }
   
   
@@ -290,10 +312,6 @@ namespace racer {
     return
       q1.getNamespace() == q2.getNamespace()
       && q1.getOntology() == q2.getOntology()
-      && q1.getPlusC() == q2.getPlusC()
-      && q1.getMinusC() == q2.getMinusC()
-      && q1.getPlusR() == q2.getPlusR()
-      && q1.getMinusR() == q2.getMinusR()
       && q1.getDLQuery() == q2.getDLQuery();
   }
   
@@ -321,7 +339,7 @@ Query::Query(const std::string& uri,
 	     const Term& pr,
 	     const Term& mr,
 	     const DLQuery& q,
-	     const Interpretation& i)
+	     const AtomSet& i)
   : ontology(uri),
     nspace(ns),
     plusC(pc),
@@ -355,13 +373,35 @@ Query::getDLQuery() const
   return this->query;
 }
 
-void
-Query::setInterpretation(const Interpretation& ints)
+const AtomSet&
+Query::getProjectedInterpretation() const
 {
-  this->interpretation = ints;
+  return this->proj;
 }
 
-const Interpretation&
+void
+Query::setInterpretation(const AtomSet& ints)
+{
+  this->interpretation = ints;
+
+  // project out interpretation, i.e. compute I^\lambda
+  for (AtomSet::const_iterator it = ints.begin();
+       it != ints.end(); it++)
+    {
+      Term p = it->getPredicate();
+
+      if (p == getPlusC() ||
+	  p == getMinusC() ||
+	  p == getPlusR() ||
+	  p == getMinusR())
+	{
+	  AtomPtr ap(new Atom(it->getArguments()));
+	  proj.insert(ap);
+	}
+    }
+}
+
+const AtomSet&
 Query::getInterpretation() const
 {
   return this->interpretation;
@@ -401,10 +441,8 @@ Query::isSubseteq(const Query& q2) const
   //
   const Query& q1 = *this;
 
-  const AtomSet& i1 = q1.getInterpretation();
-  const AtomSet& i2 = q2.getInterpretation();
-
-  ///@todo project out interpretations
+  const AtomSet& i1 = q1.getProjectedInterpretation();
+  const AtomSet& i2 = q2.getProjectedInterpretation();
 
   //
   // q1 is a subset of q2:
