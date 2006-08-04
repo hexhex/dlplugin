@@ -34,7 +34,7 @@ QueryCtx::QueryCtx()
 		Term(),
 		Term(),
 		DLQuery(Term(),Tuple()),
-		Interpretation())),
+		AtomSet())),
     a(new Answer(q))
 { }
 
@@ -167,7 +167,6 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
       ///@todo should we ignore this?
     }
 
-
   // setup the query if input tuple contains a query atom or a
   // conjunctive query
   if (inputtuple.size() > 5)
@@ -257,13 +256,29 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
 	}
       else // this is a plain query
 	{
+	  std::string querystr = inputtuple[5].getUnquotedString();
+
+	  if (querystr.find('#') == std::string::npos) // no namespace in query
+	    {
+	      if (querystr[0] == '-') // negated query
+		{
+		  querystr.insert(1, defaultNS);
+		}
+	      else
+		{
+		  querystr.insert(0, defaultNS);
+		}
+	    }
+
+	  Term qu(querystr);
+
 	  q = new Query(ontostr,
 			defaultNS,
 			inputtuple[1],
 			inputtuple[2],
 			inputtuple[3],
 			inputtuple[4],
-			DLQuery(inputtuple[5], query.getPatternTuple()),
+			DLQuery(qu, query.getPatternTuple()),
 			query.getInterpretation()
 			);
 	}
