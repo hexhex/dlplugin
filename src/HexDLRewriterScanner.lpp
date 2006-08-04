@@ -27,7 +27,7 @@
 
 NEWLINE         \r?\n
 BLANK           [ \t]
-STRING          (\-)?[A-Za-z][A-Za-z_0-9]*
+STRING          ("-"|"~")?[A-Za-z][A-Za-z_0-9]*
 QUOTED_STRING   \"[^\"]*\"
 NUMBER          (\-)?[0-9]+
 
@@ -39,10 +39,12 @@ INPUTLIST       \[[^\]]+\]
 OUTPUTLIST      \([^\)]*\)
 
 DLATOM          DL{INPUTLIST}{OUTPUTLIST}
-CQATOM          &dlCQ{INPUTLIST}({OUTPUTLIST})?
+CQATOM          &dlCQ{INPUTLIST}{OUTPUTLIST}?
 
-LITERAL         (("not"|"non"){BLANK}+)?({STRING}|{QUOTED_STRING})({OUTPUTLIST})?
-EXTATOM         &{STRING}{INPUTLIST}({OUTPUTLIST})?
+NAF             ("not"|"non"){BLANK}+
+
+LITERAL         {NAF}?({STRING}|{QUOTED_STRING}){OUTPUTLIST}?
+EXTATOM         {NAF}?&{STRING}{INPUTLIST}{OUTPUTLIST}?
 INFIXATOM       {STRING}{BLANK}*("="|"!="|"<>"|"=="|"<"|">"|"<="|">="){BLANK}*({STRING}|{NUMBER})({BLANK}*("+"|"-"|"*"|"/"){BLANK}*({STRING}|{NUMBER}))?
 AGGREGATE       #{STRING}{OUTPUTLIST}
 
@@ -74,26 +76,35 @@ typedef yy::HexDLRewriterParser::token token;
 }
 
 
-<body,atom>"." {
-  // start over again when the body of a rule is done
-  BEGIN(INITIAL);
-  return yy::HexDLRewriterParser::token_type(*yytext);
-}
+<body,atom>{
+
+  "." {
+    // start over again when the body of a rule is done
+    BEGIN(INITIAL);
+    return yy::HexDLRewriterParser::token_type(*yytext);
+  }
 
 
-<body,atom>"," {
-  BEGIN(body);
-  return yy::HexDLRewriterParser::token_type(*yytext);
+  "," {
+    // we got a body separator element, continue as body
+    BEGIN(body);
+    return yy::HexDLRewriterParser::token_type(*yytext);
+  }
+
 }
 
 
 {CONS}        BEGIN(body); ECHO;
 
 
-<body,atom,list>{BLANK}+    yylloc->step();
+<body,atom,list>{BLANK}+    /* skip blanks */ yylloc->step();
 
 
 <body>{
+
+  ("not"|"non") {
+    return token::NOT;
+  }
 
   {DLATOM} {
     yyless(2); // skip DL, but rescan the input/output list
@@ -108,6 +119,7 @@ typedef yy::HexDLRewriterParser::token token;
   }
 
   ({EXTATOM}|{INFIXATOM}|{AGGREGATE}|{LITERAL}) {
+    // all other kinds of literals are passed as is
     yylval.sval = new std::string(yytext);
     return token::LITERAL;
   }

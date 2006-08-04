@@ -65,7 +65,7 @@
 
 %token <sval> STRING LITERAL
 %token <ival> NUMBER
-%token DLATOM CQATOM
+%token DLATOM CQATOM NOT
 %type <bodylist> body
 %type <sval> dlquery cqatom dlatom literal
 %type <termval> term
@@ -147,6 +147,16 @@ literal: LITERAL
        | dlatom
          {
 	   $$ = $1;
+	 }
+       | NOT cqatom
+         {
+	   $2->insert(0, "not ");
+	   $$ = $2;
+ 	 }
+       | NOT dlatom
+         {
+	   $2->insert(0, "not ");
+	   $$ = $2;
 	 }
        ;
 
