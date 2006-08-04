@@ -80,12 +80,16 @@ namespace racer {
     /// caches QueryCtx::shared_pointer with help of a std::set
     typedef std::set<QueryCtx::shared_pointer, QueryCtxCompare> CacheSet;
 
+    /// the cache
     CacheSet cache;
 
-  public:
-    virtual
-    ~Cache();
+    virtual QueryCtx::shared_pointer
+    find(const QueryCtx::shared_pointer& q);
 
+    virtual bool
+    isValid(const QueryCtx::shared_pointer& q, const QueryCtx::shared_pointer& f);
+
+  public:
     virtual QueryCtx::shared_pointer
     cacheHit(const QueryCtx::shared_pointer& query);
 
@@ -100,14 +104,8 @@ namespace racer {
   class DebugCache : public Cache
   {
   public:
-    virtual
-    ~DebugCache();
-
     virtual QueryCtx::shared_pointer
     cacheHit(const QueryCtx::shared_pointer& query);
-
-    virtual void
-    insert(const QueryCtx::shared_pointer& query);
   };
 
 } // namespace racer
