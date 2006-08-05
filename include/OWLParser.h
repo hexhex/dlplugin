@@ -85,16 +85,14 @@ namespace racer {
     static void
     namespaceHandler(void* userData, raptor_namespace* nspace);
 
+    static void
+    writeBytesHandler(raptor_www* w3, void* userData,
+		      const void* ptr, size_t size, size_t nmemb);
 
   public:
-    OWLParser();
-
     /// Ctor
     explicit
     OWLParser(const std::string& uri);
-
-    /// Copy Ctor
-    OWLParser(const OWLParser&);
 
     /// Dtor
     virtual
@@ -105,7 +103,7 @@ namespace racer {
      *
      * @param uri the new OWL uri
      */
-    virtual void
+    void
     open(const std::string& uri);
 
     /**
@@ -129,6 +127,14 @@ namespace racer {
      */
     virtual void
     parseNames(std::set<Term>& concepts, std::set<Term>& roles) throw (RacerParsingError);
+
+    /** 
+     * Fetch uri to file.
+     * 
+     * @param file 
+     */
+    virtual void
+    fetchURI(const std::string& file);
   };
 
 } // namespace racer

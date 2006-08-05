@@ -32,20 +32,16 @@ const std::string OWLParser::owlSubClassOf = "http://www.w3.org/2000/01/rdf-sche
 const std::string OWLParser::owlObjectProperty = "http://www.w3.org/2002/07/owl#ObjectProperty";
 const std::string OWLParser::owlInverseOf = "http://www.w3.org/2002/07/owl#inverseOf";
 
-OWLParser::OWLParser()
-{ }
 
 OWLParser::OWLParser(const std::string& u)
 {
   open(u);
 }
 
-OWLParser::OWLParser(const OWLParser& x)
-  : uri(x.uri)
-{ }
 
 OWLParser::~OWLParser()
 { }
+
 
 void
 OWLParser::open(const std::string& uri)
@@ -61,6 +57,7 @@ OWLParser::open(const std::string& uri)
       this->uri = "file:" + uri;
     }
 }
+
 
 void
 OWLParser::namespaceHandler(void* userData, raptor_namespace* nspace)
@@ -153,6 +150,14 @@ OWLParser::aboxHandler(void* userData, const raptor_statement* statement)
 
 
 void
+OWLParser::writeBytesHandler(raptor_www* /* w3 */, void* userData,
+			     const void* ptr, size_t size, size_t nmemb)
+{
+  raptor_iostream_write_bytes((raptor_iostream *) userData, ptr, size, nmemb);
+}
+
+
+void
 OWLParser::parse(void* userData,
 		 raptor_statement_handler handler,
 		 raptor_namespace_handler nsHandler)
@@ -212,4 +217,28 @@ OWLParser::parseNames(std::set<Term>& concepts, std::set<Term>& roles)
   names.roleNames = &roles;
 
   parse(&names, OWLParser::tboxHandler, 0);
+}
+
+void
+OWLParser::fetchURI(const std::string& file)
+{
+  raptor_init();
+  raptor_www_init();
+
+  raptor_uri* fetchURI = raptor_new_uri((const unsigned char*) uri.c_str());
+
+  raptor_iostream* io = raptor_new_iostream_to_filename(file.c_str());
+
+  raptor_www* rw3 = raptor_www_new();
+
+  raptor_www_set_write_bytes_handler(rw3, OWLParser::writeBytesHandler, io);
+
+  raptor_www_fetch(rw3, fetchURI);
+
+  raptor_www_free(rw3);
+  raptor_free_uri(fetchURI);
+  raptor_free_iostream(io);
+
+  raptor_www_finish();
+  raptor_finish();
 }
