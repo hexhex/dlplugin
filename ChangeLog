@@ -1,3 +1,31 @@
+2006-08-05  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/Registry.h: URL -> URI.
+	* src/Registry.cpp: Likewise.
+
+	* include/Query.h: Use Ontology instead of namespace + uri.
+	* src/Answer.cpp: Likewise.
+	* src/HexDLRewriterDriver.cpp: Likewise.
+	* src/Query.cpp: Likewise.
+	* src/QueryCtx.cpp: Likewise.
+	* src/RacerBuilder.cpp: Likewise.
+	* src/RacerExtAtom.cpp: Likewise.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* testsuite/TestRacerQuery.cpp: Likewise.
+	* testsuite/TestRacerNRQL.cpp: Likewise.
+	* testsuite/TestRacerBuilder.cpp: Likewise.
+
+	* include/Ontology.h: Introduce the Ontology Factory with built-in
+	ontology cache.
+	* src/Ontology.cpp: Likewise.
+
+	* src/OWLParser.cpp (OWLParser::fetchURI): Add support for OWL downloading.
+	* include/OWLParser.h: Likewise.
+
+	* src/Makefile.am (libdlvhexracer_la_SOURCES): Add Ontology.h.
+
+	* include/Makefile.am (noinst_HEADERS): Add Ontology.h.
+
 2006-08-04  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* testsuite/TestRacerQuery.cpp: Use AtomSet instead of Interpretation. 
