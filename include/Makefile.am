@@ -8,6 +8,7 @@ noinst_HEADERS = \
                  HexDLRewriterFlexLexer.h \
                  LogBuf.h \
                  OWLParser.h \
+                 Ontology.h \
                  Query.h \
                  QueryCtx.h \
                  RacerBuilder.h \
