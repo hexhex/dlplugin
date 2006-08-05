@@ -29,6 +29,7 @@ HexDLRewriterScanner.lpp \
 HexDLRewriterDriver.cpp \
 LogBuf.cpp \
 OWLParser.cpp \
+Ontology.cpp \
 Query.cpp \
 QueryCtx.cpp \
 RacerAnswerParser.ypp \
