@@ -21,7 +21,7 @@ unsigned Registry::verbose(1);
 bool Registry::una(false);
 bool Registry::datasubstrate(false);
 std::string Registry::kbName;
-std::string Registry::openURL;
+std::string Registry::openURI;
 
 
 Registry::Registry()
@@ -53,15 +53,15 @@ Registry::setKBName(const std::string& k)
 }
 
 std::string
-Registry::getOpenURL()
+Registry::getOpenURI()
 {
-  return Registry::openURL;
+  return Registry::openURI;
 }
 
 void
-Registry::setOpenURL(const std::string& o)
+Registry::setOpenURI(const std::string& o)
 {
-  Registry::openURL = o;
+  Registry::openURI = o;
 }
 
 bool

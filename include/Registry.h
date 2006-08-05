@@ -26,7 +26,7 @@ namespace racer {
     static bool una;
     static bool datasubstrate;
     static std::string kbName;
-    static std::string openURL;
+    static std::string openURI;
 
     Registry();
 
@@ -44,10 +44,10 @@ namespace racer {
     setKBName(const std::string&);
 
     static std::string
-    getOpenURL();
+    getOpenURI();
 
     static void
-    setOpenURL(const std::string&);
+    setOpenURI(const std::string&);
 
     static bool
     getUNA();
