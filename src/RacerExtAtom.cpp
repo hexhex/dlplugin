@@ -76,11 +76,11 @@ RacerExtAtom::getComposite(const dlvhex::racer::Query& query) const
       Registry::setUNA(true);
     }
 
-  if (Registry::getOpenURL() != query.getOntology()) // only load ontology if its new
+  if (Registry::getOpenURI() != query.getOntology()->getURI()) // only load ontology if its new
     {
       comp->add(new RacerOpenOWL(stream));
       comp->add(new RacerDirector<RacerImportOntologies,RacerIgnoreAnswer>(stream));
-      Registry::setOpenURL(query.getOntology());
+      Registry::setOpenURI(query.getOntology()->getURI());
     }
 
   comp->add(new RacerTempABox(stream));

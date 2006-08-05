@@ -33,7 +33,8 @@ TestRacerBuilder::runRacerPosIndBuilderTest()
   pc.insert(ap);
   AtomSet ints(pc);
 
-  Query q("foo.owl","file:shop#",Term("plusC"),Term(""),Term(""),Term(""),
+  Query q(Ontology::createOntology(shop),
+	  Term("plusC"),Term(""),Term(""),Term(""),
 	  DLQuery(Term(),Tuple()), ints);
 
   RacerStateBuilder pib(sst);
@@ -41,7 +42,7 @@ TestRacerBuilder::runRacerPosIndBuilderTest()
       
   std::string s = sst.str();
 
-  CPPUNIT_ASSERT(s == "(state (instance |file:shop#nic| |file:shop#Part|))\n");
+  CPPUNIT_ASSERT(s == "(state (instance |http://www.kr.tuwien.ac.at/staff/roman/shop#nic| |http://www.kr.tuwien.ac.at/staff/roman/shop#Part|))\n");
 }
     
 void
@@ -54,7 +55,8 @@ TestRacerBuilder::runRacerNegIndBuilderTest()
   mc.insert(ap);
   AtomSet ints(mc);
 
-  Query q("foo.owl","file:shop#",Term(""),Term("minusC"),Term(""),Term(""),
+  Query q(Ontology::createOntology(shop),
+	  Term(""),Term("minusC"),Term(""),Term(""),
 	  DLQuery(Term(),Tuple()), ints);
       
   RacerStateBuilder pib(sst);
@@ -62,7 +64,7 @@ TestRacerBuilder::runRacerNegIndBuilderTest()
       
   std::string s = sst.str();
 
-  CPPUNIT_ASSERT(s == "(state (instance |file:shop#nic| (not |file:shop#Part|)))\n");
+  CPPUNIT_ASSERT(s == "(state (instance |http://www.kr.tuwien.ac.at/staff/roman/shop#nic| (not |http://www.kr.tuwien.ac.at/staff/roman/shop#Part|)))\n");
 }
     
 void
@@ -75,7 +77,8 @@ TestRacerBuilder::runRacerPosPairBuilderTest()
   pr.insert(ap);
   AtomSet ints(pr);
 
-  Query q("foo.owl","file:shop#",Term(""),Term(""),Term("plusR"),Term(""),
+  Query q(Ontology::createOntology(shop),
+	  Term(""),Term(""),Term("plusR"),Term(""),
 	  DLQuery(Term(),Tuple()), ints);
 
   RacerStateBuilder pib(sst);
@@ -83,5 +86,5 @@ TestRacerBuilder::runRacerPosPairBuilderTest()
       
   std::string s = sst.str();
 
-  CPPUNIT_ASSERT(s == "(state (related |file:shop#nic| |file:shop#sic| |file:shop#Part|))\n");
+  CPPUNIT_ASSERT(s == "(state (related |http://www.kr.tuwien.ac.at/staff/roman/shop#nic| |http://www.kr.tuwien.ac.at/staff/roman/shop#sic| |http://www.kr.tuwien.ac.at/staff/roman/shop#Part|))\n");
 }

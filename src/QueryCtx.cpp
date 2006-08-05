@@ -14,7 +14,6 @@
 #include "QueryCtx.h"
 #include "Query.h"
 #include "Answer.h"
-#include "OWLParser.h"
 #include "RacerError.h"
 
 #include <boost/tokenizer.hpp>
@@ -27,8 +26,7 @@ using namespace dlvhex::racer;
 
 
 QueryCtx::QueryCtx()
-  : q(new Query("",
-		"",
+  : q(new Query(Ontology::shared_pointer(),
 		Term(),
 		Term(),
 		Term(),
@@ -153,18 +151,17 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
   // inputtuple[0] contains the KB URI constant
   std::string ontostr = inputtuple[0].getUnquotedString();
 
-  // get namespace from owl document
-  OWLParser p(ontostr);
-  std::string defaultNS;
+  Ontology::shared_pointer onto;
 
   // get the ontology and parse the default namespace
   try
     {
-      p.parseNamespace(defaultNS);
+      onto = Ontology::createOntology(ontostr);
     }
-  catch (RacerParsingError&)
+  catch (RacerError& e)
     {
       ///@todo should we ignore this?
+      throw e;
     }
 
   // setup the query if input tuple contains a query atom or a
@@ -244,8 +241,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
 	      as.insert(ap);
 	    }
 
-	  q = new Query(ontostr,
-			defaultNS,
+	  q = new Query(onto,
 			inputtuple[1],
 			inputtuple[2],
 			inputtuple[3],
@@ -262,18 +258,17 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
 	    {
 	      if (querystr[0] == '-') // negated query
 		{
-		  querystr.insert(1, defaultNS);
+		  querystr.insert(1, onto->getNamespace());
 		}
 	      else
 		{
-		  querystr.insert(0, defaultNS);
+		  querystr.insert(0, onto->getNamespace());
 		}
 	    }
 
 	  Term qu(querystr);
 
-	  q = new Query(ontostr,
-			defaultNS,
+	  q = new Query(onto,
 			inputtuple[1],
 			inputtuple[2],
 			inputtuple[3],
@@ -285,8 +280,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
     }
   else // no query term
     {
-      q = new Query(ontostr,
-		    defaultNS,
+      q = new Query(onto,
 		    inputtuple[1],
 		    inputtuple[2],
 		    inputtuple[3],

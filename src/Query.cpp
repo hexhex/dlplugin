@@ -265,7 +265,7 @@ namespace racer {
 	os << "&dlR: ";
       }
 
-    os << q.getOntology()
+    os << *q.getOntology()
        << ','
        << q.getPlusC()
        << ','
@@ -299,19 +299,15 @@ namespace racer {
   {
     // check each component of a query if its string representation is
     // less than the components of the other query
-    return
-      q1.getNamespace() < q2.getNamespace() ? true :
-      q1.getOntology()  < q2.getOntology()  ? true :
-      q1.getDLQuery()   < q2.getDLQuery()   ? true : false;
+    return *q1.getOntology() < *q2.getOntology() ? true :
+      q1.getDLQuery() < q2.getDLQuery() ? true : false;
   }
   
   
   bool
   operator== (const Query& q1, const Query& q2)
   {
-    return
-      q1.getNamespace() == q2.getNamespace()
-      && q1.getOntology() == q2.getOntology()
+    return *q1.getOntology() == *q2.getOntology()
       && q1.getDLQuery() == q2.getDLQuery();
   }
   
@@ -332,16 +328,14 @@ Query::Query()
 { }
 
 
-Query::Query(const std::string& uri,
-	     const std::string& ns,
+Query::Query(Ontology::shared_pointer o,
 	     const Term& pc,
 	     const Term& mc,
 	     const Term& pr,
 	     const Term& mr,
 	     const DLQuery& q,
 	     const AtomSet& i)
-  : ontology(uri),
-    nspace(ns),
+  : ontology(o),
     plusC(pc),
     minusC(mc),
     plusR(pr),
@@ -355,13 +349,7 @@ Query::Query(const std::string& uri,
 Query::~Query()
 { }
 
-const std::string&
-Query::getNamespace() const
-{
-  return this->nspace;
-}
-
-const std::string&
+const Ontology::shared_pointer&
 Query::getOntology() const
 {
   return this->ontology;

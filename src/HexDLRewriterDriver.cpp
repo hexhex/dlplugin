@@ -12,7 +12,7 @@
 
 #include "HexDLRewriterDriver.h"
 #include "HexDLRewriterFlexLexer.h"
-#include "OWLParser.h"
+#include "Ontology.h"
 #include "Registry.h"
 
 #include <iosfwd>
@@ -110,20 +110,19 @@ HexDLRewriterDriver::rewrite()
   // corresponding additional rules to the HEX program
   //
 
-  std::set<Term> concepts;
-  std::set<Term> roles;
-  std::string defaultNS;
+  Ontology::shared_pointer onto;
 
   try
     {
-      OWLParser p(uri);
-      p.parseNames(concepts, roles);
-      p.parseNamespace(defaultNS);
+      onto = Ontology::createOntology(uri);
     }
-  catch (RacerParsingError& e)
+  catch (RacerError& e)
     {
       throw PluginError(e.what());
     }
+
+  Ontology::ObjectsPtr concepts = onto->getConcepts();
+  Ontology::ObjectsPtr roles = onto->getRoles();
 
   // output rewritten dl-atoms
 
@@ -134,10 +133,10 @@ HexDLRewriterDriver::rewrite()
 
       aux << "dl_" << it->opChar;
 
-      std::string s = defaultNS + it->lhs;
+      std::string s = onto->getNamespace() + it->lhs;
       Term t(s);
 
-      if (concepts.find(t) != concepts.end())
+      if (concepts->find(t) != concepts->end())
 	{
 	  aux << "c_" << it->extAtomNo;
 
@@ -149,7 +148,7 @@ HexDLRewriterDriver::rewrite()
 		  << "(X)."
 		  << std::endl;
 	}
-      else if (roles.find(t) != roles.end())
+      else if (roles->find(t) != roles->end())
 	{
 	  aux << "r_" << it->extAtomNo;
 

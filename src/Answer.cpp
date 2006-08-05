@@ -153,7 +153,7 @@ Answer::addTuple(const Tuple& out)
 
 	  if (p.find('#') == std::string::npos)
 	    {
-	      tmp.push_back(Term(query->getNamespace() + p, true));
+	      tmp.push_back(Term(query->getOntology()->getNamespace() + p, true));
 	    }
 	  else
 	    {
@@ -170,7 +170,7 @@ Answer::addTuple(const Tuple& out)
 
 	  if (p.find('#') == std::string::npos)
 	    {
-	      tmp.push_back(Term(query->getNamespace() + p, true));
+	      tmp.push_back(Term(query->getOntology()->getNamespace() + p, true));
 	    }
 	  else
 	    {

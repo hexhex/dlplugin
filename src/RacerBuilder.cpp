@@ -109,11 +109,11 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingErro
     {
       stream << "(individual-instance? "
 	     << ABoxQueryIndividual(indv[0].getUnquotedString(),
-				    query.getNamespace()
+				    query.getOntology()->getNamespace()
 				    )
 	     << ' '
 	     << ABoxQueryConcept(q.getUnquotedString(),
-				 query.getNamespace()
+				 query.getOntology()->getNamespace()
 				 )
 	     << ')'
 	     << std::endl;
@@ -148,15 +148,15 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
     {
       stream << "(individuals-related? "
 	     << ABoxQueryIndividual(indv[0].getUnquotedString(),
-				    query.getNamespace()
+				    query.getOntology()->getNamespace()
 				    )
 	     << ' '
 	     << ABoxQueryIndividual(indv[1].getUnquotedString(),
-				    query.getNamespace()
+				    query.getOntology()->getNamespace()
 				    )
 	     << ' '
 	     << ABoxQueryRole(q.getUnquotedString(),
-			      query.getNamespace()
+			      query.getOntology()->getNamespace()
 			      )
 	     << ')'
 	     << std::endl;
@@ -199,26 +199,26 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
       if (type == 0x1)
 	{
 	  i.reset(new ABoxQueryIndividual(indv[0].getUnquotedString(),
-					  query.getNamespace()
+					  query.getOntology()->getNamespace()
 					  )
 		  );
 
 	  r.reset(new ABoxQueryRole(q.getUnquotedString(),
-				    query.getNamespace()
+				    query.getOntology()->getNamespace()
 				    )
 		  );
 	}
       else // (variable,const) pattern
 	{
 	  i.reset(new ABoxQueryIndividual(indv[1].getUnquotedString(),
-					  query.getNamespace()
+					  query.getOntology()->getNamespace()
 					  )
 		  );
 
 
 	  r.reset(new ABoxInvertedRole
 		  (new ABoxQueryRole(q.getUnquotedString(),
-				     query.getNamespace()
+				     query.getOntology()->getNamespace()
 				     )
 		   )
 		  );
@@ -255,14 +255,14 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (RacerBuildingErr
 
       if (concept[0] != '-')
 	{
-	  c.reset(new ABoxQueryConcept(concept, query.getNamespace()));
+	  c.reset(new ABoxQueryConcept(concept, query.getOntology()->getNamespace()));
 	}
       else
 	{
 	  concept.erase(0, 1); // remove first character "-"
 
 	  c.reset(new ABoxNegatedConcept
-		  (new ABoxQueryConcept(concept, query.getNamespace())
+		  (new ABoxQueryConcept(concept, query.getOntology()->getNamespace())
 		   )
 		  );
 	}
@@ -294,7 +294,7 @@ RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (RacerBuildingErro
     {
       stream << "(retrieve-related-individuals "
 	     << ABoxQueryRole(q.getUnquotedString(),
-			      query.getNamespace()
+			      query.getOntology()->getNamespace()
 			      )
 	     << ')'
 	     << std::endl;
@@ -315,24 +315,22 @@ RacerOpenOWLBuilder::RacerOpenOWLBuilder(std::ostream& s)
 bool
 RacerOpenOWLBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 {
-  std::string doc = query.getOntology();
-
   // first 7 chars contains the URL scheme
-  std::string scheme = doc.substr(0,7);
+  std::string scheme = query.getOntology()->getURI().substr(0,7);
 
   try
     {
       if (scheme == "http://" || scheme == "file://") ///@todo file:// is foobar
 	{
 	  stream << "(owl-read-document \""
-		 << doc
+		 << query.getOntology()->getURI()
 		 << "\" :kb-name DEFAULT)"
 		 << std::endl;
 	}
       else
 	{
 	  stream << "(owl-read-file \""
-		 << doc
+		 << query.getOntology()->getURI()
 		 << "\" :kb-name DEFAULT)"
 		 << std::endl;
 	}

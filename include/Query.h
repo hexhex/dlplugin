@@ -14,6 +14,8 @@
 #ifndef _QUERY_H
 #define _QUERY_H
 
+#include "Ontology.h"
+
 #include <dlvhex/Atom.h>
 #include <dlvhex/AtomSet.h>
 #include <dlvhex/Term.h>
@@ -140,10 +142,8 @@ namespace racer {
   class Query
   {
   private:
-    /// ontology uri
-    std::string ontology;
-    /// use this string to prefix the individuals of the interpretation
-    std::string nspace;
+    /// ontology uri + namespace
+    Ontology::shared_pointer ontology;
 
     /// term used to identify which individuals are used to extend
     /// positive concepts
@@ -176,8 +176,7 @@ namespace racer {
     /** 
      * Ctor.
      * 
-     * @param uri ontology
-     * @param nspace namespace
+     * @param onto ontology
      * @param pc plus concept
      * @param mc minus concept
      * @param pr plus role
@@ -185,8 +184,7 @@ namespace racer {
      * @param q dl-query
      * @param i interpretation
      */
-    Query(const std::string& uri,
-	  const std::string& nspace,
+    Query(const Ontology::shared_pointer onto,
 	  const Term& pc,
 	  const Term& mc,
 	  const Term& pr,
@@ -197,10 +195,7 @@ namespace racer {
     virtual
     ~Query();
 
-    virtual const std::string&
-    getNamespace() const;
-
-    virtual const std::string&
+    virtual const Ontology::shared_pointer&
     getOntology() const;
 
     virtual const DLQuery&
