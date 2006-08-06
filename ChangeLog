@@ -1,5 +1,11 @@
 2006-08-06  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* include/OWLParser.h: Get rid of libraptor warnings and error
+	messages.
+	* src/OWLParser.cpp: Likewise.
+
+	* src/RacerAnswerScanner.lpp: Fix Racer warning message parsing.
+
 	* testsuite/TestRacerQuery.cpp: Fix bug in the testcases.
 
 	* src/RacerInterface.cpp (RacerInterface::getUniverse): Use
@@ -8,6 +14,8 @@
 	* src/Ontology.cpp: Download http:// ontologies and put them into
 	a temporary file in ~/.dlvhex so we don't need to download them
 	in the OWLParser code *and* in the Racer code.
+	Add support for parsing errors in libraptor. 
+
 	* include/Ontology.h: Likewise.
 
 	* src/UserDir.cpp (UserDir::createTemp): New method.
