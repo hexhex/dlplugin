@@ -44,6 +44,10 @@ namespace racer {
     virtual void
     create(const std::string& file) const;
 
+    /// create a temp file inside the user directory with prefix
+    virtual std::string
+    createTemp(const std::string& prefix) const;
+
     /// open a file in the user directory
     virtual void
     open(std::fstream& s, const std::string& file) const;

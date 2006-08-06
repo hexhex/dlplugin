@@ -49,6 +49,15 @@ UserDir::create(const std::string& file) const
   ACE_OS::close(ACE_OS::creat(f.c_str(), S_IRUSR | S_IWUSR));
 }
 
+std::string
+UserDir::createTemp(const std::string& prefix) const
+{
+  const char *tmp = ACE_OS::tempnam(userDirectory.c_str(), prefix.c_str());
+  std::string tmpstr(tmp);
+  delete tmp;
+  return tmpstr;
+}
+
 void
 UserDir::open(std::fstream& s, const std::string& file) const
 {
