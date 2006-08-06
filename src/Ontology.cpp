@@ -12,6 +12,7 @@
 
 #include "Ontology.h"
 #include "OWLParser.h"
+#include "UserDir.h"
 
 #include <string>
 #include <map>
@@ -54,14 +55,43 @@ namespace dlvhex {
 Ontology::Ontology()
 { }
 
-Ontology::Ontology(const std::string& u,
-		   const std::string& n)
+Ontology::~Ontology()
+{
+  if (isTemp)
+    {
+      UserDir().remove(uri);
+    }
+}
+
+
+Ontology::Ontology(const std::string& u)
   : uri(u),
-    nspace(n)
-{ }
+    isTemp(false)
+{
+  OWLParser p(uri);
+
+  if (!isLocal())
+    {
+      std::string tmp = UserDir().createTemp("owl-");
+
+      p.fetchURI(tmp);
+      uri = tmp;
+      p.open(tmp);
+
+      isTemp = true;
+    }
+
+  p.parseNamespace(nspace);
+}
 
 Ontology::Ontology(const Ontology&)
 { }
+
+bool
+Ontology::isLocal() const
+{
+  return uri.find("http://") == std::string::npos;
+}
 
 Ontology::shared_pointer
 Ontology::createOntology(const std::string& uri)
@@ -69,21 +99,25 @@ Ontology::createOntology(const std::string& uri)
   typedef std::map<std::string, Ontology::shared_pointer> OntologyMap;
   static OntologyMap ontomap;
 
-  OntologyMap::const_iterator o = ontomap.find(uri);
+  // rip off "file:" prefix
+
+  std::string finduri = uri;
+
+  if (finduri.find("file:") == 0)
+    {
+      finduri.erase(0, 5);
+    }
+
+  OntologyMap::const_iterator o = ontomap.find(finduri);
 
   if (o != ontomap.end())
     {
       return o->second;
     }
 
-  OWLParser p(uri);
+  Ontology::shared_pointer osp(new Ontology(finduri));
 
-  std::string nspace;
-  p.parseNamespace(nspace);
-
-  Ontology::shared_pointer osp(new Ontology(uri, nspace));
-
-  ontomap[uri] = osp;
+  ontomap[finduri] = osp;
 
   return osp;
 }

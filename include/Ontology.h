@@ -37,22 +37,37 @@ namespace racer {
   private:
     /// Ontology URI
     std::string uri;
+    /// is this a temporary local file?
+    bool isTemp;
 
     /// default namespace of OWL
     std::string nspace;
 
+    // the next members must be mutable, otw. we would not be able to
+    // declare the getter methods with a const qualifier
+
+    /// concept names
     mutable ObjectsPtr concepts;
+    /// role names
     mutable ObjectsPtr roles;
+    /// individual names
     mutable ObjectsPtr individuals;
+
 
     Ontology();
 
-    Ontology(const std::string& uri, const std::string& nspace);
+    Ontology(const std::string& uri);
 
     Ontology(const Ontology&);
 
 
+    bool
+    isLocal() const;
+
   public:
+    virtual
+    ~Ontology();
+
     static Ontology::shared_pointer
     createOntology(const std::string& uri);
 
