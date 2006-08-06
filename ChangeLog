@@ -1,3 +1,18 @@
+2006-08-06  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* testsuite/TestRacerQuery.cpp: Fix bug in the testcases.
+
+	* src/RacerInterface.cpp (RacerInterface::getUniverse): Use
+	Ontology instead of OWLParser.
+
+	* src/Ontology.cpp: Download http:// ontologies and put them into
+	a temporary file in ~/.dlvhex so we don't need to download them
+	in the OWLParser code *and* in the Racer code.
+	* include/Ontology.h: Likewise.
+
+	* src/UserDir.cpp (UserDir::createTemp): New method.
+	* include/UserDir.h (Module): Likewise.
+
 2006-08-05  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/Registry.h: URL -> URI.
