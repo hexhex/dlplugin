@@ -13,8 +13,11 @@
 
 #include "OWLParser.h"
 #include "RacerError.h"
+
 #include <set>
 #include <string>
+#include <sstream>
+
 #include <raptor.h>
 
 using namespace dlvhex::racer;
@@ -158,16 +161,43 @@ OWLParser::writeBytesHandler(raptor_www* /* w3 */, void* userData,
 
 
 void
+OWLParser::errorHandler(void* userData, raptor_locator* locator, const char* message)
+{
+  std::string* err = (std::string*) userData;
+
+  if (err)
+    {
+      std::ostringstream oss;
+
+      oss << message;
+
+      int line = raptor_locator_line(locator);
+      if (line >= 0)
+	{
+	  oss << " (line " << line << ')';
+	}
+
+      *err = oss.str();
+    }
+}
+
+
+void
 OWLParser::parse(void* userData,
 		 raptor_statement_handler handler,
 		 raptor_namespace_handler nsHandler)
   throw (RacerParsingError)
 {
-  bool error = false;
+  std::string error;
 
   raptor_init();
 
   raptor_parser* parser = raptor_new_parser("rdfxml");
+
+  raptor_set_fatal_error_handler(parser, &error, OWLParser::errorHandler);
+  raptor_set_error_handler(parser, &error, OWLParser::errorHandler);
+  raptor_set_warning_handler(parser, 0, OWLParser::errorHandler);
+
   raptor_uri* parseURI  = raptor_new_uri((const unsigned char*) uri.c_str());
 
   if (handler)
@@ -180,19 +210,16 @@ OWLParser::parse(void* userData,
       raptor_set_namespace_handler(parser, userData, nsHandler);
     }
 
-  if (raptor_parse_uri(parser, parseURI, 0))
-    {
-      error = true;
-    }
+  raptor_parse_uri(parser, parseURI, 0);
     
   raptor_free_uri(parseURI);
   raptor_free_parser(parser);
 
   raptor_finish();
 
-  if (error)
+  if (!error.empty())
     {
-      throw RacerParsingError("Couldn't parse URI " + uri);
+      throw RacerParsingError(error);
     }
 }
 
@@ -221,7 +248,10 @@ OWLParser::parseNames(std::set<Term>& concepts, std::set<Term>& roles)
 
 void
 OWLParser::fetchURI(const std::string& file)
+  throw (RacerParsingError)
 {
+  std::string error;
+
   raptor_init();
   raptor_www_init();
 
@@ -232,6 +262,7 @@ OWLParser::fetchURI(const std::string& file)
   raptor_www* rw3 = raptor_www_new();
 
   raptor_www_set_write_bytes_handler(rw3, OWLParser::writeBytesHandler, io);
+  raptor_www_set_error_handler(rw3, OWLParser::errorHandler, &error);
 
   raptor_www_fetch(rw3, fetchURI);
 
@@ -241,4 +272,9 @@ OWLParser::fetchURI(const std::string& file)
 
   raptor_www_finish();
   raptor_finish();
+  
+  if (!error.empty())
+    {
+      throw RacerParsingError(error);
+    }
 }

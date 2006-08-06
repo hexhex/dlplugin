@@ -89,6 +89,10 @@ namespace racer {
     writeBytesHandler(raptor_www* w3, void* userData,
 		      const void* ptr, size_t size, size_t nmemb);
 
+
+    static void
+    errorHandler(void* userData, raptor_locator* locator, const char* message);
+
   public:
     /// Ctor
     explicit
@@ -134,7 +138,7 @@ namespace racer {
      * @param file 
      */
     virtual void
-    fetchURI(const std::string& file);
+    fetchURI(const std::string& file) throw (RacerParsingError);
   };
 
 } // namespace racer
