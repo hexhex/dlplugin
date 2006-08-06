@@ -154,10 +154,11 @@ yylloc->step();
 
 <answertrailer>{
 
-  \"[^\"]*\" {
+  \"[^\n]*\n {
     // get the warning message
     BEGIN(INITIAL);
-    yylval.sval = new std::string(yytext + 1, yyleng - 2); // skip "
+    yylval.sval = new std::string(yytext + 1, yyleng - 3); // skip "\n
+    yyless(yyleng - 1); // add \n into the stream
     return token::STRING;
   }
 
