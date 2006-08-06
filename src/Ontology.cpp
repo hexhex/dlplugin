@@ -115,11 +115,18 @@ Ontology::createOntology(const std::string& uri)
       return o->second;
     }
 
-  Ontology::shared_pointer osp(new Ontology(finduri));
+  try
+    {
+      Ontology::shared_pointer osp(new Ontology(finduri));
 
-  ontomap[finduri] = osp;
+      ontomap[finduri] = osp;
 
-  return osp;
+      return osp;
+    }
+  catch (RacerParsingError& e)
+    {
+      throw RacerParsingError("Couldn't parse document " + uri + ": " + e.what());
+    }
 }
 
 const std::string&
@@ -156,9 +163,9 @@ Ontology::getConcepts() const
 	  OWLParser p(uri);
 	  p.parseNames(*c, *r);
 	}
-      catch (RacerParsingError&)
+      catch (RacerParsingError& e)
 	{
-	  ///@todo ignore?
+	  throw RacerParsingError("Couldn't parse document " + uri + ": " + e.what());
 	}
 
       concepts = c;
@@ -190,9 +197,9 @@ Ontology::getRoles() const
 	  OWLParser p(uri);
 	  p.parseNames(*c, *r);
 	}
-      catch (RacerParsingError&)
+      catch (RacerParsingError& e)
 	{
-	  ///@todo ignore?
+	  throw RacerParsingError("Couldn't parse document " + uri + ": " + e.what());
 	}
 
       concepts = c;
@@ -214,9 +221,9 @@ Ontology::getIndividuals() const
 	  OWLParser p(uri);
 	  p.parseIndividuals(*i);
 	}
-      catch (RacerParsingError&)
+      catch (RacerParsingError& e)
 	{
-	  ///@todo ignore?
+	  throw RacerParsingError("Couldn't parse document " + uri + ": " + e.what());
 	}
 
       individuals = i;
