@@ -14,7 +14,7 @@
 
 #include "RacerRunner.h"
 #include "RacerExtAtom.h"
-#include "OWLParser.h"
+#include "Ontology.h"
 #include "HexDLRewriterDriver.h"
 #include "LogBuf.h"
 #include "Registry.h"
@@ -52,11 +52,19 @@ RacerInterface::createRewriter(std::istream& i, std::ostream& o)
 void
 RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
 {
-  OWLParser p(uri);
-  std::set<Term> indvs;
-  p.parseIndividuals(indvs);
-  std::insert_iterator<std::list<Term> > ins = std::inserter(uni, uni.begin());
-  std::copy(indvs.begin(), indvs.end(), ins);
+  try
+    {
+      Ontology::shared_pointer onto = Ontology::createOntology(uri);
+
+      Ontology::ObjectsPtr indvs = onto->getIndividuals();
+      
+      std::insert_iterator<std::list<Term> > ins = std::inserter(uni, uni.begin());
+      std::copy(indvs->begin(), indvs->end(), ins);
+    }
+  catch (RacerError& e)
+    {
+      throw PluginError(e.what());
+    }
 }
 
 void
