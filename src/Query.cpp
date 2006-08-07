@@ -267,14 +267,6 @@ namespace racer {
 
     os << *q.getOntology()
        << ','
-       << q.getPlusC()
-       << ','
-       << q.getMinusC()
-       << ','
-       << q.getPlusR()
-       << ','
-       << q.getMinusR()
-       << ','
        << q.getDLQuery()
        << " {";
 
@@ -336,13 +328,9 @@ Query::Query(Ontology::shared_pointer o,
 	     const DLQuery& q,
 	     const AtomSet& i)
   : ontology(o),
-    plusC(pc),
-    minusC(mc),
-    plusR(pr),
-    minusR(mr),
     query(q)
 {
-  setInterpretation(i);
+  setInterpretation(i, pc, mc, pr, mr);
 }
 
 
@@ -368,52 +356,51 @@ Query::getProjectedInterpretation() const
 }
 
 void
-Query::setInterpretation(const AtomSet& ints)
+Query::setInterpretation(const AtomSet& ints,
+			 const Term& pc, const Term& mc,
+			 const Term& pr, const Term& mr
+			 )
 {
-  this->interpretation = ints;
-
   // project out interpretation, i.e. compute I^\lambda
   for (AtomSet::const_iterator it = ints.begin();
        it != ints.end(); it++)
     {
       Term p = it->getPredicate();
 
-      if (p == getPlusC() ||
-	  p == getMinusC() ||
-	  p == getPlusR() ||
-	  p == getMinusR())
-	{
-	  AtomPtr ap(new Atom(it->getArguments()));
-	  proj.insert(ap);
-	}
+      bool isPC = p == pc; bool isMC = p == mc; bool isPR = p == pr; bool isMR = p == mr;
+
+      AtomPtr ap(isPC || isMC || isPR || isMR ?
+		 new Atom(it->getArguments()) :
+		 0);
+
+      if (isPC)      plusC.insert(ap);
+      else if (isMC) minusC.insert(ap);
+      else if (isPR) plusR.insert(ap);
+      else if (isMR) minusR.insert(ap);
+
+      if (ap) proj.insert(ap);
     }
 }
 
 const AtomSet&
-Query::getInterpretation() const
-{
-  return this->interpretation;
-}
-
-const Term&
 Query::getPlusC() const
 {
   return this->plusC;
 }
 
-const Term&
+const AtomSet&
 Query::getMinusC() const
 {
   return this->minusC;
 }
 
-const Term&
+const AtomSet&
 Query::getPlusR() const
 {
   return this->plusR;
 }
 
-const Term&
+const AtomSet&
 Query::getMinusR() const
 {
   return this->minusR;

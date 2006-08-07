@@ -71,122 +71,178 @@ NRQLBuilder::createHead(std::ostream& stream, const Query& query) const
   return !isEmpty;
 }
 
+namespace dlvhex {
+  namespace racer {
+
+    struct InterToAssertion
+    {
+      const Query& query;
+      bool& empty;
+      bool negate;
+
+      InterToAssertion(const Query& q, bool& isEmpty, bool isNegated)
+	: query(q), empty(isEmpty), negate(isNegated)
+      { }
+    };
+
+
+    struct InterToInstance : public InterToAssertion
+    {
+      InterToInstance(const Query& q, bool& isEmpty, bool isNegated = false)
+	: InterToAssertion(q, isEmpty, isNegated)
+      { }
+
+      ABoxInstance
+      operator() (const Atom& a)
+      {
+	empty = false;
+
+	if (a.getArity() == 2)
+	  {
+	    ABoxQueryConcept::const_pointer c =
+	      new ABoxQueryConcept
+	      (a.getArgument(0).getUnquotedString(),
+	       query.getOntology()->getNamespace()
+	       );
+	    ABoxQueryIndividual::const_pointer i =
+	      new ABoxQueryIndividual
+	      (a.getArgument(1).getUnquotedString(),
+	       query.getOntology()->getNamespace()
+	       );
+	    
+	    return ABoxInstance(negate ? new ABoxNegatedConcept(c) : c, i);
+	  }
+	else if (a.getArity() == 3 && negate)
+	  {
+	    ABoxQueryRole::const_pointer r = 
+	      new ABoxQueryRole
+	      (a.getArgument(0).getUnquotedString(),
+	       query.getOntology()->getNamespace()
+	       );
+	    ABoxQueryIndividual* i1 =
+	      new ABoxQueryIndividual
+	      (a.getArgument(1).getUnquotedString(),
+	       query.getOntology()->getNamespace()
+	       );
+	    ABoxQueryIndividual* i2 =
+	      new ABoxQueryIndividual
+	      (a.getArgument(2).getUnquotedString(),
+	       query.getOntology()->getNamespace()
+	       );
+	    
+	    ABoxOneOfConcept::IndividualVector iv;
+	    iv.push_back(i2);
+
+	    // -R(a,b) -> (instance a (not (some R (one-of b))))
+	    // does not work? seems like there is a bug in Racer
+	    return ABoxInstance
+	      (new ABoxNegatedConcept
+	       (new ABoxSomeConcept(r, new ABoxOneOfConcept(iv))
+		),
+	       i1
+	       );
+	  }
+
+	std::ostringstream oss;
+	oss << a << " has wrong arity.";
+	throw RacerBuildingError(oss.str());
+      }
+
+    };
+
+
+    struct InterToRelated : public InterToAssertion
+    {
+      InterToRelated(const Query& q, bool& isEmpty, bool isNegated = false)
+	: InterToAssertion(q, isEmpty, isNegated)
+      { }
+
+
+      ABoxRelated
+      operator() (const Atom& a)
+      {
+	empty = false;
+
+	if (a.getArity() == 3 && !negate)
+	  {
+	    ABoxQueryRole::const_pointer r = 
+	      new ABoxQueryRole
+	      (a.getArgument(0).getUnquotedString(),
+	       query.getOntology()->getNamespace()
+	       );
+	    ABoxQueryIndividual::const_pointer i1 =
+	      new ABoxQueryIndividual
+	      (a.getArgument(1).getUnquotedString(),
+	     query.getOntology()->getNamespace()
+	       );
+	    ABoxQueryIndividual::const_pointer i2 =
+	      new ABoxQueryIndividual
+	      (a.getArgument(2).getUnquotedString(),
+	       query.getOntology()->getNamespace()
+	       );
+	    
+	    return ABoxRelated(r, i1, i2);
+	  }
+
+	std::ostringstream oss;
+	oss << a << " has wrong arity.";
+	throw RacerBuildingError(oss.str());
+      }
+
+    };
+
+  }
+}
+
 
 bool
 NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
   throw(RacerBuildingError)
 {
-  const AtomSet& ints = query.getInterpretation();
   bool isEmpty = true;
 
-  for (AtomSet::const_iterator it = ints.begin(); it != ints.end(); it++)
+  if (!query.getPlusC().empty())
     {
-      if (!isEmpty) // this skips the beginning of the output
-	{
-	  stream << ' ';
-	}
+      AtomSet::const_iterator backPlusC = --query.getPlusC().end();
+      InterToInstance i2i(query, isEmpty);
+      std::transform(query.getPlusC().begin(), backPlusC,
+		     std::ostream_iterator<ABoxInstance>(stream, " "),
+		     i2i
+		     );
+      stream << i2i(*backPlusC);
+    }
 
-      const Atom& a = *it;
-      const Term pred = a.getArgument(0);
+  if (!query.getMinusC().empty())
+    {
+      AtomSet::const_iterator backMinusC = --query.getMinusC().end();
+      InterToInstance i2i(query, isEmpty, true);
+      std::transform(query.getMinusC().begin(), backMinusC,
+		     std::ostream_iterator<ABoxInstance>(stream, " "),
+		     i2i
+		     );
+      stream << i2i(*backMinusC);
+    }
 
-      if (pred == query.getPlusC()) // plusC
-	{
-	  if (a.getArity() < 3)
-	    {
-	      throw RacerBuildingError(pred.getUnquotedString() + " has wrong arity.");
-	    }
+  if (!query.getPlusR().empty())
+    {
+      AtomSet::const_iterator backPlusR = --query.getPlusR().end();
+      InterToRelated i2r(query, isEmpty);
+      std::transform(query.getPlusR().begin(), backPlusR,
+		     std::ostream_iterator<ABoxRelated>(stream, " "),
+		     i2r
+		     );
+      stream << i2r(*backPlusR);
+    }
 
-	  isEmpty = false;
-
-	  stream <<
-	    ABoxInstance
-	    (new ABoxQueryConcept
-	     (a.getArgument(1).getUnquotedString(),
-	      query.getOntology()->getNamespace()),
-	     new ABoxQueryIndividual
-	     (a.getArgument(2).getUnquotedString(),
-	      query.getOntology()->getNamespace())
-	     );
-	}
-      else if (pred == query.getMinusC()) // minusC
-	{
-	  if (a.getArity() < 3)
-	    {
-	      throw RacerBuildingError(pred.getUnquotedString() + " has wrong arity.");
-	    }
-
-	  isEmpty = false;
-
-	  stream <<
-	    ABoxInstance
-	    (new ABoxNegatedConcept
-	     (new ABoxQueryConcept
-	      (a.getArgument(1).getUnquotedString(),
-	       query.getOntology()->getNamespace())
-	      ),
-	     new ABoxQueryIndividual
-	     (a.getArgument(2).getUnquotedString(),
-	      query.getOntology()->getNamespace())
-	     );
-	}
-      else if (pred == query.getPlusR()) // plusR
-	{
-	  if (a.getArity() < 4)
-	    {
-	      throw RacerBuildingError(pred.getUnquotedString() + " has wrong arity.");
-	    }
-
-	  isEmpty = false;
-
-	  stream << 
-	    ABoxRelated
-	    (new ABoxQueryRole
-	     (a.getArgument(1).getUnquotedString(),
-	      query.getOntology()->getNamespace()),
-	     new ABoxQueryIndividual
-	     (a.getArgument(2).getUnquotedString(),
-	      query.getOntology()->getNamespace()),
-	     new ABoxQueryIndividual
-	     (a.getArgument(3).getUnquotedString(),
-	      query.getOntology()->getNamespace())
-	     );
-	}
-      else if (pred == query.getMinusR()) // minusR
-	{
-	  if (a.getArity() < 4)
-	    {
-	      throw RacerBuildingError(pred.getUnquotedString() + " has wrong arity.");
-	    }
-
-	  isEmpty = false;
-
-	  ABoxOneOfConcept::IndividualVector iv;
-	  iv.push_back(new ABoxQueryIndividual
-		       (a.getArgument(3).getUnquotedString(),
-			query.getOntology()->getNamespace())
-		       );
-
-	  // -R(a,b) -> (instance a (not (some R (one-of b))))
-	  // does not work? seems like there is a bug in Racer
-	  stream << 
-	    ABoxInstance
-	    (new ABoxNegatedConcept
-	     (new ABoxSomeConcept
-	      (new ABoxQueryRole
-	       (a.getArgument(1).getUnquotedString(),
-		query.getOntology()->getNamespace()),
-	       new ABoxOneOfConcept(iv)
-	       )
-	      ),
-	     new ABoxQueryIndividual
-	     (a.getArgument(2).getUnquotedString(),
-	      query.getOntology()->getNamespace())
-	     );
-	}
-      else
-	{
-	  // just ignore unknown stuff...
-	}
+  if (!query.getMinusR().empty())
+    {
+      AtomSet::const_iterator backMinusR = --query.getMinusR().end();
+      InterToInstance i2i(query, isEmpty, true);
+      std::transform(query.getMinusR().begin(), backMinusR,
+		     std::ostream_iterator<ABoxInstance>(stream, " "),
+		     i2i
+		     );
+      stream << i2i(*backMinusR);
     }
 
   ///@todo this is a preliminary workaround for the Racer abox-cloning bug 

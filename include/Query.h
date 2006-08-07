@@ -145,22 +145,17 @@ namespace racer {
     /// ontology uri + namespace
     Ontology::shared_pointer ontology;
 
-    /// term used to identify which individuals are used to extend
-    /// positive concepts
-    Term plusC;
-    /// term used to identify which individuals are used to extend
-    /// negative concepts
-    Term minusC;
-    /// term used to identify which individuals are used to extend
-    /// positive roles
-    Term plusR;
-    /// term used to identify which individuals are used to extend
-    /// negative roles
-    Term minusR;
-    /// set of ground atoms
-    AtomSet interpretation;
     /// projected interpretation
     AtomSet proj;
+
+    /// projected interpretation for plus concepts
+    AtomSet plusC;
+    /// projected interpretation for minus concepts
+    AtomSet minusC;
+    /// projected interpretation for plus roles
+    AtomSet plusR;
+    /// projected interpretation for minus roles
+    AtomSet minusR;
 
     /// the dl-query
     DLQuery query;
@@ -168,9 +163,13 @@ namespace racer {
     /// private default ctor
     Query();
 
-    /// setup interpretation
+    /// setup projected interpretations
     void
-    setInterpretation(const AtomSet& ints);
+    setInterpretation(const AtomSet& ints,
+		      const Term& pc,
+		      const Term& mc,
+		      const Term& pr,
+		      const Term& mr);
 
   public:
     /** 
@@ -202,21 +201,18 @@ namespace racer {
     getDLQuery() const;
 
     virtual const AtomSet&
-    getInterpretation() const;
-
-    virtual const AtomSet&
     getProjectedInterpretation() const;
 
-    virtual const Term&
+    virtual const AtomSet&
     getPlusC() const;
 
-    virtual const Term&
+    virtual const AtomSet&
     getMinusC() const;
 
-    virtual const Term&
+    virtual const AtomSet&
     getPlusR() const;
 
-    virtual const Term&
+    virtual const AtomSet&
     getMinusR() const;
 
     ///@return true if interpretation is a subset of q2's
