@@ -198,6 +198,11 @@ HexDLRewriterDriver::rewriteDLAtom(const std::string& query, const std::string& 
 {
   ///@todo let the HexDLRewriter bison parser rewrite the dl-atoms
 
+  if (uri.empty())
+    {
+      throw PluginError("Couldn't rewrite dl-atom, ontology URI is empty.");
+    }
+
   // first commandment: stream thy strings
   std::ostringstream extAtom;
 
