@@ -439,7 +439,7 @@ TestRacerInterface::runRacerConjQueryTest()
   parms.push_back(Term("\"b\""));
   parms.push_back(Term("\"c\""));
   parms.push_back(Term("\"d\""));
-  parms.push_back(Term("\"http://wires#wired(X,Z1),http://wires#wired(Z1,Z2),http://wires#wired(Z2,Z3),http://wires#wired(Z3,Y)\"", true));
+  parms.push_back(Term("\"http://wires.com/wire#wired(X,Z1),http://wires.com/wire#wired(Z1,Z2),http://wires.com/wire#wired(Z2,Z3),http://wires.com/wire#wired(Z3,Y)\"", true));
 
   Tuple pat;
   pat.push_back(Term("X"));

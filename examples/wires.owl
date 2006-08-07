@@ -5,8 +5,8 @@
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-  xmlns="http://wires#"
-  xml:base="http://wires">
+  xmlns="http://wires.com/wire#"
+  xml:base="http://wires.com/wire">
 
   <owl:Ontology rdf:ID="wires"/>
 

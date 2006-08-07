@@ -1,1 +1,1 @@
-over(X) :- &dlC["wires.owl",a,b,c,d,"http://wires#HighTrafficNode"](X).
+over(X) :- &dlC["wires.owl",a,b,c,d,"http://wires.com/wire#HighTrafficNode"](X).
