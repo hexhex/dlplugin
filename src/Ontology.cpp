@@ -32,14 +32,13 @@ namespace dlvhex {
     bool
     operator< (const Ontology& o1, const Ontology& o2)
     {
-      return o1.getURI() < o2.getURI() ? true :
-	o1.getNamespace() < o2.getNamespace() ? true : false;
+      return o1.getURI() < o2.getURI();
     }
 
     bool
     operator== (const Ontology& o1, const Ontology& o2)
     {
-      return o1.getURI() == o2.getURI() && o1.getNamespace() == o2.getNamespace();
+      return o1.getURI() == o2.getURI();
     }
 
     bool
@@ -54,6 +53,7 @@ namespace dlvhex {
 
 Ontology::Ontology()
 { }
+
 
 Ontology::~Ontology()
 {
@@ -84,14 +84,17 @@ Ontology::Ontology(const std::string& u)
   p.parseNamespace(nspace);
 }
 
+
 Ontology::Ontology(const Ontology&)
 { }
+
 
 bool
 Ontology::isLocal() const
 {
   return uri.find("http://") == std::string::npos;
 }
+
 
 Ontology::shared_pointer
 Ontology::createOntology(const std::string& uri)
@@ -129,17 +132,20 @@ Ontology::createOntology(const std::string& uri)
     }
 }
 
+
 const std::string&
 Ontology::getURI() const
 {
   return uri;
 }
+
     
 const std::string&
 Ontology::getNamespace() const
 {
   return nspace;
 }
+
 
 Ontology::ObjectsPtr
 Ontology::getConcepts() const
@@ -174,6 +180,7 @@ Ontology::getConcepts() const
 
   return concepts;
 }
+
     
 Ontology::ObjectsPtr
 Ontology::getRoles() const
@@ -208,6 +215,7 @@ Ontology::getRoles() const
 
   return roles;
 }
+
 
 Ontology::ObjectsPtr
 Ontology::getIndividuals() const
