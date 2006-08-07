@@ -16,6 +16,7 @@
 
 #include <fstream>
 #include <string>
+#include <iostream>
 
 using namespace dlvhex::racer;
 
@@ -69,7 +70,17 @@ UserDir::open(std::fstream& s, const std::string& file) const
 void
 UserDir::remove(const std::string& file) const
 {
-  // remove "~/.dlvhex/" + file
-  std::string f = userDirectory + file;
+  std::string f;
+
+  if (file.find(userDirectory) != 0)
+    {
+      // remove "~/.dlvhex/" + file
+      f = userDirectory + file;
+    }
+  else
+    {
+      f = file;
+    }
+
   ACE_OS::unlink(f.c_str());
 }
