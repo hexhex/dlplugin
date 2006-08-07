@@ -12,12 +12,12 @@ if test "$RACER" = ""; then
     # we assume "RacerPro"
     RACER=RacerPro
     # and check if and where it exists
-    AC_PATH_PROG(RACERPATH, $RACER, notfound)
+    AC_PATH_PROG([RACERPATH], [$RACER], [notfound])
 else
     # the user supplied a 'RACER=...'
     # check if it exists (with search path=/, since the user supplied
     # an entire path!) and set RACERPATH to it!
-    AC_CHECK_PROG(RACERPATH, $RACER, $RACER, notfound, [/])
+    AC_CHECK_PROG([RACERPATH], [$RACER], [$RACER], [notfound], [/])
 fi
 
 if test "$RACERPATH" = notfound; then
@@ -27,7 +27,7 @@ fi
 #
 # put the racer path into config.h
 #
-AC_DEFINE_UNQUOTED(RACERPATH,"$RACERPATH",[Path of RACER executable])
+AC_DEFINE_UNQUOTED([RACERPATH],["$RACER"],[Path of RACER executable])
 
 
 AM_INIT_AUTOMAKE
