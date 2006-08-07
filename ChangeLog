@@ -1,3 +1,25 @@
+2006-08-07  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* configure.ac: Per default we don't hardcode RacerPro executable
+	path in config.h.
+
+	* src/UserDir.cpp (UserDir::remove): Fix file unlinking.
+
+	* src/HexDLRewriterDriver.cpp (HexDLRewriterDriver::rewriteDLAtom):
+	Throw PluginError if user forgot to supply the ontology.
+
+	* src/Ontology.cpp (Ontology::operator<,Ontology::operator==):
+	Don't compare namespace.
+
+	* include/Query.h: Use only projected interpretation.
+	* src/RacerNRQLBuilder.cpp (Module): Likewise.
+	* src/Query.cpp (Module): Likewise.
+
+	* examples/wires.owl: Fix namespace.
+	* examples/wires.hex: Likewise.
+	* examples/tests/wires.out: Likewise.
+	* testsuite/TestRacerInterface.cpp: Likewise.
+
 2006-08-06  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/OWLParser.h: Get rid of libraptor warnings and error
