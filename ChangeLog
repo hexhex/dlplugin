@@ -1,3 +1,50 @@
+2006-08-09  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/tests/shop.out: Fix answersets.
+	* examples/tests/test.out: Likewise.
+
+	* include/Answer.h: Fix documentation + code cleanups.
+	* include/TCPStream.h: Likewise. 
+	* include/Registry.h: Likewise. 
+	* include/RacerRunner.h: Likewise. 
+	* include/RacerQueryExpr.tcc: Likewise. 
+	* include/RacerQueryExpr.h: Likewise. 
+	* include/RacerNRQLBuilder.h: Likewise. 
+	* include/RacerNRQL.h: Likewise. 
+	* include/RacerInterface.h: Likewise. 
+	* include/RacerFlexLexer.h: Likewise. 
+	* include/RacerExtAtom.h: Likewise. 
+	* include/RacerDirector.h: Likewise. 
+	* include/RacerBuilder.h: Likewise. 
+	* include/RacerAnswerDriver.h: Likewise. 
+	* include/QueryCtx.h: Likewise. 
+	* include/Query.h: Likewise. 
+	* include/Ontology.h: Likewise. 
+	* include/OWLParser.h: Likewise. 
+	* include/LogBuf.h: Likewise. 
+	* include/HexDLRewriterFlexLexer.h: Likewise. 
+	* include/HexDLRewriterDriver.h: Likewise. 
+	* include/Cache.h: Likewise. 
+	* include/UserDir.h: Likewise. 
+	* src/TCPStream.cpp: Likewise. 
+	* src/Registry.cpp: Likewise. 
+	* src/RacerRunner.cpp: Likewise. 
+	* src/RacerQueryExpr.cpp: Likewise. 
+	* src/RacerNRQLBuilder.cpp: Likewise. 
+	* src/RacerInterface.cpp: Likewise. 
+	* src/RacerDirector.cpp: Likewise. 
+	* src/RacerAnswerDriver.cpp: Likewise. 
+	* src/QueryCtx.cpp: Likewise. 
+	* src/Query.cpp: Likewise. 
+	* src/Ontology.cpp: Likewise. 
+	* src/OWLParser.cpp: Likewise. 
+	* src/LogBuf.cpp: Likewise. 
+	* src/HexDLRewriterDriver.cpp: Likewise. 
+	* src/Cache.cpp: Likewise. 
+	* src/Answer.cpp: Likewise. 
+	* src/UserDir.cpp: Likewise. 
+	* testsuite/TestRacerDirector.cpp: Likewise. 
+
 2006-08-07  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* configure.ac: Per default we don't hardcode RacerPro executable
@@ -12,8 +59,8 @@
 	Don't compare namespace.
 
 	* include/Query.h: Use only projected interpretation.
-	* src/RacerNRQLBuilder.cpp (Module): Likewise.
-	* src/Query.cpp (Module): Likewise.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* src/Query.cpp: Likewise.
 
 	* examples/wires.owl: Fix namespace.
 	* examples/wires.hex: Likewise.
@@ -41,7 +88,7 @@
 	* include/Ontology.h: Likewise.
 
 	* src/UserDir.cpp (UserDir::createTemp): New method.
-	* include/UserDir.h (Module): Likewise.
+	* include/UserDir.h: Likewise.
 
 2006-08-05  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
