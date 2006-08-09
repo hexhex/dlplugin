@@ -65,7 +65,15 @@ TestRacerDirector::runRacerAllIndividualsTest()
   
   RacerAllIndQuery aiq(rsIO);
   
-  QueryCtx::shared_pointer q(new QueryCtx);
+  QueryCtx::shared_pointer q(new QueryCtx(new Query(Ontology::shared_pointer(),
+						    Term(""),
+						    Term(""),
+						    Term(""),
+						    Term(""),
+						    DLQuery(AtomSet(), Tuple()),
+						    AtomSet()),
+					  new Answer(0))
+			     );
   
   CPPUNIT_ASSERT_NO_THROW( q = aiq.query(q) );
   CPPUNIT_ASSERT(q->getAnswer().getTuples()->size() > 0);

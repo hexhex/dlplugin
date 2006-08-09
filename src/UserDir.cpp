@@ -13,6 +13,8 @@
 #include "UserDir.h"
 
 #include <ace/OS.h>
+#include <ace/Null_Mutex.h>
+#include <ace/Singleton.h>
 
 #include <fstream>
 #include <string>
@@ -21,39 +23,46 @@
 using namespace dlvhex::racer;
 
 
-UserDir::UserDir()
+const std::string&
+UserDir::getUserDirectory()
 {
-  // get the homedirectory of the current user and set userDirectory
-  // to ~/.dlvhex/
+  /// pathname of dlvhex user directory
+  //  static std::string* userDirectory = new std::string;
+  typedef ACE_Singleton<std::string, ACE_Null_Mutex> UserDirectory;
 
-  char user[ACE_MAX_USERID];
-
-  if (ACE_OS::cuserid(user, ACE_MAX_USERID) != 0)
+  if (UserDirectory::instance()->empty())
     {
-      struct passwd* pwd = ACE_OS::getpwnam(user);
+      // get the homedirectory of the current user and set
+      // userDirectory to ~/.dlvhex/
 
-      this->userDirectory = std::string(pwd->pw_dir) + std::string("/.dlvhex/");
+      char user[ACE_MAX_USERID];
 
-      // just in case ~/.dlvhex is not there
-      ACE_OS::mkdir(userDirectory.c_str());
+      if (ACE_OS::cuserid(user, ACE_MAX_USERID) != 0)
+	{
+	  struct passwd* pwd = ACE_OS::getpwnam(user);
+
+	  *UserDirectory::instance() = std::string(pwd->pw_dir) + std::string("/.dlvhex/");
+
+	  // just in case ~/.dlvhex is not there
+	  ACE_OS::mkdir(UserDirectory::instance()->c_str());
+	}
     }
-}
 
-UserDir::~UserDir()
-{ }
+  return *UserDirectory::instance();
+}
 
 void
 UserDir::create(const std::string& file) const
 {
   // create "~/.dlvhex/" + file
-  std::string f = userDirectory + file;
+  std::string f = getUserDirectory() + file;
   ACE_OS::close(ACE_OS::creat(f.c_str(), S_IRUSR | S_IWUSR));
 }
 
 std::string
 UserDir::createTemp(const std::string& prefix) const
 {
-  const char *tmp = ACE_OS::tempnam(userDirectory.c_str(), prefix.c_str());
+  const char *tmp = ACE_OS::tempnam(getUserDirectory().c_str(), prefix.c_str());
   std::string tmpstr(tmp);
   delete tmp;
   return tmpstr;
@@ -63,7 +72,7 @@ void
 UserDir::open(std::fstream& s, const std::string& file) const
 {
   // open "~/.dlvhex/" + file
-  std::string f = userDirectory + file;
+  std::string f = getUserDirectory() + file;
   s.open(f.c_str());
 }
 
@@ -72,10 +81,10 @@ UserDir::remove(const std::string& file) const
 {
   std::string f;
 
-  if (file.find(userDirectory) != 0)
+  if (file[0] != '/' && file.find(getUserDirectory()) != 0)
     {
       // remove "~/.dlvhex/" + file
-      f = userDirectory + file;
+      f = getUserDirectory() + file;
     }
   else
     {

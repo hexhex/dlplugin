@@ -22,13 +22,6 @@
 using namespace dlvhex::racer;
 
 
-Answer::Answer()
-  : PluginAtom::Answer(),
-    isIncoherent(false),
-    answer(false),
-    query(0) // don't care
-{ }
-
 Answer::Answer(const Query* q)
   : PluginAtom::Answer(),
     isIncoherent(false),
@@ -124,7 +117,7 @@ Answer::addTuple(const Tuple& out)
 	  // e.g. pt = (_,X,Y,_,Z), out = (a1,a2,a3)
 	  //      -> tmp = ("",a1,a2,"",a3)
 	  //
-	  for (; pit != pt.end(); pit++)
+	  for (; pit != pt.end(); ++pit)
 	    {
 	      if (pit->isAnon())
 		{
@@ -133,7 +126,7 @@ Answer::addTuple(const Tuple& out)
 	      else
 		{
 		  tmp.push_back(*oit);
-		  oit++;
+		  ++oit;
 		}
 	    }
 

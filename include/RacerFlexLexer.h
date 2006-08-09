@@ -36,8 +36,10 @@ namespace dlvhex {
  */
 struct RacerFlexLexer : public yyRacerFlexLexer
 {
+  explicit
   RacerFlexLexer(dlvhex::racer::RacerBaseAnswerDriver* d) : lexdrv(d) { }
-  virtual ~RacerFlexLexer() { }
+  virtual
+  ~RacerFlexLexer() { }
   dlvhex::racer::RacerBaseAnswerDriver* lexdrv;
   yy::RacerAnswerParser::location_type* lexloc;
   yy::RacerAnswerParser::semantic_type* lexval;

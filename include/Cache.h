@@ -28,21 +28,24 @@ namespace racer {
   class BaseCache
   {
   public:
+
+    /// Dtor.
     virtual
-    ~BaseCache();
+    ~BaseCache()
+    { }
 
     /**
-     * checks if there is a cached entry for query.
+     * checks if there is a cached entry for @a query.
      *
      * @param query
      *
-     * @return the cached QueryCtx, an empty QueryCtx otherwise.
+     * @return the cached QueryCtx, an empty QueryCtx::shared_pointer otherwise.
      */
     virtual QueryCtx::shared_pointer
     cacheHit(const QueryCtx::shared_pointer& query) = 0;
 
     /** 
-     * insert query into the cache.
+     * insert @a query into the cache.
      * 
      * @param query 
      */
@@ -64,6 +67,8 @@ namespace racer {
   class Cache : public BaseCache
   {
   protected:
+    /// Functor used in CacheSet as strict weak ordering. This is done
+    /// by comparing the internal Query members of the QueryCtx.
     struct QueryCtxCompare
       : public std::binary_function<const QueryCtx::shared_pointer,
 				    const QueryCtx::shared_pointer,

@@ -74,6 +74,7 @@ NRQLBuilder::createHead(std::ostream& stream, const Query& query) const
 namespace dlvhex {
   namespace racer {
 
+    /// base class for transforming Atom objects to ABoxAssertion objects
     struct InterToAssertion
     {
       const Query& query;
@@ -86,6 +87,7 @@ namespace dlvhex {
     };
 
 
+    /// transform Atom objects to ABoxInstance objects
     struct InterToInstance : public InterToAssertion
     {
       InterToInstance(const Query& q, bool& isEmpty, bool isNegated = false)
@@ -151,6 +153,7 @@ namespace dlvhex {
     };
 
 
+    /// transform Atom objects to ABoxRelated objects
     struct InterToRelated : public InterToAssertion
     {
       InterToRelated(const Query& q, bool& isEmpty, bool isNegated = false)
@@ -273,7 +276,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 
   NRQLConjunction body;
 
-  for (AtomSet::const_iterator it = as.begin(); it != as.end(); it++)
+  for (AtomSet::const_iterator it = as.begin(); it != as.end(); ++it)
     {
       switch (it->getArity())
 	{

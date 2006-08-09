@@ -25,7 +25,8 @@ namespace dlvhex {
 namespace racer {
 
   /**
-   * @brief Parse individuals and default namespace of an OWL KB.
+   * @brief Parse individuals, concepts names, role names and default
+   * namespace of an OWL KB.
    */
   class OWLParser
   {

@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Tue Jul 25 09:38:15 2006
  * 
- * @brief  
+ * @brief  A FlexLexer class for the Hex DL Rewriters flex scanner.
  * 
  * 
  */
@@ -36,8 +36,10 @@ namespace dlvhex {
  */
 struct HexDLRewriterFlexLexer : public yyHexFlexLexer
 {
+  explicit
   HexDLRewriterFlexLexer(dlvhex::racer::HexDLRewriterDriver* d) : lexdrv(d) { }
-  virtual ~HexDLRewriterFlexLexer() { }
+  virtual
+  ~HexDLRewriterFlexLexer() { }
   dlvhex::racer::HexDLRewriterDriver* lexdrv;
   yy::HexDLRewriterParser::location_type* lexloc;
   yy::HexDLRewriterParser::semantic_type* lexval;

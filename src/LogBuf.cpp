@@ -30,13 +30,11 @@ std::ostream dlvhex::racer::log(new LogBuf);
 LogBuf::LogBuf(std::ostream* stream)
   : std::streambuf(),
     out(stream)
-{
-}
+{ }
 
 
 LogBuf::~LogBuf()
-{
-}
+{ }
 
 std::streamsize
 LogBuf::xsputn(const std::streambuf::char_type* s, std::streamsize n)

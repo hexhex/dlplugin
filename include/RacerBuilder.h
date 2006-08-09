@@ -21,8 +21,11 @@
 namespace dlvhex {
 namespace racer {
 
-  // fwd decl
+  //
+  // forward declarations
+  //
   class Query;
+
 
   /**
    * @brief Base Builder for building RACER commands.
@@ -34,7 +37,7 @@ namespace racer {
     std::ostream& stream;
 
     /**
-     * Ctor
+     * protected ctor.
      *
      * @param s used as output stream
      */
@@ -49,9 +52,9 @@ namespace racer {
     /**
      * Building method implemented by the children of RacerBuilder.
      *
-     * @param q contains the information in order to create RACER commands
+     * @param q contains the information in order to create a RACER command
      *
-     * @return true if command was built and sent into the stream,
+     * @return true if command was built and sent to the #stream,
      * false otherwise.
      */
     virtual bool
@@ -92,9 +95,11 @@ namespace racer {
     RacerStateBuilder(std::ostream&);
 
     /**
-     * Calls various building methods in order to generate a state command.
+     * Calls various other building methods in order to generate a
+     * state command.
      *
-     * @param q use the Interpretation of Query to generate a state command 
+     * @param q use the interpretation of Query to generate a state
+     * command
      *
      * @return true if we could add something to the abox, false otherwise.
      */

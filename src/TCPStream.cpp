@@ -120,7 +120,7 @@ TCPStreamBuf::open()
       ACE_Time_Value tv(0, 300000);
 
       // at most 3 seconds (approx. 10 rounds)
-      for (unsigned i = 0; i < 10; i++)
+      for (unsigned i = 0; i < 10; ++i)
 	{
 	  close();
       

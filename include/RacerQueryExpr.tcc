@@ -28,7 +28,7 @@ namespace racer {
 
 
   /** 
-   * Calls operator<< on every element of v, separated by a blank.
+   * Calls operator<< on every element of @a v, separated by a blank.
    * 
    * @todo feature: maybe some homebrewn manipulators for setting the
    * delimiter character?
@@ -36,7 +36,7 @@ namespace racer {
    * @param s output content of v to this stream
    * @param v a vector of boost::shared_ptr<T>
    * 
-   * @return s
+   * @return @a s
    */
   template<typename T>
   std::ostream&
@@ -57,7 +57,7 @@ namespace racer {
   }
 
   /** 
-   * Calls operator<< on every element of v, separated by a blank.
+   * Calls operator<< on every element of @a v, separated by a blank.
    * 
    * @todo feature: maybe some homebrewn manipulators for setting the
    * delimiter character?
@@ -65,7 +65,7 @@ namespace racer {
    * @param s output content of v to this stream
    * @param v a boost::ptr_vector<T>
    * 
-   * @return s
+   * @return @a s
    */
   template<typename T>
   std::ostream&

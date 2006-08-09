@@ -51,10 +51,6 @@ namespace dlvhex {
 }
 
 
-Ontology::Ontology()
-{ }
-
-
 Ontology::~Ontology()
 {
   if (isTemp)

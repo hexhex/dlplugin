@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Thu Aug  3 12:01:39 2006
  * 
- * @brief  
+ * @brief  The Answer to a Query.
  * 
  * 
  */
@@ -22,11 +22,15 @@
 namespace dlvhex {
 namespace racer {
 
-  // forward decl
+  //
+  // forward declaration
+  //
   class Query;
 
+
+
   /**
-   * @brief The answer to a query.
+   * @brief The Answer to a Query.
    */
   class Answer : public PluginAtom::Answer
   {
@@ -43,9 +47,8 @@ namespace racer {
     /// to fill tuples in some query flavours
     const Query* query;
 
-    Answer();
-
   public:
+    explicit
     Answer(const Query* q);
 
     virtual

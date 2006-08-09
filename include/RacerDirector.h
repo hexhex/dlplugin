@@ -13,14 +13,14 @@
 #ifndef _RACERDIRECTOR_H
 #define _RACERDIRECTOR_H
 
-#include <dlvhex/Atom.h>
-#include <dlvhex/Term.h>
-
 #include "QueryCtx.h"
 #include "RacerError.h"
 #include "RacerAnswerDriver.h"
 #include "RacerBuilder.h"
 #include "Cache.h"
+
+#include <dlvhex/Atom.h>
+#include <dlvhex/Term.h>
 
 #include <iosfwd>
 
@@ -36,15 +36,6 @@ namespace racer {
   class RacerBaseDirector
   {
   public:
-    typedef RacerBaseDirector value_type;
-    typedef boost::shared_ptr<value_type> shared_pointer; /// managed
-							  /// RacerBaseDirector
-
-  protected:
-    RacerBaseDirector()
-    { }
-
-  public:
     virtual
     ~RacerBaseDirector()
     { }
@@ -56,6 +47,9 @@ namespace racer {
      */
     virtual QueryCtx::shared_pointer
     query(QueryCtx::shared_pointer qctx) throw(RacerError) = 0;
+
+    typedef RacerBaseDirector value_type;
+    typedef boost::shared_ptr<value_type> shared_pointer; 
   };
 
 
@@ -66,7 +60,7 @@ namespace racer {
   template <class Builder, class Parser>
   class RacerDirector : public RacerBaseDirector
   {
-  protected:
+  private:
     /// Builder object
     Builder builder;
     /// Parser object
@@ -76,7 +70,7 @@ namespace racer {
     /**
      * Ctor.
      *
-     * @param s use s to instantiate Builder and Parser
+     * @param s use @a s to instantiate Builder and Parser
      */
     explicit
     RacerDirector(std::iostream& s);
@@ -89,7 +83,7 @@ namespace racer {
      * member to the Builder/Parser.
      *
      * @return the QueryCtx::shared_pointer with the corresponding
-     * Answer to the Query
+     * Answer to the Query found in @a qctx
      */
     virtual QueryCtx::shared_pointer
     query(QueryCtx::shared_pointer qctx) throw(RacerError);
@@ -106,11 +100,7 @@ namespace racer {
    */
   class RacerCompositeDirector : public RacerBaseDirector
   {
-  public:
-    typedef RacerCompositeDirector value_type;
-    typedef boost::shared_ptr<value_type> shared_pointer;
-
-  protected:
+  private:
     /// holds a list of RacerBaseDirector objects
     boost::ptr_vector<RacerBaseDirector> dirs;
 
@@ -119,13 +109,13 @@ namespace racer {
     std::iostream& stream;
 
     /**
-     * handleInconsistency() implemented in the children of
-     * RacerCompositeDirector.
+     * If @a qctx leads to inconsistency, this method is called to
+     * handle that case.
      *
      * @param qctx
      *
-     * @return the QueryCtx::shared_pointer with the corresponding
-     * Answer to the Query
+     * @return the QueryCtx::shared_pointer with the appropriate
+     * Answer to the Query found in @a qctx.
      */
     virtual QueryCtx::shared_pointer
     handleInconsistency(QueryCtx::shared_pointer qctx);
@@ -136,16 +126,9 @@ namespace racer {
     RacerCompositeDirector(std::iostream&);
 
     /**
-     * Dtor deletes managed RacerBaseDirector objects.
-     */
-    virtual
-    ~RacerCompositeDirector();
-
-    /**
      * adds a new RacerBaseDirector to dirs.
      *
-     * @param d add it to the managed list of RacerBaseDirector
-     * objects
+     * @param d add it to #dirs
      */
     virtual void
     add(RacerBaseDirector* d);
@@ -163,6 +146,9 @@ namespace racer {
      */
     virtual QueryCtx::shared_pointer
     query(QueryCtx::shared_pointer qctx) throw(RacerError);
+
+    typedef RacerCompositeDirector value_type;
+    typedef boost::shared_ptr<value_type> shared_pointer;
   };
 
 
@@ -171,7 +157,7 @@ namespace racer {
    */
   class RacerCachingDirector : public RacerBaseDirector
   {
-  protected:
+  private:
     /// the underlying director, usually a RacerCompositeDirector
     RacerBaseDirector::shared_pointer director;
 
@@ -179,17 +165,19 @@ namespace racer {
     BaseCache& cache;
 
   public:
-    explicit
-    RacerCachingDirector(BaseCache&, RacerBaseDirector::shared_pointer d);
-
-    virtual
-    ~RacerCachingDirector();
+    /** 
+     * Ctor.
+     * 
+     * @param c the cache
+     * @param d delegation director
+     */
+    RacerCachingDirector(BaseCache& c, RacerBaseDirector::shared_pointer d);
 
     /**
-     * Tries to lookup the query in its cache and determines
+     * Tries to lookup the query @a qctx in its cache and determines
      * BaseCache::cacheHit() if its really a cache-hit. Otherwise it
-     * delegates the querying to its underlying director and caches
-     * its QueryCtx object.
+     * delegates the querying to its underlying @a director and caches
+     * the new QueryCtx object.
      *
      * @param qctx
      *
@@ -201,7 +189,9 @@ namespace racer {
   };
 
 
+  //
   // following typedefs are here for easy of use
+  //
 
   /// builds nothing and parses nothing. Mainly for testing purposes.
   typedef RacerDirector<RacerNullBuilder, RacerNullParser> RacerNullDirector;

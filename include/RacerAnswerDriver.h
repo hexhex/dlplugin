@@ -5,8 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Fri Mar 17 22:26:20 2006
  * 
- * @brief Driver classes which encapsulates the bison parser and flex
- * lexer.
+ * @brief  Driver classes for the RacerAnswer bison/flex parser.
  * 
  * 
  */
@@ -19,15 +18,22 @@
 #include "RacerError.h"
 
 #include <iosfwd>
+#include <string>
 
-// forward declaration
+//
+// forward declarations
+//
 class RacerFlexLexer;
+
 
 namespace dlvhex {
 namespace racer {
 
-  // fwd decl
+  //
+  // forward declarations
+  //
   class Answer;
+
 
   /**
    * @brief Base class for the parsers.
@@ -40,16 +46,17 @@ namespace racer {
     /// lexer object which scans the stream
     RacerFlexLexer* lexer;
 
+    /// sync and clear #stream
     void
     syncStream();
 
+    /// protected ctor.
     explicit
     RacerBaseAnswerDriver(std::istream&);
 
+  public:
     virtual
     ~RacerBaseAnswerDriver();
-
-  public:
 
     /**
      * Parses the answers from RACER.
@@ -59,10 +66,11 @@ namespace racer {
     virtual void
     parse(Answer& answer) throw (RacerParsingError) = 0;
 
-    // Error handling.
+    /// Error handling.
     void
     error(const yy::location& l, const std::string& m) throw (RacerParsingError);
 
+    /// Error handling.
     void
     error(const std::string& m) throw (RacerParsingError);
 
@@ -80,9 +88,6 @@ namespace racer {
   public:
     RacerAnswerDriver(std::istream& is);
 
-    virtual
-    ~RacerAnswerDriver();
-
     virtual void
     parse(Answer& answer) throw (RacerParsingError);
   };
@@ -98,10 +103,7 @@ namespace racer {
     explicit
     RacerIgnoreAnswer(std::istream&);
 
-    virtual
-    ~RacerIgnoreAnswer();
-
-    /// just remove pending input from stream without parsing it
+    /// just remove pending input from #stream without parsing it.
     virtual void
     parse(Answer&) throw (RacerParsingError);
   };
@@ -116,10 +118,6 @@ namespace racer {
     explicit
     RacerNullParser(std::istream& s)
       : RacerBaseAnswerDriver(s)
-    { }
-
-    virtual
-    ~RacerNullParser()
     { }
 
     /// does nothing

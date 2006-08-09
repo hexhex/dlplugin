@@ -73,8 +73,6 @@ RacerAnswerDriver::RacerAnswerDriver(std::istream& i)
   : RacerBaseAnswerDriver(i)
 { }
 
-RacerAnswerDriver::~RacerAnswerDriver()
-{ }
 
 void
 RacerAnswerDriver::parse(Answer &a) throw (RacerParsingError)
@@ -102,8 +100,6 @@ RacerIgnoreAnswer::RacerIgnoreAnswer(std::istream& s)
   : RacerBaseAnswerDriver(s)
 { }
 
-RacerIgnoreAnswer::~RacerIgnoreAnswer()
-{ }
 
 void
 RacerIgnoreAnswer::parse(Answer&) throw (RacerParsingError)

@@ -14,6 +14,8 @@
 #ifndef _QUERYCTX_H
 #define _QUERYCTX_H
 
+#include "RacerError.h"
+
 #include <dlvhex/PluginInterface.h>
 
 #include <boost/shared_ptr.hpp>
@@ -21,9 +23,12 @@
 namespace dlvhex {
 namespace racer {
 
-  // fwd decl
+  //
+  // forward declarations
+  //
   class Query;
   class Answer;
+
 
   /**
    * @brief Encapsulates a Query and the corresponding Answer.
@@ -35,20 +40,25 @@ namespace racer {
     Answer* a; /// the Answer object
 
   public:
-    /// Ctor
-    QueryCtx();
-
     /** 
      * Ctor which utilizes PluginAtom::Query to fill the members of
-     * @see{q} and creates @see{a} with a reference to @see{q}.
+     * @a q and creates @a a with a reference to @a q.
      * 
      * @param query 
      */
     explicit
-    QueryCtx(const PluginAtom::Query& query);
+    QueryCtx(const PluginAtom::Query& query) throw (RacerError);
 
-    explicit
-    QueryCtx(const QueryCtx& qctx);
+
+    /** 
+     * Ctor which takes a Query and an Answer.
+     * 
+     * @param qq 
+     * @param aa 
+     */
+    QueryCtx(Query* qq, Answer* aa)
+      : q(qq), a(aa)
+    { }
 
     virtual
     ~QueryCtx();

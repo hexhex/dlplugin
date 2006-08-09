@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Sat Aug  5 13:50:01 2006
  * 
- * @brief  
+ * @brief  Basic information about ontologies.
  * 
  * 
  */
@@ -25,7 +25,11 @@ namespace dlvhex {
 namespace racer {
 
   /**
-   * @brief Describes an ontology.
+   * @brief Basic information about ontologies.
+   *
+   * This factory stores all available ontologies and provides fast
+   * access to them, i.e. it caches concepts/roles/individuals and
+   * downloads non-local OWL ontologies.
    */
   class Ontology
   {
@@ -43,8 +47,10 @@ namespace racer {
     /// default namespace of OWL
     std::string nspace;
 
+    //
     // the next members must be mutable, otw. we would not be able to
     // declare the getter methods with a const qualifier
+    //
 
     /// concept names
     mutable ObjectsPtr concepts;
@@ -53,14 +59,20 @@ namespace racer {
     /// individual names
     mutable ObjectsPtr individuals;
 
+    //
+    // we don't want Ontology to be constructed by the user, so keep
+    // those ctors private such that we can only create Ontology by
+    // calling Ontology::createOntology
+    //
 
-    Ontology();
-
+    /// private std::string ctor
+    explicit
     Ontology(const std::string& uri);
 
+    /// private copy ctor
     Ontology(const Ontology&);
 
-
+    /// @return true if #uri is a local file, false otw.
     bool
     isLocal() const;
 
@@ -100,37 +112,46 @@ namespace racer {
   };
 
   /**
-   * @brief put the string representation of o into os
+   * @brief put the string representation of @a o into @a os.
+   *
    * @param os
    * @param o
-   * @return os
+   *
+   * @return @a os
    */
   std::ostream&
   operator<< (std::ostream& os, const Ontology& o);
 
   /**
-   * @brief lexicographically compare o1 to o2 and check if o1 is less than o2
+   * @brief lexicographically compare @a o1 to @a o2 and check if @a o1 is less than @a o2.
+   *
    * @param o1
    * @param o2
-   * @return true if o1 < o2, false otherwise.
+   *
+   * @return true if @a o1 < @a o2, false otherwise.
    */
   bool
   operator< (const Ontology& o1, const Ontology& o2);
 
   /**
-   * @brief lexicographically compare o1 to o2 and check if both queries are equal
+   * @brief lexicographically compare @a o1 to @a o2 and check if both
+   * are equal.
+   *
    * @param o1
    * @param o2
-   * @return true if o1 equals o2, false otherwise.
+   *
+   * @return true if @a o1 equals @a o2, false otherwise.
    */
   bool
   operator== (const Ontology& o1, const Ontology& o2);
 
   /**
-   * @brief converse of operator==
+   * @brief converse of operator==.
+   *
    * @param o1
    * @param o2
-   * @return true if !(o1 == o2), false otherwise.
+   *
+   * @return true if !(@a o1 == @a o2), false otherwise.
    */
   bool
   operator!= (const Ontology& o1, const Ontology& o2);

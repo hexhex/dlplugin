@@ -24,10 +24,6 @@ std::string Registry::kbName;
 std::string Registry::openURI;
 
 
-Registry::Registry()
-{ }
-
-
 unsigned
 Registry::getVerbose()
 {

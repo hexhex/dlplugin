@@ -22,10 +22,6 @@
 using namespace dlvhex::racer;
 
 
-BaseCache::~BaseCache()
-{ }
-
-
 QueryCtx::shared_pointer
 Cache::find(const QueryCtx::shared_pointer& q)
 {

@@ -56,19 +56,10 @@ ABoxQueryExpr::output(std::ostream& s) const
 std::ostream&
 ABoxQueryVariable::output(std::ostream& s) const
 {
-  if (typeFlags & VariableType::noninjective)
-    {
-      s << '$';
-    }
-  
-  s << '?';
-
-  if (typeFlags & VariableType::substrate)
-    {
-      s << '*';
-    }
-  
-  return s << symbol;
+  return s << (typeFlags & VariableType::noninjective ? "$" : "")
+	   << '?'
+	   << (typeFlags & VariableType::substrate ? "*" : "")
+	   << symbol;
 }
 
 

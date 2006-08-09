@@ -23,6 +23,7 @@
 
 using namespace dlvhex::racer;
 
+
 HexDLRewriterDriver::HexDLRewriterDriver(std::istream& i, std::ostream& o)
   : PluginRewriter(i, o),
     lexer(new HexDLRewriterFlexLexer(this)),
@@ -127,7 +128,7 @@ HexDLRewriterDriver::rewrite()
   // output rewritten dl-atoms
 
   for (boost::ptr_vector<RewriteDLAtom>::const_iterator it = rewrittenDLAtoms.begin();
-       it != rewrittenDLAtoms.end(); it++)
+       it != rewrittenDLAtoms.end(); ++it)
     {
       std::ostringstream aux;
 
@@ -280,7 +281,8 @@ HexDLRewriterDriver::rewriteDLAtom(const std::string& query,
 
 void
 HexDLRewriterDriver::error(const yy::location& l,
-			   const std::string& m) throw (RacerParsingError)
+			   const std::string& m) const
+  throw (RacerParsingError)
 {
   std::ostringstream s;
   s << "Parsing error at " << l << ": " << m;

@@ -14,7 +14,6 @@
 #ifndef _LOGBUF_H
 #define _LOGBUF_H
 
-#include <string>
 #include <streambuf>
 #include <sstream>
 #include <iostream>
@@ -36,7 +35,12 @@ namespace racer {
 
   protected:
     /**
-     * @return sbuf.sputn(s,n) if obuf != 0. Otherwise returns -1.
+     * Write @a n bytes of @a s to #sstream.
+     *
+     * @param s
+     * @param n
+     *
+     * @return #sstream::write(s,n) if #out != 0, otw. -1.
      */
     virtual std::streamsize
     xsputn(const std::streambuf::char_type* s, std::streamsize n);
@@ -46,7 +50,7 @@ namespace racer {
      *
      * @param c put this character into the output buffer
      *
-     * @return sbuf.sputc(c) if obuf != 0, otherwise traits::eof().
+     * @return #sstream::put(c) if #out != 0, otw. #traits_type::eof().
      */
     virtual std::streambuf::int_type
     overflow(std::streambuf::int_type c);
@@ -55,8 +59,8 @@ namespace racer {
      * Called when output buffer needs syncronization and resets the
      * input buffer.
      *
-     * @return Prefix log information with a timestamp if obuf != 0,
-     * otherwise -1.
+     * @return Prefix log information with a timestamp if #out != 0,
+     * otw. -1.
      */
     virtual std::streambuf::int_type
     sync();

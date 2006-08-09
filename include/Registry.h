@@ -19,6 +19,9 @@
 namespace dlvhex {
 namespace racer {
 
+  /**
+   * @brief The Registry keeps track of global state.
+   */
   class Registry
   {
   private:
@@ -28,7 +31,9 @@ namespace racer {
     static std::string kbName;
     static std::string openURI;
 
-    Registry();
+    /// pure virtual dtor, we don't want an instance or a child
+    virtual
+    ~Registry() = 0;
 
   public:
     static unsigned

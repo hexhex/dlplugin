@@ -125,12 +125,7 @@ namespace racer {
 
 
   /**
-   * @brief An IOStream to a TCP server.
-   *
-   * Instead of using TCPStreamBuf we could inherit from
-   * ACE_IOStream<ACE_SOCK_Stream> and use automatically ACE_Streambuf
-   * but for unknown reasons it is disabled on Linux and we have to do
-   * the whole buffering ourselves.
+   * @brief A std::iostream which utilizes TCPStreamBuf.
    */
   class TCPIOStream : public std::iostream
   {

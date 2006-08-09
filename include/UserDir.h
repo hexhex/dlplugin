@@ -28,32 +28,27 @@ namespace racer {
    */
   class UserDir
   {
-  private:
-    /// pathname of dlvhex user directory
-    std::string userDirectory;
-
   public:
-    /// Ctor tries to get the home directory and sets userDirectory
-    /// accordingly
-    UserDir();
+    /// tries to get the home directory and setups the user directory
+    /// @return absolute pathname of the user directory
+    static const std::string&
+    getUserDirectory();
 
-    virtual
-    ~UserDir();
-
-    /// create a file in the user directory
-    virtual void
+    /// create @a file in the user directory
+    void
     create(const std::string& file) const;
 
-    /// create a temp file inside the user directory with prefix
-    virtual std::string
+    /// create a temp file inside the user directory with @a prefix
+    /// @return filename for the temporary file
+    std::string
     createTemp(const std::string& prefix) const;
 
-    /// open a file in the user directory
-    virtual void
+    /// open @a file in the user directory
+    void
     open(std::fstream& s, const std::string& file) const;
 
-    /// remove a file in the user directory
-    virtual void
+    /// remove @a file in the user directory
+    void
     remove(const std::string& file) const;
   };
 

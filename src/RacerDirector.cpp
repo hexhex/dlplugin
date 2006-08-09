@@ -28,8 +28,6 @@ RacerCompositeDirector::RacerCompositeDirector(std::iostream& s)
     stream(s)
 { }
 
-RacerCompositeDirector::~RacerCompositeDirector()
-{ }
 
 void
 RacerCompositeDirector::add(RacerBaseDirector* d)
@@ -45,7 +43,7 @@ QueryCtx::shared_pointer
 RacerCompositeDirector::query(QueryCtx::shared_pointer qctx) throw(RacerError)
 {
   for (boost::ptr_vector<RacerBaseDirector>::iterator it = dirs.begin();
-       it != dirs.end(); it++)
+       it != dirs.end(); ++it)
     {
       qctx = it->query(qctx);
 
@@ -84,10 +82,10 @@ RacerCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
 	  std::vector<Tuple> pairs;
 	  
 	  for (std::vector<Tuple>::const_iterator it1 = tuples->begin();
-	       it1 != tuples->end(); it1++)
+	       it1 != tuples->end(); ++it1)
 	    {
 	      for (std::vector<Tuple>::const_iterator it2 = tuples->begin();
-		   it2 != tuples->end(); it2++)
+		   it2 != tuples->end(); ++it2)
 		{
 		  Tuple t;
 		  t.push_back((*it1)[0]);	 
@@ -114,8 +112,6 @@ RacerCachingDirector::RacerCachingDirector(BaseCache& c,
     cache(c)
 { }
 
-RacerCachingDirector::~RacerCachingDirector()
-{ }
 
 QueryCtx::shared_pointer
 RacerCachingDirector::query(QueryCtx::shared_pointer qctx) throw(RacerError)

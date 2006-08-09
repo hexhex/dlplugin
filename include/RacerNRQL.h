@@ -22,7 +22,9 @@
 namespace dlvhex {
 namespace racer {
 
-  // fwd decl
+  //
+  // forward declarations
+  //
   class Query;
 
 
@@ -38,7 +40,8 @@ namespace racer {
 
   public:
     virtual
-    ~NRQLBase() {}
+    ~NRQLBase()
+    { }
 
     friend std::ostream&
     operator<< (std::ostream& s, const NRQLBase& b);

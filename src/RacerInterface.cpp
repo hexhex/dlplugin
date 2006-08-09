@@ -18,6 +18,8 @@
 #include "HexDLRewriterDriver.h"
 #include "LogBuf.h"
 #include "Registry.h"
+#include "TCPStream.h"
+#include "Cache.h"
 
 #include <algorithm>
 #include <iterator>
@@ -28,7 +30,7 @@
 using namespace dlvhex::racer;
 
 RacerInterface::RacerInterface()
-  : stream("localhost", 8088),
+  : stream(new TCPIOStream("localhost", 8088)),
     cache(new Cache),
     rewriter(new HexDLRewriterDriver(std::cin, std::cout))
 { }
@@ -37,6 +39,7 @@ RacerInterface::~RacerInterface()
 {
   delete rewriter;
   delete cache;
+  delete stream;
   // stop RacerPro server
   RacerRunner::instance()->stop();
 }
@@ -70,20 +73,20 @@ RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
 void
 RacerInterface::getAtoms(AtomFunctionMap& m)
 {
-  m["dlC"]          = new RacerConceptAtom(stream, *cache);
-  m["dlR"]          = new RacerRoleAtom(stream, *cache);
-  m["dlConsistent"] = new RacerConsistentAtom(stream);
-  m["dlDR"]         = new RacerDatatypeRoleAtom(stream, *cache);
+  m["dlC"]          = new RacerConceptAtom(*stream, *cache);
+  m["dlR"]          = new RacerRoleAtom(*stream, *cache);
+  m["dlConsistent"] = new RacerConsistentAtom(*stream);
+  m["dlDR"]         = new RacerDatatypeRoleAtom(*stream, *cache);
 
   // register for each arity in range 0 to 32 a dedicated RacerCQAtom
   // external atom with specified arity
 
   std::ostringstream oss;
 
-  for (unsigned n = 0; n <= 32; n++)
+  for (unsigned n = 0; n <= 32; ++n)
     {
       oss << "dlCQ" << n;
-      m[oss.str()]  = new RacerCQAtom(stream, *cache, n);
+      m[oss.str()]  = new RacerCQAtom(*stream, *cache, n);
       oss.str("");
     }
 }
@@ -104,7 +107,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 
   for (std::vector<std::string>::iterator it = argv.begin();
        it != argv.end();
-       it++)
+       ++it)
     {
       std::string::size_type o;
 
@@ -154,7 +157,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
   // we handled it so we've got to remove it. do this right after the
   // for-loop due to invalidation of the iterator in vector<>::erase()
   for (std::vector<std::vector<std::string>::iterator>::const_iterator it = found.begin();
-       it != found.end(); it++)
+       it != found.end(); ++it)
     {
       argv.erase(*it);
     }
@@ -166,7 +169,7 @@ RacerInterface::startRacer()
   if (!RacerRunner::instance()->isRunning())
     {
       RacerRunner::instance()->run();
-      stream.setConnection("localhost", RacerRunner::instance()->getPort());
+      stream->setConnection("localhost", RacerRunner::instance()->getPort());
     }
 }
  

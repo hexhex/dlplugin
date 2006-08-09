@@ -33,8 +33,9 @@ namespace racer {
   private:
     /// RACER command
     std::string command;
+    /// the listening port of the RACER server
     unsigned port;
-    ///
+    /// start racer with this kb file
     std::string kb;
     /// RACER process id
     pid_t racer;

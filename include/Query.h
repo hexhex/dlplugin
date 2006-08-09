@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Thu Aug  3 10:24:52 2006
  * 
- * @brief  
+ * @brief  Query classes.
  * 
  * 
  */
@@ -20,7 +20,6 @@
 #include <dlvhex/AtomSet.h>
 #include <dlvhex/Term.h>
 
-#include <string>
 #include <iosfwd>
 
 namespace dlvhex {
@@ -28,8 +27,8 @@ namespace racer {
 
 
   /**
-   * @brief A DL Query, i.e. syntactic information for querying the DL
-   * KB.
+   * @brief A DLQuery provides syntactic information for querying the
+   * DL KB.
    */
   class DLQuery
   {
@@ -46,13 +45,25 @@ namespace racer {
     /// bitvector for quickly comparing the pattern tuple
     unsigned long typeFlags;
 
-    /// setup typeFlags and pattern
+    /// setup #typeFlags and #pattern
     void
     setPatternTuple(const Tuple& pattern);
 
   public:
+    /** 
+     * Ctor for a plain dl-query.
+     * 
+     * @param q 
+     * @param p 
+     */
     DLQuery(const Term& q, const Tuple& p);
 
+    /** 
+     * Ctor for a conjunctive dl-query.
+     * 
+     * @param cq 
+     * @param p 
+     */
     DLQuery(const AtomSet& cq, const Tuple& p);
 
     virtual
@@ -98,37 +109,42 @@ namespace racer {
 
 
   /**
-   * @brief put the string representation of q into os
+   * @brief put the string representation of @a q into @a os.
+   *
    * @param os
    * @param q
-   * @return os
+   * @return @a os
    */
   std::ostream&
   operator<< (std::ostream& os, const DLQuery& q);
 
   /**
-   * @brief lexicographically compare q1 to q2 and check if q1 is less than q2
+   * @brief lexicographically compare @a q1 to @a q2 and check if @a
+   * q1 is less than @a q2.
+   *
    * @param q1
    * @param q2
-   * @return true if q1 < q2, false otherwise.
+   * @return true if @a q1 < @a q2, false otherwise.
    */
   bool
   operator< (const DLQuery& q1, const DLQuery& q2);
 
   /**
-   * @brief lexicographically compare q1 to q2 and check if both dl-queries are equal
+   * @brief lexicographically compare @a q1 to @a q2 and check if both
+   * dl-queries are equal.
+   *
    * @param q1
    * @param q2
-   * @return true if q1 equals q2, false otherwise.
+   * @return true if @a q1 equals @a q2, false otherwise.
    */
   bool
   operator== (const DLQuery& q1, const DLQuery& q2);
 
   /**
-   * @brief converse of operator==
+   * @brief converse of operator==.
    * @param q1
    * @param q2
-   * @return true if !(q1 == q2), false otherwise.
+   * @return true if !(@a q1 == @a q2), false otherwise.
    */
   bool
   operator!= (const DLQuery& q1, const DLQuery& q2);
@@ -136,8 +152,10 @@ namespace racer {
 
 
   /**
-   * @brief A Query with encapsulated DLQuery, holds both semantic and
-   * syntactic information (DLQuery).
+   * @brief A Query holds informations about an Ontology, the assigned
+   * interpretation and a DLQuery.
+   *
+   * Holds both semantic and syntactic information of a dl-query.
    */
   class Query
   {
@@ -145,7 +163,7 @@ namespace racer {
     /// ontology uri + namespace
     Ontology::shared_pointer ontology;
 
-    /// projected interpretation
+    /// the whole projected interpretation
     AtomSet proj;
 
     /// projected interpretation for plus concepts
@@ -160,10 +178,8 @@ namespace racer {
     /// the dl-query
     DLQuery query;
 
-    /// private default ctor
-    Query();
-
-    /// setup projected interpretations
+    /// setup projected interpretations #proj, #plusC, #minusC,
+    /// #plusR, #minusR
     void
     setInterpretation(const AtomSet& ints,
 		      const Term& pc,
@@ -215,13 +231,13 @@ namespace racer {
     virtual const AtomSet&
     getMinusR() const;
 
-    ///@return true if interpretation is a subset of q2's
-    ///interpretation, false otherwise
+    ///@return true if interpretation #proj is a subset of @a q2
+    ///interpretation, false otherwise.
     virtual bool
     isSubseteq(const Query& q2) const;
 
-    ///@return true if interpretation is a superset of q2's
-    ///interpretation, false otherwise
+    ///@return true if interpretation #proj is a superset of @a q2
+    ///interpretation, false otherwise.
     virtual bool
     isSuperseteq(const Query& q2) const;
 
@@ -241,34 +257,38 @@ namespace racer {
 
 
   /**
-   * @brief put the string representation of q into os
+   * @brief put the string representation of @a q into @a os.
    * @param os
    * @param q
-   * @return os
+   * @return @a os
    */
   std::ostream&
   operator<< (std::ostream& os, const Query& q);
 
   /**
-   * @brief lexicographically compare q1 to q2 and check if q1 is less than q2
+   * @brief lexicographically compare @a q1 to @a q2 and check if @a
+   * q1 is less than @a q2.
+   *
    * @param q1
    * @param q2
-   * @return true if q1 < q2, false otherwise.
+   * @return true if @a q1 < @a q2, false otherwise.
    */
   bool
   operator< (const Query& q1, const Query& q2);
 
   /**
-   * @brief lexicographically compare q1 to q2 and check if both queries are equal
+   * @brief lexicographically compare @a q1 to @a q2 and check if both
+   * queries are equal.
+   *
    * @param q1
    * @param q2
-   * @return true if q1 equals q2, false otherwise.
+   * @return true if @a q1 equals @a q2, false otherwise.
    */
   bool
   operator== (const Query& q1, const Query& q2);
 
   /**
-   * @brief converse of operator==
+   * @brief converse of operator==.
    * @param q1
    * @param q2
    * @return true if !(q1 == q2), false otherwise.

@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Thu Jul 27 13:22:18 2006
  * 
- * @brief  
+ * @brief  Various builders for nRQL requests.
  * 
  * 
  */
@@ -21,8 +21,11 @@
 namespace dlvhex {
 namespace racer {
 
-  // fwd decl
+  //
+  // forward declarations
+  //
   class Query;
+
 
   /**
    * @brief Base class for all the NRQL Builders.
@@ -46,7 +49,7 @@ namespace racer {
       throw(RacerBuildingError);
 
     /** 
-     * Uses query's patterntuple to create a nRQL head.
+     * Uses the output list of @a query and put a nRQL head into @a stream.
      * 
      * @param stream output the head to this stream
      * @param query use this Query
@@ -58,8 +61,8 @@ namespace racer {
       throw(RacerBuildingError);
 
     /** 
-     * Uses query's interpretation and create a list of ABox
-     * assertions.
+     * Uses interpretation of @a query and put a list of ABox
+     * assertions into @a stream.
      * 
      * @param stream output the ABox assertions to this stream
      * @param query use this query
@@ -79,7 +82,7 @@ namespace racer {
   {
   public:
     /** 
-     * Uses query to build a conjunctive query expression.
+     * Uses @a query to build a conjunctive query expression.
      * 
      * @param stream output the conjunctive query to this stream
      * @param query use this query
@@ -99,7 +102,7 @@ namespace racer {
   {
   public:
     /** 
-     * Uses query to build the head expresision for a datatype role
+     * Uses @a query to build the head expression for a datatype role
      * query.
      * 
      * @param stream output the head expression to this stream
@@ -112,7 +115,7 @@ namespace racer {
       throw(RacerBuildingError);
 
     /** 
-     * Uses query to build a datatype role query.
+     * Uses @a query to build a datatype role query.
      * 
      * @param stream output the datatype role query to this stream
      * @param query  use this query

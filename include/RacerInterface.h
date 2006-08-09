@@ -13,12 +13,6 @@
 #ifndef _RACERINTERFACE_H
 #define _RACERINTERFACE_H
 
-#include "RacerDirector.h"
-#include "TCPStream.h"
-#include "HexDLRewriterDriver.h"
-#include "Registry.h"
-#include "Cache.h"
-
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
@@ -26,10 +20,18 @@
 #include <ace/Null_Mutex.h>
 #include <ace/Singleton.h>
 
-#include <map>
 
 namespace dlvhex {
 namespace racer {
+
+  //
+  // forward declarations
+  //
+  class TCPIOStream;
+  class BaseCache;
+  class HexDLRewriterDriver;
+
+
 
   /**
    * @brief Concrete factory for the Plugin infrastructure.
@@ -38,15 +40,25 @@ namespace racer {
   {
   private:
     /// the tcp streaming interface to the RACER server
-    TCPIOStream stream;
+    TCPIOStream* stream;
     /// the cache for RACER queries
     BaseCache* cache;
     /// DL Rewriter facility
     HexDLRewriterDriver* rewriter;
 
-  public:
+    //
+    // keep those ctors private, we don't want multiple instantiations
+    //
+
+    /// private copy ctor
+    RacerInterface(const RacerInterface&)
+      : PluginInterface()
+    { }
+
+    /// private default ctor
     RacerInterface();
 
+  public:
     virtual
     ~RacerInterface();
 
@@ -103,7 +115,7 @@ namespace racer {
 
 
 /**
- * instantiates the PluginInterface singleton. Used as import function
+ * instantiates the RacerInterface singleton. Used as import function
  * when loading the plugin as shared library.
  */
 extern "C" PluginInterface*

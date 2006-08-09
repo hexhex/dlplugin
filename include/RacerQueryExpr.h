@@ -87,7 +87,7 @@ namespace racer {
 
 
   /**
-   * Base class for ABox Query objects, i.e. individuals and
+   * Base class for ABox Query objects, that is individuals and
    * variables.
    */
   class ABoxQueryObject : public ABoxQueryExpr
@@ -114,6 +114,7 @@ namespace racer {
   class ABoxQueryVariable : public ABoxQueryObject
   {
    public:
+    /// the constants used for describing the nRQL variable type
     struct VariableType
       {
 	static const unsigned noninjective = 0x1;

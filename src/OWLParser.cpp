@@ -79,6 +79,7 @@ OWLParser::namespaceHandler(void* userData, raptor_namespace* nspace)
 namespace dlvhex {
   namespace racer {
 
+    /// helper struct for parsing concept and role names
     struct TBoxNames
     {
       std::set<Term>* conceptNames;

@@ -27,7 +27,9 @@
 namespace dlvhex {
 namespace racer {
 
-  // fwd decl
+  //
+  // forward declarations
+  //
   class Query;
 
 
@@ -43,13 +45,21 @@ namespace racer {
     /// director instances
     std::iostream& stream;
 
-    /// Ctor
+    /// protected ctor
+    explicit
     RacerExtAtom(std::iostream&);
 
-    /// Dtor
+    /// dtor
     virtual
     ~RacerExtAtom();
 
+    /** 
+     * 
+     * 
+     * @param query 
+     * 
+     * @return 
+     */
     virtual RacerCompositeDirector::shared_pointer
     getComposite(const dlvhex::racer::Query& query) const;
 
@@ -70,7 +80,8 @@ namespace racer {
     /**
      * Retrieve method used in all external atoms.
      *
-     * calls getDirectors() in order to get an Answer to the Query.
+     * Calls #getDirectors() in order to get an PluginAtom::Answer for
+     * PluginAtom::Query.
      *
      * @param query
      * @param answer

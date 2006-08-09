@@ -123,7 +123,7 @@ RacerRunnerAdaptee::run()
 
 
 
-      for (unsigned portCount = 0; portCount < 20; portCount++)
+      for (unsigned portCount = 0; portCount < 20; ++portCount)
 	{
 	  std::ostringstream cmdline;
 

@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Tue Jul 25 09:16:44 2006
  * 
- * @brief  
+ * @brief  Driver class for the Hex DL Rewriters bison/flex parser.
  * 
  * 
  */
@@ -25,14 +25,20 @@
 #include "HexDLRewriterParser.hpp"
 #include "RacerError.h"
 
-// some forward declaration 
+//
+// forward declarations
+//
 class HexDLRewriterFlexLexer;
 
 
 namespace dlvhex {
 namespace racer {
 
-
+  /**
+   * A PluginRewriter which parses the HEX input program and rewrites
+   * dl-atoms to external atoms and tries to optimize queries by
+   * rewriting cq-atoms.
+   */
   class HexDLRewriterDriver : public PluginRewriter
   {
   private:
@@ -87,7 +93,7 @@ namespace racer {
     rewrite();
 
     void
-    error(const yy::location& l, const std::string& m) throw (RacerParsingError);
+    error(const yy::location& l, const std::string& m) const throw (RacerParsingError);
 
     /// callback for dl-atoms
     std::string

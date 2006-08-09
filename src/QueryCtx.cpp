@@ -24,20 +24,6 @@
 using namespace dlvhex::racer;
 
 
-
-QueryCtx::QueryCtx()
-  : q(new Query(Ontology::shared_pointer(),
-		Term(),
-		Term(),
-		Term(),
-		Term(),
-		DLQuery(Term(),Tuple()),
-		AtomSet())),
-    a(new Answer(q))
-{ }
-
-
-
 namespace dlvhex {
   namespace racer {
 
@@ -144,9 +130,14 @@ namespace dlvhex {
 } //namespace dlvhex
 
 
-QueryCtx::QueryCtx(const PluginAtom::Query& query)
+QueryCtx::QueryCtx(const PluginAtom::Query& query) throw (RacerError)
 {
   const Tuple& inputtuple = query.getInputTuple();
+
+  if (inputtuple.size() < 4)
+    {
+      throw RacerError("Incompatible input list.");
+    }
 
   // inputtuple[0] contains the KB URI constant
   std::string ontostr = inputtuple[0].getUnquotedString();
@@ -179,7 +170,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
 	  boost::tokenizer<AtomSeparator> tok(qstr);
 
 	  for (boost::tokenizer<AtomSeparator>::const_iterator it = tok.begin();
-	       it != tok.end(); it++)
+	       it != tok.end(); ++it)
 	    {
 	      tup.clear();
 
@@ -192,7 +183,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
 	      //
 	      for (std::vector<std::pair<std::string,std::string> >::iterator ns = Term::namespaces.begin();
 		   ns != Term::namespaces.end();
-		   ns++)
+		   ++ns)
 		{
 		  boost::replace_all(atom, ns->second + ":", ns->first);
 		}
@@ -291,15 +282,6 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query)
     }
 
   a = new Answer(q);
-}
-
-
-QueryCtx::QueryCtx(const QueryCtx& qctx)
-{
-  setQuery(qctx.q);
-  setAnswer(qctx.a);
-
-  this->a->setQuery(this->q);
 }
 
 

@@ -75,7 +75,7 @@ namespace racer {
 
 	    for (;
 		 it1 != p1.end() && it2 != p2.end();
-		 it1++, it2++, mask <<= 1
+		 ++it1, ++it2, mask <<= 1
 		 )
 	      {
 		if ((type & mask) == mask)
@@ -226,7 +226,7 @@ DLQuery::setPatternTuple(const Tuple& pattern)
   unsigned long mask = 0x1;
   for (Tuple::const_iterator it = pattern.begin();
        it != pattern.end();
-       it++, mask <<= 1)
+       ++it, mask <<= 1)
     {
       // for every ground term we set a flag in typeFlags
       if (!it->isVariable() && !it->isAnon())
@@ -315,11 +315,6 @@ namespace racer {
 
 
 
-Query::Query()
-  : query(Term(), Tuple())
-{ }
-
-
 Query::Query(Ontology::shared_pointer o,
 	     const Term& pc,
 	     const Term& mc,
@@ -363,7 +358,7 @@ Query::setInterpretation(const AtomSet& ints,
 {
   // project out interpretation, i.e. compute I^\lambda
   for (AtomSet::const_iterator it = ints.begin();
-       it != ints.end(); it++)
+       it != ints.end(); ++it)
     {
       Term p = it->getPredicate();
 
