@@ -195,18 +195,8 @@ namespace racer {
 
   /// builds nothing and parses nothing. Mainly for testing purposes.
   typedef RacerDirector<RacerNullBuilder, RacerNullParser> RacerNullDirector;
-  /// requests all individuals and parses the corresponding answer
-  typedef RacerDirector<RacerAllIndividualsBuilder, RacerAnswerDriver> RacerAllIndQuery;
-  /// turn on unique name assumption
-  typedef RacerDirector<RacerUNABuilder, RacerIgnoreAnswer> RacerUNA;
-  /// create a temporary ABox called DEFAULT
-  typedef RacerDirector<RacerTempABoxBuilder, RacerAnswerDriver> RacerTempABox;
   /// request to open an OWL document
   typedef RacerDirector<RacerOpenOWLBuilder, RacerAnswerDriver> RacerOpenOWL;
-  /// ask whether ABox is consistent
-  typedef RacerDirector<RacerABoxConsistentBuilder, RacerAnswerDriver> RacerABoxConsistent;
-  /// tell Racer not to check for inconsitency
-  typedef RacerDirector<RacerCheckABoxConsistencyOffBuilder, RacerIgnoreAnswer> RacerABoxConsistencyOff;
 
   /// extend ABox by a given set of individuals/pairs
   typedef RacerDirector<RacerStateBuilder, RacerAnswerDriver> RacerConceptRolePM;
@@ -221,11 +211,6 @@ namespace racer {
   /// request a list of individuals which are fillers of a role for a
   /// specified individual
   typedef RacerDirector<RacerIndividualFillersBuilder, RacerAnswerDriver> RacerIndvFillersQuery;
-  /// request a list of datatype individuals which are fillers of a
-  /// role for a specified individual
-  typedef RacerDirector<RacerIndividualDatatypeFillersBuilder, RacerAnswerDriver> RacerIndvDataFillersQuery;
-  /// pose a conjunctive query
-  typedef RacerDirector<RacerNRQLBuilder, RacerAnswerDriver> RacerConjunctiveQuery;
 
 } // namespace racer
 } // namespace dlvhex

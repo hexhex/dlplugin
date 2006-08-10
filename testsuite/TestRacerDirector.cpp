@@ -12,6 +12,7 @@
 #include "RacerRunner.h"
 #include "TCPStream.h"
 #include "QueryCtx.h"
+#include "Query.h"
 #include "TestRacerDirector.h"
 
 #include <iostream>
@@ -63,7 +64,7 @@ TestRacerDirector::runRacerAllIndividualsTest()
 {
   TCPIOStream rsIO("localhost", 8088);
   
-  RacerAllIndQuery aiq(rsIO);
+  RacerDirector<RacerFunAdapterBuilder<RacerAllIndividualsCmd>,RacerAnswerDriver> aiq(rsIO);
   
   QueryCtx::shared_pointer q(new QueryCtx(new Query(Ontology::shared_pointer(),
 						    Term(""),

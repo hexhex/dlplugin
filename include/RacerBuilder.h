@@ -15,7 +15,7 @@
 
 #include "RacerError.h"
 
-#include <iosfwd>
+#include <iostream>
 #include <string>
 
 namespace dlvhex {
@@ -201,40 +201,6 @@ namespace racer {
 
 
   /**
-   * @brief Creates a command to query datatype role individual
-   * fillers.
-   *
-   * @see individual-told-datatype-fillers function in RacerPro
-   * Reference manual
-   */
-  class RacerIndividualDatatypeFillersBuilder : public RacerBuilder
-  {
-  public:
-    explicit
-    RacerIndividualDatatypeFillersBuilder(std::ostream&);
-
-    virtual bool
-    buildCommand(Query& q) throw (RacerBuildingError);
-  };
-
-
-  /**
-   * @brief Creates a nRQL retrieve command.
-   *
-   * @see retrieve function in RacerPro Reference manual
-   */
-  class RacerNRQLBuilder : public RacerBuilder
-  {
-  public:
-    explicit
-    RacerNRQLBuilder(std::ostream&);
-
-    virtual bool
-    buildCommand(Query& q) throw (RacerBuildingError);
-  };
-
-
-  /**
    * @brief Opens an OWL from file or URL as KB "DEFAULT".
    *
    * @see owl-read-file and owl-read-document functions in RacerPro
@@ -252,23 +218,79 @@ namespace racer {
 
 
   /**
-   * @brief Creates simple commands.
+   * @brief An adapter for classes with a ctor
+   * Adaptee::Adaptee(Query&) and an operator<<(ostream&, const
+   * Adaptee&).
+   *
+   * @see NRQLQuery
    */
-  class RacerSimpleCommandBuilder : public RacerBuilder
+  template<class Adaptee>
+  class RacerAdapterBuilder : public RacerBuilder
   {
-  private:
-    /// command used to send it to the stream
-    std::string command;
-
   public:
-    RacerSimpleCommandBuilder(std::ostream& s, const std::string& cmd);
+    explicit
+    RacerAdapterBuilder(std::ostream& stream)
+      : RacerBuilder(stream)
+    { }
 
-    /**
-     * Just send a simple command to the stream.
-     */
     virtual bool
-    buildCommand(Query&);
+    buildCommand(Query& q) throw (RacerBuildingError)
+    {
+      try
+	{
+	  stream << Adaptee(q) << std::endl;
+	}
+      catch (std::exception& e)
+	{
+	  throw RacerBuildingError(e.what());
+	}
+
+      return true;
+    }
+
   };
+
+
+  /**
+   * @brief An adapter for classes with a ctor
+   * AdapteeFun::AdapteeFun(Query&), a method AdapteeFun::operator()()
+   * and an operator<<(ostream&, const Adaptee&).
+   *
+   * @see
+   */
+  template<class AdapteeFun>
+  class RacerFunAdapterBuilder : public RacerBuilder
+  {
+  public:
+    explicit
+    RacerFunAdapterBuilder(std::ostream& stream)
+      : RacerBuilder(stream)
+    { }
+
+    virtual bool
+    buildCommand(Query& q) throw (RacerBuildingError)
+    {
+      try
+	{
+	  AdapteeFun f;
+	  stream << f(q) << std::endl;
+	}
+      catch (std::exception& e)
+	{
+	  throw RacerBuildingError(e.what());
+	}
+
+      return true;
+    }
+
+  };
+
+
+
+  //
+  // the following commands can be used in as template parameter in
+  // RacerFunAdapterBuilder
+  //
 
 
   /**
@@ -276,13 +298,13 @@ namespace racer {
    *
    * @see all-individuals function in RacerPro Reference manual.
    */
-  class RacerAllIndividualsBuilder : public RacerSimpleCommandBuilder
+  struct RacerAllIndividualsCmd
   {
-  public:
-    explicit
-    RacerAllIndividualsBuilder(std::ostream& s)
-      : RacerSimpleCommandBuilder(s, "(all-individuals)")
-    { }
+    const char*
+    operator() (Query&) throw (RacerBuildingError)
+    {
+      return "(all-individuals)";
+    }
   };
 
 
@@ -291,13 +313,13 @@ namespace racer {
    *
    * @see set-unique-name-assumption function in RacerPro Reference manual. 
    */
-  class RacerUNABuilder : public RacerSimpleCommandBuilder
+  struct RacerUNACmd
   {
-  public:
-    explicit
-    RacerUNABuilder(std::ostream& s)
-      : RacerSimpleCommandBuilder(s, "(set-unique-name-assumption t)")
-    { }
+    const char*
+    operator() (Query&) throw (RacerBuildingError)
+    {
+      return "(set-unique-name-assumption t)";
+    }
   };
 
 
@@ -306,13 +328,13 @@ namespace racer {
    *
    * @see clone-abox macro in RacerPro Reference manual.
    */
-  class RacerTempABoxBuilder : public RacerSimpleCommandBuilder
+  struct RacerCloneABoxCmd
   {
-  public:
-    explicit
-    RacerTempABoxBuilder(std::ostream& s)
-      : RacerSimpleCommandBuilder(s, "(clone-abox DEFAULT :new-name temp-abox :overwrite t)")
-    { }
+    const char*
+    operator() (Query&) throw (RacerBuildingError)
+    {
+      return "(clone-abox DEFAULT :new-name temp-abox :overwrite t)";
+    }
   };
 
 
@@ -321,53 +343,43 @@ namespace racer {
    *
    * @see abox-consistent? macro in RacerPro Reference manual.
    */
-  class RacerABoxConsistentBuilder : public RacerSimpleCommandBuilder
+  struct RacerABoxConsistentCmd
   {
-  public:
-    explicit
-    RacerABoxConsistentBuilder(std::ostream& s)
-      : RacerSimpleCommandBuilder(s, "(abox-consistent?)")
-    { }
+    const char*
+    operator() (Query&) throw (RacerBuildingError)
+    {
+      return "(abox-consistent?)";
+    }
   };
 
-  /**
-   * @brief Don't check ABox consistency.
-   */
-  class RacerCheckABoxConsistencyOffBuilder : public RacerSimpleCommandBuilder
-  {
-  public:
-    explicit
-    RacerCheckABoxConsistencyOffBuilder(std::ostream& s)
-      : RacerSimpleCommandBuilder(s, "(dont-check-abox-consistency-before-querying)")
-    { }
-  };
 
   /**
    * @brief Enable data substrate mirroring.
    *
    * @see 
    */
-  class RacerDataSubstrateMirrorBuilder : public RacerSimpleCommandBuilder
+  struct RacerDataSubstrateMirroringCmd
   {
-  public:
-    explicit
-    RacerDataSubstrateMirrorBuilder(std::ostream& s)
-      : RacerSimpleCommandBuilder(s, "(enable-data-substrate-mirroring)")
-    { }
+    const char*
+    operator() (Query&) throw (RacerBuildingError)
+    {
+      return "(enable-data-substrate-mirroring)";
+    }
   };
+
 
   /**
    * @brief Enable imports in KB DEFAULT, i.e. read all owl:imports.
    *
    * @see 
    */
-  class RacerImportOntologies : public RacerSimpleCommandBuilder
+  struct RacerImportOntologiesCmd
   {
-  public:
-    explicit
-    RacerImportOntologies(std::ostream& s)
-      : RacerSimpleCommandBuilder(s, "(kb-ontologies DEFAULT)")
-    { }
+    const char*
+    operator() (Query&) throw (RacerBuildingError)
+    {
+      return "(kb-ontologies DEFAULT)";
+    }
   };
 
 

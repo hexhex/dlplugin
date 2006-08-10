@@ -35,23 +35,6 @@ RacerBuilder::~RacerBuilder()
 { }
 
 
-
-RacerSimpleCommandBuilder::RacerSimpleCommandBuilder(std::ostream& s,
-						     const std::string& cmd)
-  : RacerBuilder(s),
-    command(cmd)
-{ }
-
-
-bool
-RacerSimpleCommandBuilder::buildCommand(Query&)
-{
-  stream << command << std::endl;
-  return true;
-}
-
-
-
 RacerStateBuilder::RacerStateBuilder(std::ostream& s)
   : RacerBuilder(s)
 { }
@@ -334,49 +317,6 @@ RacerOpenOWLBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 		 << "\" :kb-name DEFAULT)"
 		 << std::endl;
 	}
-    }
-  catch (std::exception& e)
-    {
-      throw RacerBuildingError(e.what());
-    }
-
-  return true;
-}
-
-
-
-RacerIndividualDatatypeFillersBuilder::RacerIndividualDatatypeFillersBuilder(std::ostream& s)
-  : RacerBuilder(s)
-{ }
-
-bool
-RacerIndividualDatatypeFillersBuilder::buildCommand(Query& query)
-  throw (RacerBuildingError)
-{
-  try
-    {
-      stream << NRQLRetrieve<NRQLDatatypeBuilder>(query) << std::endl;
-    }
-  catch (std::exception& e)
-    {
-      throw RacerBuildingError(e.what());
-    }
-
-  return true;
-}
-
-
-RacerNRQLBuilder::RacerNRQLBuilder(std::ostream& s)
-  : RacerBuilder(s)
-{ }
-
-
-bool
-RacerNRQLBuilder::buildCommand(Query& query) throw (RacerBuildingError)
-{
-  try
-    {
-       stream << NRQLRetrieve<NRQLConjunctionBuilder>(query) << std::endl;
     }
   catch (std::exception& e)
     {

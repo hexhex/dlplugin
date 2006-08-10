@@ -14,6 +14,7 @@
 
 #include "RacerError.h"
 #include "QueryCtx.h"
+#include "Query.h"
 #include "Answer.h"
 #include "Cache.h"
 
@@ -71,7 +72,9 @@ RacerCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
   else // retrieval modes
     {
       // just get all individuals
-      RacerAllIndQuery all(stream);
+      RacerDirector<RacerFunAdapterBuilder<RacerAllIndividualsCmd>,
+	RacerAnswerDriver> all(stream);
+
       qctx = all.query(qctx);
 
       // check if we need to generate all possible pairs, i.e. only

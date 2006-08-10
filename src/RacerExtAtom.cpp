@@ -14,13 +14,16 @@
 #include "RacerInterface.h"
 #include "RacerDirector.h"
 #include "QueryCtx.h"
+#include "Query.h"
 #include "Cache.h"
 #include "Registry.h"
+#include "RacerNRQL.h"
+#include "RacerNRQLBuilder.h"
 
-#include "dlvhex/Atom.h"
-#include "dlvhex/Term.h"
-#include "dlvhex/AtomSet.h"
-#include "dlvhex/Error.h"
+#include <dlvhex/Atom.h>
+#include <dlvhex/Term.h>
+#include <dlvhex/AtomSet.h>
+#include <dlvhex/Error.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -72,18 +75,31 @@ RacerExtAtom::getComposite(const dlvhex::racer::Query& query) const
 
   if (!Registry::getUNA()) // only set UNA once
     {
-      comp->add(new RacerUNA(stream));
+      // turn on unique name assumption
+      comp->add(new RacerDirector<RacerFunAdapterBuilder<RacerUNACmd>,
+		RacerIgnoreAnswer>(stream)
+	);
+
       Registry::setUNA(true);
     }
 
   if (Registry::getOpenURI() != query.getOntology()->getURI()) // only load ontology if its new
     {
       comp->add(new RacerOpenOWL(stream));
-      comp->add(new RacerDirector<RacerImportOntologies,RacerIgnoreAnswer>(stream));
+
+      // import all referenced ontologies
+      comp->add(new RacerDirector<RacerFunAdapterBuilder<RacerImportOntologiesCmd>,
+		RacerIgnoreAnswer>(stream)
+	);
+
       Registry::setOpenURI(query.getOntology()->getURI());
     }
 
-  comp->add(new RacerTempABox(stream));
+  // create a temporary ABox called DEFAULT
+  comp->add(new RacerDirector<RacerFunAdapterBuilder<RacerCloneABoxCmd>,
+	    RacerIgnoreAnswer>(stream)
+    );
+
   comp->add(new RacerConceptRolePM(stream));
 
   return comp;
@@ -220,7 +236,10 @@ RacerConsistentAtom::getDirectors(const dlvhex::racer::Query& q) const
 {
   RacerCompositeDirector::shared_pointer comp = getComposite(q);
 
-  comp->add(new RacerABoxConsistent(stream));
+  // ask whether ABox is consistent
+  comp->add(new RacerDirector<RacerFunAdapterBuilder<RacerABoxConsistentCmd>,
+	    RacerAnswerDriver>(stream)
+    );
 
   return comp;
 }
@@ -257,11 +276,20 @@ RacerDatatypeRoleAtom::getDirectors(const dlvhex::racer::Query& query) const
 
       if (!Registry::getDataSubstrateMirroring())
 	{
-	  dir->add(new RacerDirector<RacerDataSubstrateMirrorBuilder,RacerIgnoreAnswer>(stream));
+	  // enable data substrate mirroring
+	  dir->add(new RacerDirector<RacerFunAdapterBuilder<RacerDataSubstrateMirroringCmd>,
+		   RacerIgnoreAnswer>(stream)
+		   );
+
 	  Registry::setDataSubstrateMirroring(true);
 	}
 
-      dir->add(new RacerIndvDataFillersQuery(stream));
+      // pose datatype role query
+      dir->add
+	(new RacerDirector<RacerAdapterBuilder<NRQLRetrieve<NRQLDatatypeBuilder> >,
+	 RacerAnswerDriver>(stream)
+	);
+
       return getCachedDirectors(query, dir); 
     }
   else
@@ -297,7 +325,10 @@ RacerCQAtom::getDirectors(const dlvhex::racer::Query& query) const
 
   RacerCompositeDirector::shared_pointer comp = getComposite(query);
 
-  comp->add(new RacerConjunctiveQuery(stream));
+  // pose a conjunctive query
+  comp->add(new RacerDirector<RacerAdapterBuilder<NRQLRetrieve<NRQLConjunctionBuilder> >,
+	    RacerAnswerDriver>(stream)
+    );
 
   return comp;
 }
