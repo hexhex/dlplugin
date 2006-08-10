@@ -27,6 +27,21 @@ using namespace dlvhex::racer;
 namespace dlvhex {
   namespace racer {
 
+
+    std::ostream&
+    operator<< (std::ostream& os, const QueryCtx& q)
+    {
+      return os << q.getQuery();
+    }
+  
+  
+    bool
+    operator< (const QueryCtx& q1, const QueryCtx& q2)
+    {
+      return q1.getQuery() < q2.getQuery();
+    }
+
+
     /**
      * @brief A TokenizerFunc for boost::tokenizer<>, model of
      * TokenizerFunction, tokenizes comma-separated atoms in a string.

@@ -20,6 +20,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <iosfwd>
+
 namespace dlvhex {
 namespace racer {
 
@@ -77,7 +79,37 @@ namespace racer {
 
     typedef QueryCtx value_type;
     typedef boost::shared_ptr<value_type> shared_pointer; /// managed QueryCtx
+
+    friend std::ostream&
+    operator<< (std::ostream& os, const QueryCtx& q);
+
+    friend bool
+    operator< (const QueryCtx& q1, const QueryCtx& q2);
+
+
   };
+
+
+  /**
+   * @brief put the string representation of @a q into @a os.
+   * @param os
+   * @param q
+   * @return @a os
+   */
+  std::ostream&
+  operator<< (std::ostream& os, const QueryCtx& q);
+
+  /**
+   * @brief lexicographically compare @a q1 to @a q2 and check if @a
+   * q1 is less than @a q2.
+   *
+   * @param q1
+   * @param q2
+   * @return true if @a q1 < @a q2, false otherwise.
+   */
+  bool
+  operator< (const QueryCtx& q1, const QueryCtx& q2);
+
 
 } // namespace racer
 } // namespace dlvhex
