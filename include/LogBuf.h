@@ -50,7 +50,7 @@ namespace racer {
      *
      * @param c put this character into the output buffer
      *
-     * @return #sstream::put(c) if #out != 0, otw. #traits_type::eof().
+     * @return #sstream::put(c) if #out != 0, otw. traits_type::eof().
      */
     virtual std::streambuf::int_type
     overflow(std::streambuf::int_type c);

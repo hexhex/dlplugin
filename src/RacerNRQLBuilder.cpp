@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Thu Jul 27 14:22:55 2006
  * 
- * @brief  
+ * @brief  Various builders for nRQL requests.
  * 
  * 
  */

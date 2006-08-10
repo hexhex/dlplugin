@@ -13,13 +13,14 @@
 #ifndef _OWLPARSER_H
 #define _OWLPARSER_H
 
-#include "dlvhex/Term.h"
 #include "RacerError.h"
+#include "Ontology.h"
+
+#include <dlvhex/Term.h>
 
 #include <raptor.h>
 #include <string>
 #include <set>
-
 
 namespace dlvhex {
 namespace racer {
@@ -117,7 +118,7 @@ namespace racer {
      * @param indvs add individuals to set
      */
     virtual void
-    parseIndividuals(std::set<Term>& indvs) throw (RacerParsingError);
+    parseIndividuals(Ontology::Objects& indvs) throw (RacerParsingError);
 
     /**
      * get default namespace
@@ -131,7 +132,7 @@ namespace racer {
      * get all possible concept and role names.
      */
     virtual void
-    parseNames(std::set<Term>& concepts, std::set<Term>& roles) throw (RacerParsingError);
+    parseNames(Ontology::Objects& concepts, Ontology::Objects& roles) throw (RacerParsingError);
 
     /** 
      * Fetch uri to file.

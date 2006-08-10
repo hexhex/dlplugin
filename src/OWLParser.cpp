@@ -82,8 +82,8 @@ namespace dlvhex {
     /// helper struct for parsing concept and role names
     struct TBoxNames
     {
-      std::set<Term>* conceptNames;
-      std::set<Term>* roleNames;
+      Ontology::Objects* conceptNames;
+      Ontology::Objects* roleNames;
     };
 
   } // namespace racer
@@ -123,7 +123,7 @@ OWLParser::tboxHandler(void* userData, const raptor_statement* statement)
 void
 OWLParser::aboxHandler(void* userData, const raptor_statement* statement)
 {
-  std::set<Term>* indvs = (std::set<Term>*) userData;
+  Ontology::Objects* indvs = (Ontology::Objects*) userData;
 
   std::string subj = (const char*) statement->subject;
   std::string pred = (const char*) statement->predicate;
@@ -225,7 +225,7 @@ OWLParser::parse(void* userData,
 }
 
 void
-OWLParser::parseIndividuals(std::set<Term>& indvs) throw (RacerParsingError)
+OWLParser::parseIndividuals(Ontology::Objects& indvs) throw (RacerParsingError)
 {
   parse(&indvs, OWLParser::aboxHandler, 0);
 }
@@ -237,7 +237,7 @@ OWLParser::parseNamespace(std::string& ns) throw (RacerParsingError)
 }
 
 void
-OWLParser::parseNames(std::set<Term>& concepts, std::set<Term>& roles)
+OWLParser::parseNames(Ontology::Objects& concepts, Ontology::Objects& roles)
   throw (RacerParsingError)
 {
   TBoxNames names;

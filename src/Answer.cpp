@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Thu Aug  3 12:03:57 2006
  * 
- * @brief  
+ * @brief  The Answer to a Query.
  * 
  * 
  */
@@ -29,8 +29,6 @@ Answer::Answer(const Query* q)
     query(q)
 { }
 
-Answer::~Answer()
-{ }
 
 void
 Answer::setQuery(const Query* q)

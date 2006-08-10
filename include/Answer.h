@@ -52,7 +52,8 @@ namespace racer {
     Answer(const Query* q);
 
     virtual
-    ~Answer();
+    ~Answer()
+    { }
 
     virtual void
     setQuery(const Query* q);

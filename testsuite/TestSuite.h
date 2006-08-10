@@ -3,7 +3,7 @@
 #ifndef _TESTSUITE_H
 #define _TESTSUITE_H
 
-#include "dlvhex/Term.h"
+#include <dlvhex/Term.h>
 
 #include <cppunit/TestCase.h>
 #include <cppunit/TestSuite.h>

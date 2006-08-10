@@ -17,7 +17,7 @@
 %file-prefix = "RacerAnswerParser"
 
 %{
-#include "dlvhex/Term.h"
+#include <dlvhex/Term.h>
 
 #include "Answer.h"
 #include "RacerAnswerDriver.h"

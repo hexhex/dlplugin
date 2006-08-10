@@ -19,7 +19,7 @@
 %{
 #include "HexDLRewriterDriver.h"
 
-#include "dlvhex/Term.h"
+#include <dlvhex/Term.h>
 
 #include <iosfwd>
 #include <string>

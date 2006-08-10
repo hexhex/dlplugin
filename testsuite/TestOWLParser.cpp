@@ -27,7 +27,7 @@ TestOWLParser::runParserTest()
 {
   OWLParser p(shop);
   std::string defaultNS;
-  std::set<Term> indvs;
+  Ontology::Objects indvs;
   p.parseIndividuals(indvs);
 
   if (!indvs.empty())

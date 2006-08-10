@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Tue Jul 25 09:23:09 2006
  * 
- * @brief  
+ * @brief  Driver class for the Hex DL Rewriters bison/flex parser.
  * 
  * 
  */

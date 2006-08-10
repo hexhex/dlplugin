@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Thu Aug  3 10:34:15 2006
  * 
- * @brief  
+ * @brief  Query classes.
  * 
  * 
  */
