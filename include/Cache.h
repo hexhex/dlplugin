@@ -15,9 +15,10 @@
 #define _CACHE_H
 
 #include "QueryCtx.h"
-#include "Query.h"
 
 #include <set>
+
+#include <boost/ptr_container/indirect_fun.hpp>
 
 namespace dlvhex {
 namespace racer {
@@ -67,23 +68,9 @@ namespace racer {
   class Cache : public BaseCache
   {
   protected:
-    /// Functor used in CacheSet as strict weak ordering. This is done
-    /// by comparing the internal Query members of the QueryCtx.
-    struct QueryCtxCompare
-      : public std::binary_function<const QueryCtx::shared_pointer,
-				    const QueryCtx::shared_pointer,
-				    bool>
-    {
-      bool
-      operator() (const QueryCtx::shared_pointer& a,
-		  const QueryCtx::shared_pointer& b) const
-      {
-	return a->getQuery() < b->getQuery();
-      }
-    };
-
     /// caches QueryCtx::shared_pointer with help of a std::set
-    typedef std::set<QueryCtx::shared_pointer, QueryCtxCompare> CacheSet;
+    typedef std::set<QueryCtx::shared_pointer,
+		     boost::indirect_fun<std::less<QueryCtx> > > CacheSet;
 
     /// the cache
     CacheSet cache;
