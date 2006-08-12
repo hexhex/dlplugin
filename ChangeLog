@@ -1,3 +1,46 @@
+2006-08-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerDirector.cpp: Fix handling of inconsistent conjunctive
+	queries.
+
+	* include/Ontology.h: Code cleanups.
+	* src/LogBuf.cpp: Likewise. 
+	* src/Ontology.cpp: Likewise. 
+
+	* include/OWLParser.h: Get rid of static member functions for the
+	raptor parser.
+	* src/OWLParser.cpp: Likewise.
+
+2006-08-10  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/RacerBuilder.h: Add adapters for two adaptation
+	scenarious in order to simplify the RacerBuilder class hierarchy.
+	* include/RacerDirector.h: Likewise.
+	* src/RacerBuilder.cpp: Likewise.
+	* src/RacerDirector.cpp: Likewise. 
+	* src/RacerExtAtom.cpp: Likewise. 
+	* testsuite/TestRacerDirector.cpp: Likewise. 
+
+	* include/Answer.h: Code cleanups.
+	* include/LogBuf.h: Likewise.
+	* include/OWLParser.h: Likewise.
+	* src/Answer.cpp: Likewise.
+	* src/HexDLRewriterDriver.cpp: Likewise.
+	* src/HexDLRewriterParser.ypp: Likewise.
+	* src/OWLParser.cpp: Likewise.
+	* src/Query.cpp: Likewise.
+	* src/RacerAnswerParser.ypp: Likewise.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* testsuite/TestOWLParser.cpp: Likewise.
+	* testsuite/TestSuite.h: Likewise.
+
+	* include/Cache.h (Cache::CacheSet): Use boost::indirect_fun<>
+	instead of homebrewn comparator.
+ 
+	* include/QueryCtx.h (operator<<,operator<): Add some operators
+	for QueryCtx.
+	* src/QueryCtx.cpp: Likewise. 
+
 2006-08-09  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* examples/tests/shop.out: Fix answersets.
