@@ -90,7 +90,7 @@ LogBuf::sync()
 	   << std::setw(6) << std::setfill('0') << tv.tv_usec << ' ';
  
       // now append get the current buffer
-      std::string s = sstream.str();
+      const std::string& s = sstream.str();
       *out << s;
 
       if (*s.rbegin() != '\n')

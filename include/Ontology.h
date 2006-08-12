@@ -16,6 +16,7 @@
 
 #include <dlvhex/Term.h>
 
+#include <iosfwd>
 #include <string>
 #include <set>
 

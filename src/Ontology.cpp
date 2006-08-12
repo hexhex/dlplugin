@@ -5,7 +5,7 @@
  * @author Thomas Krennwallner
  * @date   Sat Aug  5 14:00:05 2006
  * 
- * @brief  
+ * @brief  Basic information about ontologies.
  * 
  * 
  */
