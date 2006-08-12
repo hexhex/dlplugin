@@ -16,11 +16,8 @@
 #include "RacerError.h"
 #include "Ontology.h"
 
-#include <dlvhex/Term.h>
-
-#include <raptor.h>
 #include <string>
-#include <set>
+
 
 namespace dlvhex {
 namespace racer {
@@ -35,6 +32,22 @@ namespace racer {
     /// URI to the OWL KB
     std::string uri;
 
+    // forward declaration
+    class HandlerFuns;
+
+
+    /** 
+     * setup parser with @a userData and @a handler and parses the OWL
+     * document found at #uri.
+     * 
+     * @param userData 
+     * @param handler 
+     */
+    void
+    parse(void* userData, const HandlerFuns* handler) throw (RacerParsingError);
+
+
+  public:
     /// owl:Thing
     static const std::string owlThing;
     /// rdf:type
@@ -52,50 +65,6 @@ namespace racer {
     static const std::string owlObjectProperty;
     static const std::string owlInverseOf;
 
-    /**
-     * setup parser with userData and handler.
-     */
-    virtual void
-    parse(void *userData,
-	  raptor_statement_handler handler,
-	  raptor_namespace_handler nsHandler) throw (RacerParsingError);
-
-  protected:
-    /**
-     * The individual handler for libraptor.
-     *
-     * @param userData a downcasted Answer object for adding the individuals
-     *
-     * @param statement libraptor statement contains triples and
-     * various other information
-     */
-    static void
-    aboxHandler(void* userData, const raptor_statement* statement);
-
-    /**
-     * The concept and role name handler for libraptor.
-     */
-    static void
-    tboxHandler(void* userData, const raptor_statement* statement);
-
-    /**
-     * The namespace callback handler for libraptor.
-     *
-     * @param userData a downcasted Query object for setting the default namespace
-     * @param nspace libraptor nspace contains currently parsed namespace
-     */
-    static void
-    namespaceHandler(void* userData, raptor_namespace* nspace);
-
-    static void
-    writeBytesHandler(raptor_www* w3, void* userData,
-		      const void* ptr, size_t size, size_t nmemb);
-
-
-    static void
-    errorHandler(void* userData, raptor_locator* locator, const char* message);
-
-  public:
     /// Ctor
     explicit
     OWLParser(const std::string& uri);
@@ -103,6 +72,7 @@ namespace racer {
     /// Dtor
     virtual
     ~OWLParser();
+
 
     /**
      * set new OWL uri.
@@ -141,6 +111,7 @@ namespace racer {
      */
     virtual void
     fetchURI(const std::string& file) throw (RacerParsingError);
+
   };
 
 } // namespace racer
