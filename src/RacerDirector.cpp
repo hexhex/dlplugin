@@ -58,6 +58,88 @@ RacerCompositeDirector::query(QueryCtx::shared_pointer qctx) throw(RacerError)
 }
 
 
+namespace dlvhex {
+  namespace racer {
+
+    /**
+     * @brief Grounds the range [#pbeg, #pend) with [#ubeg, #uend).
+     */
+    class Grounder
+    {
+    private:
+      std::vector<Tuple>& tuples;
+      Tuple tuple;
+      Ontology::Objects::const_iterator ubeg;
+      Ontology::Objects::const_iterator uend;
+      Tuple::const_iterator pbeg;
+      Tuple::const_iterator pend;
+      
+
+      /// recursively grounding
+      void
+      ground(Tuple::const_iterator p, Tuple::iterator ins)
+      {
+	if (p == pend)
+	  { 
+	    tuples.push_back(tuple);
+	  }
+	else
+	  {
+	    if (!p->isVariable() && !p->isAnon())
+	      {
+		*ins = *p;
+		ground(++p, ++ins);
+	      }
+	    else
+	      {
+		for (Ontology::Objects::const_iterator it = ubeg; it != uend; ++it)
+		  {
+		    *ins = *it;
+		    ground(++p, ++ins);
+		    --p; --ins;
+		  }
+	      }
+	  }
+      }
+      
+    public:
+      
+      /** 
+       * Ctor.
+       * 
+       * @param t  append grounding to this tuple vector
+       * @param ub begin of the universe
+       * @param ue end of the universe
+       * @param pb begin of the output list
+       * @param pe end of the output list
+       */
+      Grounder(std::vector<Tuple>& t,
+	       Ontology::Objects::const_iterator ub,
+	       Ontology::Objects::const_iterator ue,
+	       Tuple::const_iterator pb,
+	       Tuple::const_iterator pe)
+	: tuples(t),
+	  tuple(pe - pb), // we reserve exactly the length of the output list
+	  ubeg(ub),
+	  uend(ue),
+	  pbeg(pb),
+	  pend(pe)
+      { }
+
+      void
+      ground()
+      {
+	ground(pbeg, tuple.begin());
+      }
+
+    };
+
+
+  } // namespace racer
+} // namespace dlvhex
+
+
+
 QueryCtx::shared_pointer
 RacerCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
 {
@@ -72,34 +154,21 @@ RacerCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
   else // retrieval modes
     {
       // just get all individuals
-      RacerDirector<RacerFunAdapterBuilder<RacerAllIndividualsCmd>,
-	RacerAnswerDriver> all(stream);
 
-      qctx = all.query(qctx);
+      ///@todo add interpretation from qctx
+      Ontology::ObjectsPtr universe = qctx->getQuery().getOntology()->getIndividuals();
 
-      // check if we need to generate all possible pairs, i.e. only
-      // the first two bits of the typeflags are allowed to be true
-      if ((dlq.getTypeFlags() & std::numeric_limits<unsigned long>::max()) == 0x3)
-	{
-	  const std::vector<Tuple>* tuples = qctx->getAnswer().getTuples();
-	  std::vector<Tuple> pairs;
-	  
-	  for (std::vector<Tuple>::const_iterator it1 = tuples->begin();
-	       it1 != tuples->end(); ++it1)
-	    {
-	      for (std::vector<Tuple>::const_iterator it2 = tuples->begin();
-		   it2 != tuples->end(); ++it2)
-		{
-		  Tuple t;
-		  t.push_back((*it1)[0]);	 
-		  t.push_back((*it2)[0]);
-		  
-		  pairs.push_back(t);
-		}
-	    }
+      std::vector<Tuple> tuples;
+      const Tuple& pat = dlq.getPatternTuple();
 
-	  qctx->getAnswer().setTuples(pairs);
-	}
+      Grounder g(tuples,
+		 universe->begin(),
+		 universe->end(),
+		 pat.begin(),
+		 pat.end());
+      g.ground();
+
+      qctx->getAnswer().setTuples(tuples);
     }
 
   return qctx;
