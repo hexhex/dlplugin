@@ -20,7 +20,7 @@
 #include <ace/SOCK_Stream.h>
 
 namespace dlvhex {
-namespace racer {
+namespace util {
 
   /**
    * @brief provides input/output buffering for the network connection.
@@ -140,15 +140,14 @@ namespace racer {
     /** 
      * Setup a new connection to host:port.
      * 
-     * @param host defaults to "localhost"
-     * @param port defaults to 8088
+     * @param host
+     * @param port
      */
     void
-    setConnection(const std::string& host = "localhost",
-		  unsigned port = 8088);
+    setConnection(const std::string& host, unsigned port);
   };
 
-} // namespace racer
+} // namespace util
 } // namespace dlvhex
 
 

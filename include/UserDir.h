@@ -18,7 +18,7 @@
 #include <string>
 
 namespace dlvhex {
-namespace racer {
+namespace util {
 
   /**
    * @brief Handles files in the dlvhex user directory.
@@ -52,7 +52,7 @@ namespace racer {
     remove(const std::string& file) const;
   };
 
-} // namespace racer
+} // namespace util
 } // namespace dlvhex
 
 #endif /* _USERDIR_H */

@@ -19,7 +19,7 @@
 #include <iostream>
 
 namespace dlvhex {
-namespace racer {
+namespace util {
 
   /**
    * @brief A std::streambuf for logging purposes.
@@ -40,7 +40,7 @@ namespace racer {
      * @param s
      * @param n
      *
-     * @return #sstream::write(s,n) if #out != 0, otw. -1.
+     * @return #sstream.write(s,n) if #out != 0, otw. -1.
      */
     virtual std::streamsize
     xsputn(const std::streambuf::char_type* s, std::streamsize n);
@@ -50,7 +50,7 @@ namespace racer {
      *
      * @param c put this character into the output buffer
      *
-     * @return #sstream::put(c) if #out != 0, otw. traits_type::eof().
+     * @return #sstream.put(c) if #out != 0, otw. traits_type::eof().
      */
     virtual std::streambuf::int_type
     overflow(std::streambuf::int_type c);
@@ -78,7 +78,7 @@ namespace racer {
   /// a logging output stream
   extern std::ostream log;
 
-} // namespace racer
+} // namespace util
 } // namespace dlvhex
 
 #endif /* _LOGBUF_H */

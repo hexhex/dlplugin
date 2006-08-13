@@ -20,11 +20,11 @@
 #include <ctime>
 #include <sys/time.h>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::util;
 
 
 /// global log ostream
-std::ostream dlvhex::racer::log(new LogBuf);
+std::ostream dlvhex::util::log(new LogBuf);
 
 
 LogBuf::LogBuf(std::ostream* stream)

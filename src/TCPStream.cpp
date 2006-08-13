@@ -24,7 +24,7 @@
 #include <ace/OS.h>
 #include <ace/Signal.h>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::util;
 
 
 

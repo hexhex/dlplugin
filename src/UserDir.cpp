@@ -20,14 +20,18 @@
 #include <string>
 #include <iostream>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::util;
 
 
 const std::string&
 UserDir::getUserDirectory()
 {
+  ///@todo get rid of the ACE_Singleton stuff, but beware we can't
+  ///just use a static variable here due to an unforseeable
+  ///destruction order during the program exit time -> bad interaction
+  ///with Ontology.
+
   /// pathname of dlvhex user directory
-  //  static std::string* userDirectory = new std::string;
   typedef ACE_Singleton<std::string, ACE_Null_Mutex> UserDirectory;
 
   if (UserDirectory::instance()->empty())
