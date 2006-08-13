@@ -22,10 +22,10 @@
 #endif
 
 namespace dlvhex {
-  namespace racer {
+  namespace dl {
     // forward declaration
     class HexDLRewriterDriver;
-  } // namespace racer
+  } // namespace dl
 } // namespace dlvhex
 
 /**
@@ -37,10 +37,10 @@ namespace dlvhex {
 struct HexDLRewriterFlexLexer : public yyHexFlexLexer
 {
   explicit
-  HexDLRewriterFlexLexer(dlvhex::racer::HexDLRewriterDriver* d) : lexdrv(d) { }
+  HexDLRewriterFlexLexer(dlvhex::dl::HexDLRewriterDriver* d) : lexdrv(d) { }
   virtual
   ~HexDLRewriterFlexLexer() { }
-  dlvhex::racer::HexDLRewriterDriver* lexdrv;
+  dlvhex::dl::HexDLRewriterDriver* lexdrv;
   yy::HexDLRewriterParser::location_type* lexloc;
   yy::HexDLRewriterParser::semantic_type* lexval;
   int yylex(); // implemented in HexDLRewriterScanner.lpp

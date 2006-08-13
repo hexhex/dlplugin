@@ -13,14 +13,14 @@
 #ifndef _OWLPARSER_H
 #define _OWLPARSER_H
 
-#include "RacerError.h"
+#include "DLError.h"
 #include "Ontology.h"
 
 #include <string>
 
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   /**
    * @brief Parse individuals, concepts names, role names and default
@@ -32,9 +32,8 @@ namespace racer {
     /// URI to the OWL KB
     std::string uri;
 
-    // forward declaration
-    class HandlerFuns;
-
+    /// helper struct for parsing concept and role names
+    struct HandlerFuns;
 
     /** 
      * setup parser with @a userData and @a handler and parses the OWL
@@ -44,7 +43,7 @@ namespace racer {
      * @param handler 
      */
     void
-    parse(void* userData, const HandlerFuns* handler) throw (RacerParsingError);
+    parse(void* userData, const HandlerFuns* handler) throw (DLParsingError);
 
 
   public:
@@ -88,7 +87,7 @@ namespace racer {
      * @param indvs add individuals to set
      */
     virtual void
-    parseIndividuals(Ontology::Objects& indvs) throw (RacerParsingError);
+    parseIndividuals(Ontology::Objects& indvs) throw (DLParsingError);
 
     /**
      * get default namespace
@@ -96,13 +95,13 @@ namespace racer {
      * @param ns set namespace to this string
      */
     virtual void
-    parseNamespace(std::string& ns) throw (RacerParsingError);
+    parseNamespace(std::string& ns) throw (DLParsingError);
 
     /**
      * get all possible concept and role names.
      */
     virtual void
-    parseNames(Ontology::Objects& concepts, Ontology::Objects& roles) throw (RacerParsingError);
+    parseNames(Ontology::Objects& concepts, Ontology::Objects& roles) throw (DLParsingError);
 
     /** 
      * Fetch uri to file.
@@ -110,11 +109,11 @@ namespace racer {
      * @param file 
      */
     virtual void
-    fetchURI(const std::string& file) throw (RacerParsingError);
+    fetchURI(const std::string& file) throw (DLParsingError);
 
   };
 
-} // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _OWLPARSER_H */

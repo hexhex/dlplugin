@@ -17,7 +17,7 @@
 #include <string>
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   /**
    * @brief The Registry keeps track of global state.
@@ -67,7 +67,7 @@ namespace racer {
     setDataSubstrateMirroring(bool);
   };
 
-} // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _REGISTRY_H */

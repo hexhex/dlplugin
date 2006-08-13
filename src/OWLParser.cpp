@@ -12,7 +12,7 @@
  */
 
 #include "OWLParser.h"
-#include "RacerError.h"
+#include "DLError.h"
 #include "Ontology.h"
 
 #include <string>
@@ -20,7 +20,7 @@
 
 #include <raptor.h>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
 
 
 const std::string OWLParser::owlThing = "http://www.w3.org/2002/07/owl#Thing";
@@ -39,13 +39,10 @@ const std::string OWLParser::owlInverseOf = "http://www.w3.org/2002/07/owl#inver
 OWLParser::OWLParser(const std::string& uri)
 {
   open(uri);
-  raptor_init();
 }
 
 OWLParser::~OWLParser()
-{
-  raptor_finish();
-}
+{ }
 
 
 void
@@ -67,7 +64,7 @@ OWLParser::open(const std::string& uri)
 
 
 namespace dlvhex {
-  namespace racer {
+  namespace dl {
 
 
     /**
@@ -200,7 +197,7 @@ namespace dlvhex {
     }
 
 
-  } // namespace racer
+  } // namespace dl
 } // namespace dlvhex
 
 
@@ -213,8 +210,10 @@ struct OWLParser::HandlerFuns
 
 
 void
-OWLParser::parse(void* userData, const HandlerFuns* handler) throw (RacerParsingError)
+OWLParser::parse(void* userData, const HandlerFuns* handler) throw (DLParsingError)
 {
+  raptor_init();
+
   raptor_parser* parser = raptor_new_parser("rdfxml");
 
   std::string error;
@@ -242,19 +241,21 @@ OWLParser::parse(void* userData, const HandlerFuns* handler) throw (RacerParsing
 
   if (!error.empty())
     {
-      throw RacerParsingError(error);
+      throw DLParsingError(error);
     }
+
+  raptor_finish();
 }
 
 void
-OWLParser::parseIndividuals(Ontology::Objects& indvs) throw (RacerParsingError)
+OWLParser::parseIndividuals(Ontology::Objects& indvs) throw (DLParsingError)
 {
   HandlerFuns funs = { aboxHandler, 0 };
   parse(&indvs, &funs);
 }
 
 void
-OWLParser::parseNamespace(std::string& ns) throw (RacerParsingError)
+OWLParser::parseNamespace(std::string& ns) throw (DLParsingError)
 {
   HandlerFuns funs = { 0, namespaceHandler };
   parse(&ns, &funs);
@@ -262,7 +263,7 @@ OWLParser::parseNamespace(std::string& ns) throw (RacerParsingError)
 
 void
 OWLParser::parseNames(Ontology::Objects& concepts, Ontology::Objects& roles)
-  throw (RacerParsingError)
+  throw (DLParsingError)
 {
   TBoxNames names = { &concepts, &roles };
   HandlerFuns funs = { tboxHandler, 0 };
@@ -271,20 +272,24 @@ OWLParser::parseNames(Ontology::Objects& concepts, Ontology::Objects& roles)
 
 void
 OWLParser::fetchURI(const std::string& file)
-  throw (RacerParsingError)
+  throw (DLParsingError)
 {
+  raptor_init();
+
   raptor_www_init();
 
   raptor_uri* fetchURI = raptor_new_uri((const unsigned char*) uri.c_str());
 
   raptor_iostream* io = raptor_new_iostream_to_filename(file.c_str());
 
+  raptor_www_init();
+
   raptor_www* rw3 = raptor_www_new();
 
   raptor_www_set_write_bytes_handler(rw3, writeBytesHandler, io);
 
   std::string error;
-  raptor_www_init();  raptor_www_set_error_handler(rw3, errorHandler, &error);
+  raptor_www_set_error_handler(rw3, errorHandler, &error);
 
   raptor_www_fetch(rw3, fetchURI);
 
@@ -294,8 +299,10 @@ OWLParser::fetchURI(const std::string& file)
 
   raptor_www_finish();
   
+  raptor_finish();
+
   if (!error.empty())
     {
-      throw RacerParsingError(error);
+      throw DLParsingError(error);
     }
 }

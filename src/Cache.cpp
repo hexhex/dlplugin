@@ -19,7 +19,7 @@
 #include <iterator>
 #include <boost/iterator/indirect_iterator.hpp>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
 
 
 QueryCtx::shared_pointer

@@ -19,7 +19,7 @@
 
 #include <string>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
 
 
 Answer::Answer(const Query* q)

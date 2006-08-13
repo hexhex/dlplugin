@@ -29,7 +29,7 @@
 
   // why do we need this forward declaration?
   namespace dlvhex {
-    namespace racer {
+    namespace dl {
       class HexDLRewriterDriver;
     }
   }
@@ -38,13 +38,13 @@
 
 // this is the parsing context, passed as parameters to the
 // yy::HexDLRewriterParser ctor
-%parse-param { dlvhex::racer::HexDLRewriterDriver& driver }
+%parse-param { dlvhex::dl::HexDLRewriterDriver& driver }
 
 
 // bison passes the driver as additional parameter to the lexer
 // function YY_DECL, so we can abuse the driver to get the real lexer
 // object and call the yylex() method
-%lex-param   { dlvhex::racer::HexDLRewriterDriver& driver }
+%lex-param   { dlvhex::dl::HexDLRewriterDriver& driver }
 
 // use a yy::location object to keep track of the location information
 %locations
@@ -81,7 +81,7 @@
 yy::HexDLRewriterParser::token_type                             \
 yylex (yy::HexDLRewriterParser::semantic_type* yylval,          \
        yy::HexDLRewriterParser::location_type* yylloc,          \
-       dlvhex::racer::HexDLRewriterDriver& driver)
+       dlvhex::dl::HexDLRewriterDriver& driver)
 
 // declare YY_DECL function for the parser
 YY_DECL;

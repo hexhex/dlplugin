@@ -20,7 +20,7 @@
 #include <string>
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   //
   // forward declaration
@@ -87,7 +87,7 @@ namespace racer {
 
   };
 
-} // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _ANSWER_H */

@@ -21,7 +21,7 @@
 #include <boost/ptr_container/indirect_fun.hpp>
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   /**
    * @brief Base class for caching classes.
@@ -100,7 +100,7 @@ namespace racer {
     cacheHit(const QueryCtx::shared_pointer& query);
   };
 
-} // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _RACERDIRECTOR_H */

@@ -14,18 +14,18 @@
 #include "QueryCtx.h"
 #include "Query.h"
 #include "Answer.h"
-#include "RacerError.h"
+#include "DLError.h"
 
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
 
 
 namespace dlvhex {
-  namespace racer {
+  namespace dl {
 
 
     std::ostream&
@@ -78,14 +78,14 @@ namespace dlvhex {
       template <typename InputIterator, typename Token>
       bool
       operator() (InputIterator& next, InputIterator end, Token& tok)
-	throw (RacerParsingError)
+	throw (DLParsingError)
       {
 	tok = Token();
 	
 	if (next == end)
 	  {
 	    if (state == PARENCLOSE) return false;
-	    else throw RacerParsingError("this is foo");
+	    else throw DLParsingError("this is foo"); ///@todo not very informative exception
 	  }
 
 	bool unexpected = false;
@@ -122,7 +122,7 @@ namespace dlvhex {
 	      }
 
 	    if (unexpected)
-	      throw RacerParsingError("unexpected " + *next);
+	      throw DLParsingError("unexpected " + *next);
 	  }
 	
 	if (state == PARENCLOSE)
@@ -141,17 +141,17 @@ namespace dlvhex {
 
     };
 
-  } // namespace racer
+  } // namespace dl
 } //namespace dlvhex
 
 
-QueryCtx::QueryCtx(const PluginAtom::Query& query) throw (RacerError)
+QueryCtx::QueryCtx(const PluginAtom::Query& query) throw (DLError)
 {
   const Tuple& inputtuple = query.getInputTuple();
 
   if (inputtuple.size() < 4)
     {
-      throw RacerError("Incompatible input list.");
+      throw DLError("Incompatible input list.");
     }
 
   // inputtuple[0] contains the KB URI constant
@@ -164,7 +164,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query) throw (RacerError)
     {
       onto = Ontology::createOntology(ontostr);
     }
-  catch (RacerError& e)
+  catch (DLError& e)
     {
       ///@todo should we ignore this?
       throw e;

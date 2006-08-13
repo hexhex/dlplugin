@@ -14,7 +14,7 @@
 
 #include <string>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
 
 
 unsigned Registry::verbose(1);

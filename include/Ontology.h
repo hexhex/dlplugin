@@ -23,7 +23,7 @@
 #include <boost/shared_ptr.hpp>
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   /**
    * @brief Basic information about ontologies.
@@ -158,7 +158,7 @@ namespace racer {
   operator!= (const Ontology& o1, const Ontology& o2);
 
 
-} // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _ONTOLOGY_H */

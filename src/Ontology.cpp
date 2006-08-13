@@ -18,10 +18,11 @@
 #include <map>
 #include <iterator>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
+using dlvhex::util::UserDir;
 
 namespace dlvhex {
-  namespace racer {
+  namespace dl {
 
     std::ostream&
     operator<< (std::ostream& os, const Ontology& o)
@@ -95,6 +96,10 @@ Ontology::isLocal() const
 Ontology::shared_pointer
 Ontology::createOntology(const std::string& uri)
 {
+  ///@todo get rid of the static variable: due to an unforseeable
+  ///destruction order during the program exit time, this has a bad
+  ///interaction with UserDir (@see Ontology::~Ontology).
+
   typedef std::map<std::string, Ontology::shared_pointer> OntologyMap;
   static OntologyMap ontomap;
 
@@ -122,9 +127,9 @@ Ontology::createOntology(const std::string& uri)
 
       return osp;
     }
-  catch (RacerParsingError& e)
+  catch (DLParsingError& e)
     {
-      throw RacerParsingError("Couldn't parse document " + uri + ": " + e.what());
+      throw DLParsingError("Couldn't parse document " + uri + ": " + e.what());
     }
 }
 
@@ -165,9 +170,9 @@ Ontology::getConcepts() const
 	  OWLParser p(uri);
 	  p.parseNames(*c, *r);
 	}
-      catch (RacerParsingError& e)
+      catch (DLParsingError& e)
 	{
-	  throw RacerParsingError("Couldn't parse document " + uri + ": " + e.what());
+	  throw DLParsingError("Couldn't parse document " + uri + ": " + e.what());
 	}
 
       concepts = c;
@@ -200,9 +205,9 @@ Ontology::getRoles() const
 	  OWLParser p(uri);
 	  p.parseNames(*c, *r);
 	}
-      catch (RacerParsingError& e)
+      catch (DLParsingError& e)
 	{
-	  throw RacerParsingError("Couldn't parse document " + uri + ": " + e.what());
+	  throw DLParsingError("Couldn't parse document " + uri + ": " + e.what());
 	}
 
       concepts = c;
@@ -225,9 +230,9 @@ Ontology::getIndividuals() const
 	  OWLParser p(uri);
 	  p.parseIndividuals(*i);
 	}
-      catch (RacerParsingError& e)
+      catch (DLParsingError& e)
 	{
-	  throw RacerParsingError("Couldn't parse document " + uri + ": " + e.what());
+	  throw DLParsingError("Couldn't parse document " + uri + ": " + e.what());
 	}
 
       individuals = i;

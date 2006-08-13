@@ -6,7 +6,9 @@
  * @date   Tue Jul 25 09:16:44 2006
  * 
  * @brief  Driver class for the Hex DL Rewriters bison/flex parser.
- * 
+ *
+ * @todo Introduce a Rewriter hierarchy, use the HexDLRewriterDriver
+ * just for the actual parsing stuff.
  * 
  */
 
@@ -23,7 +25,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include "HexDLRewriterParser.hpp"
-#include "RacerError.h"
+#include "DLError.h"
 
 //
 // forward declarations
@@ -32,7 +34,7 @@ class HexDLRewriterFlexLexer;
 
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   /**
    * A PluginRewriter which parses the HEX input program and rewrites
@@ -93,7 +95,7 @@ namespace racer {
     rewrite();
 
     void
-    error(const yy::location& l, const std::string& m) const throw (RacerParsingError);
+    error(const yy::location& l, const std::string& m) const throw (DLParsingError);
 
     /// callback for dl-atoms
     std::string
@@ -108,7 +110,7 @@ namespace racer {
     registerDLOp(char op, const std::string& lhs, const std::string& rhs);
   };
 
-} // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif // _HEXDLREWRITERDRIVER_H

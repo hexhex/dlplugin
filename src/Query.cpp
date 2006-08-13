@@ -17,11 +17,11 @@
 #include <dlvhex/AtomSet.h>
 #include <dlvhex/Term.h>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
 
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   std::ostream&
   operator<< (std::ostream& os, const DLQuery& q)
@@ -133,7 +133,7 @@ namespace racer {
     return !(q1 == q2);
   }
 
-} // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 
@@ -247,7 +247,7 @@ DLQuery::getPatternTuple() const
 
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   std::ostream&
   operator<< (std::ostream& os, const Query& q)
@@ -310,7 +310,7 @@ namespace racer {
     return !(q1 == q2);
   }
 
-} // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 

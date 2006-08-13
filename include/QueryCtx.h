@@ -14,7 +14,7 @@
 #ifndef _QUERYCTX_H
 #define _QUERYCTX_H
 
-#include "RacerError.h"
+#include "DLError.h"
 
 #include <dlvhex/PluginInterface.h>
 
@@ -23,7 +23,7 @@
 #include <iosfwd>
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   //
   // forward declarations
@@ -49,7 +49,7 @@ namespace racer {
      * @param query 
      */
     explicit
-    QueryCtx(const PluginAtom::Query& query) throw (RacerError);
+    QueryCtx(const PluginAtom::Query& query) throw (DLError);
 
 
     /** 
@@ -77,8 +77,7 @@ namespace racer {
     virtual Answer&
     getAnswer() const;
 
-    typedef QueryCtx value_type;
-    typedef boost::shared_ptr<value_type> shared_pointer; /// managed QueryCtx
+    typedef boost::shared_ptr<QueryCtx> shared_pointer; /// managed QueryCtx
 
     friend std::ostream&
     operator<< (std::ostream& os, const QueryCtx& q);
@@ -111,7 +110,7 @@ namespace racer {
   operator< (const QueryCtx& q1, const QueryCtx& q2);
 
 
-} // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _RACERQUERY_H */

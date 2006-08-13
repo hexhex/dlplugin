@@ -14,6 +14,7 @@
 #include "HexDLRewriterFlexLexer.h"
 #include "Ontology.h"
 #include "Registry.h"
+#include "DLError.h"
 
 #include <iosfwd>
 
@@ -21,7 +22,7 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/erase.hpp>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
 
 
 HexDLRewriterDriver::HexDLRewriterDriver(std::istream& i, std::ostream& o)
@@ -92,7 +93,7 @@ HexDLRewriterDriver::rewrite()
       parser.set_debug_level(Registry::getVerbose() > 2 ? true : false);
       parser.parse();
     }
-  catch (RacerParsingError& e)
+  catch (DLParsingError& e)
     {
       throw PluginError(e.what());
     }
@@ -117,7 +118,7 @@ HexDLRewriterDriver::rewrite()
     {
       onto = Ontology::createOntology(uri);
     }
-  catch (RacerError& e)
+  catch (DLError& e)
     {
       throw PluginError(e.what());
     }
@@ -282,10 +283,10 @@ HexDLRewriterDriver::rewriteDLAtom(const std::string& query,
 void
 HexDLRewriterDriver::error(const yy::location& l,
 			   const std::string& m) const
-  throw (RacerParsingError)
+  throw (DLParsingError)
 {
   std::ostringstream s;
   s << "Parsing error at " << l << ": " << m;
 
-  throw RacerParsingError(s.str());
+  throw DLParsingError(s.str());
 }

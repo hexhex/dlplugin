@@ -23,7 +23,7 @@
 #include <iosfwd>
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
 
   /**
@@ -296,7 +296,7 @@ namespace racer {
   bool
   operator!= (const Query& q1, const Query& q2);
 
-} // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _QUERY_H */
