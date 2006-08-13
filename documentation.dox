@@ -19,23 +19,23 @@ This is a brief overview of the Racer plugin with its components and
 
 @verbatim
      ________             ________________
-    |        |           |                | instantiates and maintains the
-    | DLVHEX |<--------->| RacerInterface | TCP IOStream, the DL Cache and
-    |________|           |________________| creates the external atoms.
+    |        |           |                | instantiates and maintains the network connection,
+    | DLVHEX |<--------->| RacerInterface | the DL Cache and creates the external atoms as well
+    |________|           |________________| as the DL Rewriter.
        | ^ ^              ________________
-       | | |             |                | Rewrites DL programs to HEX
-       | | +------------>| DL Rewriter    | programs.
+       | | |             |                |
+       | | +------------>| DL Rewriter    | Rewrites DL programs to HEX programs.
        | |               |________________|
-       | |
-       | |
- Query | | Answer
-       | |
-    ___v_|______________
-   |                    | setup of Query objects and RacerDirectors, on-the-fly
+       | |                ________________
+       | |               |                |
+       | |          +--->| DL Cache       | Cache the answers to dl-queries.
+ Query | | Answer   |    |________________|
+    ___v_|__________|___
+   |                    | setup of Query objects and QueryDirectors, on-the-fly
    | RacerExtAtom       | RACER process creation
    |____________________|
    |                    | represents a Racer command and provides caching and
-   |   RacerDirector    | command chaining support as well as inconsistency handling
+   |   QueryDirector    | command chaining support as well as inconsistency handling
    |              ^^    |
    | ___||________||___ |
    ||   ||    |   ||   || RacerBuilder uses the Query to create RACER commands
@@ -60,11 +60,19 @@ This is a brief overview of the Racer plugin with its components and
 @endverbatim
 
 
-@defgroup RacerDirector A Racer command
+@defgroup QueryDirector A dl query command
 
 @defgroup RacerInterface The plugin interface
 
 @defgroup DLRewriter The DL Rewriter
 
+@defgroup DLCache The DL Cache
+
+@todo We could store Term objectes more efficiently using some kind of
+Term Repository which takes care of objects like
+boost::shared_ptr<Term>. All other components like the DLCache could
+benefit from such a utility. Maybe we have to adapt the
+PluginInterface to use boost::shared_ptr<Term> instead of plain Term
+objects.
 
 */
