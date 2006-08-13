@@ -1,5 +1,15 @@
 // -*- C++ -*-
 
+/**
+ * @file   TestSuite.h
+ * @author Thomas Krennwallner
+ * @date   Sun Aug 13 15:27:48 2006
+ * 
+ * @brief  TestSuite base class.
+ * 
+ * 
+ */
+
 #ifndef _TESTSUITE_H
 #define _TESTSUITE_H
 
@@ -12,7 +22,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
+namespace test {
 
   /**
    * @brief Base class for the TestCases.
@@ -33,7 +44,8 @@ namespace racer {
     output(const std::vector<Tuple>& tv);
   };
 
-} // namespace racer
+} // namespace test
+} // namespace dl
 } // namespace dlvhex
 
 

@@ -3,7 +3,7 @@
  * @author Thomas Krennwallner
  * @date   Thu Apr 13 14:38:37 2006
  * 
- * @brief  
+ * @brief  TestCases for Racer's nRQL.
  * 
  * 
  */
@@ -17,7 +17,9 @@
 #include <string>
 
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
+using namespace dlvhex::dl::racer;
+using namespace dlvhex::dl::test;
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerNRQL);

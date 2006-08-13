@@ -3,7 +3,7 @@
  * @author Thomas Krennwallner
  * @date   Wed Feb  8 21:41:07 2006
  * 
- * @brief  
+ * @brief  TestCase for some types.
  * 
  * 
  */
@@ -13,7 +13,8 @@
 
 #include "TestRacerTypes.h"
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
+using namespace dlvhex::dl::test;
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerTypes);

@@ -3,7 +3,7 @@
  * @author Thomas Krennwallner
  * @date   Wed Feb  8 21:02:29 2006
  * 
- * @brief  
+ * @brief  Tests parsing an OWL document.
  * 
  * 
  */
@@ -17,7 +17,8 @@
 #include <functional>
 #include <iterator>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl::test;
+using dlvhex::dl::OWLParser;
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TestOWLParser);

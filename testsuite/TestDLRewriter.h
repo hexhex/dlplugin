@@ -1,5 +1,15 @@
 // -*- C++ -*-
 
+/**
+ * @file   TestDLRewriter.h
+ * @author Thomas Krennwallner
+ * @date   Thu Apr 27 13:28:39 2006
+ * 
+ * @brief  Tests the DL Rewriter facility.
+ * 
+ * 
+ */
+
 #ifndef _TESTDLREWRITER_H
 #define _TESTDLREWRITER_H
 
@@ -18,11 +28,12 @@
 #include "TestSuite.h"
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
+namespace test {
 
 
   /**
-   * @brief TestCases for DLRewriter. 
+   * @brief TestCases for HexDLRewriter. 
    *
    * @test Tests the DL Rewriter facility.
    */
@@ -39,7 +50,8 @@ namespace racer {
     void runDLNoRewrite();    
   };
 
-} // namespace racer
+} // namespace test
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _TESTDLREWRITER_H */

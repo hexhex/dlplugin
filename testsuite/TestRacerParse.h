@@ -1,5 +1,15 @@
 // -*- C++ -*-
 
+/**
+ * @file   TestRacerParse.h
+ * @author Thomas Krennwallner
+ * @date   Wed Feb  8 21:27:06 2006
+ * 
+ * @brief  TestCases for RacerAnswer Parser.
+ * 
+ * 
+ */
+
 #ifndef _TESTRACERPARSE_H
 #define _TESTRACERPARSE_H
 
@@ -12,10 +22,11 @@
 #include "TestSuite.h"
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
+namespace test {
 
   /**
-   * @brief TestCases for RacerParse and its children.
+   * @brief TestCases for RacerAnswer Parser.
    *
    * @test Tests the RacerSimpleAnswer and RacerAnswerList parsers and
    * performs some sanity checks on the result.
@@ -33,7 +44,8 @@ namespace racer {
     void runRacerAnswerListTest();    
   };
 
-} // namespace racer
+} // namespace test
+} // namespace dl
 } // namespace dlvhex
 
 

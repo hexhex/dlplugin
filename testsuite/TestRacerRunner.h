@@ -1,5 +1,15 @@
 // -*- C++ -*-
 
+/**
+ * @file   TestRacerRunner.h
+ * @author Thomas Krennwallner
+ * @date   Wed Feb  8 21:35:11 2006
+ * 
+ * @brief  TestCase for RacerRunner.
+ * 
+ * 
+ */
+
 #ifndef _TESTRACERRUNNER_H
 #define _TESTRACERRUNNER_H
 
@@ -12,7 +22,8 @@
 #include "TestSuite.h"
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
+namespace test {
 
   /**
    * @brief TestCase for RacerRunner.
@@ -29,7 +40,8 @@ namespace racer {
     void runRacerRunnerTest();    
   };
 
-} // namespace racer
+} // namespace test
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _TESTRACERRUNNER_H */

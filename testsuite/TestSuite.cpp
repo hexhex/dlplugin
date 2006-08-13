@@ -1,3 +1,13 @@
+/**
+ * @file   TestSuite.cpp
+ * @author Thomas Krennwallner
+ * @date   Sun Aug 13 15:28:13 2006
+ * 
+ * @brief  TestSuite base class.
+ * 
+ * 
+ */
+
 #include "TestSuite.h"
 
 #include <cppunit/CompilerOutputter.h>
@@ -9,7 +19,7 @@
 #include <functional>
 #include <iterator>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl::test;
 
 TestSuite::TestSuite()
  : CppUnit::TestFixture()

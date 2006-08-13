@@ -3,7 +3,7 @@
  * @author Thomas Krennwallner
  * @date   Wed Feb  8 21:31:18 2006
  * 
- * @brief  
+ * @brief  TestCases for Query.
  * 
  * 
  */
@@ -12,7 +12,8 @@
 
 #include "TestRacerQuery.h"
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
+using namespace dlvhex::dl::test;
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerQuery);

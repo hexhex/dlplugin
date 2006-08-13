@@ -1,5 +1,15 @@
 // -*- C++ -*-
 
+/**
+ * @file   TestRacerQuery.h
+ * @author Thomas Krennwallner
+ * @date   Wed Feb  8 21:31:18 2006
+ * 
+ * @brief  TestCases for Query.
+ * 
+ * 
+ */
+
 #ifndef _TESTRACERQUERY_H
 #define _TESTRACERQUERY_H
 
@@ -12,7 +22,8 @@
 #include "TestSuite.h"
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
+namespace test {
 
   /**
    * @brief TestCases for Query.
@@ -39,7 +50,8 @@ namespace racer {
     void runRacerQueryLessThanTest();
   };
 
-} // namespace racer
+} // namespace test
+} // namespace dl
 } // namespace dlvhex
 
 

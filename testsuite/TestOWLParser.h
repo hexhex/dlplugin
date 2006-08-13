@@ -1,5 +1,15 @@
 // -*- C++ -*-
 
+/**
+ * @file   TestOWLParser.h
+ * @author Thomas Krennwallner
+ * @date   Wed Feb  8 21:02:29 2006
+ * 
+ * @brief  Tests parsing an OWL document.
+ * 
+ * 
+ */
+
 #ifndef _TESTOWLPARSER_H
 #define _TESTOWLPARSER_H
 
@@ -13,7 +23,8 @@
 
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
+namespace test {
 
   /**
    * @brief TestCases for OWLParser
@@ -30,7 +41,8 @@ namespace racer {
     void runParserTest();
   };
 
-} // namespace racer
+} // namespace test
+} // namespace dl
 } // namespace dlvhex
 
 

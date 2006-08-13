@@ -3,17 +3,19 @@
  * @author Thomas Krennwallner
  * @date   Wed Feb  8 21:13:26 2006
  * 
- * @brief  
+ * @brief  TestCases for QueryDirector.
  * 
  * 
  */
 
-#include "RacerDirector.h"
+#include "TestRacerDirector.h"
+#include "RacerBuilder.h"
+#include "RacerAnswerDriver.h"
+#include "QueryDirector.h"
 #include "RacerRunner.h"
 #include "TCPStream.h"
 #include "QueryCtx.h"
 #include "Query.h"
-#include "TestRacerDirector.h"
 
 #include <iostream>
 #include <string>
@@ -21,7 +23,10 @@
 #include <iterator>
 
 
-using namespace dlvhex::racer;
+using namespace dlvhex::util;
+using namespace dlvhex::dl;
+using namespace dlvhex::dl::racer;
+using namespace dlvhex::dl::test;
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerDirector);
@@ -37,7 +42,7 @@ TestRacerDirector::runRacerPlusConceptTest()
 {
   TCPIOStream rsIO("localhost", 8088);
       
-  RacerConceptRolePM pcd(rsIO);
+  QueryDirector<RacerStateBuilder, RacerAnswerDriver> pcd(rsIO);
   
   AtomSet pc;
   AtomPtr ap(new Atom("plusC(\"Part\",\"foo\")"));
@@ -64,7 +69,7 @@ TestRacerDirector::runRacerAllIndividualsTest()
 {
   TCPIOStream rsIO("localhost", 8088);
   
-  RacerDirector<RacerFunAdapterBuilder<RacerAllIndividualsCmd>,RacerAnswerDriver> aiq(rsIO);
+  QueryDirector<RacerFunAdapterBuilder<RacerAllIndividualsCmd>,RacerAnswerDriver> aiq(rsIO);
   
   QueryCtx::shared_pointer q(new QueryCtx(new Query(Ontology::shared_pointer(),
 						    Term(""),

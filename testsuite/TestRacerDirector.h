@@ -1,5 +1,15 @@
 // -*- C++ -*-
 
+/**
+ * @file   TestRacerDirector.h
+ * @author Thomas Krennwallner
+ * @date   Wed Feb  8 21:13:26 2006
+ * 
+ * @brief  TestCases for QueryDirector.
+ * 
+ * 
+ */
+
 #ifndef _TESTRACERDIRECTOR_H
 #define _TESTRACERDIRECTOR_H
 
@@ -12,10 +22,11 @@
 #include "TestSuite.h"
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
+namespace test {
 
   /**
-   * @brief TestCases for RacerDirector.
+   * @brief TestCases for QueryDirector.
    *
    * @test Opens a connection to RACER with TCPIOStream, sends some
    * commands and performs some sanity checks on the result.
@@ -35,7 +46,8 @@ namespace racer {
     void runRacerAllIndividualsTest();
   };
 
-} // namespace racer
+} // namespace test
+} // namespace dl
 } // namespace dlvhex
 
 

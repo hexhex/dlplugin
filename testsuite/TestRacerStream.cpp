@@ -3,7 +3,7 @@
  * @author Thomas Krennwallner
  * @date   Wed Feb  8 21:37:32 2006
  * 
- * @brief  
+ * @brief  TestCases for TCPIOStream and TCPStreamBuf
  * 
  * 
  */
@@ -15,7 +15,9 @@
 
 #include <iosfwd>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::util;
+using namespace dlvhex::dl::test;
+using namespace dlvhex::dl::racer;
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerStream);

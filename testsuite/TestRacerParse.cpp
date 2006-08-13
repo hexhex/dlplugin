@@ -3,7 +3,7 @@
  * @author Thomas Krennwallner
  * @date   Wed Feb  8 21:27:06 2006
  * 
- * @brief  
+ * @brief  TestCases for RacerAnswer Parser.
  * 
  * 
  */
@@ -16,7 +16,9 @@
 #include <iosfwd>
 #include <string>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
+using namespace dlvhex::dl::racer;
+using namespace dlvhex::dl::test;
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerParse);

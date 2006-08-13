@@ -1,5 +1,15 @@
 // -*- C++ -*-
 
+/**
+ * @file   TestRacerBuilder.h
+ * @author Thomas Krennwallner
+ * @date   Wed Feb  8 21:06:24 2006
+ * 
+ * @brief  Builds various RACER commands and checks if they are valid.
+ * 
+ * 
+ */
+
 #ifndef _TESTRACERBUILDER_H
 #define _TESTRACERBUILDER_H
 
@@ -13,7 +23,8 @@
 
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
+namespace test {
 
 
   /**
@@ -37,7 +48,8 @@ namespace racer {
     void runRacerPosPairBuilderTest();
   };
 
-} // namespace racer
+} // namespace test
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _TESTRACERBUILDER_H */

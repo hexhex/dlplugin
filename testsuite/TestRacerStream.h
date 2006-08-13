@@ -1,5 +1,15 @@
 // -*- C++ -*-
 
+/**
+ * @file   TestRacerStream.h
+ * @author Thomas Krennwallner
+ * @date   Wed Feb  8 21:37:32 2006
+ * 
+ * @brief  TestCases for TCPIOStream and TCPStreamBuf
+ * 
+ * 
+ */
+
 #ifndef _TESTRACERSTREAM_H
 #define _TESTRACERSTREAM_H
 
@@ -12,7 +22,8 @@
 #include "TestSuite.h"
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
+namespace test {
 
   /**
    * @brief TestCases for TCPIOStream and TCPStreamBuf
@@ -36,7 +47,8 @@ namespace racer {
     void runRacerIOStreamTest();   
   };
 
-} // namespace racer
+} // namespace test
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _TESTRACERSTREAM_H */

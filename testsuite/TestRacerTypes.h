@@ -1,5 +1,15 @@
 // -*- C++ -*-
 
+/**
+ * @file   TestRacerTypes.h
+ * @author Thomas Krennwallner
+ * @date   Wed Feb  8 21:41:07 2006
+ * 
+ * @brief  TestCase for some types.
+ * 
+ * 
+ */
+
 #ifndef _TESTRACERTYPES_H
 #define _TESTRACERTYPES_H
 
@@ -12,7 +22,8 @@
 #include "TestSuite.h"
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
+namespace test {
 
   /**
    * @brief TestCase for some types.
@@ -29,7 +40,8 @@ namespace racer {
     void runRacerSetTest();   
   };
 
-} // namespace racer
+} // namespace test
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _TESTRACERRUNNER_H */

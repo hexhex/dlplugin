@@ -1,5 +1,15 @@
 // -*- C++ -*-
 
+/**
+ * @file   TestRacerInterface.h
+ * @author Thomas Krennwallner
+ * @date   Wed Feb  8 21:22:04 2006
+ * 
+ * @brief  TestCases for the RacerInterface.
+ * 
+ * 
+ */
+
 #ifndef _TESTRACERINTERFACE_H
 #define _TESTRACERINTERFACE_H
 
@@ -12,11 +22,12 @@
 #include "TestSuite.h"
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
+namespace test {
 
 
   /**
-   * @brief TestCases for RacerDirector. 
+   * @brief TestCases for the RacerInterface. 
    *
    * @test Imports the callback functions and runs some tests on them.
    */
@@ -56,7 +67,8 @@ namespace racer {
     void runGetUniverseTest();    
   };
 
-} // namespace racer
+} // namespace test
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _TESTRACERBUILDER_H */

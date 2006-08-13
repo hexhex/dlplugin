@@ -3,7 +3,7 @@
  * @author Thomas Krennwallner
  * @date   Thu Apr 27 13:28:39 2006
  * 
- * @brief  
+ * @brief  Tests the DL Rewriter facility.
  * 
  * 
  */
@@ -15,7 +15,8 @@
 #include <fstream>
 #include <sstream>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
+using namespace dlvhex::dl::test;
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TestDLRewriter);
