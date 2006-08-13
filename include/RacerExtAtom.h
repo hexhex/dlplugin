@@ -13,24 +13,21 @@
 #ifndef _RACEREXTATOM_H
 #define _RACEREXTATOM_H
 
-#include <dlvhex/PluginInterface.h>
-#include <dlvhex/Atom.h>
-#include <dlvhex/Term.h>
-#include <dlvhex/AtomSet.h>
-
 #include "RacerInterface.h"
-#include "RacerDirector.h"
+#include "QueryDirector.h"
 #include "Cache.h"
 
 #include <iosfwd>
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   //
   // forward declarations
   //
   class Query;
+
+namespace racer {
 
 
   /**
@@ -60,8 +57,8 @@ namespace racer {
      * 
      * @return 
      */
-    virtual RacerCompositeDirector::shared_pointer
-    getComposite(const dlvhex::racer::Query& query) const;
+    virtual QueryCompositeDirector::shared_pointer
+    getComposite(const dlvhex::dl::Query& query) const;
 
     /**
      * children of RacerExtAtom implement this method to create a
@@ -70,11 +67,11 @@ namespace racer {
      *
      * @param query
      *
-     * @return a RacerBaseDirector::shared_pointer representing the
+     * @return a QueryBaseDirector::shared_pointer representing the
      * appropriate command to send to the RACER process
      */
-    virtual RacerBaseDirector::shared_pointer
-    getDirectors(const dlvhex::racer::Query& query) const = 0;
+    virtual QueryBaseDirector::shared_pointer
+    getDirectors(const dlvhex::dl::Query& query) const = 0;
 
   public:
     /**
@@ -101,8 +98,8 @@ namespace racer {
     BaseCache& cache;
 
     /// fill a composite and add a caching director
-    RacerBaseDirector::shared_pointer
-    getCachedDirectors(const dlvhex::racer::Query&, RacerBaseDirector*) const;
+    QueryBaseDirector::shared_pointer
+    getCachedDirectors(const dlvhex::dl::Query&, QueryBaseDirector*) const;
 
   public:
     RacerCachingAtom(std::iostream&, BaseCache&);
@@ -124,8 +121,8 @@ namespace racer {
      *
      * @return
      */
-    virtual RacerBaseDirector::shared_pointer
-    getDirectors(const dlvhex::racer::Query& query) const;
+    virtual QueryBaseDirector::shared_pointer
+    getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
     RacerConceptAtom(std::iostream&, BaseCache&);
@@ -148,8 +145,8 @@ namespace racer {
      *
      * @return
      */
-    virtual RacerBaseDirector::shared_pointer
-    getDirectors(const dlvhex::racer::Query& query) const;
+    virtual QueryBaseDirector::shared_pointer
+    getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
     RacerRoleAtom(std::iostream&, BaseCache&);
@@ -171,8 +168,8 @@ namespace racer {
      *
      * @return
      */
-    virtual RacerBaseDirector::shared_pointer
-    getDirectors(const dlvhex::racer::Query& query) const;
+    virtual QueryBaseDirector::shared_pointer
+    getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
     explicit
@@ -196,8 +193,8 @@ namespace racer {
      *
      * @return
      */
-    virtual RacerBaseDirector::shared_pointer
-    getDirectors(const dlvhex::racer::Query& query) const;
+    virtual QueryBaseDirector::shared_pointer
+    getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
     RacerDatatypeRoleAtom(std::iostream&, BaseCache&);
@@ -219,14 +216,15 @@ namespace racer {
      *
      * @return
      */
-    virtual RacerBaseDirector::shared_pointer
-    getDirectors(const dlvhex::racer::Query& query) const;
+    virtual QueryBaseDirector::shared_pointer
+    getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
     RacerCQAtom(std::iostream&, BaseCache&, unsigned n);
   };
 
 } // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _RACEREXTATOM_H */

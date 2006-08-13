@@ -24,7 +24,7 @@
 #include <string>
 #include <memory>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl::racer;
 
 
 RacerBuilder::RacerBuilder(std::ostream& s)
@@ -40,7 +40,7 @@ RacerStateBuilder::RacerStateBuilder(std::ostream& s)
 { }
 
 bool
-RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
+RacerStateBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
   //
   // create a state list. If there is no individual or pair to add
@@ -63,7 +63,7 @@ RacerStateBuilder::buildCommand(Query& query) throw (RacerBuildingError)
     }
   catch (std::exception& e)
     {
-      throw RacerBuildingError(e.what());
+      throw DLBuildingError(e.what());
     }
 
   return true;
@@ -77,7 +77,7 @@ RacerIsConceptMemberBuilder::RacerIsConceptMemberBuilder(std::ostream& s)
 { }
 
 bool
-RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
+RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
   const DLQuery dlq = query.getDLQuery();
   const Term& q = dlq.getQuery();
@@ -85,7 +85,7 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingErro
 
   if (!(dlq.isBoolean() && indv.size() == 1))
     {
-      throw RacerBuildingError("Incompatible pattern supplied.");
+      throw DLBuildingError("Incompatible pattern supplied.");
     }
 
   try
@@ -103,7 +103,7 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (RacerBuildingErro
     }
   catch (std::exception& e)
     {
-      throw RacerBuildingError(e.what());
+      throw DLBuildingError(e.what());
     }
 
   return true;
@@ -116,7 +116,7 @@ RacerIsRoleMemberBuilder::RacerIsRoleMemberBuilder(std::ostream& s)
 { }
 
 bool
-RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
+RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
   const DLQuery dlq = query.getDLQuery();
   const Term& q = dlq.getQuery();
@@ -124,7 +124,7 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
 
   if (!(dlq.isBoolean() && indv.size() == 2))
     {
-      throw RacerBuildingError("Incompatible pattern supplied.");
+      throw DLBuildingError("Incompatible pattern supplied.");
     }
 
   try
@@ -146,7 +146,7 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (RacerBuildingError)
     }
   catch (std::exception& e)
     {
-      throw RacerBuildingError(e.what());
+      throw DLBuildingError(e.what());
     }
 
   return true;
@@ -160,7 +160,7 @@ RacerIndividualFillersBuilder::RacerIndividualFillersBuilder(std::ostream& s)
 
 bool
 RacerIndividualFillersBuilder::buildCommand(Query& query)
-  throw (RacerBuildingError)
+  throw (DLBuildingError)
 {
   const DLQuery dlq = query.getDLQuery();
   const Term& q = dlq.getQuery();
@@ -170,7 +170,7 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
 
   if (!(type == 0x1 || type == 0x2) || indv.size() != 2)
     {
-      throw RacerBuildingError("Incompatible pattern supplied.");
+      throw DLBuildingError("Incompatible pattern supplied.");
     }
 
   try
@@ -211,7 +211,7 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
     }
   catch (std::exception& e)
     {
-      throw RacerBuildingError(e.what());
+      throw DLBuildingError(e.what());
     }
 
   return true;
@@ -226,7 +226,7 @@ RacerConceptInstancesBuilder::RacerConceptInstancesBuilder(std::ostream& s)
 { }
 
 bool
-RacerConceptInstancesBuilder::buildCommand(Query& query) throw (RacerBuildingError)
+RacerConceptInstancesBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
   const DLQuery dlq = query.getDLQuery();
   const Term& q = dlq.getQuery();
@@ -254,7 +254,7 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (RacerBuildingErr
     }
   catch (std::exception& e)
     {
-      throw RacerBuildingError(e.what());
+      throw DLBuildingError(e.what());
     }
 
   return true;
@@ -268,7 +268,7 @@ RacerRoleIndividualsBuilder::RacerRoleIndividualsBuilder(std::ostream& s)
 { }
 
 bool
-RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (RacerBuildingError)
+RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
   const DLQuery dlq = query.getDLQuery();
   const Term& q = dlq.getQuery();
@@ -284,7 +284,7 @@ RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (RacerBuildingErro
     }
   catch (std::exception& e)
     {
-      throw RacerBuildingError(e.what());
+      throw DLBuildingError(e.what());
     }
 
   return true;
@@ -296,7 +296,7 @@ RacerOpenOWLBuilder::RacerOpenOWLBuilder(std::ostream& s)
 { }
 
 bool
-RacerOpenOWLBuilder::buildCommand(Query& query) throw (RacerBuildingError)
+RacerOpenOWLBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
   // first 7 chars contains the URL scheme
   std::string scheme = query.getOntology()->getURI().substr(0,7);
@@ -320,7 +320,7 @@ RacerOpenOWLBuilder::buildCommand(Query& query) throw (RacerBuildingError)
     }
   catch (std::exception& e)
     {
-      throw RacerBuildingError(e.what());
+      throw DLBuildingError(e.what());
     }
 
   return true;

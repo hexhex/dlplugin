@@ -15,10 +15,10 @@
 #include "Answer.h"
 #include "RacerFlexLexer.h"
 #include "RacerAnswerParser.hpp"
-#include "RacerError.h"
+#include "DLError.h"
 #include "Registry.h"
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl::racer;
 
 
 RacerBaseAnswerDriver::RacerBaseAnswerDriver(std::istream& i)
@@ -52,19 +52,19 @@ RacerBaseAnswerDriver::syncStream()
 
 void
 RacerBaseAnswerDriver::error(const yy::location& l,
-			     const std::string& m) throw (RacerParsingError)
+			     const std::string& m) throw (DLParsingError)
 {
   syncStream();
   std::stringstream s;
   s << "Parsing error at " << l << ": " << m;
-  throw RacerParsingError(s.str());
+  throw DLParsingError(s.str());
 }
      
 void
-RacerBaseAnswerDriver::error(const std::string& m) throw (RacerParsingError)
+RacerBaseAnswerDriver::error(const std::string& m) throw (DLParsingError)
 {
   syncStream();
-  throw RacerParsingError("Parsing error: " + m);
+  throw DLParsingError("Parsing error: " + m);
 }
 
 
@@ -75,7 +75,7 @@ RacerAnswerDriver::RacerAnswerDriver(std::istream& i)
 
 
 void
-RacerAnswerDriver::parse(Answer &a) throw (RacerParsingError)
+RacerAnswerDriver::parse(Answer &a) throw (DLParsingError)
 {
   try
     {
@@ -90,7 +90,7 @@ RacerAnswerDriver::parse(Answer &a) throw (RacerParsingError)
     }
   catch (std::ios_base::failure& f)
     {
-      throw RacerParsingError(f.what());
+      throw DLParsingError(f.what());
     }
 }
 
@@ -102,7 +102,7 @@ RacerIgnoreAnswer::RacerIgnoreAnswer(std::istream& s)
 
 
 void
-RacerIgnoreAnswer::parse(Answer&) throw (RacerParsingError)
+RacerIgnoreAnswer::parse(Answer&) throw (DLParsingError)
 {
   // Just skip the answer. This is useful for such "glorious" Racer
   // responses as "T" for a (set-unique-name-assumption t). Otherwise
@@ -123,7 +123,7 @@ RacerIgnoreAnswer::parse(Answer&) throw (RacerParsingError)
     }
   catch (std::ios_base::failure& f)
     {
-      throw RacerParsingError(f.what());
+      throw DLParsingError(f.what());
     }
 
 }

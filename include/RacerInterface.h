@@ -22,15 +22,23 @@
 
 
 namespace dlvhex {
-namespace racer {
+
+  //
+  // forward declaration
+  //
+  namespace util {
+    class TCPIOStream;
+  } //namespace util
+
+namespace dl {
 
   //
   // forward declarations
   //
-  class TCPIOStream;
   class BaseCache;
   class HexDLRewriterDriver;
 
+namespace racer {
 
 
   /**
@@ -40,7 +48,7 @@ namespace racer {
   {
   private:
     /// the tcp streaming interface to the RACER server
-    TCPIOStream* stream;
+    dlvhex::util::TCPIOStream* stream;
     /// the cache for RACER queries
     BaseCache* cache;
     /// DL Rewriter facility
@@ -111,6 +119,7 @@ namespace racer {
   typedef ACE_Singleton<RacerInterface, ACE_Null_Mutex> TheRacerInterface;
 
 } // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 

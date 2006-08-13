@@ -12,7 +12,9 @@
 
 #include "RacerExtAtom.h"
 #include "RacerInterface.h"
-#include "RacerDirector.h"
+#include "RacerBuilder.h"
+#include "RacerAnswerDriver.h"
+#include "QueryDirector.h"
 #include "QueryCtx.h"
 #include "Query.h"
 #include "Cache.h"
@@ -24,12 +26,37 @@
 #include <dlvhex/Term.h>
 #include <dlvhex/AtomSet.h>
 #include <dlvhex/Error.h>
+#include <dlvhex/PluginInterface.h>
 
 #include <boost/shared_ptr.hpp>
 
 #include <iosfwd>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl;
+using namespace dlvhex::dl::racer;
+
+//
+// following typedefs are here for easy of use
+//
+
+/// builds nothing and parses nothing. Mainly for testing purposes.
+typedef QueryDirector<RacerNullBuilder, RacerNullParser> RacerNullDirector;
+/// request to open an OWL document
+typedef QueryDirector<RacerOpenOWLBuilder, RacerAnswerDriver> RacerOpenOWL;
+
+/// extend ABox by a given set of individuals/pairs
+typedef QueryDirector<RacerStateBuilder, RacerAnswerDriver> RacerConceptRolePM;
+/// request a list of individuals from a specified concept
+typedef QueryDirector<RacerConceptInstancesBuilder, RacerAnswerDriver> RacerConceptQuery;
+/// request a list of pairs from a specified role
+typedef QueryDirector<RacerRoleIndividualsBuilder, RacerAnswerDriver> RacerRoleQuery;
+/// ask whether a given individual is member of a specified concept
+typedef QueryDirector<RacerIsConceptMemberBuilder, RacerAnswerDriver> RacerIsConceptQuery;
+/// ask whether a given pair is member of a specified role
+typedef QueryDirector<RacerIsRoleMemberBuilder, RacerAnswerDriver> RacerIsRoleQuery;
+/// request a list of individuals which are fillers of a role for a
+/// specified individual
+typedef QueryDirector<RacerIndividualFillersBuilder, RacerAnswerDriver> RacerIndvFillersQuery;
 
 
 RacerExtAtom::RacerExtAtom(std::iostream& s)
@@ -51,7 +78,7 @@ RacerExtAtom::retrieve(const PluginAtom::Query& query,
 
       QueryCtx::shared_pointer qctx(new QueryCtx(query));
 
-      RacerBaseDirector::shared_pointer dirs = getDirectors(qctx->getQuery());
+      QueryBaseDirector::shared_pointer dirs = getDirectors(qctx->getQuery());
 
       qctx = dirs->query(qctx);
 
@@ -68,15 +95,15 @@ RacerExtAtom::retrieve(const PluginAtom::Query& query,
     }
 }
 
-RacerCompositeDirector::shared_pointer
-RacerExtAtom::getComposite(const dlvhex::racer::Query& query) const
+QueryCompositeDirector::shared_pointer
+RacerExtAtom::getComposite(const dlvhex::dl::Query& query) const
 {
-  RacerCompositeDirector::shared_pointer comp(new RacerCompositeDirector(stream));
+  QueryCompositeDirector::shared_pointer comp(new QueryCompositeDirector(stream));
 
   if (!Registry::getUNA()) // only set UNA once
     {
       // turn on unique name assumption
-      comp->add(new RacerDirector<RacerFunAdapterBuilder<RacerUNACmd>,
+      comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerUNACmd>,
 		RacerIgnoreAnswer>(stream)
 	);
 
@@ -88,7 +115,7 @@ RacerExtAtom::getComposite(const dlvhex::racer::Query& query) const
       comp->add(new RacerOpenOWL(stream));
 
       // import all referenced ontologies
-      comp->add(new RacerDirector<RacerFunAdapterBuilder<RacerImportOntologiesCmd>,
+      comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerImportOntologiesCmd>,
 		RacerIgnoreAnswer>(stream)
 	);
 
@@ -96,7 +123,7 @@ RacerExtAtom::getComposite(const dlvhex::racer::Query& query) const
     }
 
   // create a temporary ABox called DEFAULT
-  comp->add(new RacerDirector<RacerFunAdapterBuilder<RacerCloneABoxCmd>,
+  comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerCloneABoxCmd>,
 	    RacerIgnoreAnswer>(stream)
     );
 
@@ -111,10 +138,10 @@ RacerCachingAtom::RacerCachingAtom(std::iostream& s, BaseCache& c)
     cache(c)
 { }
 
-RacerBaseDirector::shared_pointer
-RacerCachingAtom::getCachedDirectors(const dlvhex::racer::Query& q, RacerBaseDirector* cmd) const
+QueryBaseDirector::shared_pointer
+RacerCachingAtom::getCachedDirectors(const dlvhex::dl::Query& q, QueryBaseDirector* cmd) const
 {
-  RacerCompositeDirector::shared_pointer comp = getComposite(q);
+  QueryCompositeDirector::shared_pointer comp = getComposite(q);
 
   comp->add(cmd); // the actual command to send
 
@@ -126,7 +153,7 @@ RacerCachingAtom::getCachedDirectors(const dlvhex::racer::Query& q, RacerBaseDir
     }
   else // default action is query caching
     {
-      return RacerBaseDirector::shared_pointer(new RacerCachingDirector
+      return QueryBaseDirector::shared_pointer(new QueryCachingDirector
 					       (cache, comp)
 					       );
     }
@@ -151,8 +178,8 @@ RacerConceptAtom::RacerConceptAtom(std::iostream& s, BaseCache& c)
   addInputConstant();  // query
 }
 
-RacerBaseDirector::shared_pointer
-RacerConceptAtom::getDirectors(const dlvhex::racer::Query& query) const
+QueryBaseDirector::shared_pointer
+RacerConceptAtom::getDirectors(const dlvhex::dl::Query& query) const
 {
   const DLQuery& dlq = query.getDLQuery();
 
@@ -188,8 +215,8 @@ RacerRoleAtom::RacerRoleAtom(std::iostream& s, BaseCache& c)
   addInputConstant();  // query
 }
 
-RacerBaseDirector::shared_pointer
-RacerRoleAtom::getDirectors(const dlvhex::racer::Query& query) const
+QueryBaseDirector::shared_pointer
+RacerRoleAtom::getDirectors(const dlvhex::dl::Query& query) const
 {
   const DLQuery& dlq = query.getDLQuery();
 
@@ -231,13 +258,13 @@ RacerConsistentAtom::RacerConsistentAtom(std::iostream& s)
   addInputPredicate(); // minusR
 }
 
-RacerBaseDirector::shared_pointer
-RacerConsistentAtom::getDirectors(const dlvhex::racer::Query& q) const
+QueryBaseDirector::shared_pointer
+RacerConsistentAtom::getDirectors(const dlvhex::dl::Query& q) const
 {
-  RacerCompositeDirector::shared_pointer comp = getComposite(q);
+  QueryCompositeDirector::shared_pointer comp = getComposite(q);
 
   // ask whether ABox is consistent
-  comp->add(new RacerDirector<RacerFunAdapterBuilder<RacerABoxConsistentCmd>,
+  comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerABoxConsistentCmd>,
 	    RacerAnswerDriver>(stream)
     );
 
@@ -264,20 +291,20 @@ RacerDatatypeRoleAtom::RacerDatatypeRoleAtom(std::iostream& s, BaseCache& c)
   addInputConstant();  // query
 }
 
-RacerBaseDirector::shared_pointer
-RacerDatatypeRoleAtom::getDirectors(const dlvhex::racer::Query& query) const
+QueryBaseDirector::shared_pointer
+RacerDatatypeRoleAtom::getDirectors(const dlvhex::dl::Query& query) const
 {
   const DLQuery& dlq = query.getDLQuery();
 
   if (dlq.isRetrieval() || dlq.isMixed())
     {
       ///@todo this is kind of a hack, maybe we should unify this stuff...
-      RacerCompositeDirector* dir = new RacerCompositeDirector(stream);
+      QueryCompositeDirector* dir = new QueryCompositeDirector(stream);
 
       if (!Registry::getDataSubstrateMirroring())
 	{
 	  // enable data substrate mirroring
-	  dir->add(new RacerDirector<RacerFunAdapterBuilder<RacerDataSubstrateMirroringCmd>,
+	  dir->add(new QueryDirector<RacerFunAdapterBuilder<RacerDataSubstrateMirroringCmd>,
 		   RacerIgnoreAnswer>(stream)
 		   );
 
@@ -286,7 +313,7 @@ RacerDatatypeRoleAtom::getDirectors(const dlvhex::racer::Query& query) const
 
       // pose datatype role query
       dir->add
-	(new RacerDirector<RacerAdapterBuilder<NRQLRetrieve<NRQLDatatypeBuilder> >,
+	(new QueryDirector<RacerAdapterBuilder<NRQLRetrieve<NRQLDatatypeBuilder> >,
 	 RacerAnswerDriver>(stream)
 	);
 
@@ -318,15 +345,15 @@ RacerCQAtom::RacerCQAtom(std::iostream& s, BaseCache& c, unsigned n)
   addInputConstant();  // query
 }
 
-RacerBaseDirector::shared_pointer
-RacerCQAtom::getDirectors(const dlvhex::racer::Query& query) const
+QueryBaseDirector::shared_pointer
+RacerCQAtom::getDirectors(const dlvhex::dl::Query& query) const
 {
   ///@todo right now we don't cache conjunctive queries
 
-  RacerCompositeDirector::shared_pointer comp = getComposite(query);
+  QueryCompositeDirector::shared_pointer comp = getComposite(query);
 
   // pose a conjunctive query
-  comp->add(new RacerDirector<RacerAdapterBuilder<NRQLRetrieve<NRQLConjunctionBuilder> >,
+  comp->add(new QueryDirector<RacerAdapterBuilder<NRQLRetrieve<NRQLConjunctionBuilder> >,
 	    RacerAnswerDriver>(stream)
     );
 

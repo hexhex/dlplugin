@@ -15,7 +15,7 @@
 #define _RACERANSWERDRIVER_H
 
 #include "RacerAnswerParser.hpp"
-#include "RacerError.h"
+#include "DLError.h"
 
 #include <iosfwd>
 #include <string>
@@ -27,12 +27,14 @@ class RacerFlexLexer;
 
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   //
   // forward declarations
   //
   class Answer;
+
+namespace racer {
 
 
   /**
@@ -64,15 +66,15 @@ namespace racer {
      * @param answer
      */
     virtual void
-    parse(Answer& answer) throw (RacerParsingError) = 0;
+    parse(Answer& answer) throw (DLParsingError) = 0;
 
     /// Error handling.
     void
-    error(const yy::location& l, const std::string& m) throw (RacerParsingError);
+    error(const yy::location& l, const std::string& m) throw (DLParsingError);
 
     /// Error handling.
     void
-    error(const std::string& m) throw (RacerParsingError);
+    error(const std::string& m) throw (DLParsingError);
 
     RacerFlexLexer*
     getLexer() const;
@@ -89,7 +91,7 @@ namespace racer {
     RacerAnswerDriver(std::istream& is);
 
     virtual void
-    parse(Answer& answer) throw (RacerParsingError);
+    parse(Answer& answer) throw (DLParsingError);
   };
 
 
@@ -105,7 +107,7 @@ namespace racer {
 
     /// just remove pending input from #stream without parsing it.
     virtual void
-    parse(Answer&) throw (RacerParsingError);
+    parse(Answer&) throw (DLParsingError);
   };
 
 
@@ -122,13 +124,14 @@ namespace racer {
 
     /// does nothing
     virtual void
-    parse(Answer&) throw (RacerParsingError)
+    parse(Answer&) throw (DLParsingError)
     { }
   };
 
 
 
 } // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif // _RACERANSWERDRIVER_H

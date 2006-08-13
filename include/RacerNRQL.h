@@ -20,13 +20,14 @@
 #include <iosfwd>
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   //
   // forward declarations
   //
   class Query;
 
+namespace racer {
 
   /**
    * Base class for nRQL query expressions. Resembles interpreter
@@ -216,6 +217,7 @@ namespace racer {
 
 
 } // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 

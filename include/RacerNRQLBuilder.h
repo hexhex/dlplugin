@@ -14,18 +14,19 @@
 #ifndef _RACERNRQLBUILDER_H
 #define _RACERNRQLBUILDER_H
 
-#include "RacerError.h"
+#include "DLError.h"
 
 #include <iosfwd>
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   //
   // forward declarations
   //
   class Query;
 
+namespace racer {
 
   /**
    * @brief Base class for all the NRQL Builders.
@@ -46,7 +47,7 @@ namespace racer {
      */
     virtual bool
     createBody(std::ostream& stream, const Query& query) const
-      throw(RacerBuildingError);
+      throw(DLBuildingError);
 
     /** 
      * Uses the output list of @a query and put a nRQL head into @a stream.
@@ -58,7 +59,7 @@ namespace racer {
      */
     virtual bool
     createHead(std::ostream& stream, const Query& query) const
-      throw(RacerBuildingError);
+      throw(DLBuildingError);
 
     /** 
      * Uses interpretation of @a query and put a list of ABox
@@ -71,7 +72,7 @@ namespace racer {
      */
     virtual bool
     createPremise(std::ostream& stream, const Query& query) const
-      throw(RacerBuildingError);
+      throw(DLBuildingError);
   };
 
 
@@ -91,7 +92,7 @@ namespace racer {
      */
     virtual bool
     createBody(std::ostream& stream, const Query& query) const
-      throw(RacerBuildingError);
+      throw(DLBuildingError);
   };
 
 
@@ -112,7 +113,7 @@ namespace racer {
      */
     virtual bool
     createHead(std::ostream& stream, const Query& query) const
-      throw(RacerBuildingError);
+      throw(DLBuildingError);
 
     /** 
      * Uses @a query to build a datatype role query.
@@ -124,10 +125,11 @@ namespace racer {
      */
     virtual bool
     createBody(std::ostream& stream, const Query& query) const
-      throw(RacerBuildingError);
+      throw(DLBuildingError);
   };
 
 } // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _RACERNRQLBUILDER_H */

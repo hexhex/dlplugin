@@ -20,9 +20,9 @@
 #include <ace/Null_Mutex.h>
 #include <ace/Singleton.h>
 
-#include "UserDir.h"
 
 namespace dlvhex {
+namespace dl {
 namespace racer {
 
   /**
@@ -41,8 +41,6 @@ namespace racer {
     pid_t racer;
     /// signal handler
     ACE_Sig_Handler sighandler;
-    /// dlvhex user directory
-    UserDir dir;
 
     /// signal handler
     virtual int
@@ -94,6 +92,7 @@ namespace racer {
   typedef ACE_Singleton<RacerRunnerAdaptee, ACE_Null_Mutex> RacerRunner;
 
 } // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _RACERERROR_H */

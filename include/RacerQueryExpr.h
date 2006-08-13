@@ -18,9 +18,9 @@
 
 #include <iosfwd>
 #include <string>
-#include <vector>
 
 namespace dlvhex {
+namespace dl {
 namespace racer {
 
 
@@ -491,6 +491,7 @@ namespace racer {
 
 
 } // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 

@@ -15,8 +15,9 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "RacerRunner.h"
-#include "RacerError.h"
+#include "DLError.h"
 #include "LogBuf.h"
+#include "UserDir.h"
 
 #include <string>
 #include <iostream>
@@ -28,7 +29,9 @@
 #include <ace/Signal.h>
 #include <ace/Pipe.h>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl::racer;
+using dlvhex::util::log;
+using dlvhex::util::UserDir;
 
 #define PIDFILE "racer.pid"
 
@@ -83,7 +86,7 @@ RacerRunnerAdaptee::cleanup()
 {
   std::fstream s;
 
-  dir.open(s, PIDFILE);
+  UserDir().open(s, PIDFILE);
 
   if (s.is_open())
     {
@@ -99,6 +102,7 @@ void
 RacerRunnerAdaptee::savePID()
 {
   std::fstream s;
+  UserDir dir;
   dir.create(PIDFILE);
   dir.open(s, PIDFILE);
   s << racer;
@@ -207,7 +211,7 @@ RacerRunnerAdaptee::run()
 	      os << "Couldn't execute program "
 		 << command;
 	      
-	      throw RacerError(os.str());
+	      throw DLError(os.str());
 	    }
 	  else if (check == racer && ec != 0)
 	    {
@@ -219,7 +223,7 @@ RacerRunnerAdaptee::run()
 // 		 << " stopped with exit status "
 // 		 << ec;
 	      
-// 	      throw RacerError(os.str());
+// 	      throw DLError(os.str());
 	    }
 	  else if (check == racer && ec == 0)
 	    {
@@ -231,11 +235,11 @@ RacerRunnerAdaptee::run()
 // 		 << ", maybe another RACER instance is running"
 // 		 << " and I didn't succeed in stopping it.";
 
-// 	      throw RacerError(os.str());
+// 	      throw DLError(os.str());
 	    }
 	  else
 	    {
-	      throw RacerError("Unknown error while starting " + command);
+	      throw DLError("Unknown error while starting " + command);
 	    }
 	}
     }
@@ -262,6 +266,6 @@ RacerRunnerAdaptee::stop()
       ACE_Process_Manager::instance()->terminate(racer, SIGINT);
       ACE_Process_Manager::instance()->wait(racer);
       racer = ACE_INVALID_PID;
-      dir.remove(PIDFILE);
+      UserDir().remove(PIDFILE);
     }
 }

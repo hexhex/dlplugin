@@ -13,19 +13,21 @@
 #ifndef _RACERBUILDER_H
 #define _RACERBUILDER_H
 
-#include "RacerError.h"
+#include "DLError.h"
 
 #include <iostream>
 #include <string>
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   //
   // forward declarations
   //
   class Query;
 
+
+namespace racer {
 
   /**
    * @brief Base Builder for building RACER commands.
@@ -104,7 +106,7 @@ namespace racer {
      * @return true if we could add something to the abox, false otherwise.
      */
     virtual bool
-    buildCommand(Query& q) throw (RacerBuildingError);
+    buildCommand(Query& q) throw (DLBuildingError);
   };
 
 
@@ -126,7 +128,7 @@ namespace racer {
      * @param q use Query to get the individual and the concept name.
      */
     virtual bool
-    buildCommand(Query& q) throw (RacerBuildingError);
+    buildCommand(Query& q) throw (DLBuildingError);
   };
 
 
@@ -148,7 +150,7 @@ namespace racer {
      * @param q use Query to get the pair and the role name.
      */
     virtual bool
-    buildCommand(Query& q) throw (RacerBuildingError);
+    buildCommand(Query& q) throw (DLBuildingError);
   };
 
 
@@ -164,7 +166,7 @@ namespace racer {
     RacerConceptInstancesBuilder(std::ostream&);
 
     virtual bool
-    buildCommand(Query& q) throw (RacerBuildingError);
+    buildCommand(Query& q) throw (DLBuildingError);
   };
 
 
@@ -180,7 +182,7 @@ namespace racer {
     RacerRoleIndividualsBuilder(std::ostream&);
 
     virtual bool
-    buildCommand(Query& q) throw (RacerBuildingError);
+    buildCommand(Query& q) throw (DLBuildingError);
   };
 
 
@@ -196,7 +198,7 @@ namespace racer {
     RacerIndividualFillersBuilder(std::ostream&);
 
     virtual bool
-    buildCommand(Query& q) throw (RacerBuildingError);
+    buildCommand(Query& q) throw (DLBuildingError);
   };
 
 
@@ -213,7 +215,7 @@ namespace racer {
     RacerOpenOWLBuilder(std::ostream&);
 
     virtual bool
-    buildCommand(Query& q) throw (RacerBuildingError);
+    buildCommand(Query& q) throw (DLBuildingError);
   };
 
 
@@ -234,7 +236,7 @@ namespace racer {
     { }
 
     virtual bool
-    buildCommand(Query& q) throw (RacerBuildingError)
+    buildCommand(Query& q) throw (DLBuildingError)
     {
       try
 	{
@@ -242,7 +244,7 @@ namespace racer {
 	}
       catch (std::exception& e)
 	{
-	  throw RacerBuildingError(e.what());
+	  throw DLBuildingError(e.what());
 	}
 
       return true;
@@ -268,7 +270,7 @@ namespace racer {
     { }
 
     virtual bool
-    buildCommand(Query& q) throw (RacerBuildingError)
+    buildCommand(Query& q) throw (DLBuildingError)
     {
       try
 	{
@@ -277,7 +279,7 @@ namespace racer {
 	}
       catch (std::exception& e)
 	{
-	  throw RacerBuildingError(e.what());
+	  throw DLBuildingError(e.what());
 	}
 
       return true;
@@ -301,7 +303,7 @@ namespace racer {
   struct RacerAllIndividualsCmd
   {
     const char*
-    operator() (Query&) throw (RacerBuildingError)
+    operator() (Query&)
     {
       return "(all-individuals)";
     }
@@ -316,7 +318,7 @@ namespace racer {
   struct RacerUNACmd
   {
     const char*
-    operator() (Query&) throw (RacerBuildingError)
+    operator() (Query&)
     {
       return "(set-unique-name-assumption t)";
     }
@@ -331,7 +333,7 @@ namespace racer {
   struct RacerCloneABoxCmd
   {
     const char*
-    operator() (Query&) throw (RacerBuildingError)
+    operator() (Query&)
     {
       return "(clone-abox DEFAULT :new-name temp-abox :overwrite t)";
     }
@@ -346,7 +348,7 @@ namespace racer {
   struct RacerABoxConsistentCmd
   {
     const char*
-    operator() (Query&) throw (RacerBuildingError)
+    operator() (Query&)
     {
       return "(abox-consistent?)";
     }
@@ -361,7 +363,7 @@ namespace racer {
   struct RacerDataSubstrateMirroringCmd
   {
     const char*
-    operator() (Query&) throw (RacerBuildingError)
+    operator() (Query&)
     {
       return "(enable-data-substrate-mirroring)";
     }
@@ -376,7 +378,7 @@ namespace racer {
   struct RacerImportOntologiesCmd
   {
     const char*
-    operator() (Query&) throw (RacerBuildingError)
+    operator() (Query&)
     {
       return "(kb-ontologies DEFAULT)";
     }
@@ -384,6 +386,7 @@ namespace racer {
 
 
 } // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _RACERBUILDER_H */

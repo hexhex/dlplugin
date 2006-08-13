@@ -21,14 +21,16 @@
 
 #include "Answer.h"
 #include "RacerAnswerDriver.h"
-#include "RacerError.h"
+#include "DLError.h"
 
 #include <string>
 
   // why do we need this forward declaration?
   namespace dlvhex {
-    namespace racer {
-      class RacerAnswerDriver;
+    namespace dl {
+      namespace racer {
+	class RacerAnswerDriver;
+      }
     }
   }
 
@@ -36,13 +38,13 @@
 
 // this is the parsing context, passed as parameters to the
 // yy::RacerAnswerParser ctor
-%parse-param { dlvhex::racer::RacerAnswerDriver& driver }
-%parse-param { dlvhex::racer::Answer& answer }
+%parse-param { dlvhex::dl::racer::RacerAnswerDriver& driver }
+%parse-param { dlvhex::dl::Answer& answer }
 
 // bison passes the driver as additional parameter to the lexer
 // function YY_DECL, so we can abuse the driver to get the real lexer
 // object and call the yylex() method
-%lex-param   { dlvhex::racer::RacerAnswerDriver& driver }
+%lex-param   { dlvhex::dl::racer::RacerAnswerDriver& driver }
 
 // use a yy::location object to keep track of the location information
 %locations
@@ -70,7 +72,7 @@
 yy::RacerAnswerParser::token_type \
 yylex (yy::RacerAnswerParser::semantic_type* yylval, \
        yy::RacerAnswerParser::location_type* yylloc, \
-       dlvhex::racer::RacerAnswerDriver& driver)
+       dlvhex::dl::racer::RacerAnswerDriver& driver)
 
 // declare YY_DECL function
 YY_DECL;
@@ -125,7 +127,7 @@ racer: ANSWER message STRING '\n'
 	   }
 	 else
 	   {
-	     throw dlvhex::racer::RacerParsingError(answer.getErrorMessage());
+	     throw dlvhex::dl::DLParsingError(answer.getErrorMessage());
 	   }
        }
 ;

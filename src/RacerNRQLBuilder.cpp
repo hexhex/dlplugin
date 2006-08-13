@@ -13,11 +13,11 @@
 #include "RacerNRQLBuilder.h"
 #include "RacerNRQL.h"
 #include "Query.h"
-#include "RacerError.h"
+#include "DLError.h"
 
 #include <iosfwd>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl::racer;
 
 
 NRQLBuilder::~NRQLBuilder()
@@ -26,7 +26,7 @@ NRQLBuilder::~NRQLBuilder()
 
 bool
 NRQLBuilder::createBody(std::ostream& /* stream */, const Query& /* query */) const
-  throw(RacerBuildingError)
+  throw(DLBuildingError)
 {
   return false;
 }
@@ -34,7 +34,7 @@ NRQLBuilder::createBody(std::ostream& /* stream */, const Query& /* query */) co
 
 bool
 NRQLBuilder::createHead(std::ostream& stream, const Query& query) const
-  throw(RacerBuildingError)
+  throw(DLBuildingError)
 {
   const DLQuery& dlq = query.getDLQuery();
   const Tuple& pat = dlq.getPatternTuple();
@@ -72,135 +72,137 @@ NRQLBuilder::createHead(std::ostream& stream, const Query& query) const
 }
 
 namespace dlvhex {
-  namespace racer {
+  namespace dl {
+    namespace racer {
 
-    /// base class for transforming Atom objects to ABoxAssertion objects
-    struct InterToAssertion
-    {
-      const Query& query;
-      bool& empty;
-      bool negate;
-
-      InterToAssertion(const Query& q, bool& isEmpty, bool isNegated)
-	: query(q), empty(isEmpty), negate(isNegated)
-      { }
-    };
-
-
-    /// transform Atom objects to ABoxInstance objects
-    struct InterToInstance : public InterToAssertion
-    {
-      InterToInstance(const Query& q, bool& isEmpty, bool isNegated = false)
-	: InterToAssertion(q, isEmpty, isNegated)
-      { }
-
-      ABoxInstance
-      operator() (const Atom& a)
+      /// base class for transforming Atom objects to ABoxAssertion objects
+      struct InterToAssertion
       {
-	empty = false;
-
-	if (a.getArity() == 2)
-	  {
-	    ABoxQueryConcept::const_pointer c =
-	      new ABoxQueryConcept
-	      (a.getArgument(0).getUnquotedString(),
-	       query.getOntology()->getNamespace()
-	       );
-	    ABoxQueryIndividual::const_pointer i =
-	      new ABoxQueryIndividual
-	      (a.getArgument(1).getUnquotedString(),
-	       query.getOntology()->getNamespace()
-	       );
-	    
-	    return ABoxInstance(negate ? new ABoxNegatedConcept(c) : c, i);
-	  }
-	else if (a.getArity() == 3 && negate)
-	  {
-	    ABoxQueryRole::const_pointer r = 
-	      new ABoxQueryRole
-	      (a.getArgument(0).getUnquotedString(),
-	       query.getOntology()->getNamespace()
-	       );
-	    ABoxQueryIndividual* i1 =
-	      new ABoxQueryIndividual
-	      (a.getArgument(1).getUnquotedString(),
-	       query.getOntology()->getNamespace()
-	       );
-	    ABoxQueryIndividual* i2 =
-	      new ABoxQueryIndividual
-	      (a.getArgument(2).getUnquotedString(),
-	       query.getOntology()->getNamespace()
-	       );
-	    
-	    ABoxOneOfConcept::IndividualVector iv;
-	    iv.push_back(i2);
-
-	    // -R(a,b) -> (instance a (not (some R (one-of b))))
-	    // does not work? seems like there is a bug in Racer
-	    return ABoxInstance
-	      (new ABoxNegatedConcept
-	       (new ABoxSomeConcept(r, new ABoxOneOfConcept(iv))
-		),
-	       i1
-	       );
-	  }
-
-	std::ostringstream oss;
-	oss << a << " has wrong arity.";
-	throw RacerBuildingError(oss.str());
-      }
-
-    };
-
-
-    /// transform Atom objects to ABoxRelated objects
-    struct InterToRelated : public InterToAssertion
-    {
-      InterToRelated(const Query& q, bool& isEmpty, bool isNegated = false)
-	: InterToAssertion(q, isEmpty, isNegated)
-      { }
-
-
-      ABoxRelated
-      operator() (const Atom& a)
+	const Query& query;
+	bool& empty;
+	bool negate;
+	
+	InterToAssertion(const Query& q, bool& isEmpty, bool isNegated)
+	  : query(q), empty(isEmpty), negate(isNegated)
+	{ }
+      };
+      
+      
+      /// transform Atom objects to ABoxInstance objects
+      struct InterToInstance : public InterToAssertion
       {
-	empty = false;
+	InterToInstance(const Query& q, bool& isEmpty, bool isNegated = false)
+	  : InterToAssertion(q, isEmpty, isNegated)
+	{ }
+	
+	ABoxInstance
+	operator() (const Atom& a)
+	{
+	  empty = false;
+	  
+	  if (a.getArity() == 2)
+	    {
+	      ABoxQueryConcept::const_pointer c =
+		new ABoxQueryConcept
+		(a.getArgument(0).getUnquotedString(),
+		 query.getOntology()->getNamespace()
+		 );
+	      ABoxQueryIndividual::const_pointer i =
+		new ABoxQueryIndividual
+		(a.getArgument(1).getUnquotedString(),
+		 query.getOntology()->getNamespace()
+		 );
+	      
+	      return ABoxInstance(negate ? new ABoxNegatedConcept(c) : c, i);
+	    }
+	  else if (a.getArity() == 3 && negate)
+	    {
+	      ABoxQueryRole::const_pointer r = 
+		new ABoxQueryRole
+		(a.getArgument(0).getUnquotedString(),
+		 query.getOntology()->getNamespace()
+		 );
+	      ABoxQueryIndividual* i1 =
+		new ABoxQueryIndividual
+		(a.getArgument(1).getUnquotedString(),
+		 query.getOntology()->getNamespace()
+		 );
+	      ABoxQueryIndividual* i2 =
+		new ABoxQueryIndividual
+		(a.getArgument(2).getUnquotedString(),
+		 query.getOntology()->getNamespace()
+		 );
+	      
+	      ABoxOneOfConcept::IndividualVector iv;
+	      iv.push_back(i2);
+	      
+	      // -R(a,b) -> (instance a (not (some R (one-of b))))
+	      // does not work? seems like there is a bug in Racer
+	      return ABoxInstance
+		(new ABoxNegatedConcept
+		 (new ABoxSomeConcept(r, new ABoxOneOfConcept(iv))
+		  ),
+		 i1
+		 );
+	    }
+	  
+	  std::ostringstream oss;
+	  oss << a << " has wrong arity.";
+	  throw DLBuildingError(oss.str());
+	}
+	
+      };
 
-	if (a.getArity() == 3 && !negate)
-	  {
-	    ABoxQueryRole::const_pointer r = 
-	      new ABoxQueryRole
-	      (a.getArgument(0).getUnquotedString(),
-	       query.getOntology()->getNamespace()
-	       );
-	    ABoxQueryIndividual::const_pointer i1 =
-	      new ABoxQueryIndividual
-	      (a.getArgument(1).getUnquotedString(),
-	     query.getOntology()->getNamespace()
-	       );
-	    ABoxQueryIndividual::const_pointer i2 =
-	      new ABoxQueryIndividual
-	      (a.getArgument(2).getUnquotedString(),
-	       query.getOntology()->getNamespace()
-	       );
-	    
-	    return ABoxRelated(r, i1, i2);
-	  }
-
-	std::ostringstream oss;
-	oss << a << " has wrong arity.";
-	throw RacerBuildingError(oss.str());
-      }
-
-    };
-
-  }
-}
+      
+      /// transform Atom objects to ABoxRelated objects
+      struct InterToRelated : public InterToAssertion
+      {
+	InterToRelated(const Query& q, bool& isEmpty, bool isNegated = false)
+	  : InterToAssertion(q, isEmpty, isNegated)
+	{ }
+	
+	
+	ABoxRelated
+	operator() (const Atom& a)
+	{
+	  empty = false;
+	  
+	  if (a.getArity() == 3 && !negate)
+	    {
+	      ABoxQueryRole::const_pointer r = 
+		new ABoxQueryRole
+		(a.getArgument(0).getUnquotedString(),
+		 query.getOntology()->getNamespace()
+		 );
+	      ABoxQueryIndividual::const_pointer i1 =
+		new ABoxQueryIndividual
+		(a.getArgument(1).getUnquotedString(),
+		 query.getOntology()->getNamespace()
+		 );
+	      ABoxQueryIndividual::const_pointer i2 =
+		new ABoxQueryIndividual
+		(a.getArgument(2).getUnquotedString(),
+		 query.getOntology()->getNamespace()
+		 );
+	      
+	      return ABoxRelated(r, i1, i2);
+	    }
+	  
+	  std::ostringstream oss;
+	  oss << a << " has wrong arity.";
+	  throw DLBuildingError(oss.str());
+	}
+	
+      };
+      
+    } // namespace racer
+  } // namespace dl
+} // namespace dlvhex
 
 
 bool
 NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
-  throw(RacerBuildingError)
+  throw(DLBuildingError)
 {
   bool isEmpty = true;
 
@@ -269,7 +271,7 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
 
 bool
 NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) const
-  throw(RacerBuildingError)
+  throw(DLBuildingError)
 {
   const DLQuery& dlq = query.getDLQuery();
   const AtomSet& as = dlq.getConjQuery();
@@ -379,7 +381,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 	  break;
 
 	default: // bail out
-	  throw RacerBuildingError("wrong arity in conjunctive query");
+	  throw DLBuildingError("wrong arity in conjunctive query");
 	  break;
 	}
     }
@@ -392,7 +394,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 
 bool
 NRQLDatatypeBuilder::createHead(std::ostream& stream, const Query& query) const
-  throw(RacerBuildingError)
+  throw(DLBuildingError)
 {
   const DLQuery& dlq = query.getDLQuery();
   const Tuple& pat = dlq.getPatternTuple();
@@ -401,7 +403,7 @@ NRQLDatatypeBuilder::createHead(std::ostream& stream, const Query& query) const
 
   if (!(type == 0x0 || type == 0x1) || pat.size() != 2)
     {
-      throw RacerBuildingError("Incompatible pattern supplied.");
+      throw DLBuildingError("Incompatible pattern supplied.");
     }
 
   if (type == 0x1) // (const,variable) pattern
@@ -427,7 +429,7 @@ NRQLDatatypeBuilder::createHead(std::ostream& stream, const Query& query) const
 
 bool
 NRQLDatatypeBuilder::createBody(std::ostream& stream, const Query& query) const
-  throw(RacerBuildingError)
+  throw(DLBuildingError)
 {
   const DLQuery& dlq = query.getDLQuery();
   const Term& q = dlq.getQuery();
@@ -437,7 +439,7 @@ NRQLDatatypeBuilder::createBody(std::ostream& stream, const Query& query) const
 
   if (!(type == 0x0 || type == 0x1) || pat.size() != 2)
     {
-      throw RacerBuildingError("Incompatible pattern supplied.");
+      throw DLBuildingError("Incompatible pattern supplied.");
     }
 
   if (type == 0x1) // (const,variable) pattern

@@ -15,6 +15,7 @@
 #include "RacerNRQLBuilder.h"
 
 namespace dlvhex {
+namespace dl {
 namespace racer {
 
 
@@ -110,6 +111,7 @@ namespace racer {
   }
 
 } // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _RACERNRQL_TCC */

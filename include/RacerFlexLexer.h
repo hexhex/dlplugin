@@ -22,10 +22,12 @@
 #endif
 
 namespace dlvhex {
-  namespace racer {
-    // forward declaration
-    class RacerBaseAnswerDriver;
-  } // namespace racer
+  namespace dl {
+    namespace racer {
+      // forward declaration
+      class RacerBaseAnswerDriver;
+    } // namespace racer
+  } // namespace dl
 } // namespace dlvhex
 
 /**
@@ -37,10 +39,10 @@ namespace dlvhex {
 struct RacerFlexLexer : public yyRacerFlexLexer
 {
   explicit
-  RacerFlexLexer(dlvhex::racer::RacerBaseAnswerDriver* d) : lexdrv(d) { }
+  RacerFlexLexer(dlvhex::dl::racer::RacerBaseAnswerDriver* d) : lexdrv(d) { }
   virtual
   ~RacerFlexLexer() { }
-  dlvhex::racer::RacerBaseAnswerDriver* lexdrv;
+  dlvhex::dl::racer::RacerBaseAnswerDriver* lexdrv;
   yy::RacerAnswerParser::location_type* lexloc;
   yy::RacerAnswerParser::semantic_type* lexval;
   int yylex(); // implemented in RacerAnswerScanner.lpp

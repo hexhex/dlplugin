@@ -20,6 +20,7 @@
 #include "Registry.h"
 #include "TCPStream.h"
 #include "Cache.h"
+#include "DLError.h"
 
 #include <algorithm>
 #include <iterator>
@@ -27,10 +28,11 @@
 #include <ace/Null_Mutex.h>
 #include <ace/Singleton.h>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl::racer;
+
 
 RacerInterface::RacerInterface()
-  : stream(new TCPIOStream("localhost", 8088)),
+  : stream(new dlvhex::util::TCPIOStream("localhost", 8088)),
     cache(new Cache),
     rewriter(new HexDLRewriterDriver(std::cin, std::cout))
 { }
@@ -64,7 +66,7 @@ RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
       std::insert_iterator<std::list<Term> > ins = std::inserter(uni, uni.begin());
       std::copy(indvs->begin(), indvs->end(), ins);
     }
-  catch (RacerError& e)
+  catch (DLError& e)
     {
       throw PluginError(e.what());
     }
@@ -142,9 +144,9 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	  if (level > 1)
 	    {
 	      // get rid of null logger
-	      delete log.rdbuf();
+	      delete dlvhex::util::log.rdbuf();
 	      // use std::cerr as output for the LogBuf
-	      log.rdbuf(new LogBuf(&std::cerr));
+	      dlvhex::util::log.rdbuf(new dlvhex::util::LogBuf(&std::cerr));
 	    }
 
 	  delete cache;

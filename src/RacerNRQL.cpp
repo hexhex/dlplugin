@@ -16,10 +16,11 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
-using namespace dlvhex::racer;
+using namespace dlvhex::dl::racer;
 
 
 namespace dlvhex {
+namespace dl {
 namespace racer {
 
   std::ostream&
@@ -28,6 +29,7 @@ namespace racer {
     return b.output(s);
   }
   
+}
 }
 }
 

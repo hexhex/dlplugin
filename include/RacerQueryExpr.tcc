@@ -24,6 +24,7 @@
 
 
 namespace dlvhex {
+namespace dl {
 namespace racer {
 
 
@@ -86,6 +87,7 @@ namespace racer {
 
 
 } // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 #endif /* _RACERQUERYEXPR_TCC */
