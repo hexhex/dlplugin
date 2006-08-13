@@ -90,7 +90,7 @@ PKG_CHECK_MODULES([ACE], [ACE >= 5.5.1], [:],
 PKG_CHECK_MODULES([RAPTOR], [raptor >= 1.4.8])
 
 # we want dlvhex
-PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 1.0])
+PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 1.1])
 
 
 AC_ARG_ENABLE(userinstall, 
