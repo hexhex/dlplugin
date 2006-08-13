@@ -1,3 +1,94 @@
+2006-08-13  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* configure.ac: Check for dlvhex >= 1.1.
+
+	* testsuite/TestDLRewriter.cpp: Introduce dlvhex::dl::test namespace.
+	* testsuite/TestDLRewriter.h: Likewise. 
+	* testsuite/TestOWLParser.cpp: Likewise. 
+	* testsuite/TestOWLParser.h: Likewise. 
+	* testsuite/TestRacerBuilder.cpp: Likewise. 
+	* testsuite/TestRacerBuilder.h: Likewise. 
+	* testsuite/TestRacerDirector.cpp: Likewise. 
+	* testsuite/TestRacerDirector.h: Likewise. 
+	* testsuite/TestRacerInterface.cpp: Likewise. 
+	* testsuite/TestRacerInterface.h: Likewise. 
+	* testsuite/TestRacerNRQL.cpp: Likewise. 
+	* testsuite/TestRacerNRQL.h: Likewise. 
+	* testsuite/TestRacerParse.cpp: Likewise. 
+	* testsuite/TestRacerParse.h: Likewise. 
+	* testsuite/TestRacerQuery.cpp: Likewise. 
+	* testsuite/TestRacerQuery.h: Likewise. 
+	* testsuite/TestRacerRunner.cpp: Likewise. 
+	* testsuite/TestRacerRunner.h: Likewise. 
+	* testsuite/TestRacerStream.cpp: Likewise. 
+	* testsuite/TestRacerStream.h: Likewise. 
+	* testsuite/TestRacerTypes.cpp: Likewise. 
+	* testsuite/TestRacerTypes.h: Likewise. 
+	* testsuite/TestSuite.cpp: Likewise. 
+	* testsuite/TestSuite.h: Likewise. 
+
+	* include/RacerAnswerDriver.h: Introduce dlvhex::dl::racer namespace.
+	* include/RacerRunner.h: Likewise. 
+	* include/RacerQueryExpr.tcc: Likewise. 
+	* include/RacerQueryExpr.h: Likewise. 
+	* include/RacerNRQLBuilder.h: Likewise. 
+	* include/RacerNRQL.tcc: Likewise. 
+	* include/RacerInterface.h: Likewise. 
+	* include/RacerFlexLexer.h: Likewise. 
+	* include/RacerExtAtom.h: Likewise. 
+	* include/RacerBuilder.h: Likewise. 
+	* src/RacerAnswerDriver.cpp: Likewise. 
+	* src/RacerAnswerParser.ypp: Likewise. 
+	* src/RacerAnswerScanner.lpp: Likewise. 
+	* src/RacerBuilder.cpp: Likewise. 
+	* src/RacerExtAtom.cpp: Likewise. 
+	* src/RacerInterface.cpp: Likewise. 
+	* src/RacerNRQL.cpp: Likewise. 
+	* src/RacerNRQLBuilder.cpp: Likewise. 
+	* src/RacerQueryExpr.cpp: Likewise. 
+	* src/RacerRunner.cpp: Likewise. 
+
+	* include/LogBuf.h: Introduce dlvhex::util namespace.
+	* include/TCPStream.h: Likewise. 
+	* include/UserDir.h: Likewise. 
+	* src/LogBuf.cpp: Likewise. 
+	* src/TCPStream.cpp: Likewise. 
+	* src/UserDir.cpp: Likewise. 
+
+	* include/Answer.h: Introduce dlvhex::dl namespace.
+	* include/HexDLRewriterFlexLexer.h: Likewise. 
+	* include/HexDLRewriterDriver.h: Likewise. 
+	* include/Cache.h: Likewise. 
+	* include/QueryCtx.h: Likewise. 
+	* include/Query.h: Likewise. 
+	* include/Ontology.h: Likewise. 
+	* include/OWLParser.h: Likewise. 
+	* include/Registry.h: Likewise. 
+	* src/Answer.cpp: Likewise. 
+	* src/Cache.cpp: Likewise. 
+	* src/HexDLRewriterDriver.cpp: Likewise. 
+	* src/HexDLRewriterParser.ypp: Likewise. 
+	* src/QueryCtx.cpp: Likewise. 
+	* src/Query.cpp: Likewise. 
+	* src/Ontology.cpp: Likewise. 
+	* src/OWLParser.cpp: Likewise. 
+	* src/Registry.cpp: Likewise. 
+
+	* documentation.dox: Fix documentation.
+
+	* include/Makefile.am: Add QueryDirector and DLError.
+	* src/Makefile.am: Likewise. 
+
+	* include/QueryDirector.h: Move RacerDirector to QueryDirector. 
+	* include/RacerDirector.tcc: Likewise. 
+	* include/RacerDirector.h: Likewise. 
+	* include/QueryDirector.tcc: Likewise. 
+	* src/RacerDirector.cpp: Likewise. 
+	* src/QueryDirector.cpp: Likewise. 
+
+	* include/RacerError.h: Move RacerError to DLError.
+	* include/DLError.h: Likewise.
+
 2006-08-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerDirector.cpp: Fix handling of inconsistent conjunctive
