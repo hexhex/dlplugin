@@ -32,11 +32,11 @@ OWLParser.cpp \
 Ontology.cpp \
 Query.cpp \
 QueryCtx.cpp \
+QueryDirector.cpp \
 RacerAnswerParser.ypp \
 RacerAnswerScanner.lpp \
 RacerAnswerDriver.cpp \
 RacerBuilder.cpp \
-RacerDirector.cpp \
 RacerExtAtom.cpp \
 RacerInterface.cpp \
 RacerNRQL.cpp \

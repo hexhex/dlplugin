@@ -4,6 +4,7 @@ AUTOMAKE_OPTIONS = foreign
 noinst_HEADERS = \
                  Answer.h \
                  Cache.h \
+                 DLError.h \
                  HexDLRewriterDriver.h \
                  HexDLRewriterFlexLexer.h \
                  LogBuf.h \
@@ -11,10 +12,9 @@ noinst_HEADERS = \
                  Ontology.h \
                  Query.h \
                  QueryCtx.h \
+                 QueryDirector.h \
+                 QueryDirector.tcc \
                  RacerBuilder.h \
-                 RacerDirector.h \
-                 RacerDirector.tcc \
-                 RacerError.h \
                  RacerExtAtom.h \
                  RacerInterface.h \
                  RacerQueryExpr.h \
