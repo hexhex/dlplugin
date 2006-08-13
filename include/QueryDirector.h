@@ -1,26 +1,21 @@
 /* -*- C++ -*- */
 
 /**
- * @file   RacerDirector.h
+ * @file   QueryDirector.h
  * @author Thomas Krennwallner
  * @date   Wed Jul  6 09:49:23 2005
  * 
- * @brief  Director classes for the communication with RACER.
+ * @brief  Director classes for the communication with a dl engine.
  * 
  * 
  */
 
-#ifndef _RACERDIRECTOR_H
-#define _RACERDIRECTOR_H
+#ifndef _QUERYDIRECTOR_H
+#define _QUERYDIRECTOR_H
 
 #include "QueryCtx.h"
-#include "RacerError.h"
-#include "RacerAnswerDriver.h"
-#include "RacerBuilder.h"
+#include "DLError.h"
 #include "Cache.h"
-
-#include <dlvhex/Atom.h>
-#include <dlvhex/Term.h>
 
 #include <iosfwd>
 
@@ -28,28 +23,27 @@
 #include <boost/shared_ptr.hpp>
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   /**
    * @brief Base class for the director classes.
    */
-  class RacerBaseDirector
+  class QueryBaseDirector
   {
   public:
     virtual
-    ~RacerBaseDirector()
+    ~QueryBaseDirector()
     { }
 
     /**
-     * query method implemented in the children of RacerBaseDirector.
+     * query method implemented in the children of QueryBaseDirector.
      *
      * @param qctx
      */
     virtual QueryCtx::shared_pointer
-    query(QueryCtx::shared_pointer qctx) throw(RacerError) = 0;
+    query(QueryCtx::shared_pointer qctx) throw(DLError) = 0;
 
-    typedef RacerBaseDirector value_type;
-    typedef boost::shared_ptr<value_type> shared_pointer; 
+    typedef boost::shared_ptr<QueryBaseDirector> shared_pointer; 
   };
 
 
@@ -58,7 +52,7 @@ namespace racer {
    * their result.
    */
   template <class Builder, class Parser>
-  class RacerDirector : public RacerBaseDirector
+  class QueryDirector : public QueryBaseDirector
   {
   private:
     /// Builder object
@@ -73,7 +67,7 @@ namespace racer {
      * @param s use @a s to instantiate Builder and Parser
      */
     explicit
-    RacerDirector(std::iostream& s);
+    QueryDirector(std::iostream& s);
 
     /**
      * @brief builds/parses RACER commands/answers using the Builder
@@ -86,7 +80,7 @@ namespace racer {
      * Answer to the Query found in @a qctx
      */
     virtual QueryCtx::shared_pointer
-    query(QueryCtx::shared_pointer qctx) throw(RacerError);
+    query(QueryCtx::shared_pointer qctx) throw(DLError);
   };
 
 
@@ -95,14 +89,14 @@ namespace racer {
    * @brief A base composite director for querying lists of RACER
    * commands.
    *
-   * Provides a list of RacerBaseDirector and takes care of
+   * Provides a list of QueryBaseDirector and takes care of
    * inconsistency during execution of the RACER commands.
    */
-  class RacerCompositeDirector : public RacerBaseDirector
+  class QueryCompositeDirector : public QueryBaseDirector
   {
   private:
-    /// holds a list of RacerBaseDirector objects
-    boost::ptr_vector<RacerBaseDirector> dirs;
+    /// holds a list of QueryBaseDirector objects
+    boost::ptr_vector<QueryBaseDirector> dirs;
 
     /// keep a reference to the iostream just in case we need to
     /// create a dedicated director
@@ -123,18 +117,18 @@ namespace racer {
   public:
     /// Ctor
     explicit
-    RacerCompositeDirector(std::iostream&);
+    QueryCompositeDirector(std::iostream&);
 
     /**
-     * adds a new RacerBaseDirector to dirs.
+     * adds a new QueryBaseDirector to dirs.
      *
      * @param d add it to #dirs
      */
     virtual void
-    add(RacerBaseDirector* d);
+    add(QueryBaseDirector* d);
 
     /**
-     * iterates through the list of RacerBaseDirectors and calls their
+     * iterates through the list of QueryBaseDirectors and calls their
      * query() method. If RACERs ABox gets inconsistent during the
      * iteration query() calls handleInconsitency() in order to
      * generate the appropriate answer.
@@ -145,21 +139,20 @@ namespace racer {
      * Answer to the Query
      */
     virtual QueryCtx::shared_pointer
-    query(QueryCtx::shared_pointer qctx) throw(RacerError);
+    query(QueryCtx::shared_pointer qctx) throw(DLError);
 
-    typedef RacerCompositeDirector value_type;
-    typedef boost::shared_ptr<value_type> shared_pointer;
+    typedef boost::shared_ptr<QueryCompositeDirector> shared_pointer;
   };
 
 
   /**
    * @brief Provides caching support for RACER Queries.
    */
-  class RacerCachingDirector : public RacerBaseDirector
+  class QueryCachingDirector : public QueryBaseDirector
   {
   private:
-    /// the underlying director, usually a RacerCompositeDirector
-    RacerBaseDirector::shared_pointer director;
+    /// the underlying director, usually a QueryCompositeDirector
+    QueryBaseDirector::shared_pointer director;
 
     /// reference to the cache of QueryCtx objects
     BaseCache& cache;
@@ -171,7 +164,7 @@ namespace racer {
      * @param c the cache
      * @param d delegation director
      */
-    RacerCachingDirector(BaseCache& c, RacerBaseDirector::shared_pointer d);
+    QueryCachingDirector(BaseCache& c, QueryBaseDirector::shared_pointer d);
 
     /**
      * Tries to lookup the query @a qctx in its cache and determines
@@ -185,39 +178,16 @@ namespace racer {
      * Answer to the Query
      */
     virtual QueryCtx::shared_pointer
-    query(QueryCtx::shared_pointer qctx) throw(RacerError);
+    query(QueryCtx::shared_pointer qctx) throw(DLError);
   };
 
 
-  //
-  // following typedefs are here for easy of use
-  //
-
-  /// builds nothing and parses nothing. Mainly for testing purposes.
-  typedef RacerDirector<RacerNullBuilder, RacerNullParser> RacerNullDirector;
-  /// request to open an OWL document
-  typedef RacerDirector<RacerOpenOWLBuilder, RacerAnswerDriver> RacerOpenOWL;
-
-  /// extend ABox by a given set of individuals/pairs
-  typedef RacerDirector<RacerStateBuilder, RacerAnswerDriver> RacerConceptRolePM;
-  /// request a list of individuals from a specified concept
-  typedef RacerDirector<RacerConceptInstancesBuilder, RacerAnswerDriver> RacerConceptQuery;
-  /// request a list of pairs from a specified role
-  typedef RacerDirector<RacerRoleIndividualsBuilder, RacerAnswerDriver> RacerRoleQuery;
-  /// ask whether a given individual is member of a specified concept
-  typedef RacerDirector<RacerIsConceptMemberBuilder, RacerAnswerDriver> RacerIsConceptQuery;
-  /// ask whether a given pair is member of a specified role
-  typedef RacerDirector<RacerIsRoleMemberBuilder, RacerAnswerDriver> RacerIsRoleQuery;
-  /// request a list of individuals which are fillers of a role for a
-  /// specified individual
-  typedef RacerDirector<RacerIndividualFillersBuilder, RacerAnswerDriver> RacerIndvFillersQuery;
-
-} // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 
 // include the implemantation of the templates
-#include "RacerDirector.tcc"
+#include "QueryDirector.tcc"
 
 
-#endif /* _RACERDIRECTOR_H */
+#endif /* _QUERYDIRECTOR_H */

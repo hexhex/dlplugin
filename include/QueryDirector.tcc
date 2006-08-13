@@ -1,32 +1,32 @@
 /* -*- C++ -*- */
 
 /**
- * @file   RacerDirector.tcc
+ * @file   QueryDirector.tcc
  * @author Thomas Krennwallner
  * @date   Fri Jul 15 13:35:52 2005
  * 
- * @brief  Template implementation for RacerDirector class.
+ * @brief  Template implementation for QueryDirector class.
  * 
  * 
  */
 
-#ifndef _RACERDIRECTOR_TCC
-#define _RACERDIRECTOR_TCC
+#ifndef _QUERYDIRECTOR_TCC
+#define _QUERYDIRECTOR_TCC
 
 namespace dlvhex {
-namespace racer {
+namespace dl {
 
   template <class Builder, class Parser>
-  RacerDirector<Builder, Parser>::RacerDirector(std::iostream& s)
-    : RacerBaseDirector(),
+  QueryDirector<Builder, Parser>::QueryDirector(std::iostream& s)
+    : QueryBaseDirector(),
       builder(s),
       parser(s)
   { }
 
   template <class Builder, class Parser>
   QueryCtx::shared_pointer
-  RacerDirector<Builder, Parser>::query(QueryCtx::shared_pointer qctx)
-    throw(RacerError)
+  QueryDirector<Builder, Parser>::query(QueryCtx::shared_pointer qctx)
+    throw(DLError)
   {
     // just in case the builder has nothing to send, we cannot simply
     // parse an answer since there is none. So forget about this
@@ -38,8 +38,8 @@ namespace racer {
     return qctx;
   }
 
-} // namespace racer
+} // namespace dl
 } // namespace dlvhex
 
 
-#endif /* _RACERDIRECTOR_TCC */
+#endif /* _QUERYDIRECTOR_TCC */
