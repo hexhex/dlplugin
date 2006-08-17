@@ -15,6 +15,7 @@
 #include "Query.h"
 #include "Answer.h"
 #include "DLError.h"
+#include "KBManager.h"
 
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string/trim.hpp>
@@ -145,7 +146,7 @@ namespace dlvhex {
 } //namespace dlvhex
 
 
-QueryCtx::QueryCtx(const PluginAtom::Query& query) throw (DLError)
+QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError)
 {
   const Tuple& inputtuple = query.getInputTuple();
 
@@ -166,7 +167,6 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query) throw (DLError)
     }
   catch (DLError& e)
     {
-      ///@todo should we ignore this?
       throw e;
     }
 
@@ -248,6 +248,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query) throw (DLError)
 	    }
 
 	  q = new Query(onto,
+			kb,
 			inputtuple[1],
 			inputtuple[2],
 			inputtuple[3],
@@ -275,6 +276,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query) throw (DLError)
 	  Term qu(querystr);
 
 	  q = new Query(onto,
+			kb,
 			inputtuple[1],
 			inputtuple[2],
 			inputtuple[3],
@@ -287,6 +289,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query) throw (DLError)
   else // no query term
     {
       q = new Query(onto,
+		    kb,
 		    inputtuple[1],
 		    inputtuple[2],
 		    inputtuple[3],

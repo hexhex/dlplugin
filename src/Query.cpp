@@ -12,6 +12,7 @@
 
 
 #include "Query.h"
+#include "KBManager.h"
 
 #include <dlvhex/Atom.h>
 #include <dlvhex/AtomSet.h>
@@ -316,6 +317,7 @@ namespace dl {
 
 
 Query::Query(Ontology::shared_pointer o,
+	     KBManager& kb,
 	     const Term& pc,
 	     const Term& mc,
 	     const Term& pr,
@@ -323,6 +325,7 @@ Query::Query(Ontology::shared_pointer o,
 	     const DLQuery& q,
 	     const AtomSet& i)
   : ontology(o),
+    kbManager(kb),
     query(q)
 {
   setInterpretation(i, pc, mc, pr, mr);
@@ -336,6 +339,12 @@ const Ontology::shared_pointer&
 Query::getOntology() const
 {
   return this->ontology;
+}
+
+KBManager&
+Query::getKBManager() const
+{
+  return this->kbManager;
 }
 
 const DLQuery&

@@ -21,6 +21,7 @@
 #include "Registry.h"
 #include "RacerNRQL.h"
 #include "RacerNRQLBuilder.h"
+#include "RacerKBManager.h"
 
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
@@ -59,8 +60,8 @@ typedef QueryDirector<RacerIsRoleMemberBuilder, RacerAnswerDriver> RacerIsRoleQu
 typedef QueryDirector<RacerIndividualFillersBuilder, RacerAnswerDriver> RacerIndvFillersQuery;
 
 
-RacerExtAtom::RacerExtAtom(std::iostream& s)
-  : stream(s)
+RacerExtAtom::RacerExtAtom(std::iostream& s, RacerKBManager& k)
+  : stream(s), kbManager(k)
 { }
 
 RacerExtAtom::~RacerExtAtom()
@@ -73,10 +74,7 @@ RacerExtAtom::retrieve(const PluginAtom::Query& query,
 {
   try
     {
-      // just try to run RACER
-      TheRacerInterface::instance()->startRacer();
-
-      QueryCtx::shared_pointer qctx(new QueryCtx(query));
+      QueryCtx::shared_pointer qctx(new QueryCtx(query, kbManager));
 
       QueryBaseDirector::shared_pointer dirs = getDirectors(qctx->getQuery());
 
@@ -110,7 +108,15 @@ RacerExtAtom::getComposite(const dlvhex::dl::Query& query) const
       Registry::setUNA(true);
     }
 
-  if (Registry::getOpenURI() != query.getOntology()->getURI()) // only load ontology if its new
+  // check if Racer has an open KB with the name of the real URI of
+  // the query's ontology, we can reuse it
+
+  const KBManager::KBList& v = kbManager.getOpenKB();
+
+  std::vector<std::string>::const_iterator f = std::find(v.begin(), v.end(),
+							 query.getOntology()->getRealURI());
+  
+  if (f == v.end())
     {
       comp->add(new RacerOpenOWL(stream));
 
@@ -118,23 +124,22 @@ RacerExtAtom::getComposite(const dlvhex::dl::Query& query) const
       comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerImportOntologiesCmd>,
 		RacerIgnoreAnswer>(stream)
 	);
-
-      Registry::setOpenURI(query.getOntology()->getURI());
     }
 
-  // create a temporary ABox called DEFAULT
+  // create a temporary ABox for the (state) command
   comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerCloneABoxCmd>,
 	    RacerIgnoreAnswer>(stream)
     );
 
+  // add concept and role assertions via (state) command
   comp->add(new RacerConceptRolePM(stream));
 
   return comp;
 }
 
 
-RacerCachingAtom::RacerCachingAtom(std::iostream& s, BaseCache& c)
-  : RacerExtAtom(s),
+RacerCachingAtom::RacerCachingAtom(std::iostream& s, RacerKBManager& k, BaseCache& c)
+  : RacerExtAtom(s,k),
     cache(c)
 { }
 
@@ -161,8 +166,8 @@ RacerCachingAtom::getCachedDirectors(const dlvhex::dl::Query& q, QueryBaseDirect
 
 
 
-RacerConceptAtom::RacerConceptAtom(std::iostream& s, BaseCache& c)
-  : RacerCachingAtom(s, c)
+RacerConceptAtom::RacerConceptAtom(std::iostream& s, RacerKBManager& k, BaseCache& c)
+  : RacerCachingAtom(s, k, c)
 {
   //
   // &dlC[kb,plusC,minusC,plusR,minusR,query](X)
@@ -198,8 +203,8 @@ RacerConceptAtom::getDirectors(const dlvhex::dl::Query& query) const
 }
 
 
-RacerRoleAtom::RacerRoleAtom(std::iostream& s, BaseCache& c)
-  : RacerCachingAtom(s, c)
+RacerRoleAtom::RacerRoleAtom(std::iostream& s, RacerKBManager& k, BaseCache& c)
+  : RacerCachingAtom(s,k,c)
 {
   //
   // &dlR[kb,plusC,minusC,plusR,minusR,query](X,Y)
@@ -242,8 +247,8 @@ RacerRoleAtom::getDirectors(const dlvhex::dl::Query& query) const
 
 
 
-RacerConsistentAtom::RacerConsistentAtom(std::iostream& s)
-  : RacerExtAtom(s)
+RacerConsistentAtom::RacerConsistentAtom(std::iostream& s, RacerKBManager& k)
+  : RacerExtAtom(s,k)
 {
   //
   // &dlConsistent[kb,plusC,minusC,plusR,minusR]()
@@ -274,8 +279,8 @@ RacerConsistentAtom::getDirectors(const dlvhex::dl::Query& q) const
 
 
 
-RacerDatatypeRoleAtom::RacerDatatypeRoleAtom(std::iostream& s, BaseCache& c)
-  : RacerCachingAtom(s, c)
+RacerDatatypeRoleAtom::RacerDatatypeRoleAtom(std::iostream& s, RacerKBManager& k, BaseCache& c)
+  : RacerCachingAtom(s,k,c)
 {
   //
   // &dlDR[kb,plusC,minusC,plusR,minusR,query](X,Y)
@@ -298,6 +303,7 @@ RacerDatatypeRoleAtom::getDirectors(const dlvhex::dl::Query& query) const
 
   if (dlq.isRetrieval() || dlq.isMixed())
     {
+      ///@todo does this really work? what about the open command?
       ///@todo this is kind of a hack, maybe we should unify this stuff...
       QueryCompositeDirector* dir = new QueryCompositeDirector(stream);
 
@@ -328,8 +334,8 @@ RacerDatatypeRoleAtom::getDirectors(const dlvhex::dl::Query& query) const
 
 
 
-RacerCQAtom::RacerCQAtom(std::iostream& s, BaseCache& c, unsigned n)
-  : RacerCachingAtom(s, c)
+RacerCQAtom::RacerCQAtom(std::iostream& s, RacerKBManager& k, BaseCache& c, unsigned n)
+  : RacerCachingAtom(s,k,c)
 {
   //
   // &dlCQn[kb,plusC,minusC,plusR,minusR,query](X_1,...,X_n)

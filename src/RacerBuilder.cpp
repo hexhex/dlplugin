@@ -27,16 +27,8 @@
 using namespace dlvhex::dl::racer;
 
 
-RacerBuilder::RacerBuilder(std::ostream& s)
-  : stream(s)
-{ }
-
-RacerBuilder::~RacerBuilder()
-{ }
-
-
 RacerStateBuilder::RacerStateBuilder(std::ostream& s)
-  : RacerBuilder(s)
+  : QueryBaseBuilder(s)
 { }
 
 bool
@@ -49,6 +41,11 @@ RacerStateBuilder::buildCommand(Query& query) throw (DLBuildingError)
   // RACER keeps the enlarged ABox if the command results in an
   // inconsistent ABox.
   //
+
+  // We cannot supply an abox name to the (state) function, it is not
+  // supported by racer. In order to feed the abox assertions to the
+  // correct abox we have to set the current abox to the appropriate
+  // one. This is done through the (clone-abox) command.
 
   try
     {
@@ -73,7 +70,7 @@ RacerStateBuilder::buildCommand(Query& query) throw (DLBuildingError)
 
 
 RacerIsConceptMemberBuilder::RacerIsConceptMemberBuilder(std::ostream& s)
-  : RacerBuilder(s)
+  : QueryBaseBuilder(s)
 { }
 
 bool
@@ -98,6 +95,8 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 	     << ABoxQueryConcept(q.getUnquotedString(),
 				 query.getOntology()->getNamespace()
 				 )
+	     << ' '
+	     << query.getKBManager().getKBName()
 	     << ')'
 	     << std::endl;
     }
@@ -112,7 +111,7 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 
 
 RacerIsRoleMemberBuilder::RacerIsRoleMemberBuilder(std::ostream& s)
-  : RacerBuilder(s)
+  : QueryBaseBuilder(s)
 { }
 
 bool
@@ -141,6 +140,8 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 	     << ABoxQueryRole(q.getUnquotedString(),
 			      query.getOntology()->getNamespace()
 			      )
+	     << ' '
+	     << query.getKBManager().getKBName()
 	     << ')'
 	     << std::endl;
     }
@@ -155,7 +156,7 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 
 
 RacerIndividualFillersBuilder::RacerIndividualFillersBuilder(std::ostream& s)
-  : RacerBuilder(s)
+  : QueryBaseBuilder(s)
 { }
 
 bool
@@ -207,7 +208,13 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
 		  );
 	}
 
-      stream << "(individual-fillers " << *i << ' ' << *r << ')' << std::endl;
+      stream << "(individual-fillers "
+	     << *i
+	     << ' '
+	     << *r 
+	     << ' '
+	     << query.getKBManager().getKBName()
+	     << ')' << std::endl;
     }
   catch (std::exception& e)
     {
@@ -222,7 +229,7 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
 
 
 RacerConceptInstancesBuilder::RacerConceptInstancesBuilder(std::ostream& s)
-  : RacerBuilder(s)
+  : QueryBaseBuilder(s)
 { }
 
 bool
@@ -250,7 +257,11 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (DLBuildingError)
 		  );
 	}
 
-      stream << "(concept-instances " << *c << ')' << std::endl;
+      stream << "(concept-instances "
+	     << *c
+	     << ' '
+	     << query.getKBManager().getKBName()
+	     << ')' << std::endl;
     }
   catch (std::exception& e)
     {
@@ -264,7 +275,7 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (DLBuildingError)
 
 
 RacerRoleIndividualsBuilder::RacerRoleIndividualsBuilder(std::ostream& s)
-  : RacerBuilder(s)
+  : QueryBaseBuilder(s)
 { }
 
 bool
@@ -279,6 +290,8 @@ RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (DLBuildingError)
 	     << ABoxQueryRole(q.getUnquotedString(),
 			      query.getOntology()->getNamespace()
 			      )
+	     << ' '
+	     << query.getKBManager().getKBName()
 	     << ')'
 	     << std::endl;
     }
@@ -292,29 +305,51 @@ RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (DLBuildingError)
 
 
 RacerOpenOWLBuilder::RacerOpenOWLBuilder(std::ostream& s)
-  : RacerBuilder(s)
+  : QueryBaseBuilder(s)
 { }
 
 bool
 RacerOpenOWLBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
-  // first 7 chars contains the URL scheme
-  std::string scheme = query.getOntology()->getURI().substr(0,7);
+  const std::string& realuri = query.getOntology()->getRealURI();
+  const std::string& uri = query.getOntology()->getURI();
+
+  // we read the owl document uri into kb-name uri
 
   try
     {
-      if (scheme == "http://" || scheme == "file://") ///@todo file:// is foobar
+      if (uri.find("http://") == 0) // a http document
 	{
 	  stream << "(owl-read-document \""
-		 << query.getOntology()->getURI()
-		 << "\" :kb-name DEFAULT)"
+		 << uri
+		 << "\" :kb-name |"
+		 << realuri
+		 << "|)"
 		 << std::endl;
 	}
-      else
+      else // a file document
 	{
+	  std::string tmpuri;
+
+	  if (uri.find("file:") == 0) // get rid of file prefix
+	    {
+	      tmpuri = uri.substr(5);
+
+	      if (tmpuri.find("//") == 0)
+		{
+		  tmpuri.erase(0, 2);
+		}
+	    }
+	  else
+	    {
+	      tmpuri = uri;
+	    }
+
 	  stream << "(owl-read-file \""
-		 << query.getOntology()->getURI()
-		 << "\" :kb-name DEFAULT)"
+		 << tmpuri
+		 << "\" :kb-name |"
+		 << realuri
+		 << "|)"
 		 << std::endl;
 	}
     }

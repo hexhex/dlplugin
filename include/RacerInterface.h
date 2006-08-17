@@ -40,6 +40,11 @@ namespace dl {
 
 namespace racer {
 
+  //
+  // forward declarations
+  //
+  class RacerKBManager;
+
 
   /**
    * @brief Concrete factory for the Plugin infrastructure.
@@ -47,12 +52,23 @@ namespace racer {
   class RacerInterface : public PluginInterface
   {
   private:
+
+    //
+    // We instantiate these objects here so we don't have to keep them
+    // as static variable or singletons which is always problematic
+    // due to the unforseeable nature of destruction order of global
+    // static objects. Here, we can control the destruction time
+    // explicitly in the dtor of RacerInterface.
+    //
+
     /// the tcp streaming interface to the RACER server
     dlvhex::util::TCPIOStream* stream;
     /// the cache for RACER queries
     BaseCache* cache;
     /// DL Rewriter facility
     HexDLRewriterDriver* rewriter;
+    /// the kb-manager for RACER
+    RacerKBManager* kbManager;
 
     //
     // keep those ctors private, we don't want multiple instantiations

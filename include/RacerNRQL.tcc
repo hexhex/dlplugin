@@ -13,6 +13,8 @@
 #define _RACERNRQL_TCC
 
 #include "RacerNRQLBuilder.h"
+#include "Query.h"
+#include "KBManager.h"
 
 namespace dlvhex {
 namespace dl {
@@ -23,16 +25,6 @@ namespace racer {
   NRQLQuery<Builder>::NRQLQuery(const Query& q)
     : query(q)
   { }
-
-
-  template <class Builder>
-  std::ostream&
-  NRQLQuery<Builder>::output(std::ostream& s) const
-  {
-    ///@todo as for now we skip the :abox and :tbox arguments, but in
-    ///future we could add the knowledge base parameters here
-    return s;
-  }
 
 
   template <class Builder>
@@ -53,9 +45,7 @@ namespace racer {
 
     this->builder.createBody(s, this->query);
   
-    NRQLQuery<Builder>::output(s);
-
-    return s << ')';
+    return s << " :abox " << this->query.getKBManager().getKBName() << ')';
   }
   
 
@@ -77,9 +67,7 @@ namespace racer {
 
     this->builder.createBody(s, this->query);
     
-    NRQLQuery<Builder>::output(s);
-    
-    return s << ')';
+    return s << " :tbox |" << this->query.getOntology()->getRealURI() << "|)";
   }
   
 
@@ -105,9 +93,7 @@ namespace racer {
 
     this->builder.createBody(s, this->query);
     
-    NRQLQuery<Builder>::output(s);
-    
-    return s << ')';
+    return s << " :abox |" << this->query.getOntology()->getRealURI() << "|)";
   }
 
 } // namespace racer

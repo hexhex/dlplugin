@@ -30,6 +30,7 @@ namespace dl {
   //
   class Query;
   class Answer;
+  class KBManager;
 
 
   /**
@@ -47,9 +48,10 @@ namespace dl {
      * @a q and creates @a a with a reference to @a q.
      * 
      * @param query 
+     * @param kb
      */
     explicit
-    QueryCtx(const PluginAtom::Query& query) throw (DLError);
+    QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError);
 
 
     /** 

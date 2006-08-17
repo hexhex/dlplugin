@@ -26,14 +26,13 @@ namespace dl {
   // forward declarations
   //
   class Query;
+  class RacerKBManager;
 
 namespace racer {
 
 
   /**
    * @brief Base class for RACER external atoms.
-   *
-   * Starts RACER in a lazy manner, i.e. when it's actually needed.
    */
   class RacerExtAtom : public PluginAtom
   {
@@ -41,10 +40,11 @@ namespace racer {
     /// keep a reference to the iostream in order to create the
     /// director instances
     std::iostream& stream;
+    /// the kb-manager
+    RacerKBManager& kbManager;
 
     /// protected ctor
-    explicit
-    RacerExtAtom(std::iostream&);
+    RacerExtAtom(std::iostream&, RacerKBManager&);
 
     /// dtor
     virtual
@@ -102,7 +102,7 @@ namespace racer {
     getCachedDirectors(const dlvhex::dl::Query&, QueryBaseDirector*) const;
 
   public:
-    RacerCachingAtom(std::iostream&, BaseCache&);
+    RacerCachingAtom(std::iostream&, RacerKBManager&, BaseCache&);
   };
 
 
@@ -125,7 +125,7 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerConceptAtom(std::iostream&, BaseCache&);
+    RacerConceptAtom(std::iostream&, RacerKBManager&, BaseCache&);
   };
 
 
@@ -149,7 +149,7 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerRoleAtom(std::iostream&, BaseCache&);
+    RacerRoleAtom(std::iostream&, RacerKBManager&, BaseCache&);
   };
 
 
@@ -173,7 +173,7 @@ namespace racer {
 
   public:
     explicit
-    RacerConsistentAtom(std::iostream&);
+    RacerConsistentAtom(std::iostream&, RacerKBManager&);
   };
 
 
@@ -197,13 +197,13 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerDatatypeRoleAtom(std::iostream&, BaseCache&);
+    RacerDatatypeRoleAtom(std::iostream&, RacerKBManager&, BaseCache&);
   };
 
 
   /**
    * @brief Implements the conjunctive query atom
-   * &dlCQn[kb,plusC,minusC,plusR,minusR,query](X_1,...,X_n), where n
+   * &dlCQn[kb,plusC,minusC,plusR,minusR,query](X_1,-,X_n), where n
    * is given at instantiation time.
    */
   class RacerCQAtom : public RacerCachingAtom
@@ -220,7 +220,7 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerCQAtom(std::iostream&, BaseCache&, unsigned n);
+    RacerCQAtom(std::iostream&, RacerKBManager&, BaseCache&, unsigned n);
   };
 
 } // namespace racer

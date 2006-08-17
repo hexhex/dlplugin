@@ -21,7 +21,12 @@
 #include "TCPStream.h"
 #include "Cache.h"
 #include "DLError.h"
+#include "RacerBuilder.h"
+#include "RacerAnswerDriver.h"
+#include "Answer.h"
+#include "RacerKBManager.h"
 
+#include <iosfwd>
 #include <algorithm>
 #include <iterator>
 
@@ -34,16 +39,34 @@ using namespace dlvhex::dl::racer;
 RacerInterface::RacerInterface()
   : stream(new dlvhex::util::TCPIOStream("localhost", 8088)),
     cache(new Cache),
-    rewriter(new HexDLRewriterDriver(std::cin, std::cout))
+    rewriter(new HexDLRewriterDriver(std::cin, std::cout)),
+    kbManager(new RacerKBManager(*stream))
 { }
 
 RacerInterface::~RacerInterface()
 {
+  try
+    {
+      if (stream->isOpen())
+	{
+	  kbManager->removeKB(); // remove temporary abox
+	}
+    }
+  catch (std::exception& e)
+    {
+      // we ignore this error since dtors must not throw exceptions
+      std::cerr << "Couldn't remove temporary KB: " << e.what() << std::endl;
+    }
+  catch (...)
+    {
+      // we ignore this error since dtors must not throw exceptions
+      std::cerr << "~RacerInterface: Caught unknown exception." << std::endl;
+    }
+
+  delete kbManager;
   delete rewriter;
   delete cache;
   delete stream;
-  // stop RacerPro server
-  RacerRunner::instance()->stop();
 }
 
 
@@ -75,10 +98,10 @@ RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
 void
 RacerInterface::getAtoms(AtomFunctionMap& m)
 {
-  m["dlC"]          = new RacerConceptAtom(*stream, *cache);
-  m["dlR"]          = new RacerRoleAtom(*stream, *cache);
-  m["dlConsistent"] = new RacerConsistentAtom(*stream);
-  m["dlDR"]         = new RacerDatatypeRoleAtom(*stream, *cache);
+  m["dlC"]          = new RacerConceptAtom(*stream, *kbManager, *cache);
+  m["dlR"]          = new RacerRoleAtom(*stream, *kbManager, *cache);
+  m["dlConsistent"] = new RacerConsistentAtom(*stream, *kbManager);
+  m["dlDR"]         = new RacerDatatypeRoleAtom(*stream, *kbManager, *cache);
 
   // register for each arity in range 0 to 32 a dedicated RacerCQAtom
   // external atom with specified arity
@@ -88,7 +111,7 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
   for (unsigned n = 0; n <= 32; ++n)
     {
       oss << "dlCQ" << n;
-      m[oss.str()]  = new RacerCQAtom(*stream, *cache, n);
+      m[oss.str()]  = new RacerCQAtom(*stream, *kbManager, *cache, n);
       oss.str("");
     }
 }

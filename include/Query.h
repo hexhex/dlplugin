@@ -25,6 +25,11 @@
 namespace dlvhex {
 namespace dl {
 
+  //
+  // forward declarations
+  //
+  class KBManager;
+
 
   /**
    * @brief A DLQuery provides syntactic information for querying the
@@ -163,6 +168,8 @@ namespace dl {
     /// ontology uri + namespace
     Ontology::shared_pointer ontology;
 
+    KBManager& kbManager;
+
     /// the whole projected interpretation
     AtomSet proj;
 
@@ -192,6 +199,7 @@ namespace dl {
      * Ctor.
      * 
      * @param onto ontology
+     * @param kb kb manager
      * @param pc plus concept
      * @param mc minus concept
      * @param pr plus role
@@ -200,6 +208,7 @@ namespace dl {
      * @param i interpretation
      */
     Query(const Ontology::shared_pointer onto,
+	  KBManager& kb,
 	  const Term& pc,
 	  const Term& mc,
 	  const Term& pr,
@@ -212,6 +221,9 @@ namespace dl {
 
     virtual const Ontology::shared_pointer&
     getOntology() const;
+
+    virtual KBManager&
+    getKBManager() const;
 
     virtual const DLQuery&
     getDLQuery() const;

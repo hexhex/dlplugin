@@ -14,72 +14,34 @@
 #define _RACERBUILDER_H
 
 #include "DLError.h"
+#include "Query.h"
+#include "QueryDirector.h"
+#include "KBManager.h"
 
 #include <iostream>
 #include <string>
 
 namespace dlvhex {
 namespace dl {
-
-  //
-  // forward declarations
-  //
-  class Query;
-
-
 namespace racer {
-
-  /**
-   * @brief Base Builder for building RACER commands.
-   */
-  class RacerBuilder
-  {
-  protected:
-    /// the builders write commands to this stream
-    std::ostream& stream;
-
-    /**
-     * protected ctor.
-     *
-     * @param s used as output stream
-     */
-    explicit
-    RacerBuilder(std::ostream& s);
-
-    /// Dtor
-    virtual
-    ~RacerBuilder();
-
-  public:
-    /**
-     * Building method implemented by the children of RacerBuilder.
-     *
-     * @param q contains the information in order to create a RACER command
-     *
-     * @return true if command was built and sent to the #stream,
-     * false otherwise.
-     */
-    virtual bool
-    buildCommand(Query& q) = 0;
-  };
 
 
   /**
    * @brief A Builder which does nothing. Mainly for testing purposes.
    */
-  class RacerNullBuilder : public RacerBuilder
+  class RacerNullBuilder : public QueryBaseBuilder
   {
   public:
     explicit
     RacerNullBuilder(std::ostream& s)
-      : RacerBuilder(s)
+      : QueryBaseBuilder(s)
     { }
 
     /**
      * @brief Ignores its input.
      */
     virtual bool
-    buildCommand(Query&)
+    buildCommand(Query&) throw (DLBuildingError)
     { return true; }
   };
 
@@ -90,7 +52,7 @@ namespace racer {
    *
    * @see state macro in RacerPro Reference Manual
    */
-  class RacerStateBuilder : public RacerBuilder
+  class RacerStateBuilder : public QueryBaseBuilder
   {
   public:
     explicit
@@ -116,7 +78,7 @@ namespace racer {
    *
    * @see individual-instance? macro in RacerPro Reference Manual
    */
-  class RacerIsConceptMemberBuilder : public RacerBuilder
+  class RacerIsConceptMemberBuilder : public QueryBaseBuilder
   {
   public:
     explicit
@@ -138,7 +100,7 @@ namespace racer {
    *
    * @see individuals-related? macro in RacerPro Reference Manual
    */
-  class RacerIsRoleMemberBuilder : public RacerBuilder
+  class RacerIsRoleMemberBuilder : public QueryBaseBuilder
   {
   public:
     explicit
@@ -159,7 +121,7 @@ namespace racer {
    *
    * @see concept-instances macro in RacerPro Reference Manual
    */
-  class RacerConceptInstancesBuilder : public RacerBuilder
+  class RacerConceptInstancesBuilder : public QueryBaseBuilder
   {
   public:
     explicit
@@ -175,7 +137,7 @@ namespace racer {
    *
    * @see related-individuals macro in RacerPro Reference manual
    */
-  class RacerRoleIndividualsBuilder : public RacerBuilder
+  class RacerRoleIndividualsBuilder : public QueryBaseBuilder
   {
   public:
     explicit
@@ -191,7 +153,7 @@ namespace racer {
    *
    * @see individual-fillers macro in RacerPro Reference manual
    */
-  class RacerIndividualFillersBuilder : public RacerBuilder
+  class RacerIndividualFillersBuilder : public QueryBaseBuilder
   {
   public:
     explicit
@@ -208,7 +170,7 @@ namespace racer {
    * @see owl-read-file and owl-read-document functions in RacerPro
    * Reference manual.
    */
-  class RacerOpenOWLBuilder : public RacerBuilder
+  class RacerOpenOWLBuilder : public QueryBaseBuilder
   {
   public:
     explicit
@@ -227,12 +189,12 @@ namespace racer {
    * @see NRQLQuery
    */
   template<class Adaptee>
-  class RacerAdapterBuilder : public RacerBuilder
+  class RacerAdapterBuilder : public QueryBaseBuilder
   {
   public:
     explicit
     RacerAdapterBuilder(std::ostream& stream)
-      : RacerBuilder(stream)
+      : QueryBaseBuilder(stream)
     { }
 
     virtual bool
@@ -261,12 +223,12 @@ namespace racer {
    * @see
    */
   template<class AdapteeFun>
-  class RacerFunAdapterBuilder : public RacerBuilder
+  class RacerFunAdapterBuilder : public QueryBaseBuilder
   {
   public:
     explicit
     RacerFunAdapterBuilder(std::ostream& stream)
-      : RacerBuilder(stream)
+      : QueryBaseBuilder(stream)
     { }
 
     virtual bool
@@ -302,10 +264,10 @@ namespace racer {
    */
   struct RacerAllIndividualsCmd
   {
-    const char*
-    operator() (Query&)
+    const std::string
+    operator() (Query& q)
     {
-      return "(all-individuals)";
+      return "(all-individuals " + q.getKBManager().getKBName() + ")";
     }
   };
 
@@ -320,22 +282,33 @@ namespace racer {
     const char*
     operator() (Query&)
     {
+      return (*this)();
+    }
+
+    const char*
+    operator() ()
+    {
       return "(set-unique-name-assumption t)";
     }
   };
 
 
   /**
-   * @brief Clone the "DEFAULT" ABox into "temp-abox".
+   * @brief Clone the Ontology's |realuri| ABox into the KBManager's
+   * kb-name.
    *
    * @see clone-abox macro in RacerPro Reference manual.
    */
   struct RacerCloneABoxCmd
   {
-    const char*
-    operator() (Query&)
+    const std::string
+    operator() (Query& q)
     {
-      return "(clone-abox DEFAULT :new-name temp-abox :overwrite t)";
+      return "(clone-abox |"
+	+ q.getOntology()->getRealURI() 
+	+ "| :new-name "
+	+ q.getKBManager().getKBName()
+	+ " :overwrite t)";
     }
   };
 
@@ -347,10 +320,10 @@ namespace racer {
    */
   struct RacerABoxConsistentCmd
   {
-    const char*
-    operator() (Query&)
+    const std::string
+    operator() (Query& q)
     {
-      return "(abox-consistent?)";
+      return "(abox-consistent? " + q.getKBManager().getKBName()  + ")";
     }
   };
 
@@ -358,12 +331,18 @@ namespace racer {
   /**
    * @brief Enable data substrate mirroring.
    *
-   * @see 
+   * @see enable-data-substrate-mirroring function in RacerPro Reference manual.
    */
   struct RacerDataSubstrateMirroringCmd
   {
     const char*
     operator() (Query&)
+    {
+      return (*this)();
+    }
+
+    const char*
+    operator() ()
     {
       return "(enable-data-substrate-mirroring)";
     }
@@ -371,18 +350,61 @@ namespace racer {
 
 
   /**
-   * @brief Enable imports in KB DEFAULT, i.e. read all owl:imports.
+   * @brief Enable imports in KB |realuri|, i.e. read all owl:imports.
    *
-   * @see 
+   * @see kb-ontologies in RacerPro Reference manual.
    */
   struct RacerImportOntologiesCmd
   {
-    const char*
-    operator() (Query&)
+    const std::string
+    operator() (Query& q)
     {
-      return "(kb-ontologies DEFAULT)";
+      return "(kb-ontologies |" + q.getOntology()->getRealURI() + "|)";
     }
   };
+
+
+  /**
+   * @brief Remove an ABox from RACER.
+   *
+   * @see forget-abox function in RacerPro Reference manual.
+   */
+  struct RacerForgetABoxCmd
+  {
+    const std::string
+    operator() (Query& q) const
+    {
+      return (*this)(q.getKBManager());
+    }
+
+    const std::string
+    operator() (KBManager& k) const
+    {
+      return "(forget-abox " + k.getKBName() + ")";
+    }
+  };
+
+
+  /**
+   * @brief Request a list of all currently loaded TBoxes.
+   *
+   * @see all-tboxes function in RacerPro Reference manual.
+   */
+  struct RacerAllTBoxesCmd
+  {
+    const char *
+    operator() (Query&) const
+    {
+      return (*this)();
+    }
+
+    const char *
+    operator() () const
+    {
+      return "(all-tboxes)";
+    }
+  };
+
 
 
 } // namespace racer
