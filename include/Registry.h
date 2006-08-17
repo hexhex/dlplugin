@@ -28,8 +28,6 @@ namespace dl {
     static unsigned verbose;
     static bool una;
     static bool datasubstrate;
-    static std::string kbName;
-    static std::string openURI;
 
     /// pure virtual dtor, we don't want an instance or a child
     virtual
@@ -41,18 +39,6 @@ namespace dl {
 
     static void
     setVerbose(unsigned);
-
-    static std::string
-    getKBName();
-
-    static void
-    setKBName(const std::string&);
-
-    static std::string
-    getOpenURI();
-
-    static void
-    setOpenURI(const std::string&);
 
     static bool
     getUNA();

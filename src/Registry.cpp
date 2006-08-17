@@ -20,8 +20,6 @@ using namespace dlvhex::dl;
 unsigned Registry::verbose(1);
 bool Registry::una(false);
 bool Registry::datasubstrate(false);
-std::string Registry::kbName;
-std::string Registry::openURI;
 
 
 unsigned
@@ -34,30 +32,6 @@ void
 Registry::setVerbose(unsigned v)
 {
   Registry::verbose = v;
-}
-
-std::string
-Registry::getKBName()
-{
-  return Registry::kbName;
-}
-
-void
-Registry::setKBName(const std::string& k)
-{
-  Registry::kbName = k;
-}
-
-std::string
-Registry::getOpenURI()
-{
-  return Registry::openURI;
-}
-
-void
-Registry::setOpenURI(const std::string& o)
-{
-  Registry::openURI = o;
 }
 
 bool
