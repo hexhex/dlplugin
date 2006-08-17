@@ -42,10 +42,12 @@ namespace dl {
   private:
     /// Ontology URI
     std::string uri;
+    /// the real ontology URI
+    std::string realuri;
     /// is this a temporary local file?
     bool isTemp;
 
-    /// default namespace of OWL
+    /// default namespace of OWL document
     std::string nspace;
 
     //
@@ -86,6 +88,9 @@ namespace dl {
 
     const std::string&
     getURI() const;
+
+    const std::string&
+    getRealURI() const;
     
     const std::string&
     getNamespace() const;
