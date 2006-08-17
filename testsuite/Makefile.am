@@ -14,9 +14,9 @@ noinst_HEADERS = \
                  TestRacerTypes.h \
                  TestSuite.h
 
-EXTRA_DIST = run-dlvhex-tests.sh
+EXTRA_DIST = run-dlvhex-tests.sh RacerRunner.sh
 
-TESTS = TestSuite run-dlvhex-tests.sh
+TESTS = RacerRunner.sh TestSuite RacerRunner.sh run-dlvhex-tests.sh
 
 TESTS_ENVIRONMENT = EXAMPLES=$(top_srcdir)/examples
 

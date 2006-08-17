@@ -8,9 +8,11 @@
  * 
  */
 
+#include "TestRacerNRQL.h"
+
+#include "RacerKBManager.h"
 #include "RacerNRQL.h"
 #include "Query.h"
-#include "TestRacerNRQL.h"
 
 #include <sstream>
 #include <iosfwd>
@@ -39,7 +41,10 @@ TestRacerNRQL::runRacerRetrieveTest()
   as.insert(ap1);
   as.insert(ap2);
 
-  Query q(Ontology::createOntology(test),Term(""),Term(""),Term(""),Term(""),DLQuery(as,tup),AtomSet());
+  RacerKBManager kb(sst, "DEFAULT");
+  Query q(Ontology::createOntology(test), kb,
+	  Term(""),Term(""),Term(""),Term(""),
+	  DLQuery(as,tup),AtomSet());
 
   NRQLRetrieve<NRQLConjunctionBuilder> nrql(q);
 
@@ -49,7 +54,7 @@ TestRacerNRQL::runRacerRetrieveTest()
  
   std::cout << s << std::endl;
 
-  CPPUNIT_ASSERT(s == "(retrieve ($?X $?Y) (and ($?X $?Y |http://www.test.com/test#moo|) ($?X |http://www.test.com/test#foo|)))");
+  CPPUNIT_ASSERT(s == "(retrieve ($?X $?Y) (and ($?X $?Y |http://www.test.com/test#moo|) ($?X |http://www.test.com/test#foo|)) :abox DEFAULT)");
 }
     
 void

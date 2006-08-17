@@ -24,6 +24,6 @@ void
 TestRacerRunner::runRacerRunnerTest()
 {
   CPPUNIT_ASSERT(RacerRunner::instance() != 0);
-  RacerRunner::instance()->run();
+  //RacerRunner::instance()->run();
 }
 

@@ -26,7 +26,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerStream);
 void
 TestRacerStream::setUp()
 {
-  RacerRunner::instance()->run();
+  //RacerRunner::instance()->run();
 }
 
 void

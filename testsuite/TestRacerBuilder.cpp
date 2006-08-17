@@ -8,10 +8,12 @@
  * 
  */
 
-#include "RacerBuilder.h"
-#include "Query.h"
 
 #include "TestRacerBuilder.h"
+
+#include "RacerBuilder.h"
+#include "Query.h"
+#include "RacerKBManager.h"
 
 #include <sstream>
 #include <iostream>
@@ -34,8 +36,9 @@ TestRacerBuilder::runRacerPosIndBuilderTest()
   AtomPtr ap(new Atom("plusC(\"Part\",\"nic\")"));
   pc.insert(ap);
   AtomSet ints(pc);
-
+  RacerKBManager kb(sst, "DEFAULT");
   Query q(Ontology::createOntology(shop),
+	  kb,
 	  Term("plusC"),Term(""),Term(""),Term(""),
 	  DLQuery(Term(),Tuple()), ints);
 
@@ -56,8 +59,9 @@ TestRacerBuilder::runRacerNegIndBuilderTest()
   AtomPtr ap(new Atom("minusC(\"Part\",\"nic\")"));
   mc.insert(ap);
   AtomSet ints(mc);
-
+  RacerKBManager kb(sst, "DEFAULT");
   Query q(Ontology::createOntology(shop),
+	  kb,
 	  Term(""),Term("minusC"),Term(""),Term(""),
 	  DLQuery(Term(),Tuple()), ints);
       
@@ -78,8 +82,9 @@ TestRacerBuilder::runRacerPosPairBuilderTest()
   AtomPtr ap(new Atom("plusR(\"Part\",\"nic\",\"sic\")"));
   pr.insert(ap);
   AtomSet ints(pr);
-
+  RacerKBManager kb(sst, "DEFAULT");
   Query q(Ontology::createOntology(shop),
+	  kb,
 	  Term(""),Term(""),Term("plusR"),Term(""),
 	  DLQuery(Term(),Tuple()), ints);
 

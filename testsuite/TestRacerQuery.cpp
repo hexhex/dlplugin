@@ -8,9 +8,11 @@
  * 
  */
 
-#include "Query.h"
 
 #include "TestRacerQuery.h"
+
+#include "Query.h"
+#include "KBManager.h"
 
 using namespace dlvhex::dl;
 using namespace dlvhex::dl::test;
@@ -47,8 +49,13 @@ TestRacerQuery::runRacerQueryEqualityTest()
 
   Term pa("a");
 
-  Query q1(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt1),ints1);
-  Query q2(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt2),ints2);
+  KBManager kb("DEFAULT");
+  Query q1(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt1),ints1);
+  Query q2(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt2),ints2);
 
   CPPUNIT_ASSERT(   q1 == q2  );
   CPPUNIT_ASSERT( q1.isSubseteq(q2) );
@@ -81,8 +88,13 @@ TestRacerQuery::runRacerQuerySubsetTest()
   
   Term pa("a");
 
-  Query q1(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt1),ints1);
-  Query q2(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt2),ints2);
+  KBManager kb("DEFAULT");
+  Query q1(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt1),ints1);
+  Query q2(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt2),ints2);
   
   CPPUNIT_ASSERT( q1 == q2 );
   CPPUNIT_ASSERT(   q1.isSubseteq(q2)  );
@@ -115,8 +127,13 @@ TestRacerQuery::runRacerQuerySupersetTest()
 
   Term pa("a");
   
-  Query q1(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt1),ints1);
-  Query q2(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt2),ints2);
+  KBManager kb("DEFAULT");
+  Query q1(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt1),ints1);
+  Query q2(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt2),ints2);
   
   CPPUNIT_ASSERT( q1 == q2 );
   CPPUNIT_ASSERT( !(q1.isSubseteq(q2)) );
@@ -133,17 +150,25 @@ TestRacerQuery::runRacerQueryLessThanTest()
 
   Term pa("a");
 
-  Query q1(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt1),AtomSet());
+  KBManager kb("DEFAULT");
+
+  Query q1(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt1),AtomSet());
   
   Term pb("b");
 
-  Query q2(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pb,pt2),AtomSet());
+  Query q2(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pb,pt2),AtomSet());
 
   CPPUNIT_ASSERT(q1.getDLQuery().isBoolean());
   CPPUNIT_ASSERT(q2.getDLQuery().isBoolean());
   CPPUNIT_ASSERT( (q1 < q2) && !(q2 < q1) );
 
-  Query q3(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt1),AtomSet());
+  Query q3(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt1),AtomSet());
 
   CPPUNIT_ASSERT( !(q1 < q3) && !(q3 < q1) );
 
@@ -156,8 +181,12 @@ TestRacerQuery::runRacerQueryLessThanTest()
   pt2.push_back(Term("foo",true));
   pt2.push_back(Term("X"));
 
-  Query q4(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt1),AtomSet());
-  Query q5(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt2),AtomSet());
+  Query q4(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt1),AtomSet());
+  Query q5(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt2),AtomSet());
 
   CPPUNIT_ASSERT(q4.getDLQuery().isMixed());
   CPPUNIT_ASSERT(q5.getDLQuery().isMixed());
@@ -172,8 +201,12 @@ TestRacerQuery::runRacerQueryLessThanTest()
   pt2.push_back(Term("X"));
   pt2.push_back(Term("Y"));
 
-  Query q6(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt1),AtomSet());
-  Query q7(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt2),AtomSet());
+  Query q6(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt1),AtomSet());
+  Query q7(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt2),AtomSet());
 
   CPPUNIT_ASSERT(q6.getDLQuery().isRetrieval());
   CPPUNIT_ASSERT(q7.getDLQuery().isRetrieval());
@@ -188,8 +221,12 @@ TestRacerQuery::runRacerQueryLessThanTest()
   pt2.push_back(Term("X"));
   pt2.push_back(Term("Y"));
 
-  Query q8(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt1),AtomSet());
-  Query q9(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt2),AtomSet());
+  Query q8(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt1),AtomSet());
+  Query q9(Ontology::createOntology(shop),kb,
+	   Term("p"),Term("q"),Term("foo"),Term("foo"),
+	   DLQuery(pa,pt2),AtomSet());
 
   CPPUNIT_ASSERT(q8.getDLQuery().isBoolean());
   CPPUNIT_ASSERT(q9.getDLQuery().isRetrieval());
@@ -204,8 +241,12 @@ TestRacerQuery::runRacerQueryLessThanTest()
   pt2.push_back(Term("Z"));
   pt2.push_back(Term("a"));
 
-  Query q10(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt1),AtomSet());
-  Query q11(Ontology::createOntology(shop),Term("p"),Term("q"),Term("foo"),Term("foo"),DLQuery(pa,pt2),AtomSet());
+  Query q10(Ontology::createOntology(shop),kb,
+	    Term("p"),Term("q"),Term("foo"),Term("foo"),
+	    DLQuery(pa,pt1),AtomSet());
+  Query q11(Ontology::createOntology(shop),kb,
+	    Term("p"),Term("q"),Term("foo"),Term("foo"),
+	    DLQuery(pa,pt2),AtomSet());
 
   CPPUNIT_ASSERT(q10.getDLQuery().isMixed());
   CPPUNIT_ASSERT(q11.getDLQuery().isMixed());

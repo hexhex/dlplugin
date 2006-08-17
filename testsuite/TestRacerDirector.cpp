@@ -16,6 +16,7 @@
 #include "TCPStream.h"
 #include "QueryCtx.h"
 #include "Query.h"
+#include "RacerKBManager.h"
 
 #include <iostream>
 #include <string>
@@ -34,7 +35,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerDirector);
 void
 TestRacerDirector::setUp()
 {
-  RacerRunner::instance()->run();
+  //RacerRunner::instance()->run();
 }
 
 void
@@ -58,8 +59,9 @@ TestRacerDirector::runRacerPlusConceptTest()
   in.push_back(Term(""));
 
   Tuple out;
+  RacerKBManager kb(rsIO, "DEFAULT");
 
-  QueryCtx::shared_pointer q(new QueryCtx(PluginAtom::Query(ints, in, out)));
+  QueryCtx::shared_pointer q(new QueryCtx(PluginAtom::Query(ints, in, out),kb));
   
   CPPUNIT_ASSERT_NO_THROW( q = pcd.query(q) );
 }
@@ -70,8 +72,9 @@ TestRacerDirector::runRacerAllIndividualsTest()
   TCPIOStream rsIO("localhost", 8088);
   
   QueryDirector<RacerFunAdapterBuilder<RacerAllIndividualsCmd>,RacerAnswerDriver> aiq(rsIO);
-  
+  RacerKBManager kb(rsIO, "DEFAULT");
   QueryCtx::shared_pointer q(new QueryCtx(new Query(Ontology::shared_pointer(),
+						    kb,
 						    Term(""),
 						    Term(""),
 						    Term(""),
