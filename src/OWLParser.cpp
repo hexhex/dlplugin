@@ -48,13 +48,27 @@ OWLParser::~OWLParser()
 void
 OWLParser::open(const std::string& uri)
 {
-  std::string scheme = uri.substr(0,7);
-
-  if (scheme == "http://" || scheme == "file://" || scheme.find("file:") == 0)
+  if (uri.find("http://") == 0) // a http URI can be used as is
     {
       this->uri = uri;
     }
-  else
+  else if (uri.find("file:") == 0) // a file URI must be prepared, it
+				   // is not allowed to use
+				   // file://PATH, only file:PATH can
+				   // be used by raptor
+    {
+      std::string tmp = uri.substr(5);
+
+      if (tmp.find("//") == 0)
+	{
+	  this->uri = "file:" + tmp.substr(2);
+	}
+      else
+	{
+	  this->uri = "file:" + tmp;
+	}
+    }
+  else // a plain file
     {
       this->uri = "file:" + uri;
     }

@@ -27,19 +27,19 @@ namespace dlvhex {
     std::ostream&
     operator<< (std::ostream& os, const Ontology& o)
     {
-      return os << o.getURI() << '(' << o.getNamespace() << ')';
+      return os << o.getRealURI() << '(' << o.getNamespace() << ')';
     }
 
     bool
     operator< (const Ontology& o1, const Ontology& o2)
     {
-      return o1.getURI() < o2.getURI();
+      return o1.getRealURI() < o2.getRealURI();
     }
 
     bool
     operator== (const Ontology& o1, const Ontology& o2)
     {
-      return o1.getURI() == o2.getURI();
+      return o1.getRealURI() == o2.getRealURI();
     }
 
     bool
@@ -63,6 +63,7 @@ Ontology::~Ontology()
 
 Ontology::Ontology(const std::string& u)
   : uri(u),
+    realuri(u),
     isTemp(false)
 {
   OWLParser p(uri);
@@ -103,13 +104,20 @@ Ontology::createOntology(const std::string& uri)
   typedef std::map<std::string, Ontology::shared_pointer> OntologyMap;
   static OntologyMap ontomap;
 
-  // rip off "file:" prefix
+  std::string finduri;
 
-  std::string finduri = uri;
-
-  if (finduri.find("file:") == 0)
+  if (uri.find("file://") != 0 && uri.find("file:") != 0 && uri.find("http://") != 0)
     {
-      finduri.erase(0, 5);
+      // must be a pathname
+      finduri = "file:" + uri;
+    }
+  else if (uri.find("file://") == 0) // this needs a special massage
+    {
+      finduri = "file:" + uri.substr(7);
+    }
+  else // a valid URI
+    {
+      finduri = uri;
     }
 
   OntologyMap::const_iterator o = ontomap.find(finduri);
@@ -138,6 +146,13 @@ const std::string&
 Ontology::getURI() const
 {
   return uri;
+}
+
+
+const std::string&
+Ontology::getRealURI() const
+{
+  return realuri;
 }
 
     
