@@ -112,20 +112,24 @@ ABoxInvertedRole::output(std::ostream& s) const
 
 
 std::ostream&
-ABoxInstance::output(std::ostream& s) const
+ABoxAddConceptAssertion::output(std::ostream& s) const
 {
-  return s << "(instance "
+  return s << "(add-concept-assertion "
+	   << abox
+	   << ' '
 	   << *iExpr
-	   << " "
+	   << ' '
 	   << *cExpr
-	   << ")";
+	   << ')';
 }
 
 
 std::ostream&
-ABoxRelated::output(std::ostream& s) const
+ABoxAddRoleAssertion::output(std::ostream& s) const
 {
-  return s << "(related "
+  return s << "(add-role-assertion "
+	   << abox
+	   << ' '
 	   << *i1Expr
 	   << ' '
 	   << *i2Expr

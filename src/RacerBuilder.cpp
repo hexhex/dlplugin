@@ -42,11 +42,6 @@ RacerStateBuilder::buildCommand(Query& query) throw (DLBuildingError)
   // inconsistent ABox.
   //
 
-  // We cannot supply an abox name to the (state) function, it is not
-  // supported by racer. In order to feed the abox assertions to the
-  // correct abox we have to set the current abox to the appropriate
-  // one. This is done through the (clone-abox) command.
-
   try
     {
       std::ostringstream oss;

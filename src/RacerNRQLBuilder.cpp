@@ -71,6 +71,7 @@ NRQLBuilder::createHead(std::ostream& stream, const Query& query) const
   return !isEmpty;
 }
 
+
 namespace dlvhex {
   namespace dl {
     namespace racer {
@@ -95,7 +96,7 @@ namespace dlvhex {
 	  : InterToAssertion(q, isEmpty, isNegated)
 	{ }
 	
-	ABoxInstance
+	ABoxAddConceptAssertion
 	operator() (const Atom& a)
 	{
 	  empty = false;
@@ -113,7 +114,10 @@ namespace dlvhex {
 		 query.getOntology()->getNamespace()
 		 );
 	      
-	      return ABoxInstance(negate ? new ABoxNegatedConcept(c) : c, i);
+	      return ABoxAddConceptAssertion(negate ? new ABoxNegatedConcept(c) : c,
+					     i,
+					     query.getKBManager().getKBName()
+					     );
 	    }
 	  else if (a.getArity() == 3 && negate)
 	    {
@@ -138,11 +142,12 @@ namespace dlvhex {
 	      
 	      // -R(a,b) -> (instance a (not (some R (one-of b))))
 	      // does not work? seems like there is a bug in Racer
-	      return ABoxInstance
+	      return ABoxAddConceptAssertion
 		(new ABoxNegatedConcept
 		 (new ABoxSomeConcept(r, new ABoxOneOfConcept(iv))
 		  ),
-		 i1
+		 i1,
+		 query.getKBManager().getKBName()
 		 );
 	    }
 	  
@@ -162,7 +167,7 @@ namespace dlvhex {
 	{ }
 	
 	
-	ABoxRelated
+	ABoxAddRoleAssertion
 	operator() (const Atom& a)
 	{
 	  empty = false;
@@ -185,7 +190,7 @@ namespace dlvhex {
 		 query.getOntology()->getNamespace()
 		 );
 	      
-	      return ABoxRelated(r, i1, i2);
+	      return ABoxAddRoleAssertion(r, i1, i2, query.getKBManager().getKBName());
 	    }
 	  
 	  std::ostringstream oss;
@@ -211,7 +216,7 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
       AtomSet::const_iterator backPlusC = --query.getPlusC().end();
       InterToInstance i2i(query, isEmpty);
       std::transform(query.getPlusC().begin(), backPlusC,
-		     std::ostream_iterator<ABoxInstance>(stream, " "),
+		     std::ostream_iterator<ABoxAddConceptAssertion>(stream, " "),
 		     i2i
 		     );
       stream << i2i(*backPlusC);
@@ -222,7 +227,7 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
       AtomSet::const_iterator backMinusC = --query.getMinusC().end();
       InterToInstance i2i(query, isEmpty, true);
       std::transform(query.getMinusC().begin(), backMinusC,
-		     std::ostream_iterator<ABoxInstance>(stream, " "),
+		     std::ostream_iterator<ABoxAddConceptAssertion>(stream, " "),
 		     i2i
 		     );
       stream << i2i(*backMinusC);
@@ -233,7 +238,7 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
       AtomSet::const_iterator backPlusR = --query.getPlusR().end();
       InterToRelated i2r(query, isEmpty);
       std::transform(query.getPlusR().begin(), backPlusR,
-		     std::ostream_iterator<ABoxRelated>(stream, " "),
+		     std::ostream_iterator<ABoxAddRoleAssertion>(stream, " "),
 		     i2r
 		     );
       stream << i2r(*backPlusR);
@@ -244,7 +249,7 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
       AtomSet::const_iterator backMinusR = --query.getMinusR().end();
       InterToInstance i2i(query, isEmpty, true);
       std::transform(query.getMinusR().begin(), backMinusR,
-		     std::ostream_iterator<ABoxInstance>(stream, " "),
+		     std::ostream_iterator<ABoxAddConceptAssertion>(stream, " "),
 		     i2i
 		     );
       stream << i2i(*backMinusR);
@@ -257,9 +262,10 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
       isEmpty = false;
 
       stream << 
-	ABoxInstance
+	ABoxAddConceptAssertion
 	(new ABoxQueryConcept("foo"),
-	 new ABoxQueryIndividual("bar")
+	 new ABoxQueryIndividual("bar"),
+	 query.getKBManager().getKBName()
 	 );
     }
 #endif

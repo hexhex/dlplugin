@@ -325,49 +325,49 @@ namespace racer {
 
 
   /**
-   * instance assertion.
+   * add concept assertion.
    */
-  class ABoxInstance : public ABoxAssertion
+  class ABoxAddConceptAssertion : public ABoxAssertion
   {
   private:
     const ABoxConceptDescrExpr::shared_pointer cExpr;
     const ABoxQueryIndividual::shared_pointer iExpr;
+    const std::string& abox;
 
   protected:
     std::ostream&
     output(std::ostream& s) const;
 
   public:
-    ABoxInstance(ABoxConceptDescrExpr::const_pointer c,
-		 ABoxQueryIndividual::const_pointer i)
-      : cExpr(c), iExpr(i)
+    ABoxAddConceptAssertion(ABoxConceptDescrExpr::const_pointer c,
+		 ABoxQueryIndividual::const_pointer i,
+		 const std::string& a)
+      : cExpr(c), iExpr(i), abox(a)
     {}
-
-    typedef ABoxInstance value_type;
-    typedef const value_type* const_pointer;
-    typedef boost::shared_ptr<const value_type> shared_pointer;
   };
 
 
   /**
    * related assertion.
    */
-  class ABoxRelated : public ABoxAssertion
+  class ABoxAddRoleAssertion : public ABoxAssertion
   {
   private:
     const ABoxRoleDescrExpr::shared_pointer rExpr;
     const ABoxQueryIndividual::shared_pointer i1Expr;
     const ABoxQueryIndividual::shared_pointer i2Expr;
+    const std::string& abox;
 
   protected:
     std::ostream&
     output(std::ostream& s) const;
 
   public:
-    ABoxRelated(ABoxRoleDescrExpr::const_pointer r,
+    ABoxAddRoleAssertion(ABoxRoleDescrExpr::const_pointer r,
 		ABoxQueryIndividual::const_pointer i1,
-		ABoxQueryIndividual::const_pointer i2)
-      : rExpr(r), i1Expr(i1), i2Expr(i2)
+		ABoxQueryIndividual::const_pointer i2,
+		const std::string& a)
+      : rExpr(r), i1Expr(i1), i2Expr(i2), abox(a)
     {}
   };
 

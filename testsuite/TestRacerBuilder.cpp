@@ -47,7 +47,7 @@ TestRacerBuilder::runRacerPosIndBuilderTest()
       
   std::string s = sst.str();
 
-  CPPUNIT_ASSERT(s == "(state (instance |http://www.kr.tuwien.ac.at/staff/roman/shop#nic| |http://www.kr.tuwien.ac.at/staff/roman/shop#Part|))\n");
+  CPPUNIT_ASSERT(s == "(state (add-concept-assertion DEFAULT |http://www.kr.tuwien.ac.at/staff/roman/shop#nic| |http://www.kr.tuwien.ac.at/staff/roman/shop#Part|))\n");
 }
     
 void
@@ -70,7 +70,7 @@ TestRacerBuilder::runRacerNegIndBuilderTest()
       
   std::string s = sst.str();
 
-  CPPUNIT_ASSERT(s == "(state (instance |http://www.kr.tuwien.ac.at/staff/roman/shop#nic| (not |http://www.kr.tuwien.ac.at/staff/roman/shop#Part|)))\n");
+  CPPUNIT_ASSERT(s == "(state (add-concept-assertion DEFAULT |http://www.kr.tuwien.ac.at/staff/roman/shop#nic| (not |http://www.kr.tuwien.ac.at/staff/roman/shop#Part|)))\n");
 }
     
 void
@@ -93,5 +93,5 @@ TestRacerBuilder::runRacerPosPairBuilderTest()
       
   std::string s = sst.str();
 
-  CPPUNIT_ASSERT(s == "(state (related |http://www.kr.tuwien.ac.at/staff/roman/shop#nic| |http://www.kr.tuwien.ac.at/staff/roman/shop#sic| |http://www.kr.tuwien.ac.at/staff/roman/shop#Part|))\n");
+  CPPUNIT_ASSERT(s == "(state (add-role-assertion DEFAULT |http://www.kr.tuwien.ac.at/staff/roman/shop#nic| |http://www.kr.tuwien.ac.at/staff/roman/shop#sic| |http://www.kr.tuwien.ac.at/staff/roman/shop#Part|))\n");
 }
