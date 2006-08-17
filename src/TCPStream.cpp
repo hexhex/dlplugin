@@ -14,8 +14,7 @@
 #include "TCPStream.h"
 #include "LogBuf.h"
 
-#include <streambuf>
-#include <iosfwd>
+#include <ios>
 #include <sstream>
 
 #include <ace/SOCK_Connector.h>
@@ -31,7 +30,7 @@ using namespace dlvhex::util;
 TCPIOStream::TCPIOStream(const std::string& host, unsigned port)
   : std::iostream(new TCPStreamBuf(host, port))
 {
-  exceptions(std::ios_base::badbit); // let streambuf throw std::ios_base::failure
+  exceptions(std::ios_base::badbit); // let TCPStreamBuf throw std::ios_base::failure
 }
 
 
@@ -39,6 +38,7 @@ TCPIOStream::~TCPIOStream()
 {
   delete rdbuf();
 }
+
 
 void
 TCPIOStream::setConnection(const std::string& host,
@@ -49,6 +49,11 @@ TCPIOStream::setConnection(const std::string& host,
 }
 
 
+bool
+TCPIOStream::isOpen() const
+{
+  return dynamic_cast<TCPStreamBuf*>(rdbuf())->isOpen();
+}
 
 
 TCPStreamBuf::TCPStreamBuf(const std::string& host,
@@ -110,16 +115,23 @@ TCPStreamBuf::initBuffers()
 
 
 bool
+TCPStreamBuf::isOpen() const
+{
+  return stream.get_handle() != ACE_INVALID_HANDLE;
+}
+
+
+bool
 TCPStreamBuf::open()
 {
-  if (stream.get_handle() == ACE_INVALID_HANDLE)
+  if (!isOpen())
     {
       ACE_INET_Addr addr(port, host.c_str());
       ACE_SOCK_Connector conn;
 
       ACE_Time_Value tv(0, 300000);
 
-      // at most 3 seconds (approx. 10 rounds)
+      // try for at most 3 seconds (approx. 10 rounds)
       for (unsigned i = 0; i < 10; ++i)
 	{
 	  close();
@@ -137,7 +149,7 @@ TCPStreamBuf::open()
 
       // connection failed
       std::ostringstream oss;
-      oss << "Couldn't open connection to " << host << ':' << port << '.';
+      oss << "Could not open connection to " << host << ':' << port << '.';
       throw std::ios_base::failure(oss.str());
     }
 
@@ -172,7 +184,7 @@ TCPStreamBuf::overflow(std::streambuf::int_type c)
   // write it
   if (!traits_type::eq_int_type(c, traits_type::eof()))
     {
-      *pptr() = (char_type) c;
+      *pptr() = traits_type::to_char_type(c);
       pbump(1); // increase put pointer by one
     }
   
@@ -200,9 +212,9 @@ TCPStreamBuf::underflow()
       // try to receive at most bufsize bytes
       ssize_t n = stream.recv(ibuf, bufsize, 0);
 
-      // Nothing is received (n=0) when RACER query handling
+      // Nothing is received (n = 0) when RACER query handling
       // timeouts. In this case RACERs only answer is empty and we
-      // cannot use the stream any more, so just return EOF. Otherwise
+      // cannot use the stream any more, so just bail out. Otherwise
       // (n < 0), a failure occured while receiving from the stream
       if (n <= 0)
 	{
@@ -255,7 +267,7 @@ TCPStreamBuf::sync()
       if (n <= 0 || errno == EPIPE) // EOF or failure
 	{
 	  std::ostringstream oss;
-	  oss << "Couldn't send to peer (errno = " << errno << ").";
+	  oss << "Could not send to peer (errno = " << errno << ").";
 	  throw std::ios_base::failure(oss.str());
 	}
     }

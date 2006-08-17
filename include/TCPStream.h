@@ -108,7 +108,7 @@ namespace util {
     /**
      * Tries to establish a connection to the tcp server.
      *
-     * @return false on error, true on success.
+     * @return true on success, throw std::basic_ios::failure on error.
      */
     virtual bool
     open();
@@ -120,6 +120,12 @@ namespace util {
      */
     virtual bool
     close();
+
+    /** 
+     * @return true if connection is established, false otw.
+     */
+    virtual bool
+    isOpen() const;
 
   };
 
@@ -145,6 +151,12 @@ namespace util {
      */
     void
     setConnection(const std::string& host, unsigned port);
+
+    /** 
+     * @return true if connection is established, false otw.
+     */
+    bool
+    isOpen() const;
   };
 
 } // namespace util
