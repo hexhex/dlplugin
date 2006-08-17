@@ -161,7 +161,7 @@ status: ':' STRING
         {
 	  delete $2;
 	}
-      | '|' STRING '|'
+      | '|' URI '|'
         {
 	  delete $2;
 	}
