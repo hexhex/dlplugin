@@ -7,6 +7,7 @@ noinst_HEADERS = \
                  DLError.h \
                  HexDLRewriterDriver.h \
                  HexDLRewriterFlexLexer.h \
+                 KBManager.h \
                  LogBuf.h \
                  OWLParser.h \
                  Ontology.h \
@@ -17,6 +18,7 @@ noinst_HEADERS = \
                  RacerBuilder.h \
                  RacerExtAtom.h \
                  RacerInterface.h \
+                 RacerKBManager.h \
                  RacerQueryExpr.h \
                  RacerQueryExpr.tcc \
                  RacerRunner.h \

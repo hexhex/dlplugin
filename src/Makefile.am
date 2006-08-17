@@ -39,6 +39,7 @@ RacerAnswerDriver.cpp \
 RacerBuilder.cpp \
 RacerExtAtom.cpp \
 RacerInterface.cpp \
+RacerKBManager.cpp \
 RacerNRQL.cpp \
 RacerNRQLBuilder.cpp \
 RacerRunner.cpp \
