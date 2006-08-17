@@ -1,3 +1,62 @@
+2006-08-17  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	The "from now on we won't start Racer anymore" update.
+	
+	* include/TCPStream.h: Add isOpen() methods to TCPStreamBuf and
+	TCPIOStream.
+	* src/TCPStream.cpp: Likewise.
+
+	* testsuite/Makefile.am: Start Racer outside of dlvhex.
+	* testsuite/RacerRunner.sh: Likewise. 
+	* testsuite/TestRacerBuilder.cpp: Likewise. 
+	* testsuite/TestRacerDirector.cpp: Likewise. 
+	* testsuite/TestRacerNRQL.cpp: Likewise. 
+	* testsuite/TestRacerQuery.cpp: Likewise. 
+	* testsuite/TestRacerRunner.cpp: Likewise. 
+	* testsuite/TestRacerStream.cpp: Likewise. 
+	* testsuite/run-dlvhex-tests.sh: Likewise. 
+
+	* src/RacerAnswerScanner.lpp: Fix URI regexp for scheme:path URIs
+	without //.
+
+	* src/RacerAnswerParser.ypp: Fix status message parsing.
+
+	* src/OWLParser.cpp: Fix file:// URIs.
+	* src/Ontology.cpp: Likewise. 
+
+	* include/Registry.h: Remove KB and open URI getter/setter
+	methods.
+	* src/Registry.cpp: Likewise. 
+
+	* include/QueryDirector.h (QueryBaseBuilder,QueryBaseParser): New
+	interfaces.
+	* include/RacerAnswerDriver.h: Likewise. 
+	* src/RacerAnswerDriver.cpp: Likewise. 
+
+	* include/Ontology.h (Ontology::getRealURI): New method.
+
+	* include/Makefile.am: Add KBManager and RacerKBManager.
+	* src/Makefile.am: Likewise. 
+
+	* include/LogBuf.h: Fix documentation.
+	* include/RacerNRQL.h: Likewise. 
+	* documentation.dox: Likewise.
+
+	* include/KBManager.h: Introduce KB Manager.
+	* include/Query.h: Likewise. 
+	* include/QueryCtx.h: Likewise. 
+	* include/RacerBuilder.h: Likewise. 
+	* include/RacerExtAtom.h: Likewise. 
+	* include/RacerInterface.h: Likewise. 
+	* include/RacerKBManager.h: Likewise. 
+	* include/RacerNRQL.tcc: Likewise. 
+	* src/Query.cpp: Likewise. 
+	* src/QueryCtx.cpp: Likewise. 
+	* src/RacerBuilder.cpp: Likewise. 
+	* src/RacerExtAtom.cpp: Likewise. 
+	* src/RacerInterface.cpp: Likewise. 
+	* src/RacerKBManager.cpp: Likewise. 
+
 2006-08-13  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* configure.ac: Check for dlvhex >= 1.1.
