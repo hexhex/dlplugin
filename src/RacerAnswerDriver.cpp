@@ -22,7 +22,7 @@ using namespace dlvhex::dl::racer;
 
 
 RacerBaseAnswerDriver::RacerBaseAnswerDriver(std::istream& i)
-  : stream(i),
+  : QueryBaseParser(i),
     lexer(new RacerFlexLexer(this))
 {
 }

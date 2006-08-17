@@ -14,8 +14,10 @@
 #ifndef _RACERANSWERDRIVER_H
 #define _RACERANSWERDRIVER_H
 
-#include "RacerAnswerParser.hpp"
 #include "DLError.h"
+#include "QueryDirector.h"
+
+#include "RacerAnswerParser.hpp"
 
 #include <iosfwd>
 #include <string>
@@ -38,13 +40,11 @@ namespace racer {
 
 
   /**
-   * @brief Base class for the parsers.
+   * @brief Base class for the Racer parsers.
    */
-  class RacerBaseAnswerDriver
+  class RacerBaseAnswerDriver : public QueryBaseParser
   {
   protected:
-    /// the parser read the answers from this stream
-    std::istream& stream;
     /// lexer object which scans the stream
     RacerFlexLexer* lexer;
 
@@ -57,16 +57,7 @@ namespace racer {
     RacerBaseAnswerDriver(std::istream&);
 
   public:
-    virtual
     ~RacerBaseAnswerDriver();
-
-    /**
-     * Parses the answers from RACER.
-     *
-     * @param answer
-     */
-    virtual void
-    parse(Answer& answer) throw (DLParsingError) = 0;
 
     /// Error handling.
     void
@@ -88,6 +79,7 @@ namespace racer {
   class RacerAnswerDriver : public RacerBaseAnswerDriver
   {
   public:
+    explicit
     RacerAnswerDriver(std::istream& is);
 
     virtual void

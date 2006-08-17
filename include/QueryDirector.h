@@ -48,8 +48,8 @@ namespace dl {
 
 
   /**
-   * @brief Template Director for building RACER commands and parsing
-   * their result.
+   * @brief Template Director for building DL querying commands and
+   * parsing their result.
    */
   template <class Builder, class Parser>
   class QueryDirector : public QueryBaseDirector
@@ -70,8 +70,8 @@ namespace dl {
     QueryDirector(std::iostream& s);
 
     /**
-     * @brief builds/parses RACER commands/answers using the Builder
-     * and Parser members.
+     * @brief builds/parses DL queries/answers using the Builder and
+     * Parser members.
      *
      * @param qctx pass the appropriate QueryCtx::shared_pointer
      * member to the Builder/Parser.
@@ -86,11 +86,87 @@ namespace dl {
 
 
   /**
-   * @brief A base composite director for querying lists of RACER
-   * commands.
+   * @brief Base class for building queries.
+   *
+   * @see QueryDirector
+   */
+  class QueryBaseBuilder
+  {
+  protected:
+    /// the builders write commands to this stream
+    std::ostream& stream;
+
+    /**
+     * protected ctor.
+     *
+     * @param os used as output stream
+     */
+    explicit
+    QueryBaseBuilder(std::ostream& os)
+      : stream(os)
+    { }
+
+  public:
+    /// Dtor
+    virtual
+    ~QueryBaseBuilder()
+    { }
+
+    /**
+     * Building method implemented by the children of QueryBuilder.
+     *
+     * @param q contains the information in order to create a query
+     *
+     * @return true if a command was built, false otherwise.
+     */
+    virtual bool
+    buildCommand(Query& q) throw (DLBuildingError) = 0;
+  };
+
+
+  /**
+   * @brief Base class for the parsing answers.
+   *
+   * @see QueryDirector
+   */
+  class QueryBaseParser
+  {
+  protected:
+    /// the parser read the answers from this stream
+    std::istream& stream;
+
+    /**
+     * protected ctor.
+     *
+     * @param is used as input stream
+     */
+    explicit
+    QueryBaseParser(std::istream& is)
+      : stream(is)
+    { }
+
+  public:
+    /// dtor
+    virtual
+    ~QueryBaseParser()
+    { }
+
+    /**
+     * Parsing method implemented by the children of QueryParser.
+     *
+     * @param answer add answers to a query to @a answer
+     */
+    virtual void
+    parse(Answer& answer) throw (DLParsingError) = 0;
+  };
+
+
+  /**
+   * @brief A base composite director for querying lists of
+   * QueryBaseDirector objects.
    *
    * Provides a list of QueryBaseDirector and takes care of
-   * inconsistency during execution of the RACER commands.
+   * inconsistency during execution of the query commands.
    */
   class QueryCompositeDirector : public QueryBaseDirector
   {
@@ -129,7 +205,7 @@ namespace dl {
 
     /**
      * iterates through the list of QueryBaseDirectors and calls their
-     * query() method. If RACERs ABox gets inconsistent during the
+     * query() method. If the ABox gets inconsistent during the
      * iteration query() calls handleInconsitency() in order to
      * generate the appropriate answer.
      *
@@ -146,7 +222,7 @@ namespace dl {
 
 
   /**
-   * @brief Provides caching support for RACER Queries.
+   * @brief Provides caching support for the QueryCtx objects.
    */
   class QueryCachingDirector : public QueryBaseDirector
   {
