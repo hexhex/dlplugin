@@ -1,5 +1,18 @@
 // -*- C++ -*-
 
+/// the dlvhex namespace
+namespace dlvhex {
+  /// namespace used for utils
+  namespace util { }
+  /// namespace used for generic classes of the dl-plugin
+  namespace dl {
+    /// namespace used for the unit and regression testsuite
+    namespace test { }
+    /// namespace used for RACER specific classes of the dl-plugin
+    namespace racer { }
+  }
+}
+
 /**
 
 @mainpage Documentation DL Plugin

@@ -66,9 +66,6 @@ namespace racer {
    */
   class NRQLBody : public NRQLBase
   {
-  protected:
-    NRQLBody() {}
-
   public:
     typedef NRQLBody value_type;
     typedef const value_type* const_pointer;
@@ -85,6 +82,13 @@ namespace racer {
     /// a managed ABoxQueryAtom 
     const ABoxQueryAtom::shared_pointer atom;
 
+    /** 
+     * output #atom to @a s as nRQL body atom expression.
+     * 
+     * @param s 
+     * 
+     * @return @a s
+     */
     std::ostream&
     output(std::ostream& s) const;
 
@@ -108,10 +112,22 @@ namespace racer {
     /// conjunction of NRQLBody expressions
     boost::ptr_vector<NRQLBody> list;
 
+    /** 
+     * output #list to @a s as nRQL (and) expression
+     * 
+     * @param s 
+     * 
+     * @return @a s
+     */
     std::ostream&
     output(std::ostream& s) const;
 
   public:
+    /** 
+     * add @a e to #list.
+     * 
+     * @param e 
+     */
     void
     addAtom(NRQLBody::const_pointer e);
 
@@ -131,10 +147,22 @@ namespace racer {
     /// union of NRQLBody expressions
     boost::ptr_vector<NRQLBody> list;
 
+    /** 
+     * output #list to @a s as nRQL (union) expression.
+     * 
+     * @param s 
+     * 
+     * @return @a s
+     */
     std::ostream&
     output(std::ostream& s) const;
 
   public:
+    /** 
+     * add @a e to #list.
+     * 
+     * @param e 
+     */
     void
     addAtom(NRQLBody::const_pointer e);
 
@@ -151,12 +179,11 @@ namespace racer {
   class NRQLQuery : public NRQLBase
   {
   protected:
+    /// the builder object
     Builder builder;
 
+    /// Query object used to create the nRQL query
     const Query& query;
-
-    virtual std::ostream&
-    output(std::ostream& s) const;
 
   public:
     /** 
@@ -169,12 +196,20 @@ namespace racer {
 
 
   /**
-   * A retrieve query.
+   * A nRQL retrieve query.
    */
   template <class Builder>
   class NRQLRetrieve : public NRQLQuery<Builder>
   {
   private:
+    /** 
+     * output #query with help of #builder to @a s as nRQL retrieve
+     * expression.
+     * 
+     * @param s 
+     * 
+     * @return @a s
+     */
     std::ostream&
     output(std::ostream& s) const;
 
@@ -185,12 +220,20 @@ namespace racer {
 
 
   /**
-   * A tbox-retrieve query.
+   * A nRQL tbox-retrieve query.
    */
   template <class Builder>
   class NRQLTBoxRetrieve : public NRQLQuery<Builder>
   {
   private:
+    /** 
+     * output #query with help of #builder to @a s as nRQL
+     * tbox-retrieve expression.
+     * 
+     * @param s 
+     * 
+     * @return @a s
+     */
     std::ostream&
     output(std::ostream& s) const;
 
@@ -201,12 +244,20 @@ namespace racer {
 
 
   /**
-   * A retrieve-under-premise query.
+   * A nRQL retrieve-under-premise query.
    */
   template <class Builder>
   class NRQLRetrieveUnderPremise : public NRQLQuery<Builder>
   {
   private:
+    /** 
+     * output #query with help of #builder to @a s as nRQL
+     * retrieve-under-premise expression.
+     * 
+     * @param s 
+     * 
+     * @return @a s
+     */
     std::ostream&
     output(std::ostream& s) const;
 
