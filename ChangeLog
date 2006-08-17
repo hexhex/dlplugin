@@ -1,6 +1,14 @@
 2006-08-17  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	The "from now on we won't start Racer anymore" update.
+
+	* include/RacerQueryExpr.h: Use (add-concept-assertion)
+	and (add-role-assertion) instead of (instance) resp. (related), so
+	we can specify the ABox for the (state) command.
+	* src/RacerBuilder.cpp: Likewise.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* src/RacerQueryExpr.cpp: Likewise.
+	* testsuite/TestRacerBuilder.cpp: Likewise.
 	
 	* include/TCPStream.h: Add isOpen() methods to TCPStreamBuf and
 	TCPIOStream.
@@ -9,6 +17,7 @@
 	* testsuite/Makefile.am: Start Racer outside of dlvhex.
 	* testsuite/RacerRunner.sh: Likewise. 
 	* testsuite/TestRacerBuilder.cpp: Likewise. 
+
 	* testsuite/TestRacerDirector.cpp: Likewise. 
 	* testsuite/TestRacerNRQL.cpp: Likewise. 
 	* testsuite/TestRacerQuery.cpp: Likewise. 
@@ -53,6 +62,7 @@
 	* src/Query.cpp: Likewise. 
 	* src/QueryCtx.cpp: Likewise. 
 	* src/RacerBuilder.cpp: Likewise. 
+ 
 	* src/RacerExtAtom.cpp: Likewise. 
 	* src/RacerInterface.cpp: Likewise. 
 	* src/RacerKBManager.cpp: Likewise. 
