@@ -20,12 +20,8 @@
 using namespace dlvhex::dl::racer;
 
 
-NRQLBuilder::~NRQLBuilder()
-{ }
-
-
 bool
-NRQLBuilder::createBody(std::ostream& /* stream */, const Query& /* query */) const
+NRQLBaseBuilder::createBody(std::ostream& /* stream */, const Query& /* query */) const
   throw(DLBuildingError)
 {
   return false;
@@ -33,7 +29,7 @@ NRQLBuilder::createBody(std::ostream& /* stream */, const Query& /* query */) co
 
 
 bool
-NRQLBuilder::createHead(std::ostream& stream, const Query& query) const
+NRQLBaseBuilder::createHead(std::ostream& stream, const Query& query) const
   throw(DLBuildingError)
 {
   const DLQuery& dlq = query.getDLQuery();
@@ -77,31 +73,30 @@ namespace dlvhex {
     namespace racer {
 
       /// base class for transforming Atom objects to ABoxAssertion objects
-      struct InterToAssertion
+      struct InterToAssertion : public std::unary_function<const Atom&, void>
       {
+	mutable std::ostream& stream;
+	mutable AtomSet::atomset_t::size_type count;
 	const Query& query;
-	bool& empty;
+	mutable bool& empty;
 	bool negate;
+	bool abox;
 	
-	InterToAssertion(const Query& q, bool& isEmpty, bool isNegated)
-	  : query(q), empty(isEmpty), negate(isNegated)
+	InterToAssertion(std::ostream& s,
+			 AtomSet::atomset_t::size_type c,
+			 const Query& q,
+			 bool& isEmpty,
+			 bool isNegated = false,
+			 bool withABox = false)
+	  : stream(s), count(c), query(q), empty(isEmpty), negate(isNegated), abox(withABox)
 	{ }
-      };
-      
-      
-      /// transform Atom objects to ABoxInstance objects
-      struct InterToInstance : public InterToAssertion
-      {
-	InterToInstance(const Query& q, bool& isEmpty, bool isNegated = false)
-	  : InterToAssertion(q, isEmpty, isNegated)
-	{ }
-	
-	ABoxAddConceptAssertion
-	operator() (const Atom& a)
+
+	void
+	operator() (const Atom& a) const
 	{
-	  empty = false;
+	  this->empty = false;
 	  
-	  if (a.getArity() == 2)
+	  if (a.getArity() == 2) // concept assertion
 	    {
 	      ABoxQueryConcept::const_pointer c =
 		new ABoxQueryConcept
@@ -114,12 +109,19 @@ namespace dlvhex {
 		 query.getOntology()->getNamespace()
 		 );
 	      
-	      return ABoxAddConceptAssertion(negate ? new ABoxNegatedConcept(c) : c,
-					     i,
-					     query.getKBManager().getKBName()
-					     );
+	      if (abox)
+		{
+		  stream << ABoxAddConceptAssertion(negate ? new ABoxNegatedConcept(c) : c,
+						    i,
+						    query.getKBManager().getKBName()
+						    );
+		}
+	      else
+		{
+		  stream << ABoxInstanceAssertion(negate ? new ABoxNegatedConcept(c) : c, i);
+		}
 	    }
-	  else if (a.getArity() == 3 && negate)
+	  else if (a.getArity() == 3 && negate) // negated role assertion
 	    {
 	      ABoxQueryRole::const_pointer r = 
 		new ABoxQueryRole
@@ -142,37 +144,28 @@ namespace dlvhex {
 	      
 	      // -R(a,b) -> (instance a (not (some R (one-of b))))
 	      // does not work? seems like there is a bug in Racer
-	      return ABoxAddConceptAssertion
-		(new ABoxNegatedConcept
-		 (new ABoxSomeConcept(r, new ABoxOneOfConcept(iv))
-		  ),
-		 i1,
-		 query.getKBManager().getKBName()
-		 );
-	    }
-	  
-	  std::ostringstream oss;
-	  oss << a << " has wrong arity.";
-	  throw DLBuildingError(oss.str());
-	}
-	
-      };
+	      if (abox)
+		{
+		  stream << ABoxAddConceptAssertion(new ABoxNegatedConcept
+						    (new ABoxSomeConcept
+						     (r, new ABoxOneOfConcept(iv))
+						     ),
+						    i1,
+						    query.getKBManager().getKBName()
+						    );
 
-      
-      /// transform Atom objects to ABoxRelated objects
-      struct InterToRelated : public InterToAssertion
-      {
-	InterToRelated(const Query& q, bool& isEmpty, bool isNegated = false)
-	  : InterToAssertion(q, isEmpty, isNegated)
-	{ }
-	
-	
-	ABoxAddRoleAssertion
-	operator() (const Atom& a)
-	{
-	  empty = false;
-	  
-	  if (a.getArity() == 3 && !negate)
+		}
+	      else
+		{
+		  stream << ABoxInstanceAssertion(new ABoxNegatedConcept
+						  (new ABoxSomeConcept
+						   (r, new ABoxOneOfConcept(iv))
+						   ),
+						  i1
+						  );
+		}
+	    }
+	  else if (a.getArity() == 3 && !negate)
 	    {
 	      ABoxQueryRole::const_pointer r = 
 		new ABoxQueryRole
@@ -190,12 +183,26 @@ namespace dlvhex {
 		 query.getOntology()->getNamespace()
 		 );
 	      
-	      return ABoxAddRoleAssertion(r, i1, i2, query.getKBManager().getKBName());
+	      if (abox)
+		{
+		  stream << ABoxAddRoleAssertion(r, i1, i2, query.getKBManager().getKBName());
+		}
+	      else
+		{
+		  stream << ABoxRelatedAssertion(r, i1, i2);
+		}
+	    }
+	  else
+	    {
+	      std::ostringstream oss;
+	      oss << a << " has wrong arity.";
+	      throw DLBuildingError(oss.str());
 	    }
 	  
-	  std::ostringstream oss;
-	  oss << a << " has wrong arity.";
-	  throw DLBuildingError(oss.str());
+	  if (--count)
+	    {
+	      stream.put(' ');
+	    }
 	}
 	
       };
@@ -206,53 +213,95 @@ namespace dlvhex {
 
 
 bool
-NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
+NRQLBaseBuilder::createPremise(std::ostream& stream, const Query& query) const
   throw(DLBuildingError)
 {
   bool isEmpty = true;
 
   if (!query.getPlusC().empty())
     {
-      AtomSet::const_iterator backPlusC = --query.getPlusC().end();
-      InterToInstance i2i(query, isEmpty);
-      std::transform(query.getPlusC().begin(), backPlusC,
-		     std::ostream_iterator<ABoxAddConceptAssertion>(stream, " "),
-		     i2i
-		     );
-      stream << i2i(*backPlusC);
+      std::for_each(query.getPlusC().begin(), query.getPlusC().end(),
+		    InterToAssertion(stream, query.getPlusC().size(), query, isEmpty)
+		    );
     }
 
   if (!query.getMinusC().empty())
     {
-      AtomSet::const_iterator backMinusC = --query.getMinusC().end();
-      InterToInstance i2i(query, isEmpty, true);
-      std::transform(query.getMinusC().begin(), backMinusC,
-		     std::ostream_iterator<ABoxAddConceptAssertion>(stream, " "),
-		     i2i
-		     );
-      stream << i2i(*backMinusC);
+      if (!isEmpty) stream.put(' ');
+      std::for_each(query.getMinusC().begin(), query.getMinusC().end(),
+		    InterToAssertion(stream, query.getMinusC().size(), query, isEmpty, true)
+		    );
     }
 
   if (!query.getPlusR().empty())
     {
-      AtomSet::const_iterator backPlusR = --query.getPlusR().end();
-      InterToRelated i2r(query, isEmpty);
-      std::transform(query.getPlusR().begin(), backPlusR,
-		     std::ostream_iterator<ABoxAddRoleAssertion>(stream, " "),
-		     i2r
-		     );
-      stream << i2r(*backPlusR);
+      if (!isEmpty) stream.put(' ');
+      std::for_each(query.getPlusR().begin(), query.getPlusR().end(),
+		    InterToAssertion(stream, query.getPlusR().size(), query, isEmpty)
+		    );
     }
 
   if (!query.getMinusR().empty())
     {
-      AtomSet::const_iterator backMinusR = --query.getMinusR().end();
-      InterToInstance i2i(query, isEmpty, true);
-      std::transform(query.getMinusR().begin(), backMinusR,
-		     std::ostream_iterator<ABoxAddConceptAssertion>(stream, " "),
-		     i2i
-		     );
-      stream << i2i(*backMinusR);
+      if (!isEmpty) stream.put(' ');
+      std::for_each(query.getMinusR().begin(), query.getMinusR().end(),
+		    InterToAssertion(stream, query.getMinusR().size(), query, isEmpty, true)
+		    );
+    }
+
+  ///@todo this is a preliminary workaround for the Racer abox-cloning bug 
+#if 1
+  if (isEmpty)
+    {
+      isEmpty = false;
+
+      stream << 
+	ABoxInstanceAssertion
+	(new ABoxQueryConcept("foo"),
+	 new ABoxQueryIndividual("bar")
+	 );
+    }
+#endif
+
+  return !isEmpty;
+}
+
+
+bool
+NRQLStateBuilder::createPremise(std::ostream& stream, const Query& query) const
+  throw(DLBuildingError)
+{
+  bool isEmpty = true;
+
+  if (!query.getPlusC().empty())
+    {
+      std::for_each(query.getPlusC().begin(), query.getPlusC().end(),
+		    InterToAssertion(stream, query.getPlusC().size(), query, isEmpty, false, true)
+		    );
+    }
+
+  if (!query.getMinusC().empty())
+    {
+      if (!isEmpty) stream.put(' ');
+      std::for_each(query.getMinusC().begin(), query.getMinusC().end(),
+		    InterToAssertion(stream, query.getMinusC().size(), query, isEmpty, true, true)
+		    );
+    }
+
+  if (!query.getPlusR().empty())
+    {
+      if (!isEmpty) stream.put(' ');
+      std::for_each(query.getPlusR().begin(), query.getPlusR().end(),
+		    InterToAssertion(stream, query.getPlusR().size(), query, isEmpty, false, true)
+		    );
+    }
+
+  if (!query.getMinusR().empty())
+    {
+      if (!isEmpty) stream.put(' ');
+      std::for_each(query.getMinusR().begin(), query.getMinusR().end(),
+		    InterToAssertion(stream, query.getMinusR().size(), query, isEmpty, true, true)
+		    );
     }
 
   ///@todo this is a preliminary workaround for the Racer abox-cloning bug 
@@ -272,7 +321,6 @@ NRQLBuilder::createPremise(std::ostream& stream, const Query& query) const
 
   return !isEmpty;
 }
-
 
 
 bool
