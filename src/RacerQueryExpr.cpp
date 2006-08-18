@@ -35,6 +35,8 @@ namespace racer {
 std::ostream&
 ABoxQueryExpr::output(std::ostream& s) const
 {
+  ///@todo we cannot assume that # is in every URI individual
+
   if (symbol.find('#') == std::string::npos) // symbol doesn't contain '#'
     {
       if (nsid.find('#') != std::string::npos) // nsid contains '#'
@@ -108,6 +110,30 @@ std::ostream&
 ABoxInvertedRole::output(std::ostream& s) const
 {
   return s << "(inv " << *rExpr << ')';
+}
+
+
+std::ostream&
+ABoxInstanceAssertion::output(std::ostream& s) const
+{
+  return s << "(instance "
+	   << *iExpr
+	   << ' '
+	   << *cExpr
+	   << ')';
+}
+
+
+std::ostream&
+ABoxRelatedAssertion::output(std::ostream& s) const
+{
+  return s << "(related "
+	   << *i1Expr
+	   << ' '
+	   << *i2Expr
+	   << ' '
+	   << *rExpr
+	   << ')';
 }
 
 
