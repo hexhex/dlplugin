@@ -12,7 +12,6 @@
 
 #include "RacerInterface.h"
 
-#include "RacerRunner.h"
 #include "RacerExtAtom.h"
 #include "Ontology.h"
 #include "HexDLRewriterDriver.h"
@@ -32,6 +31,10 @@
 
 #include <ace/Null_Mutex.h>
 #include <ace/Singleton.h>
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif /* HAVE_CONFIG_H */
 
 using namespace dlvhex::dl::racer;
 
@@ -188,16 +191,6 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
     }
 }
 
-void
-RacerInterface::startRacer()
-{
-  if (!RacerRunner::instance()->isRunning())
-    {
-      RacerRunner::instance()->run();
-      stream->setConnection("localhost", RacerRunner::instance()->getPort());
-    }
-}
- 
 
 extern "C" PluginInterface*
 PLUGINIMPORTFUNCTION()
@@ -205,5 +198,8 @@ PLUGINIMPORTFUNCTION()
   /// adapt RacerInterface to a singleton and register it to the
   /// ACE_Object_Manager facility for automatic object deletion at
   /// program exit time
+  TheRacerInterface::instance()->setVersion(DLPLUGIN_MAJOR,
+					    DLPLUGIN_MINOR,
+					    DLPLUGIN_MICRO);
   return TheRacerInterface::instance();
 }

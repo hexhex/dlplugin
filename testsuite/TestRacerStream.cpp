@@ -9,7 +9,6 @@
  */
 
 #include "TCPStream.h"
-#include "RacerRunner.h"
 
 #include "TestRacerStream.h"
 
@@ -17,17 +16,10 @@
 
 using namespace dlvhex::util;
 using namespace dlvhex::dl::test;
-using namespace dlvhex::dl::racer;
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerStream);
 
-
-void
-TestRacerStream::setUp()
-{
-  //RacerRunner::instance()->run();
-}
 
 void
 TestRacerStream::runRacerStreamBufTest()

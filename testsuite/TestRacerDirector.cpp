@@ -12,7 +12,6 @@
 #include "RacerBuilder.h"
 #include "RacerAnswerDriver.h"
 #include "QueryDirector.h"
-#include "RacerRunner.h"
 #include "TCPStream.h"
 #include "QueryCtx.h"
 #include "Query.h"
@@ -32,11 +31,6 @@ using namespace dlvhex::dl::test;
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TestRacerDirector);
 
-void
-TestRacerDirector::setUp()
-{
-  //RacerRunner::instance()->run();
-}
 
 void
 TestRacerDirector::runRacerPlusConceptTest()

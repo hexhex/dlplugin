@@ -39,8 +39,6 @@ namespace test {
     CPPUNIT_TEST_SUITE_END();
 
   public:
-    virtual void setUp();
-
     void runRacerPlusConceptTest();
     
     void runRacerAllIndividualsTest();

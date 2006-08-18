@@ -119,12 +119,6 @@ namespace racer {
     virtual void
     setOptions(bool doHelp, std::vector<std::string>& argv, std::ostream& out);
 
-    /**
-     * Start RACER and setup the stream.
-     */
-    virtual void
-    startRacer();
-
     /// transparently allow access from ACE_Singleton<>
     friend class ACE_Singleton<RacerInterface, ACE_Null_Mutex>;
   };
