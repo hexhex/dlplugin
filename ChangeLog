@@ -1,3 +1,28 @@
+2006-08-18  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* configure.ac (DLPLUGIN_MAJOR,DLPLUGIN_MINOR,DLPLUGIN_MICRO):
+	Setup version information.
+
+	* include/RacerInterface.h (RacerRunner): Remove.
+	* include/RacerRunner.h: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+	* src/RacerRunner.cpp: Likewise.
+	* testsuite/TestRacerDirector.h: Likewise.
+	* testsuite/TestRacerDirector.cpp: Likewise.
+	* testsuite/TestRacerRunner.h: Likewise.
+	* testsuite/TestRacerRunner.cpp: Likewise.
+	* testsuite/TestRacerStream.h: Likewise.
+	* testsuite/TestRacerStream.cpp: Likewise.
+
+	* testsuite/Makefile.am (noinst_HEADERS): Remove TestRacerRunner.h.
+	(TestSuite_SOURCES): Remove TestRacerRunner.cpp
+
+	* include/Makefile.am (noinst_HEADERS): Remove RacerRunner.h.
+
+	* src/Makefile.am (MAINTAINERCLEANFILES): Add
+	HexDLRewriterParser.hpp and HexDLRewriterParser.output.
+	(libdlvhexracer_la_SOURCES): Remove RacerRunner.cpp.
+
 2006-08-17  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	The "from now on we won't start Racer anymore" update.
