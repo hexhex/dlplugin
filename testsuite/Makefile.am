@@ -9,7 +9,6 @@ noinst_HEADERS = \
                  TestRacerNRQL.h \
                  TestRacerParse.h \
                  TestRacerQuery.h \
-                 TestRacerRunner.h \
                  TestRacerStream.h \
                  TestRacerTypes.h \
                  TestSuite.h
@@ -31,7 +30,6 @@ TestSuite_SOURCES = \
                     TestRacerNRQL.cpp \
                     TestRacerParse.cpp \
                     TestRacerQuery.cpp \
-                    TestRacerRunner.cpp \
                     TestRacerStream.cpp \
                     TestRacerTypes.cpp \
                     TestSuite.cpp
