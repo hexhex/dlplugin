@@ -1,5 +1,18 @@
 2006-08-18  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* include/RacerExtAtom.h: Use (retrieve-under-premise) instead
+	of (retrieve) in &dlCQ and &dlDR.
+	* src/RacerExtAtom.cpp: Likewise.
+
+	* testsuite/TestRacerNRQL.cpp (TestRacerNRQL::runRacerPremiseRetrieveTest): New testcase.
+
+	* include/RacerQueryExpr.h (ABoxInstanceAssertion,ABoxRelatedAssertion): New classes.
+	* src/RacerQueryExpr.cpp: Likewise.
+
+	* include/RacerNRQLBuilder.h (NRQLStateBuilder): New class.
+	* src/RacerBuilder.cpp: Likewise.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+
 	* configure.ac (DLPLUGIN_MAJOR,DLPLUGIN_MINOR,DLPLUGIN_MICRO):
 	Setup version information.
 
