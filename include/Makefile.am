@@ -21,7 +21,6 @@ noinst_HEADERS = \
                  RacerKBManager.h \
                  RacerQueryExpr.h \
                  RacerQueryExpr.tcc \
-                 RacerRunner.h \
                  Registry.h \
                  TCPStream.h \
                  UserDir.h \
