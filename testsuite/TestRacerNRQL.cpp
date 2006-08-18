@@ -10,7 +10,7 @@
 
 #include "TestRacerNRQL.h"
 
-#include "RacerKBManager.h"
+#include "KBManager.h"
 #include "RacerNRQL.h"
 #include "Query.h"
 
@@ -41,7 +41,7 @@ TestRacerNRQL::runRacerRetrieveTest()
   as.insert(ap1);
   as.insert(ap2);
 
-  RacerKBManager kb(sst, "DEFAULT");
+  KBManager kb("DEFAULT");
   Query q(Ontology::createOntology(test), kb,
 	  Term(""),Term(""),Term(""),Term(""),
 	  DLQuery(as,tup),AtomSet());
@@ -67,5 +67,36 @@ TestRacerNRQL::runRacerTBoxRetrieveTest()
 void
 TestRacerNRQL::runRacerPremiseRetrieveTest()
 {
+  std::stringstream sst;
 
+  Tuple tup;
+  tup.push_back(Term("X"));
+  tup.push_back(Term("Y"));
+
+  AtomSet as;
+  AtomPtr ap1(new Atom("foo(X)"));
+  AtomPtr ap2(new Atom("moo(X,Y)"));
+  as.insert(ap1);
+  as.insert(ap2);
+
+  AtomSet ints;
+  AtomPtr ap4(new Atom("pc(foo,a)"));
+  AtomPtr ap5(new Atom("pr(moo,a,b)"));
+  ints.insert(ap4);
+  ints.insert(ap5);
+
+  KBManager kb("DEFAULT");
+  Query q(Ontology::createOntology(test), kb,
+	  Term("pc"),Term(""),Term("pr"),Term(""),
+	  DLQuery(as,tup),ints);
+
+  NRQLRetrieveUnderPremise<NRQLConjunctionBuilder> nrql(q);
+
+  sst << nrql;
+     
+  std::string s = sst.str();
+ 
+  std::cout << s << std::endl;
+
+  CPPUNIT_ASSERT(s == "(retrieve-under-premise ((instance |http://www.test.com/test#a| |http://www.test.com/test#foo|) (related |http://www.test.com/test#a| |http://www.test.com/test#b| |http://www.test.com/test#moo|)) ($?X $?Y) (and ($?X $?Y |http://www.test.com/test#moo|) ($?X |http://www.test.com/test#foo|)) :abox |" + testuri + "|)");
 }
