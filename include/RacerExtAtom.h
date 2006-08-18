@@ -48,17 +48,36 @@ namespace racer {
 
     /// dtor
     virtual
-    ~RacerExtAtom();
+    ~RacerExtAtom()
+    { }
 
     /** 
+     * Setup Racer instance.
      * 
+     * @param comp add QueryDirector to this composite
+     */
+    virtual void
+    setupRacer(QueryCompositeDirector::shared_pointer& comp) const;
+
+    /** 
+     * Add QueryDirectors to @a comp in order to open an ontology.
      * 
      * @param query 
-     * 
-     * @return 
+     * @param comp 
      */
-    virtual QueryCompositeDirector::shared_pointer
-    getComposite(const dlvhex::dl::Query& query) const;
+    virtual void
+    openOntology(const dlvhex::dl::Query& query,
+		 QueryCompositeDirector::shared_pointer& comp) const;
+
+    /** 
+     * Add QueryDirectors to @a comp in order to increase the ABox.
+     * 
+     * @param query 
+     * @param comp 
+     */
+    virtual void
+    increaseABox(const dlvhex::dl::Query& query,
+		 QueryCompositeDirector::shared_pointer& comp) const;
 
     /**
      * children of RacerExtAtom implement this method to create a
@@ -97,9 +116,9 @@ namespace racer {
     /// reference to the cache of QueryCtx objects
     BaseCache& cache;
 
-    /// fill a composite and add a caching director
-    QueryBaseDirector::shared_pointer
-    getCachedDirectors(const dlvhex::dl::Query&, QueryBaseDirector*) const;
+    /// @return a caching director for @a comp
+    virtual QueryBaseDirector::shared_pointer
+    cacheQuery(QueryCompositeDirector::shared_pointer comp) const;
 
   public:
     RacerCachingAtom(std::iostream&, RacerKBManager&, BaseCache&);
@@ -184,6 +203,14 @@ namespace racer {
   class RacerDatatypeRoleAtom : public RacerCachingAtom
   {
   protected:
+    /** 
+     * Enable substrate mirroring.
+     * 
+     * @param comp 
+     */
+    virtual void
+    setupRacer(QueryCompositeDirector::shared_pointer& comp) const;
+
     /**
      * checks whether the pattern tuple requests a boolean, a
      * retrieval or a individual filler query and creates the director
