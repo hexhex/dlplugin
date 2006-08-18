@@ -1,9 +1,15 @@
 AC_PREREQ([2.59])
-AC_INIT([dlvhex-racerplugin],[0.2],[tkren@kr.tuwien.ac.at])
-AC_CONFIG_SRCDIR([src/RacerRunner.cpp])
+AC_INIT([dlvhex-racerplugin],[0.2.0],[tkren@kr.tuwien.ac.at])
+AC_CONFIG_SRCDIR([src/RacerInterface.cpp])
 AC_CONFIG_HEADER([src/config.h])
 
+MAJOR=`echo $PACKAGE_VERSION | sed "s/^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/"`
+MINOR=`echo $PACKAGE_VERSION | sed "s/^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/"`
+MICRO=`echo $PACKAGE_VERSION | sed "s/^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/"`
 
+AC_DEFINE_UNQUOTED([DLPLUGIN_MAJOR], [$MAJOR], [Major version number of the dl-plugin])
+AC_DEFINE_UNQUOTED([DLPLUGIN_MINOR], [$MINOR], [Minor version number of the dl-plugin])
+AC_DEFINE_UNQUOTED([DLPLUGIN_MICRO], [$MICRO], [Micro version number of the dl-plugin])
 
 #
 # the user didn't supply a path for Racer
@@ -24,11 +30,6 @@ if test "$RACERPATH" = notfound; then
     AC_MSG_ERROR([Racer not found. Download it at http://www.racer-systems.com])
 fi
 
-#
-# put the racer path into config.h
-#
-AC_DEFINE_UNQUOTED([RACERPATH],["$RACER"],[Path of RACER executable])
-
 
 AM_INIT_AUTOMAKE
 
@@ -42,8 +43,10 @@ AC_PROG_YACC
 # Checks for libraries.
 
 # Checks for header files.
-AC_HEADER_DIRENT
-AC_CHECK_HEADERS([sys/param.h])
+AC_CHECK_HEADERS([sys/stat.h sys/time.h sys/types.h unistd.h])
+AC_HEADER_STAT
+AC_HEADER_STDC
+AC_HEADER_TIME
 
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER([FlexLexer.h])
