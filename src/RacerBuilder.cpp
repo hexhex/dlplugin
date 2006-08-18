@@ -46,7 +46,7 @@ RacerStateBuilder::buildCommand(Query& query) throw (DLBuildingError)
     {
       std::ostringstream oss;
 
-      if (!NRQLBuilder().createPremise(oss, query))
+      if (!NRQLStateBuilder().createPremise(oss, query))
 	{
 	  return false; // nothing to sent, ignore this command
 	}

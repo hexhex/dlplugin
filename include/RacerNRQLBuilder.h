@@ -31,11 +31,17 @@ namespace racer {
   /**
    * @brief Base class for all the NRQL Builders.
    */
-  class NRQLBuilder
+  class NRQLBaseBuilder
   {
+  protected:
+    /// protected ctor
+    NRQLBaseBuilder()
+    { }
+
   public:
     virtual
-    ~NRQLBuilder();
+    ~NRQLBaseBuilder()
+    { }
 
     /** 
      * Base class method does nothing.
@@ -77,11 +83,38 @@ namespace racer {
 
 
   /**
-   * @brief Builds conjunctive nRQL queries.
+   * @brief Base class for all the NRQL Builders.
    */
-  class NRQLConjunctionBuilder : public NRQLBuilder
+  class NRQLStateBuilder : public NRQLBaseBuilder
   {
   public:
+    NRQLStateBuilder () : NRQLBaseBuilder()
+    { }
+
+    /** 
+     * Uses interpretation of @a query and put a list of ABox
+     * assertions into @a stream.
+     * 
+     * @param stream output the ABox assertions to this stream
+     * @param query use this query
+     * 
+     * @return true if method created an output, false otherwise.
+     */
+    virtual bool
+    createPremise(std::ostream& stream, const Query& query) const
+      throw(DLBuildingError);
+  };
+
+
+  /**
+   * @brief Builds conjunctive nRQL queries.
+   */
+  class NRQLConjunctionBuilder : public NRQLBaseBuilder
+  {
+  public:
+    NRQLConjunctionBuilder () : NRQLBaseBuilder()
+    { }
+
     /** 
      * Uses @a query to build a conjunctive query expression.
      * 
@@ -99,9 +132,12 @@ namespace racer {
   /**
    * @brief Builds datatype role queries.
    */
-  class NRQLDatatypeBuilder : public NRQLBuilder
+  class NRQLDatatypeBuilder : public NRQLBaseBuilder
   {
   public:
+    NRQLDatatypeBuilder () : NRQLBaseBuilder()
+    { }
+
     /** 
      * Uses @a query to build the head expression for a datatype role
      * query.
