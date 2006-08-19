@@ -21,6 +21,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
+#include <iterator>
+
 using namespace dlvhex::dl;
 
 
@@ -156,9 +158,24 @@ QueryCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
   else // retrieval modes
     {
       // just get all individuals
-
-      ///@todo add individuals from the interpretation of qctx to universe
+      
       Ontology::ObjectsPtr universe = qctx->getQuery().getOntology()->getIndividuals();
+
+      //
+      // add individuals from the interpretation of qctx to universe
+      //
+
+      std::insert_iterator<Ontology::Objects> ii = std::inserter(*universe, universe->begin());
+
+      for (AtomSet::const_iterator it1 = qctx->getQuery().getProjectedInterpretation().begin();
+	   it1 != qctx->getQuery().getProjectedInterpretation().end();
+	   ++it1)
+	{
+	  // get the arguments of each atom in the interpretation and
+	  // insert it into the universe
+	  const Tuple& args = it1->getArguments();
+	  std::copy(args.begin(), args.end(), ii);
+	}
 
       std::vector<Tuple> tuples;
       const Tuple& pat = dlq.getPatternTuple();
