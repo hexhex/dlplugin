@@ -71,7 +71,7 @@ RacerIsConceptMemberBuilder::RacerIsConceptMemberBuilder(std::ostream& s)
 bool
 RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
-  const DLQuery dlq = query.getDLQuery();
+  const DLQuery& dlq = query.getDLQuery();
   const Term& q = dlq.getQuery();
   const Tuple& indv = dlq.getPatternTuple();
 
@@ -83,13 +83,9 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
   try
     {
       stream << "(individual-instance? "
-	     << ABoxQueryIndividual(indv[0].getUnquotedString(),
-				    query.getOntology()->getNamespace()
-				    )
+	     << ABoxQueryIndividual(indv[0], query.getOntology()->getNamespace())
 	     << ' '
-	     << ABoxQueryConcept(q.getUnquotedString(),
-				 query.getOntology()->getNamespace()
-				 )
+	     << ABoxQueryConcept(q, query.getOntology()->getNamespace())
 	     << ' '
 	     << query.getKBManager().getKBName()
 	     << ')'
@@ -112,7 +108,7 @@ RacerIsRoleMemberBuilder::RacerIsRoleMemberBuilder(std::ostream& s)
 bool
 RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
-  const DLQuery dlq = query.getDLQuery();
+  const DLQuery& dlq = query.getDLQuery();
   const Term& q = dlq.getQuery();
   const Tuple& indv = dlq.getPatternTuple();
 
@@ -124,17 +120,11 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
   try
     {
       stream << "(individuals-related? "
-	     << ABoxQueryIndividual(indv[0].getUnquotedString(),
-				    query.getOntology()->getNamespace()
-				    )
+	     << ABoxQueryIndividual(indv[0], query.getOntology()->getNamespace())
 	     << ' '
-	     << ABoxQueryIndividual(indv[1].getUnquotedString(),
-				    query.getOntology()->getNamespace()
-				    )
+	     << ABoxQueryIndividual(indv[1], query.getOntology()->getNamespace())
 	     << ' '
-	     << ABoxQueryRole(q.getUnquotedString(),
-			      query.getOntology()->getNamespace()
-			      )
+	     << ABoxQueryRole(q, query.getOntology()->getNamespace())
 	     << ' '
 	     << query.getKBManager().getKBName()
 	     << ')'
@@ -158,7 +148,7 @@ bool
 RacerIndividualFillersBuilder::buildCommand(Query& query)
   throw (DLBuildingError)
 {
-  const DLQuery dlq = query.getDLQuery();
+  const DLQuery& dlq = query.getDLQuery();
   const Term& q = dlq.getQuery();
   const Tuple& indv = dlq.getPatternTuple();
 
@@ -177,28 +167,20 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
       // for a (const,variable) pattern only the first bit is allowed to be true
       if (type == 0x1)
 	{
-	  i.reset(new ABoxQueryIndividual(indv[0].getUnquotedString(),
-					  query.getOntology()->getNamespace()
-					  )
+	  i.reset(new ABoxQueryIndividual(indv[0], query.getOntology()->getNamespace())
 		  );
 
-	  r.reset(new ABoxQueryRole(q.getUnquotedString(),
-				    query.getOntology()->getNamespace()
-				    )
+	  r.reset(new ABoxQueryRole(q, query.getOntology()->getNamespace())
 		  );
 	}
       else // (variable,const) pattern
 	{
-	  i.reset(new ABoxQueryIndividual(indv[1].getUnquotedString(),
-					  query.getOntology()->getNamespace()
-					  )
+	  i.reset(new ABoxQueryIndividual(indv[1], query.getOntology()->getNamespace())
 		  );
 
-
+	  // note the inverted role
 	  r.reset(new ABoxInvertedRole
-		  (new ABoxQueryRole(q.getUnquotedString(),
-				     query.getOntology()->getNamespace()
-				     )
+		  (new ABoxQueryRole(q, query.getOntology()->getNamespace())
 		   )
 		  );
 	}
@@ -230,9 +212,9 @@ RacerConceptInstancesBuilder::RacerConceptInstancesBuilder(std::ostream& s)
 bool
 RacerConceptInstancesBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
-  const DLQuery dlq = query.getDLQuery();
+  const DLQuery& dlq = query.getDLQuery();
   const Term& q = dlq.getQuery();
-  std::string concept = q.getUnquotedString();
+  const std::string concept = q.getUnquotedString();
 
   try
     {
@@ -240,15 +222,12 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (DLBuildingError)
 
       if (concept[0] != '-')
 	{
-	  c.reset(new ABoxQueryConcept(concept, query.getOntology()->getNamespace()));
+	  c.reset(new ABoxQueryConcept(q, query.getOntology()->getNamespace()));
 	}
       else
 	{
-	  concept.erase(0, 1); // remove first character "-"
-
 	  c.reset(new ABoxNegatedConcept
-		  (new ABoxQueryConcept(concept, query.getOntology()->getNamespace())
-		   )
+		  (new ABoxQueryConcept(q, query.getOntology()->getNamespace()))
 		  );
 	}
 
@@ -276,15 +255,13 @@ RacerRoleIndividualsBuilder::RacerRoleIndividualsBuilder(std::ostream& s)
 bool
 RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
-  const DLQuery dlq = query.getDLQuery();
+  const DLQuery& dlq = query.getDLQuery();
   const Term& q = dlq.getQuery();
 
   try
     {
       stream << "(retrieve-related-individuals "
-	     << ABoxQueryRole(q.getUnquotedString(),
-			      query.getOntology()->getNamespace()
-			      )
+	     << ABoxQueryRole(q, query.getOntology()->getNamespace())
 	     << ' '
 	     << query.getKBManager().getKBName()
 	     << ')'

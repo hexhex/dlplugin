@@ -11,49 +11,52 @@
 
 #include "RacerQueryExpr.h"
 
+#include <dlvhex/Term.h>
+
 #include <iosfwd>
 #include <string>
 
 using namespace dlvhex::dl::racer;
 
 
-namespace dlvhex {
-namespace dl {
-namespace racer {
-
-  std::ostream&
-  operator<< (std::ostream& s, const QueryExpr& e)
-  {
-    return e.output(s);
-  }
-
-}
-}
+bool
+ABoxQueryExpr::isURI() const
+{
+  if (symbol.isVariable() || symbol.isAnon() || symbol.isInt())
+    {
+      return false;
+    }
+  else // term is a symbol or string
+    {
+      return symbol.getString().find(':') != std::string::npos; ///@todo is this URI to simple?
+    }
 }
 
 
 std::ostream&
 ABoxQueryExpr::output(std::ostream& s) const
 {
-  ///@todo we cannot assume that # is in every URI individual
+  const std::string& sym = symbol.getUnquotedString();
 
-  if (symbol.find('#') == std::string::npos) // symbol doesn't contain '#'
+  //
+  // Now check the possibilities for the symbol. If we have got an
+  // URI, we have to embrace the symbol with '|' characters. If we
+  // have got a '-' as first character, we ignore this since this is a
+  // negated term.
+  //
+
+  if (!isURI() && nsid.empty()) // no uri + no namespace = plain symbol
     {
-      if (nsid.find('#') != std::string::npos) // nsid contains '#'
-	{
-	  s << '|' << nsid << symbol << '|';
-	}
-      else			// nsid doesn't contain '#'
-	{
-	  s << symbol;
-	}
+      return s << sym;
     }
-  else // symbol contains '#'
+  else if (!isURI() && !nsid.empty()) // symbol + namespace = URI
     {
-      s << '|' << symbol << '|';
+      return s << '|' << nsid << (sym[0] == '-' ? sym.substr(1) : sym) << '|';
     }
-  
-  return s;
+  else // symbol is an URI, no need to add namespace
+    {
+      return s << '|' << (sym[0] == '-' ? sym.substr(1) : sym) << '|';
+    }
 }
 
 

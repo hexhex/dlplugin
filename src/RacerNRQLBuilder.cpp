@@ -50,17 +50,13 @@ NRQLBaseBuilder::createHead(std::ostream& stream, const Query& query) const
 	{
 	  isEmpty = false;
 
-	  stream <<
-	    ABoxQueryVariable
-	    (it->getVariable(),
-	     ABoxQueryVariable::VariableType::noninjective
-	     );
+	  stream << ABoxQueryVariable(*it, ABoxQueryVariable::VariableType::noninjective);
 	}
       else if (!it->isAnon()) // individual
 	{
 	  isEmpty = false;
 
-	  stream << ABoxQueryIndividual(it->getUnquotedString(), query.getOntology()->getNamespace());
+	  stream << ABoxQueryIndividual(*it, query.getOntology()->getNamespace());
 	}
     }
 
@@ -99,15 +95,9 @@ namespace dlvhex {
 	  if (a.getArity() == 2) // concept assertion
 	    {
 	      ABoxQueryConcept::const_pointer c =
-		new ABoxQueryConcept
-		(a.getArgument(0).getUnquotedString(),
-		 query.getOntology()->getNamespace()
-		 );
+		new ABoxQueryConcept(a.getArgument(0), query.getOntology()->getNamespace());
 	      ABoxQueryIndividual::const_pointer i =
-		new ABoxQueryIndividual
-		(a.getArgument(1).getUnquotedString(),
-		 query.getOntology()->getNamespace()
-		 );
+		new ABoxQueryIndividual(a.getArgument(1), query.getOntology()->getNamespace());
 	      
 	      if (abox)
 		{
@@ -124,20 +114,11 @@ namespace dlvhex {
 	  else if (a.getArity() == 3 && negate) // negated role assertion
 	    {
 	      ABoxQueryRole::const_pointer r = 
-		new ABoxQueryRole
-		(a.getArgument(0).getUnquotedString(),
-		 query.getOntology()->getNamespace()
-		 );
+		new ABoxQueryRole(a.getArgument(0), query.getOntology()->getNamespace());
 	      ABoxQueryIndividual* i1 =
-		new ABoxQueryIndividual
-		(a.getArgument(1).getUnquotedString(),
-		 query.getOntology()->getNamespace()
-		 );
+		new ABoxQueryIndividual(a.getArgument(1), query.getOntology()->getNamespace());
 	      ABoxQueryIndividual* i2 =
-		new ABoxQueryIndividual
-		(a.getArgument(2).getUnquotedString(),
-		 query.getOntology()->getNamespace()
-		 );
+		new ABoxQueryIndividual(a.getArgument(2), query.getOntology()->getNamespace());
 	      
 	      ABoxOneOfConcept::IndividualVector iv;
 	      iv.push_back(i2);
@@ -168,20 +149,11 @@ namespace dlvhex {
 	  else if (a.getArity() == 3 && !negate)
 	    {
 	      ABoxQueryRole::const_pointer r = 
-		new ABoxQueryRole
-		(a.getArgument(0).getUnquotedString(),
-		 query.getOntology()->getNamespace()
-		 );
+		new ABoxQueryRole(a.getArgument(0), query.getOntology()->getNamespace());
 	      ABoxQueryIndividual::const_pointer i1 =
-		new ABoxQueryIndividual
-		(a.getArgument(1).getUnquotedString(),
-		 query.getOntology()->getNamespace()
-		 );
+		new ABoxQueryIndividual(a.getArgument(1), query.getOntology()->getNamespace());
 	      ABoxQueryIndividual::const_pointer i2 =
-		new ABoxQueryIndividual
-		(a.getArgument(2).getUnquotedString(),
-		 query.getOntology()->getNamespace()
-		 );
+		new ABoxQueryIndividual(a.getArgument(2), query.getOntology()->getNamespace());
 	      
 	      if (abox)
 		{
@@ -345,38 +317,26 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 
 	    if (t1.isVariable())
 	      {
-		o1 = new ABoxQueryVariable
-		  (t1.getVariable(),
-		   ABoxQueryVariable::VariableType::noninjective
-		   );
+		o1 = new ABoxQueryVariable(t1, ABoxQueryVariable::VariableType::noninjective);
 	      }
 	    else
 	      {
-		o1 = new ABoxQueryIndividual
-		  (t1.getUnquotedString(),
-		   query.getOntology()->getNamespace()
-		   );
+		o1 = new ABoxQueryIndividual(t1, query.getOntology()->getNamespace());
 	      }
 	    
 	    if (t2.isVariable())
 	      {
-		o2 = new ABoxQueryVariable
-		  (t2.getVariable(),
-		   ABoxQueryVariable::VariableType::noninjective
-		   );
+		o2 = new ABoxQueryVariable(t2, ABoxQueryVariable::VariableType::noninjective);
 	      }
 	    else
 	      {
-		o2 = new ABoxQueryIndividual
-		  (t2.getUnquotedString(),
-		   query.getOntology()->getNamespace()
-		   );
+		o2 = new ABoxQueryIndividual(t2, query.getOntology()->getNamespace());
 	      }
 	    
 	    body.addAtom(new NRQLQueryAtom
 			 (new RoleQuery
 			  (new ABoxQueryRole
-			   (it->getPredicate().getUnquotedString(),
+			   (it->getPredicate(),
 			    query.getOntology()->getNamespace()
 			    ), o1, o2
 			   )
@@ -392,17 +352,11 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 
 	    if (t1.isVariable())
 	      {
-		o1 = new ABoxQueryVariable
-		  (t1.getVariable(),
-		   ABoxQueryVariable::VariableType::noninjective
-		   );
+		o1 = new ABoxQueryVariable(t1, ABoxQueryVariable::VariableType::noninjective);
 	      }
 	    else
 	      {
-		o1 = new ABoxQueryIndividual
-		  (t1.getUnquotedString(),
-		   query.getOntology()->getNamespace()
-		   );
+		o1 = new ABoxQueryIndividual(t1, query.getOntology()->getNamespace());
 	      }
 
 	    if (it->isStronglyNegated())
@@ -411,7 +365,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 			     (new ConceptQuery
 			      (new ABoxNegatedConcept
 			       (new ABoxQueryConcept
-				(it->getPredicate().getUnquotedString(),
+				(it->getPredicate(),
 				 query.getOntology()->getNamespace()
 				 )
 				), o1
@@ -424,7 +378,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 		body.addAtom(new NRQLQueryAtom
 			     (new ConceptQuery
 			      (new ABoxQueryConcept
-			       (it->getPredicate().getUnquotedString(),
+			       (it->getPredicate(),
 				query.getOntology()->getNamespace()
 				), o1
 			       )
@@ -502,9 +456,7 @@ NRQLDatatypeBuilder::createBody(std::ostream& stream, const Query& query) const
 	  
       body.addAtom(new NRQLQueryAtom
 		   (new RoleQuery
-		    (new ABoxQueryRole(q.getUnquotedString(),
-				       query.getOntology()->getNamespace(),
-				       true),
+		    (new ABoxQueryRole(q, query.getOntology()->getNamespace(), true),
 		     new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate),
 		     new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
 		     )
@@ -514,7 +466,7 @@ NRQLDatatypeBuilder::createBody(std::ostream& stream, const Query& query) const
 		   (new SameAsQuery
 		    (new ABoxQueryVariable("X"),
 		     new ABoxQueryIndividual
-		     (pat[0].getUnquotedString(), query.getOntology()->getNamespace())
+		     (pat[0], query.getOntology()->getNamespace())
 		     )
 		    )
 		   );
@@ -526,7 +478,7 @@ NRQLDatatypeBuilder::createBody(std::ostream& stream, const Query& query) const
       stream <<
 	NRQLQueryAtom
 	(new RoleQuery
-	 (new ABoxQueryRole(q.getUnquotedString(), query.getOntology()->getNamespace(), true),
+	 (new ABoxQueryRole(q, query.getOntology()->getNamespace(), true),
 	  new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate),
 	  new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
 	  )

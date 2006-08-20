@@ -13,6 +13,8 @@
 #ifndef _RACERQUERYEXPR_H
 #define _RACERQUERYEXPR_H
 
+#include <dlvhex/Term.h>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
@@ -52,8 +54,11 @@ namespace racer {
    * 
    * @return the stream result of e.output().
    */
-  std::ostream&
-  operator<< (std::ostream& s, const QueryExpr& e);
+  inline std::ostream&
+  operator<< (std::ostream& s, const QueryExpr& e)
+  {
+    return e.output(s);
+  }
 
 
   /**
@@ -62,23 +67,36 @@ namespace racer {
   class ABoxQueryExpr : public QueryExpr
   {
   protected:
-    std::string symbol; /// symbol string
+    const Term symbol; /// symbol term
     std::string nsid;   /// namespace identifier
 
+    /// @return true if #symbol is an URI, false otw.
+    virtual bool
+    isURI() const;
+
+    /**
+     * output the content of #symbol in proper Racer syntax.
+     *
+     * @param s stream
+     *
+     * @return @a s
+     */
     virtual std::ostream&
     output(std::ostream& s) const;
 
+    /// protected default ctor
+    ABoxQueryExpr()
+    { }
+    
     /** 
-     * Ctor.
+     * protected ctor.
      * 
-     * @param s symbol string
+     * @param s symbol term
      * @param n namespace identifier
      */
-    ABoxQueryExpr(const std::string& s, const std::string& n)
+    ABoxQueryExpr(const Term& s, const std::string& n)
       : symbol(s), nsid(n)
     { }
-
-    ABoxQueryExpr() { }
 
   public:
     typedef ABoxQueryExpr value_type;
@@ -94,11 +112,10 @@ namespace racer {
   class ABoxQueryObject : public ABoxQueryExpr
   {
   protected:
-    ABoxQueryObject(const std::string& s, const std::string& n)
+    /// protected ctor
+    ABoxQueryObject(const Term& s, const std::string& n)
       : ABoxQueryExpr(s, n)
     { }
-
-    ABoxQueryObject() {}
 
   public:
     typedef ABoxQueryObject value_type;
@@ -130,7 +147,7 @@ namespace racer {
 
    public:
     explicit
-    ABoxQueryVariable(const std::string& name, unsigned tf = 0)
+    ABoxQueryVariable(const Term& name, unsigned tf = 0)
       : ABoxQueryObject(name, std::string()), typeFlags(tf)
     { }
   };
@@ -143,7 +160,7 @@ namespace racer {
   {
   public:
     explicit
-    ABoxQueryIndividual(const std::string& name,
+    ABoxQueryIndividual(const Term& name,
 			const std::string& nsid = std::string())
       : ABoxQueryObject(name, nsid)
     { }
@@ -161,11 +178,14 @@ namespace racer {
   class ABoxConceptDescrExpr : public ABoxQueryExpr
   {
   protected:
-    ABoxConceptDescrExpr(const std::string& s, const std::string& n)
-      : ABoxQueryExpr(s, n)
+    /// protected default ctor
+    ABoxConceptDescrExpr()
     { }
 
-    ABoxConceptDescrExpr() {}
+    /// protected ctor
+    ABoxConceptDescrExpr(const Term& s, const std::string& n)
+      : ABoxQueryExpr(s, n)
+    { }
 
   public:
     typedef ABoxConceptDescrExpr value_type;
@@ -180,11 +200,14 @@ namespace racer {
   class ABoxRoleDescrExpr : public ABoxQueryExpr
   {
   protected:
-    ABoxRoleDescrExpr(const std::string& s, const std::string& n)
-      : ABoxQueryExpr(s, n)
+    /// protected default ctor
+    ABoxRoleDescrExpr()
     { }
 
-    ABoxRoleDescrExpr() {}
+    /// protected ctor
+    ABoxRoleDescrExpr(const Term& s, const std::string& n)
+      : ABoxQueryExpr(s, n)
+    { }
 
   public:
     typedef ABoxRoleDescrExpr value_type;
@@ -200,7 +223,7 @@ namespace racer {
   {
   public:
     explicit
-    ABoxQueryConcept(const std::string& name,
+    ABoxQueryConcept(const Term& name,
 		     const std::string& nsid = std::string())
       : ABoxConceptDescrExpr(name, nsid)
     { }
@@ -282,7 +305,7 @@ namespace racer {
 
   public:
     explicit
-    ABoxQueryRole(const std::string& name,
+    ABoxQueryRole(const Term& name,
 		  const std::string& nsid = std::string(),
 		  bool d = false)
       : ABoxRoleDescrExpr(name, nsid),
@@ -344,7 +367,7 @@ namespace racer {
     ABoxInstanceAssertion(ABoxConceptDescrExpr::const_pointer c,
 			  ABoxQueryIndividual::const_pointer i)
       : cExpr(c), iExpr(i)
-    {}
+    { }
   };
 
 
@@ -367,7 +390,7 @@ namespace racer {
 			 ABoxQueryIndividual::const_pointer i1,
 			 ABoxQueryIndividual::const_pointer i2)
       : rExpr(r), i1Expr(i1), i2Expr(i2)
-    {}
+    { }
   };
 
 
@@ -390,7 +413,7 @@ namespace racer {
 			    ABoxQueryIndividual::const_pointer i,
 			    const std::string& a)
       : cExpr(c), iExpr(i), abox(a)
-    {}
+    { }
   };
 
 
@@ -415,7 +438,7 @@ namespace racer {
 			 ABoxQueryIndividual::const_pointer i2,
 			 const std::string& a)
       : rExpr(r), i1Expr(i1), i2Expr(i2), abox(a)
-    {}
+    { }
   };
 
 
@@ -425,7 +448,9 @@ namespace racer {
   class ABoxQueryAtom : public QueryExpr
   {
   protected:
-    ABoxQueryAtom() {}
+    /// protected default ctor
+    ABoxQueryAtom()
+    { }
 
   public:
     typedef ABoxQueryAtom value_type;
@@ -449,7 +474,9 @@ namespace racer {
 
   public:
     explicit
-    NegationQuery(ABoxQueryAtom::const_pointer a) : atom(a) { }
+    NegationQuery(ABoxQueryAtom::const_pointer a)
+      : atom(a)
+    { }
   };
 
 
@@ -467,7 +494,9 @@ namespace racer {
 
   public:
     explicit
-    InvertedQuery(ABoxQueryAtom::const_pointer a) : atom(a) { }
+    InvertedQuery(ABoxQueryAtom::const_pointer a)
+      : atom(a)
+    { }
   };
 
 
