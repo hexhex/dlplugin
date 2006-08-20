@@ -19,22 +19,6 @@
 using namespace dlvhex::dl::racer;
 
 
-namespace dlvhex {
-namespace dl {
-namespace racer {
-
-  std::ostream&
-  operator<< (std::ostream& s, const NRQLBase& b)
-  {
-    return b.output(s);
-  }
-  
-}
-}
-}
-
-
-
 NRQLQueryAtom::NRQLQueryAtom(ABoxQueryAtom::const_pointer a)
   : atom(a)
 { }

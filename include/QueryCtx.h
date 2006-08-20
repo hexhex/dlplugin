@@ -15,6 +15,7 @@
 #define _QUERYCTX_H
 
 #include "DLError.h"
+#include "Query.h"
 
 #include <dlvhex/PluginInterface.h>
 
@@ -28,7 +29,6 @@ namespace dl {
   //
   // forward declarations
   //
-  class Query;
   class Answer;
   class KBManager;
 
@@ -97,8 +97,11 @@ namespace dl {
    * @param q
    * @return @a os
    */
-  std::ostream&
-  operator<< (std::ostream& os, const QueryCtx& q);
+  inline std::ostream&
+  operator<< (std::ostream& os, const QueryCtx& q)
+  {
+    return os << q.getQuery();
+  }
 
   /**
    * @brief lexicographically compare @a q1 to @a q2 and check if @a
@@ -108,8 +111,11 @@ namespace dl {
    * @param q2
    * @return true if @a q1 < @a q2, false otherwise.
    */
-  bool
-  operator< (const QueryCtx& q1, const QueryCtx& q2);
+  inline bool
+  operator< (const QueryCtx& q1, const QueryCtx& q2)
+  {
+    return q1.getQuery() < q2.getQuery();
+  }
 
 
 } // namespace dl

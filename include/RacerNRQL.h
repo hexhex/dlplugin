@@ -57,8 +57,11 @@ namespace racer {
    * 
    * @return the stream result of b.output().
    */
-  std::ostream&
-  operator<< (std::ostream& s, const NRQLBase& b);
+  inline std::ostream&
+  operator<< (std::ostream& s, const NRQLBase& b)
+  {
+    return b.output(s);
+  }
 
 
   /**

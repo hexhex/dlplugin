@@ -83,6 +83,7 @@ namespace dl {
     virtual
     ~Ontology();
 
+    /// factory method
     static Ontology::shared_pointer
     createOntology(const std::string& uri);
 
@@ -125,8 +126,11 @@ namespace dl {
    *
    * @return @a os
    */
-  std::ostream&
-  operator<< (std::ostream& os, const Ontology& o);
+  inline std::ostream&
+  operator<< (std::ostream& os, const Ontology& o)
+  {
+    return os << o.getRealURI() << '(' << o.getNamespace() << ')';
+  }
 
   /**
    * @brief lexicographically compare @a o1 to @a o2 and check if @a o1 is less than @a o2.
@@ -136,8 +140,11 @@ namespace dl {
    *
    * @return true if @a o1 < @a o2, false otherwise.
    */
-  bool
-  operator< (const Ontology& o1, const Ontology& o2);
+  inline bool
+  operator< (const Ontology& o1, const Ontology& o2)
+  {
+    return o1.getRealURI() < o2.getRealURI();
+  }
 
   /**
    * @brief lexicographically compare @a o1 to @a o2 and check if both
@@ -148,8 +155,11 @@ namespace dl {
    *
    * @return true if @a o1 equals @a o2, false otherwise.
    */
-  bool
-  operator== (const Ontology& o1, const Ontology& o2);
+  inline bool
+  operator== (const Ontology& o1, const Ontology& o2)
+  {
+    return o1.getRealURI() == o2.getRealURI();
+  }
 
   /**
    * @brief converse of operator==.
@@ -159,8 +169,11 @@ namespace dl {
    *
    * @return true if !(@a o1 == @a o2), false otherwise.
    */
-  bool
-  operator!= (const Ontology& o1, const Ontology& o2);
+  inline bool
+  operator!= (const Ontology& o1, const Ontology& o2)
+  {
+    return !(o1 == o2);
+  }
 
 
 } // namespace dl

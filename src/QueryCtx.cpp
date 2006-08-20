@@ -28,21 +28,6 @@ using namespace dlvhex::dl;
 namespace dlvhex {
   namespace dl {
 
-
-    std::ostream&
-    operator<< (std::ostream& os, const QueryCtx& q)
-    {
-      return os << q.getQuery();
-    }
-  
-  
-    bool
-    operator< (const QueryCtx& q1, const QueryCtx& q2)
-    {
-      return q1.getQuery() < q2.getQuery();
-    }
-
-
     /**
      * @brief A TokenizerFunc for boost::tokenizer<>, model of
      * TokenizerFunction, tokenizes comma-separated atoms in a string.
@@ -261,7 +246,8 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
 	{
 	  std::string querystr = inputtuple[5].getUnquotedString();
 
-	  if (querystr.find('#') == std::string::npos) // no namespace in query
+	  // no namespace in query
+	  if (querystr.find(':') == std::string::npos) ///@todo is : sufficient for a namespace?
 	    {
 	      if (querystr[0] == '-') // negated query
 		{

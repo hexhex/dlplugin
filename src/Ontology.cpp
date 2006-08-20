@@ -21,40 +21,10 @@
 using namespace dlvhex::dl;
 using dlvhex::util::UserDir;
 
-namespace dlvhex {
-  namespace dl {
-
-    std::ostream&
-    operator<< (std::ostream& os, const Ontology& o)
-    {
-      return os << o.getRealURI() << '(' << o.getNamespace() << ')';
-    }
-
-    bool
-    operator< (const Ontology& o1, const Ontology& o2)
-    {
-      return o1.getRealURI() < o2.getRealURI();
-    }
-
-    bool
-    operator== (const Ontology& o1, const Ontology& o2)
-    {
-      return o1.getRealURI() == o2.getRealURI();
-    }
-
-    bool
-    operator!= (const Ontology& o1, const Ontology& o2)
-    {
-      return !(o1 == o2);
-    }
-
-  }
-}
-
 
 Ontology::~Ontology()
 {
-  if (isTemp)
+  if (isTemp) // remove downloaded temporary file
     {
       UserDir().remove(uri);
     }
