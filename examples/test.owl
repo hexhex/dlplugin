@@ -11,14 +11,14 @@
   xmlns:rdfs="&rdfs;"
   xmlns:xsd="&xsd;"
   xmlns="http://www.test.com/test#"
-  xmlns:tst="http://www.another-test.com/test#"
+  xmlns:tst="http://www.another-test.com/test/"
   xml:base="http://www.test.com/test">
 
   <owl:Ontology rdf:ID="test"/>
 
   <owl:Class rdf:ID="Test"/>
 
-  <owl:Class rdf:about="http://www.another-test.com/test#Test"/>
+  <owl:Class rdf:about="http://www.another-test.com/test/Test"/>
 
   <owl:Class rdf:ID="TestInteger" />
   
@@ -45,6 +45,6 @@
   </Test>
   <Test rdf:about="http://www.yet-another-test.com/test%20with%20spaces#test1"/>
 
-  <tst:Test rdf:about="http://www.another-test.com/test#test3"/>
+  <tst:Test rdf:about="test3"/>
   
 </rdf:RDF>
