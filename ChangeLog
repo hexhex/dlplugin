@@ -1,3 +1,25 @@
+2006-08-20  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/Ontology.h: Move some operators to the header file.
+	* include/QueryCtx.h: Likewise.
+	* include/RacerNRQL.h: Likewise.
+	* src/RacerNRQL.cpp: Likewise.
+	* src/Ontology.cpp: Likewise.
+	* src/Query.cpp: Likewise.
+
+	* examples/test.owl: Add namespace without a fragment part.
+	* examples/test.dlp: Likewise.
+
+	* include/RacerQueryExpr.h: Fix URI handling.
+	* src/RacerBuilder.cpp: Likewise.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* src/RacerQueryExpr.cpp: Likewise.
+
+2006-08-19  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/QueryDirector.cpp (QueryCompositeDirector::handleInconsistency):
+	Add individuals of the interpretation.
+
 2006-08-18  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/RacerExtAtom.h: Use (retrieve-under-premise) instead
