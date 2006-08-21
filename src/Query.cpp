@@ -256,14 +256,19 @@ Query::setInterpretation(const AtomSet& ints,
        it != ints.end(); ++it)
     {
       const Term& p = it->getPredicate();
+      unsigned arity = it->getArity() - 1;
 
-      bool isPC = p == pc; bool isMC = p == mc; bool isPR = p == pr; bool isMR = p == mr;
+      // we ignore atoms with wrong arity
+      bool isPC = (p == pc) && (arity == 2);
+      bool isMC = (p == mc) && (arity == 2);
+      bool isPR = (p == pr) && (arity == 3);
+      bool isMR = (p == mr) && (arity == 3);
 
       AtomPtr ap(isPC || isMC || isPR || isMR ?
 		 new Atom(it->getArguments()) :
 		 0);
 
-      if (isPC)      plusC.insert(ap);
+      if      (isPC) plusC.insert(ap);
       else if (isMC) minusC.insert(ap);
       else if (isPR) plusR.insert(ap);
       else if (isMR) minusR.insert(ap);
