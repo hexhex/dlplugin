@@ -91,19 +91,21 @@ Answer::addTuple(const Tuple& out)
     {
       PluginAtom::Answer::addTuple(out);
     }
-  else if (query->getDLQuery().isConjQuery()) // in conj. queries we
-					      // only check for
-					      // anon. variables
+  else if (query->getDLQuery()->isConjQuery()) // in conj. queries we
+					       // only check for
+					       // anon. variables
     {
-      if (out.size() == query->getDLQuery().getPatternTuple().size())
+      const DLQuery::shared_pointer& dlq = query->getDLQuery();
+      const Tuple& pat = dlq->getPatternTuple();
+
+      if (out.size() == pat.size())
 	{
 	  PluginAtom::Answer::addTuple(out);
 	}
       else // take care of anonymous variables
 	{
 	  Tuple tmp;
-	  const Tuple& pt = query->getDLQuery().getPatternTuple();
-	  Tuple::const_iterator pit = pt.begin();
+	  Tuple::const_iterator pit = pat.begin();
 	  Tuple::const_iterator oit = out.begin();
 
 	  //
@@ -115,7 +117,7 @@ Answer::addTuple(const Tuple& out)
 	  // e.g. pt = (_,X,Y,_,Z), out = (a1,a2,a3)
 	  //      -> tmp = ("",a1,a2,"",a3)
 	  //
-	  for (; pit != pt.end(); ++pit)
+	  for (; pit != pat.end(); ++pit)
 	    {
 	      if (pit->isAnon())
 		{
@@ -133,18 +135,20 @@ Answer::addTuple(const Tuple& out)
     }
   else // a non-conjunctive query needs special treatment
     {
-      const Tuple& pat = query->getDLQuery().getPatternTuple();
-      unsigned long type = query->getDLQuery().getTypeFlags() & std::numeric_limits<unsigned long>::max();
-      
+      const DLQuery::shared_pointer& dlq = query->getDLQuery();
+      const Tuple& pat = dlq->getPatternTuple();
+      unsigned long type = dlq->getTypeFlags() & std::numeric_limits<unsigned long>::max();
+      const std::string& nspace = dlq->getOntology()->getNamespace();
+
       if (type == 0x2) // left retrieval
 	{
 	  Tuple tmp(out);
 
 	  std::string p = pat[1].getUnquotedString();
 
-	  if (p.find('#') == std::string::npos)
+	  if (p.find(':') == std::string::npos) ///@todo is this condition too weak for an URI?
 	    {
-	      tmp.push_back(Term(query->getOntology()->getNamespace() + p, true));
+	      tmp.push_back(Term(nspace + p, true));
 	    }
 	  else
 	    {
@@ -159,9 +163,9 @@ Answer::addTuple(const Tuple& out)
 
 	  std::string p = pat[0].getUnquotedString();
 
-	  if (p.find('#') == std::string::npos)
+	  if (p.find(':') == std::string::npos) ///@todo is this condition too weak for an URI?
 	    {
-	      tmp.push_back(Term(query->getOntology()->getNamespace() + p, true));
+	      tmp.push_back(Term(nspace + p, true));
 	    }
 	  else
 	    {
@@ -172,7 +176,7 @@ Answer::addTuple(const Tuple& out)
 
 	  PluginAtom::Answer::addTuple(tmp);
 	}
-      else if (query->getDLQuery().isBoolean()) // ground query
+      else if (dlq->isBoolean()) // ground query
 	{
 	  PluginAtom::Answer::addTuple(pat);
 	}

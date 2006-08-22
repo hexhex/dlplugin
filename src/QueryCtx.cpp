@@ -232,13 +232,13 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
 	      as.insert(ap);
 	    }
 
-	  q = new Query(onto,
-			kb,
+	  DLQuery::shared_pointer dlq(new DLQuery(onto, as, query.getPatternTuple()));
+
+	  q = new Query(kb, dlq,
 			inputtuple[1],
 			inputtuple[2],
 			inputtuple[3],
 			inputtuple[4],
-			DLQuery(as, query.getPatternTuple()),
 			query.getInterpretation()
 			);
 	}
@@ -261,26 +261,26 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
 
 	  Term qu(querystr);
 
-	  q = new Query(onto,
-			kb,
+	  DLQuery::shared_pointer dlq(new DLQuery(onto, qu, query.getPatternTuple()));
+
+	  q = new Query(kb, dlq,
 			inputtuple[1],
 			inputtuple[2],
 			inputtuple[3],
 			inputtuple[4],
-			DLQuery(qu, query.getPatternTuple()),
 			query.getInterpretation()
 			);
 	}
     }
-  else // no query term
+  else // no query term, what now?
     {
-      q = new Query(onto,
-		    kb,
+      DLQuery::shared_pointer dlq(new DLQuery(onto, Term(), query.getPatternTuple()));
+
+      q = new Query(kb, dlq,
 		    inputtuple[1],
 		    inputtuple[2],
 		    inputtuple[3],
 		    inputtuple[4],
-		    DLQuery(Term(), query.getPatternTuple()),
 		    query.getInterpretation()
 		    );
     }

@@ -147,9 +147,9 @@ namespace dlvhex {
 QueryCtx::shared_pointer
 QueryCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
 {
-  const DLQuery& dlq = qctx->getQuery().getDLQuery();
+  const DLQuery::shared_pointer& dlq = qctx->getQuery().getDLQuery();
 
-  if (dlq.isBoolean())
+  if (dlq->isBoolean())
     {
       // querying is trivial now -> true
       qctx->getAnswer().setAnswer(true);
@@ -159,7 +159,7 @@ QueryCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
     {
       // just get all individuals
       
-      Ontology::ObjectsPtr universe = qctx->getQuery().getOntology()->getIndividuals();
+      Ontology::ObjectsPtr universe = dlq->getOntology()->getIndividuals();
 
       //
       // add individuals from the interpretation of qctx to universe
@@ -178,7 +178,7 @@ QueryCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
 	}
 
       std::vector<Tuple> tuples;
-      const Tuple& pat = dlq.getPatternTuple();
+      const Tuple& pat = dlq->getPatternTuple();
 
       Grounder g(tuples,
 		 universe->begin(),

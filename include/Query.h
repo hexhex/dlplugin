@@ -23,6 +23,8 @@
 #include <iosfwd>
 #include <iterator>
 
+#include <boost/shared_ptr.hpp>
+
 namespace dlvhex {
 namespace dl {
 
@@ -39,6 +41,9 @@ namespace dl {
   class DLQuery
   {
   private:
+    /// ontology uri + namespace
+    Ontology::shared_pointer ontology;
+
     /// the query term
     Term query;
 
@@ -59,21 +64,28 @@ namespace dl {
     /** 
      * Ctor for a plain dl-query.
      * 
-     * @param q 
+     * @param o ontology
+     * @param q plain query
      * @param p 
      */
-    DLQuery(const Term& q, const Tuple& p);
+    DLQuery(Ontology::shared_pointer o, const Term& q, const Tuple& p);
 
     /** 
      * Ctor for a conjunctive dl-query.
      * 
-     * @param cq 
+     * @param o ontology
+     * @param cq conjunctive query
      * @param p 
      */
-    DLQuery(const AtomSet& cq, const Tuple& p);
+    DLQuery(Ontology::shared_pointer o, const AtomSet& cq, const Tuple& p);
 
+    /// dtor.
     virtual
-    ~DLQuery();
+    ~DLQuery()
+    { }
+
+    virtual const Ontology::shared_pointer&
+    getOntology() const;
 
     virtual unsigned long
     getTypeFlags() const;
@@ -110,6 +122,8 @@ namespace dl {
 
     friend bool
     operator!= (const DLQuery& q1, const DLQuery& q2);
+
+    typedef boost::shared_ptr<DLQuery> shared_pointer;
   };
 
 
@@ -126,18 +140,28 @@ namespace dl {
   {
     if (q.isConjQuery())
       {
-	os << '{' << q.getPatternTuple() << " | ";
+	os << *q.getOntology()
+	   << " {"
+	   << q.getPatternTuple()
+	   << " | ";
+
 	const AtomSet& cq = q.getConjQuery();
 	if (!cq.empty())
 	  {
 	    std::copy(cq.begin(), --cq.end(), std::ostream_iterator<Atom>(os, ", "));
 	    os << *(--cq.end());
 	  }
+
 	return os.put('}');
       }
     else
       {
-	return os << q.getQuery() << '(' << q.getPatternTuple() << ')';
+	return os << *q.getOntology()
+		  << ' '
+		  << q.getQuery()
+		  << '('
+		  << q.getPatternTuple()
+		  << ')';
       }
   }
 
@@ -166,7 +190,9 @@ namespace dl {
     ///@todo right now, we only support plain queries
     assert(!q1.isConjQuery());
 
-    if (q1.isConjQuery() == q2.isConjQuery())
+    if (q1.isConjQuery() == q2.isConjQuery() &&
+	*q1.getOntology() == *q2.getOntology()
+	)
       {
 	return q1.isConjQuery() ?
 	  q1.getConjQuery() == q2.getConjQuery() :
@@ -191,36 +217,24 @@ namespace dl {
 
 
   /**
-   * @brief A Query holds informations about an Ontology, the assigned
-   * interpretation and a DLQuery.
+   * @brief A Query holds informations about a knowledge base, the
+   * assigned interpretation and a DLQuery.
    *
    * Holds both semantic and syntactic information of a dl-query.
    */
   class Query
   {
   private:
-    /// ontology uri + namespace
-    Ontology::shared_pointer ontology;
-
+    /// kb-manager
     KBManager& kbManager;
 
-    /// the whole projected interpretation
+    /// the projected interpretation
     AtomSet proj;
 
-    /// projected interpretation for plus concepts
-    AtomSet plusC;
-    /// projected interpretation for minus concepts
-    AtomSet minusC;
-    /// projected interpretation for plus roles
-    AtomSet plusR;
-    /// projected interpretation for minus roles
-    AtomSet minusR;
-
     /// the dl-query
-    DLQuery query;
+    DLQuery::shared_pointer query;
 
-    /// setup projected interpretations #proj, #plusC, #minusC,
-    /// #plusR, #minusR
+    /// setup projected interpretations #proj
     void
     setInterpretation(const AtomSet& ints,
 		      const Term& pc,
@@ -232,7 +246,6 @@ namespace dl {
     /** 
      * Ctor.
      * 
-     * @param onto ontology
      * @param kb kb manager
      * @param pc plus concept
      * @param mc minus concept
@@ -241,52 +254,27 @@ namespace dl {
      * @param q dl-query
      * @param i interpretation
      */
-    Query(const Ontology::shared_pointer onto,
-	  KBManager& kb,
+    Query(KBManager& kb,
+	  const DLQuery::shared_pointer& q,
 	  const Term& pc,
 	  const Term& mc,
 	  const Term& pr,
 	  const Term& mr,
-	  const DLQuery& q,
 	  const AtomSet& i);
 
+    /// dtor.
     virtual
-    ~Query();
-
-    virtual const Ontology::shared_pointer&
-    getOntology() const;
+    ~Query()
+    { }
 
     virtual KBManager&
     getKBManager() const;
 
-    virtual const DLQuery&
+    virtual const DLQuery::shared_pointer&
     getDLQuery() const;
 
     virtual const AtomSet&
     getProjectedInterpretation() const;
-
-    virtual const AtomSet&
-    getPlusC() const;
-
-    virtual const AtomSet&
-    getMinusC() const;
-
-    virtual const AtomSet&
-    getPlusR() const;
-
-    virtual const AtomSet&
-    getMinusR() const;
-
-    ///@return true if interpretation #proj is a subset of @a q2
-    ///interpretation, false otherwise.
-    virtual bool
-    isSubseteq(const Query& q2) const;
-
-    ///@return true if interpretation #proj is a superset of @a q2
-    ///interpretation, false otherwise.
-    virtual bool
-    isSuperseteq(const Query& q2) const;
-
 
     friend std::ostream&
     operator<< (std::ostream& os, const Query& q);
@@ -311,11 +299,11 @@ namespace dl {
   inline std::ostream&
   operator<< (std::ostream& os, const Query& q)
   {
-    if (q.getDLQuery().isConjQuery())
+    if (q.getDLQuery()->isConjQuery())
       {
 	os << "&dlCQ: ";
       }
-    else if (q.getDLQuery().getPatternTuple().size() == 1)
+    else if (q.getDLQuery()->getPatternTuple().size() == 1)
       {
 	os << "&dlC: ";
       }
@@ -324,9 +312,7 @@ namespace dl {
 	os << "&dlR: ";
       }
 
-    os << *q.getOntology()
-       << ','
-       << q.getDLQuery()
+    os << *q.getDLQuery()
        << " {";
 
     const AtomSet& pint = q.getProjectedInterpretation();
@@ -353,8 +339,7 @@ namespace dl {
   {
     // check if the components of query @a q1 are less than the
     // components of query @a q2
-    return *q1.getOntology() < *q2.getOntology() ? true :
-      q1.getDLQuery() < q2.getDLQuery() ? true : false;
+    return *q1.getDLQuery() < *q2.getDLQuery();
   }
 
   /**
@@ -368,8 +353,7 @@ namespace dl {
   inline bool
   operator== (const Query& q1, const Query& q2)
   {
-    return *q1.getOntology() == *q2.getOntology()
-      && q1.getDLQuery() == q2.getDLQuery();
+    return *q1.getDLQuery() == *q2.getDLQuery();
   }
 
   /**

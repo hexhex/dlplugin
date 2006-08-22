@@ -42,9 +42,8 @@ TestRacerNRQL::runRacerRetrieveTest()
   as.insert(ap2);
 
   KBManager kb("DEFAULT");
-  Query q(Ontology::createOntology(test), kb,
-	  Term(""),Term(""),Term(""),Term(""),
-	  DLQuery(as,tup),AtomSet());
+  DLQuery::shared_pointer dlq(new DLQuery(Ontology::createOntology(test),as,tup));
+  Query q(kb,dlq,Term(""),Term(""),Term(""),Term(""),AtomSet());
 
   NRQLRetrieve<NRQLConjunctionBuilder> nrql(q);
 
@@ -86,9 +85,8 @@ TestRacerNRQL::runRacerPremiseRetrieveTest()
   ints.insert(ap5);
 
   KBManager kb("DEFAULT");
-  Query q(Ontology::createOntology(test), kb,
-	  Term("pc"),Term(""),Term("pr"),Term(""),
-	  DLQuery(as,tup),ints);
+  DLQuery::shared_pointer dlq(new DLQuery(Ontology::createOntology(test),as,tup));
+  Query q(kb,dlq,Term("pc"),Term(""),Term("pr"),Term(""),ints);
 
   NRQLRetrieveUnderPremise<NRQLConjunctionBuilder> nrql(q);
 
@@ -98,5 +96,5 @@ TestRacerNRQL::runRacerPremiseRetrieveTest()
  
   std::cout << s << std::endl;
 
-  CPPUNIT_ASSERT(s == "(retrieve-under-premise ((instance |http://www.test.com/test#a| |http://www.test.com/test#foo|) (related |http://www.test.com/test#a| |http://www.test.com/test#b| |http://www.test.com/test#moo|)) ($?X $?Y) (and ($?X $?Y |http://www.test.com/test#moo|) ($?X |http://www.test.com/test#foo|)) :abox |" + testuri + "|)");
+  CPPUNIT_ASSERT(s == "(retrieve-under-premise ((related |http://www.test.com/test#a| |http://www.test.com/test#b| |http://www.test.com/test#moo|) (instance |http://www.test.com/test#a| |http://www.test.com/test#foo|)) ($?X $?Y) (and ($?X $?Y |http://www.test.com/test#moo|) ($?X |http://www.test.com/test#foo|)) :abox |" + testuri + "|)");
 }

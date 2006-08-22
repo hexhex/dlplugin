@@ -67,7 +67,7 @@ namespace racer {
 
     this->builder.createBody(s, this->query);
     
-    return s << " :tbox |" << this->query.getOntology()->getRealURI() << "|)";
+    return s << " :tbox |" << this->query.getDLQuery().getOntology()->getRealURI() << "|)";
   }
   
 
@@ -93,7 +93,7 @@ namespace racer {
 
     this->builder.createBody(s, this->query);
     
-    return s << " :abox |" << this->query.getOntology()->getRealURI() << "|)";
+    return s << " :abox |" << this->query.getDLQuery()->getOntology()->getRealURI() << "|)";
   }
 
 } // namespace racer

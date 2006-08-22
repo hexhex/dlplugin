@@ -71,11 +71,12 @@ RacerIsConceptMemberBuilder::RacerIsConceptMemberBuilder(std::ostream& s)
 bool
 RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
-  const DLQuery& dlq = query.getDLQuery();
-  const Term& q = dlq.getQuery();
-  const Tuple& indv = dlq.getPatternTuple();
+  const DLQuery::shared_pointer& dlq = query.getDLQuery();
+  const Term& q = dlq->getQuery();
+  const Tuple& indv = dlq->getPatternTuple();
+  const std::string& nspace = dlq->getOntology()->getNamespace();
 
-  if (!(dlq.isBoolean() && indv.size() == 1))
+  if (!(dlq->isBoolean() && indv.size() == 1))
     {
       throw DLBuildingError("Incompatible pattern supplied.");
     }
@@ -83,9 +84,9 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
   try
     {
       stream << "(individual-instance? "
-	     << ABoxQueryIndividual(indv[0], query.getOntology()->getNamespace())
+	     << ABoxQueryIndividual(indv[0], nspace)
 	     << ' '
-	     << ABoxQueryConcept(q, query.getOntology()->getNamespace())
+	     << ABoxQueryConcept(q, nspace)
 	     << ' '
 	     << query.getKBManager().getKBName()
 	     << ')'
@@ -108,11 +109,12 @@ RacerIsRoleMemberBuilder::RacerIsRoleMemberBuilder(std::ostream& s)
 bool
 RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
-  const DLQuery& dlq = query.getDLQuery();
-  const Term& q = dlq.getQuery();
-  const Tuple& indv = dlq.getPatternTuple();
+  const DLQuery::shared_pointer& dlq = query.getDLQuery();
+  const Term& q = dlq->getQuery();
+  const Tuple& indv = dlq->getPatternTuple();
+  const std::string& nspace = dlq->getOntology()->getNamespace();
 
-  if (!(dlq.isBoolean() && indv.size() == 2))
+  if (!(dlq->isBoolean() && indv.size() == 2))
     {
       throw DLBuildingError("Incompatible pattern supplied.");
     }
@@ -120,11 +122,11 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
   try
     {
       stream << "(individuals-related? "
-	     << ABoxQueryIndividual(indv[0], query.getOntology()->getNamespace())
+	     << ABoxQueryIndividual(indv[0], nspace)
 	     << ' '
-	     << ABoxQueryIndividual(indv[1], query.getOntology()->getNamespace())
+	     << ABoxQueryIndividual(indv[1], nspace)
 	     << ' '
-	     << ABoxQueryRole(q, query.getOntology()->getNamespace())
+	     << ABoxQueryRole(q, nspace)
 	     << ' '
 	     << query.getKBManager().getKBName()
 	     << ')'
@@ -148,11 +150,11 @@ bool
 RacerIndividualFillersBuilder::buildCommand(Query& query)
   throw (DLBuildingError)
 {
-  const DLQuery& dlq = query.getDLQuery();
-  const Term& q = dlq.getQuery();
-  const Tuple& indv = dlq.getPatternTuple();
-
-  unsigned long type = dlq.getTypeFlags() & std::numeric_limits<unsigned long>::max();
+  const DLQuery::shared_pointer& dlq = query.getDLQuery();
+  const Term& q = dlq->getQuery();
+  const Tuple& indv = dlq->getPatternTuple();
+  const std::string& nspace = dlq->getOntology()->getNamespace();
+  unsigned long type = dlq->getTypeFlags() & std::numeric_limits<unsigned long>::max();
 
   if (!(type == 0x1 || type == 0x2) || indv.size() != 2)
     {
@@ -167,22 +169,16 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
       // for a (const,variable) pattern only the first bit is allowed to be true
       if (type == 0x1)
 	{
-	  i.reset(new ABoxQueryIndividual(indv[0], query.getOntology()->getNamespace())
-		  );
+	  i.reset(new ABoxQueryIndividual(indv[0], nspace));
 
-	  r.reset(new ABoxQueryRole(q, query.getOntology()->getNamespace())
-		  );
+	  r.reset(new ABoxQueryRole(q, nspace));
 	}
       else // (variable,const) pattern
 	{
-	  i.reset(new ABoxQueryIndividual(indv[1], query.getOntology()->getNamespace())
-		  );
+	  i.reset(new ABoxQueryIndividual(indv[1], nspace));
 
 	  // note the inverted role
-	  r.reset(new ABoxInvertedRole
-		  (new ABoxQueryRole(q, query.getOntology()->getNamespace())
-		   )
-		  );
+	  r.reset(new ABoxInvertedRole(new ABoxQueryRole(q, nspace)));
 	}
 
       stream << "(individual-fillers "
@@ -212,9 +208,10 @@ RacerConceptInstancesBuilder::RacerConceptInstancesBuilder(std::ostream& s)
 bool
 RacerConceptInstancesBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
-  const DLQuery& dlq = query.getDLQuery();
-  const Term& q = dlq.getQuery();
+  const DLQuery::shared_pointer& dlq = query.getDLQuery();
+  const Term& q = dlq->getQuery();
   const std::string concept = q.getUnquotedString();
+  const std::string& nspace = dlq->getOntology()->getNamespace();
 
   try
     {
@@ -222,13 +219,11 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (DLBuildingError)
 
       if (concept[0] != '-')
 	{
-	  c.reset(new ABoxQueryConcept(q, query.getOntology()->getNamespace()));
+	  c.reset(new ABoxQueryConcept(q, nspace));
 	}
       else
 	{
-	  c.reset(new ABoxNegatedConcept
-		  (new ABoxQueryConcept(q, query.getOntology()->getNamespace()))
-		  );
+	  c.reset(new ABoxNegatedConcept(new ABoxQueryConcept(q, nspace)));
 	}
 
       stream << "(concept-instances "
@@ -255,13 +250,14 @@ RacerRoleIndividualsBuilder::RacerRoleIndividualsBuilder(std::ostream& s)
 bool
 RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
-  const DLQuery& dlq = query.getDLQuery();
-  const Term& q = dlq.getQuery();
+  const DLQuery::shared_pointer& dlq = query.getDLQuery();
+  const Term& q = dlq->getQuery();
+  const std::string& nspace = dlq->getOntology()->getNamespace();
 
   try
     {
       stream << "(retrieve-related-individuals "
-	     << ABoxQueryRole(q, query.getOntology()->getNamespace())
+	     << ABoxQueryRole(q, nspace)
 	     << ' '
 	     << query.getKBManager().getKBName()
 	     << ')'
@@ -283,8 +279,8 @@ RacerOpenOWLBuilder::RacerOpenOWLBuilder(std::ostream& s)
 bool
 RacerOpenOWLBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
-  const std::string& realuri = query.getOntology()->getRealURI();
-  const std::string& uri = query.getOntology()->getURI();
+  const std::string& realuri = query.getDLQuery()->getOntology()->getRealURI();
+  const std::string& uri = query.getDLQuery()->getOntology()->getURI();
 
   // we read the owl document uri into kb-name uri
 

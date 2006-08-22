@@ -37,10 +37,8 @@ TestRacerBuilder::runRacerPosIndBuilderTest()
   pc.insert(ap);
   AtomSet ints(pc);
   RacerKBManager kb(sst, "DEFAULT");
-  Query q(Ontology::createOntology(shop),
-	  kb,
-	  Term("plusC"),Term(""),Term(""),Term(""),
-	  DLQuery(Term(),Tuple()), ints);
+  DLQuery::shared_pointer dlq(new DLQuery(Ontology::createOntology(shop),Term(),Tuple()));
+  Query q(kb,dlq,Term("plusC"),Term(""),Term(""),Term(""),ints);
 
   RacerStateBuilder pib(sst);
   pib.buildCommand(q);
@@ -60,10 +58,9 @@ TestRacerBuilder::runRacerNegIndBuilderTest()
   mc.insert(ap);
   AtomSet ints(mc);
   RacerKBManager kb(sst, "DEFAULT");
-  Query q(Ontology::createOntology(shop),
-	  kb,
-	  Term(""),Term("minusC"),Term(""),Term(""),
-	  DLQuery(Term(),Tuple()), ints);
+  DLQuery::shared_pointer dlq(new DLQuery(Ontology::createOntology(shop),Term(),Tuple()));
+  Query q(kb,dlq,Term(""),Term("minusC"),Term(""),Term(""),ints);
+	  
       
   RacerStateBuilder pib(sst);
   pib.buildCommand(q);
@@ -83,10 +80,8 @@ TestRacerBuilder::runRacerPosPairBuilderTest()
   pr.insert(ap);
   AtomSet ints(pr);
   RacerKBManager kb(sst, "DEFAULT");
-  Query q(Ontology::createOntology(shop),
-	  kb,
-	  Term(""),Term(""),Term("plusR"),Term(""),
-	  DLQuery(Term(),Tuple()), ints);
+  DLQuery::shared_pointer dlq(new DLQuery(Ontology::createOntology(shop),Term(),Tuple()));
+  Query q(kb,dlq,Term(""),Term(""),Term("plusR"),Term(""),ints);
 
   RacerStateBuilder pib(sst);
   pib.buildCommand(q);

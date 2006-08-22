@@ -265,9 +265,9 @@ namespace racer {
   struct RacerAllIndividualsCmd
   {
     const std::string
-    operator() (Query& q)
+    operator() (Query& query)
     {
-      return "(all-individuals " + q.getKBManager().getKBName() + ")";
+      return "(all-individuals " + query.getKBManager().getKBName() + ")";
     }
   };
 
@@ -302,12 +302,12 @@ namespace racer {
   struct RacerCloneABoxCmd
   {
     const std::string
-    operator() (Query& q)
+    operator() (Query& query)
     {
       return "(clone-abox |"
-	+ q.getOntology()->getRealURI() 
+	+ query.getDLQuery()->getOntology()->getRealURI() 
 	+ "| :new-name "
-	+ q.getKBManager().getKBName()
+	+ query.getKBManager().getKBName()
 	+ " :overwrite t)";
     }
   };
@@ -321,9 +321,9 @@ namespace racer {
   struct RacerABoxConsistentCmd
   {
     const std::string
-    operator() (Query& q)
+    operator() (Query& query)
     {
-      return "(abox-consistent? " + q.getKBManager().getKBName()  + ")";
+      return "(abox-consistent? " + query.getKBManager().getKBName()  + ")";
     }
   };
 
@@ -357,9 +357,9 @@ namespace racer {
   struct RacerImportOntologiesCmd
   {
     const std::string
-    operator() (Query& q)
+    operator() (Query& query)
     {
-      return "(kb-ontologies |" + q.getOntology()->getRealURI() + "|)";
+      return "(kb-ontologies |" + query.getDLQuery()->getOntology()->getRealURI() + "|)";
     }
   };
 
@@ -372,9 +372,9 @@ namespace racer {
   struct RacerForgetABoxCmd
   {
     const std::string
-    operator() (Query& q) const
+    operator() (Query& query) const
     {
-      return (*this)(q.getKBManager());
+      return (*this)(query.getKBManager());
     }
 
     const std::string

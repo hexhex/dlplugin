@@ -67,13 +67,9 @@ TestRacerDirector::runRacerAllIndividualsTest()
   
   QueryDirector<RacerFunAdapterBuilder<RacerAllIndividualsCmd>,RacerAnswerDriver> aiq(rsIO);
   RacerKBManager kb(rsIO, "DEFAULT");
-  QueryCtx::shared_pointer q(new QueryCtx(new Query(Ontology::shared_pointer(),
-						    kb,
-						    Term(""),
-						    Term(""),
-						    Term(""),
-						    Term(""),
-						    DLQuery(AtomSet(), Tuple()),
+  DLQuery::shared_pointer dlq(new DLQuery(Ontology::shared_pointer(),AtomSet(),Tuple()));
+  QueryCtx::shared_pointer q(new QueryCtx(new Query(kb,dlq,
+						    Term(""),Term(""),Term(""),Term(""),
 						    AtomSet()),
 					  new Answer(0))
 			     );

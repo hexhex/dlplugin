@@ -30,6 +30,20 @@ namespace dl {
     ///@todo right now, we only support plain queries
     assert(!q1.isConjQuery());
 
+    // first check if ontology of q1 is less or greater than the ontology of q2
+
+    if (*q1.getOntology() < *q2.getOntology())
+      {
+	return true;
+      }
+    else if (*q1.getOntology() > *q2.getOntology())
+      {
+	return false;
+      }
+
+    // otw. the ontologies are equal and we have to consider the
+    // actual queries
+
     bool lessthan = q1.getQuery().getString() < q2.getQuery().getString();
 
     // if q1 >= q2 we have to look at the query types in order to
@@ -95,22 +109,27 @@ namespace dl {
 
 
 
-DLQuery::DLQuery(const Term& q, const Tuple& p)
-  : query(q)
+DLQuery::DLQuery(Ontology::shared_pointer o, const Term& q, const Tuple& p)
+  : ontology(o),
+    query(q)
 {
   setPatternTuple(p);
 }
 
 
-DLQuery::DLQuery(const AtomSet& cq, const Tuple& p)
-  : conj(cq)
+DLQuery::DLQuery(Ontology::shared_pointer o, const AtomSet& cq, const Tuple& p)
+  : ontology(o),
+    conj(cq)
 {
   setPatternTuple(p);
 }
 
-DLQuery::~DLQuery()
-{ }
 
+const Ontology::shared_pointer&
+DLQuery::getOntology() const
+{
+  return this->ontology;
+}
 
 unsigned long
 DLQuery::getTypeFlags() const
@@ -202,30 +221,19 @@ DLQuery::getPatternTuple() const
 
 
 
-Query::Query(Ontology::shared_pointer o,
-	     KBManager& kb,
+Query::Query(KBManager& kb,
+	     const DLQuery::shared_pointer& q,
 	     const Term& pc,
 	     const Term& mc,
 	     const Term& pr,
 	     const Term& mr,
-	     const DLQuery& q,
 	     const AtomSet& i)
-  : ontology(o),
-    kbManager(kb),
+  : kbManager(kb),
     query(q)
 {
   setInterpretation(i, pc, mc, pr, mr);
 }
 
-
-Query::~Query()
-{ }
-
-const Ontology::shared_pointer&
-Query::getOntology() const
-{
-  return this->ontology;
-}
 
 KBManager&
 Query::getKBManager() const
@@ -233,7 +241,7 @@ Query::getKBManager() const
   return this->kbManager;
 }
 
-const DLQuery&
+const DLQuery::shared_pointer&
 Query::getDLQuery() const
 {
   return this->query;
@@ -264,70 +272,11 @@ Query::setInterpretation(const AtomSet& ints,
       bool isPR = (p == pr) && (arity == 3);
       bool isMR = (p == mr) && (arity == 3);
 
+      // negate minusC and minusR atoms
       AtomPtr ap(isPC || isMC || isPR || isMR ?
-		 new Atom(it->getArguments()) :
+		 new Atom(it->getArguments(), isMC || isMR) :
 		 0);
-
-      if      (isPC) plusC.insert(ap);
-      else if (isMC) minusC.insert(ap);
-      else if (isPR) plusR.insert(ap);
-      else if (isMR) minusR.insert(ap);
 
       if (ap) proj.insert(ap);
     }
-}
-
-const AtomSet&
-Query::getPlusC() const
-{
-  return this->plusC;
-}
-
-const AtomSet&
-Query::getMinusC() const
-{
-  return this->minusC;
-}
-
-const AtomSet&
-Query::getPlusR() const
-{
-  return this->plusR;
-}
-
-const AtomSet&
-Query::getMinusR() const
-{
-  return this->minusR;
-}
-
-
-bool
-Query::isSubseteq(const Query& q2) const
-{
-  //
-  // isSubseteq() does not lexicographically compare q1 to q2 so this is
-  // not an appropriate operator for std::less<Query>
-  //
-  const Query& q1 = *this;
-
-  const AtomSet& i1 = q1.getProjectedInterpretation();
-  const AtomSet& i2 = q2.getProjectedInterpretation();
-
-  //
-  // q1 is a subset of q2:
-  //
-  // interpretation of q1 is contained in the interpretation of q2.
-  //
-  return std::includes(i2.begin(), i2.end(), i1.begin(), i1.end());
-}
-
-bool
-Query::isSuperseteq(const Query& q2) const
-{
-  //
-  // q1 \supset q2 <=> q2 \subset q1
-  //
-  const Query& q1 = *this;
-  return q2.isSubseteq(q1);
 }
