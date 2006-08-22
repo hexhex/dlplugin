@@ -14,7 +14,7 @@
 #define _KBMANAGER_H
 
 #include <string>
-#include <vector>
+#include <set>
 
 namespace dlvhex {
 namespace dl {
@@ -25,13 +25,13 @@ namespace dl {
   class KBManager
   {
   public:
-    typedef std::vector<std::string> KBList;
+    typedef std::set<std::string> KBSet;
 
   protected:
     /// a KB name
     std::string kbName;
     /// a list of open KBs
-    KBList openKBs;
+    KBSet openKBs;
     
   public:
     /** 
@@ -41,7 +41,7 @@ namespace dl {
      * @param kbs 
      */
     explicit
-    KBManager(const std::string& name, const KBList& kbs = KBList())
+    KBManager(const std::string& name, const KBSet& kbs = KBSet())
       : kbName(name), openKBs(kbs)
     { }
 
@@ -61,10 +61,16 @@ namespace dl {
     /** 
      * @return #openKBs
      */
-    virtual const KBList&
+    virtual const KBSet&
     getOpenKB()
     {
       return openKBs;
+    }
+
+    virtual bool
+    isOpenKB(const std::string& kb)
+    {
+      return openKBs.find(kb) != openKBs.end();
     }
 
   };

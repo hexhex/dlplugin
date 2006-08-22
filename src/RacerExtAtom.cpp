@@ -97,19 +97,22 @@ RacerExtAtom::openOntology(const dlvhex::dl::Query& query,
   // check if Racer has an open KB with the name of the real URI of
   // the query's ontology, we can reuse it
 
-  const KBManager::KBList& v = kbManager.getOpenKB();
+  const std::string& kbname = query.getDLQuery()->getOntology()->getRealURI();
 
-  std::vector<std::string>::const_iterator f =
-    std::find(v.begin(), v.end(), query.getDLQuery()->getOntology()->getRealURI());
-  
-  if (f == v.end())
+  if (!kbManager.isOpenKB(kbname))
     {
-      comp->add(new RacerOpenOWL(stream));
+      // update opened KBs
+      kbManager.updateOpenKB();
+  
+      if (!kbManager.isOpenKB(kbname)) // only open OWL after we updated the open KBs
+	{
+	  comp->add(new RacerOpenOWL(stream));
 
-      // import all referenced ontologies
-      comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerImportOntologiesCmd>,
-		RacerIgnoreAnswer>(stream)
-	);
+	  // import all referenced ontologies
+	  comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerImportOntologiesCmd>,
+		    RacerIgnoreAnswer>(stream)
+		    );
+	}
     }
 }
 

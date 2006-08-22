@@ -83,8 +83,9 @@ RacerKBManager::removeKB() throw (DLError)
     }
 }
 
-const dlvhex::dl::KBManager::KBList&
-RacerKBManager::getOpenKB() throw (DLError)
+
+void
+RacerKBManager::updateOpenKB() throw (DLError)
 {
   try
     {
@@ -99,7 +100,7 @@ RacerKBManager::getOpenKB() throw (DLError)
 
       // and now set #openKBs
       openKBs.clear();
-      std::insert_iterator<std::vector<std::string> > ii = std::inserter(openKBs, openKBs.begin());
+      std::insert_iterator<KBSet> ii = std::inserter(openKBs, openKBs.begin());
 
       for (std::vector<Tuple>::const_iterator it1 = a.getTuples()->begin();
 	   it1 != a.getTuples()->end(); ++it1)
@@ -109,8 +110,6 @@ RacerKBManager::getOpenKB() throw (DLError)
 	      *ii = it2->getUnquotedString();
 	    }
 	}
-
-      return openKBs;
     }
   catch (std::exception& e)
     {

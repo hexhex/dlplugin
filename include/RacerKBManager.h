@@ -50,10 +50,10 @@ namespace racer {
     removeKB() throw (DLError);
 
     /** 
-     * @return A list of all open TBoxes from RACER.
+     * Update the list of open kbs, that is refill #openKBs
      */
-    const KBManager::KBList&
-    getOpenKB() throw (DLError);
+    void
+    updateOpenKB() throw (DLError);
   };
 
 } // namespace racer
