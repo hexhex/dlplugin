@@ -11,7 +11,6 @@
  */
 
 #include "RacerExtAtom.h"
-#include "RacerInterface.h"
 #include "RacerBuilder.h"
 #include "RacerAnswerDriver.h"
 #include "QueryDirector.h"
@@ -45,17 +44,6 @@ typedef QueryDirector<RacerOpenOWLBuilder, RacerAnswerDriver> RacerOpenOWL;
 
 /// extend ABox by a given set of individuals/pairs
 typedef QueryDirector<RacerStateBuilder, RacerAnswerDriver> RacerConceptRolePM;
-/// request a list of individuals from a specified concept
-typedef QueryDirector<RacerConceptInstancesBuilder, RacerAnswerDriver> RacerConceptQuery;
-/// request a list of pairs from a specified role
-typedef QueryDirector<RacerRoleIndividualsBuilder, RacerAnswerDriver> RacerRoleQuery;
-/// ask whether a given individual is member of a specified concept
-typedef QueryDirector<RacerIsConceptMemberBuilder, RacerAnswerDriver> RacerIsConceptQuery;
-/// ask whether a given pair is member of a specified role
-typedef QueryDirector<RacerIsRoleMemberBuilder, RacerAnswerDriver> RacerIsRoleQuery;
-/// request a list of individuals which are fillers of a role for a
-/// specified individual
-typedef QueryDirector<RacerIndividualFillersBuilder, RacerAnswerDriver> RacerIndvFillersQuery;
 
 
 RacerExtAtom::RacerExtAtom(std::iostream& s, RacerKBManager& k)
@@ -111,8 +99,8 @@ RacerExtAtom::openOntology(const dlvhex::dl::Query& query,
 
   const KBManager::KBList& v = kbManager.getOpenKB();
 
-  std::vector<std::string>::const_iterator f = std::find(v.begin(), v.end(),
-							 query.getOntology()->getRealURI());
+  std::vector<std::string>::const_iterator f =
+    std::find(v.begin(), v.end(), query.getDLQuery()->getOntology()->getRealURI());
   
   if (f == v.end())
     {
@@ -138,125 +126,6 @@ RacerExtAtom::increaseABox(const dlvhex::dl::Query& /* query */,
   // add concept and role assertions via (state) command
   comp->add(new RacerConceptRolePM(stream));
 }
-
-
-RacerCachingAtom::RacerCachingAtom(std::iostream& s, RacerKBManager& k, BaseCache& c)
-  : RacerExtAtom(s,k),
-    cache(c)
-{ }
-
-QueryBaseDirector::shared_pointer
-RacerCachingAtom::cacheQuery(QueryCompositeDirector::shared_pointer comp) const
-{
-  unsigned level = Registry::getVerbose();
-
-  if (level == 0) // no caching
-    {
-      return comp;
-    }
-  else // default action is query caching
-    {
-      return QueryBaseDirector::shared_pointer(new QueryCachingDirector(this->cache, comp));
-    }
-}
-
-
-
-RacerConceptAtom::RacerConceptAtom(std::iostream& s, RacerKBManager& k, BaseCache& c)
-  : RacerCachingAtom(s, k, c)
-{
-  //
-  // &dlC[kb,plusC,minusC,plusR,minusR,query](X)
-  //
-
-  setOutputArity(1);
-
-  addInputConstant();  // kb URI
-  addInputPredicate(); // plusC
-  addInputPredicate(); // minusC
-  addInputPredicate(); // plusR
-  addInputPredicate(); // minusR
-  addInputConstant();  // query
-}
-
-QueryBaseDirector::shared_pointer
-RacerConceptAtom::getDirectors(const dlvhex::dl::Query& query) const
-{
-  const DLQuery& dlq = query.getDLQuery();
-
-  QueryCompositeDirector::shared_pointer comp(new QueryCompositeDirector(stream));
-
-  setupRacer(comp);
-  openOntology(query, comp);
-  increaseABox(query, comp);
-
-  if (dlq.isRetrieval()) // retrieval mode
-    {
-      comp->add(new RacerConceptQuery(stream));
-    }
-  else if (dlq.isBoolean()) // boolean query mode
-    {
-      comp->add(new RacerIsConceptQuery(stream));
-    }
-  else
-    {
-      throw PluginError("Wrong query type");
-    }
-
-  return cacheQuery(comp);
-}
-
-
-RacerRoleAtom::RacerRoleAtom(std::iostream& s, RacerKBManager& k, BaseCache& c)
-  : RacerCachingAtom(s,k,c)
-{
-  //
-  // &dlR[kb,plusC,minusC,plusR,minusR,query](X,Y)
-  //
-
-  setOutputArity(2);
-
-  addInputConstant();  // kb URI
-  addInputPredicate(); // plusC
-  addInputPredicate(); // minusC
-  addInputPredicate(); // plusR
-  addInputPredicate(); // minusR
-  addInputConstant();  // query
-}
-
-QueryBaseDirector::shared_pointer
-RacerRoleAtom::getDirectors(const dlvhex::dl::Query& query) const
-{
-  const DLQuery& dlq = query.getDLQuery();
-
-  QueryCompositeDirector::shared_pointer comp(new QueryCompositeDirector(stream));
-
-  setupRacer(comp);
-  openOntology(query, comp);
-  increaseABox(query, comp);
-
-  if (dlq.isRetrieval()) // retrieval mode
-    {
-      comp->add(new RacerRoleQuery(stream));
-    }
-  else if (dlq.isBoolean()) // boolean query mode
-    {
-      comp->add(new RacerIsRoleQuery(stream));
-    }
-  else if (dlq.isMixed()) // pattern retrieval mode
-    {
-      comp->add(new RacerIndvFillersQuery(stream));
-    }
-  else
-    {
-      throw PluginError("Wrong query type");
-    }
-
-  return cacheQuery(comp);
-}
-
-
-
 
 
 RacerConsistentAtom::RacerConsistentAtom(std::iostream& s, RacerKBManager& k)
@@ -289,110 +158,5 @@ RacerConsistentAtom::getDirectors(const dlvhex::dl::Query& q) const
     (new QueryDirector<RacerFunAdapterBuilder<RacerABoxConsistentCmd>,RacerAnswerDriver>(stream)
      );
 
-  return comp;
-}
-
-
-
-
-RacerDatatypeRoleAtom::RacerDatatypeRoleAtom(std::iostream& s, RacerKBManager& k, BaseCache& c)
-  : RacerCachingAtom(s,k,c)
-{
-  //
-  // &dlDR[kb,plusC,minusC,plusR,minusR,query](X,Y)
-  //
-
-  setOutputArity(2);
-
-  addInputConstant();  // kb URI
-  addInputPredicate(); // plusC
-  addInputPredicate(); // minusC
-  addInputPredicate(); // plusR
-  addInputPredicate(); // minusR
-  addInputConstant();  // query
-}
-
-void
-RacerDatatypeRoleAtom::setupRacer(QueryCompositeDirector::shared_pointer& comp) const
-{
-  RacerExtAtom::setupRacer(comp);
-  
-  if (!Registry::getDataSubstrateMirroring())
-    {
-      // enable data substrate mirroring
-      comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerDataSubstrateMirroringCmd>,
-		RacerIgnoreAnswer>(stream)
-	);
-      
-      Registry::setDataSubstrateMirroring(true);
-    }
-}
-
-
-QueryBaseDirector::shared_pointer
-RacerDatatypeRoleAtom::getDirectors(const dlvhex::dl::Query& query) const
-{
-  const DLQuery& dlq = query.getDLQuery();
-
-  QueryCompositeDirector::shared_pointer comp(new QueryCompositeDirector(stream));
-
-  setupRacer(comp);
-  openOntology(query, comp);
-
-  // we don't have to increase the ABox here, we use retrieve-under-premise
-
-  if (dlq.isRetrieval() || dlq.isMixed())
-    {
-      // pose datatype role query
-      comp->add
-	(new QueryDirector<RacerAdapterBuilder<NRQLRetrieveUnderPremise<NRQLDatatypeBuilder> >,
-	 RacerAnswerDriver>(stream)
-	 );
-    }
-  else
-    {
-      throw PluginError("Wrong query type");
-    }
-
-  return cacheQuery(comp);
-}
-
-
-
-
-RacerCQAtom::RacerCQAtom(std::iostream& s, RacerKBManager& k, BaseCache& c, unsigned n)
-  : RacerCachingAtom(s,k,c)
-{
-  //
-  // &dlCQn[kb,plusC,minusC,plusR,minusR,query](X_1,...,X_n)
-  //
-
-  setOutputArity(n);
-
-  addInputConstant();  // kb URI
-  addInputPredicate(); // plusC
-  addInputPredicate(); // minusC
-  addInputPredicate(); // plusR
-  addInputPredicate(); // minusR
-  addInputConstant();  // query
-}
-
-QueryBaseDirector::shared_pointer
-RacerCQAtom::getDirectors(const dlvhex::dl::Query& query) const
-{
-  QueryCompositeDirector::shared_pointer comp(new QueryCompositeDirector(stream));
-
-  setupRacer(comp);
-  openOntology(query, comp);
-
-  // we don't have to increase the ABox here, we use retrieve-under-premise
-
-  // pose a conjunctive query
-  comp->add
-    (new QueryDirector<RacerAdapterBuilder<NRQLRetrieveUnderPremise<NRQLConjunctionBuilder> >,
-     RacerAnswerDriver>(stream)
-    );
-
-  ///@todo right now we don't cache conjunctive queries
   return comp;
 }

@@ -98,13 +98,41 @@ RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
     }
 }
 
+
+namespace dlvhex {
+  namespace dl {
+    namespace racer {
+
+      /** 
+       * We cannot rely on dlvhex calling RacerInterface::setOptions
+       * before RacerInterface::getAtoms so we provide this class as
+       * template parameter for the caching external atoms in order to
+       * get the current cache.
+       */
+      struct GetCacheFun
+      {
+	dlvhex::dl::BaseCache&
+	operator() () const
+	{
+	  return *(TheRacerInterface::instance()->getCache());
+	}
+      };
+ 
+    } // namespace racer
+  } // namespace dl
+} // namespace dlvhex
+
+
 void
 RacerInterface::getAtoms(AtomFunctionMap& m)
 {
-  m["dlC"]          = new RacerConceptAtom(*stream, *kbManager, *cache);
-  m["dlR"]          = new RacerRoleAtom(*stream, *kbManager, *cache);
+  // maybe we should provide the stream and the kbmanager as template
+  // parameters similar to GetCache
+
+  m["dlC"]          = new RacerConceptAtom<GetCacheFun>(*stream, *kbManager);
+  m["dlR"]          = new RacerRoleAtom<GetCacheFun>(*stream, *kbManager);
   m["dlConsistent"] = new RacerConsistentAtom(*stream, *kbManager);
-  m["dlDR"]         = new RacerDatatypeRoleAtom(*stream, *kbManager, *cache);
+  m["dlDR"]         = new RacerDatatypeRoleAtom<GetCacheFun>(*stream, *kbManager);
 
   // register for each arity in range 0 to 32 a dedicated RacerCQAtom
   // external atom with specified arity
@@ -114,7 +142,7 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
   for (unsigned n = 0; n <= 32; ++n)
     {
       oss << "dlCQ" << n;
-      m[oss.str()]  = new RacerCQAtom(*stream, *kbManager, *cache, n);
+      m[oss.str()]  = new RacerCQAtom<GetCacheFun>(*stream, *kbManager, n);
       oss.str("");
     }
 }
@@ -150,9 +178,11 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 
       o = it->find("--nocache");
 
-      if (o != std::string::npos)
+      if (o != std::string::npos) // no caching at all
 	{
-	  Registry::setVerbose(0);
+	  delete cache;
+	  cache = new NullCache;
+
 	  found.push_back(it);
 	}
 
@@ -173,10 +203,11 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	      delete dlvhex::util::log.rdbuf();
 	      // use std::cerr as output for the LogBuf
 	      dlvhex::util::log.rdbuf(new dlvhex::util::LogBuf(&std::cerr));
-	    }
 
-	  delete cache;
-	  cache = new DebugCache;
+	      // use a verbose cache
+	      delete cache;
+	      cache = new DebugCache;
+	    }
 
 	  found.push_back(it);
 	}

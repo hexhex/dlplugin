@@ -86,8 +86,15 @@ namespace racer {
     virtual
     ~RacerInterface();
 
+    ///@return the current cache
+    BaseCache*
+    getCache() const
+    {
+      return cache;
+    }
+
     /**
-     * returns the rewriter.
+     * @return the rewriter for this plugin.
      */
     virtual PluginRewriter* 
     createRewriter(std::istream&, std::ostream&);
