@@ -1,9 +1,15 @@
 2006-08-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* include/KBManager.h: Improve checking of opened tboxes.
+	* include/RacerKBManager.h: Likewise.
+	* src/RacerExtAtom.cpp: Likewise.
+	* src/RacerKBManager.cpp: Likewise.
+
 	* include/RacerExtAtom.h: Add GetCache template.
 	* include/RacerExtAtom.tcc: Likewise.
 	* include/RacerInterface.h: Likewise.
 	* src/RacerExtAtom.cpp: Likewise.
+
 	* src/RacerInterface.cpp: Likewise.
 
 	* include/Ontology.h (operator>): New comparison function.
