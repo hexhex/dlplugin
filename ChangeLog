@@ -1,3 +1,40 @@
+2006-08-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/RacerExtAtom.h: Add GetCache template.
+	* include/RacerExtAtom.tcc: Likewise.
+	* include/RacerInterface.h: Likewise.
+	* src/RacerExtAtom.cpp: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+
+	* include/Ontology.h (operator>): New comparison function.
+
+	* include/Cache.h: Support full caching strategy.
+	(NullCache): New caching strategy.
+	* src/Cache.cpp: Likewise.
+
+	* include/Query.h: Use only one AtomSet for the projected
+	interpretation.
+	Remove subset/superset methods.
+	Move Ontology member from Query to DLQuery.
+	Use a DLQuery shared_ptr in Query.
+	* include/RacerBuilder.h: Likewise.
+	* include/RacerNRQL.tcc: Likewise.
+	* src/Answer.cpp: Likewise.
+	* src/Query.cpp: Likewise.
+	* src/QueryCtx.cpp: Likewise.
+	* src/QueryDirector.cpp: Likewise.
+	* src/RacerBuilder.cpp: Likewise.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* testsuite/TestRacerBuilder.cpp: Likewise.
+	* testsuite/TestRacerDirector.cpp: Likewise.
+	* testsuite/TestRacerNRQL.cpp: Likewise.
+	* testsuite/TestRacerQuery.cpp: Likewise.
+
+2006-08-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/Query.cpp (Query::setInterpretation): Ignore atoms in the
+	interpretation with wrong arity.
+
 2006-08-20  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/Ontology.h: Move some operators to the header file.
