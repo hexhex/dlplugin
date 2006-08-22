@@ -112,6 +112,9 @@ namespace dl {
     operator< (const Ontology& o1, const Ontology& o2);
 
     friend bool
+    operator> (const Ontology& o1, const Ontology& o2);
+
+    friend bool
     operator== (const Ontology& o1, const Ontology& o2);
 
     friend bool
@@ -143,7 +146,21 @@ namespace dl {
   inline bool
   operator< (const Ontology& o1, const Ontology& o2)
   {
-    return o1.getRealURI() < o2.getRealURI();
+    return o1.getRealURI().compare(o2.getRealURI()) < 0;
+  }
+
+  /**
+   * @brief lexicographically compare @a o1 to @a o2 and check if @a o1 is greater than @a o2.
+   *
+   * @param o1
+   * @param o2
+   *
+   * @return true if @a o1 > @a o2, false otherwise.
+   */
+  inline bool
+  operator> (const Ontology& o1, const Ontology& o2)
+  {
+    return o1.getRealURI().compare(o2.getRealURI()) > 0;
   }
 
   /**
