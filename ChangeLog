@@ -1,3 +1,10 @@
+2006-08-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/Cache.h: Add cache statistics.
+	* include/RacerInterface.h: Likewise. 
+	* src/Cache.cpp: Likewise. 
+	* src/RacerInterface.cpp: Likewise. 
+	
 2006-08-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/KBManager.h: Improve checking of opened tboxes.
