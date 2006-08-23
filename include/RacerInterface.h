@@ -36,6 +36,7 @@ namespace dl {
   // forward declarations
   //
   class BaseCache;
+  class CacheStats;
   class HexDLRewriterDriver;
 
 namespace racer {
@@ -63,6 +64,8 @@ namespace racer {
 
     /// the tcp streaming interface to the RACER server
     dlvhex::util::TCPIOStream* stream;
+    /// the cache statistics
+    CacheStats* stats;
     /// the cache for RACER queries
     BaseCache* cache;
     /// DL Rewriter facility

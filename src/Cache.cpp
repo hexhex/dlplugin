@@ -29,7 +29,16 @@ Cache::find(const QueryCtx::shared_pointer& q) const
 {
   QueryAnswerMap::const_iterator foundit = cacheMap.find(q->getQuery().getDLQuery());
 
-  return foundit == cacheMap.end() ? 0 : &foundit->second;
+  if (foundit == cacheMap.end())
+    {
+      stats.miss(1);
+      return 0;
+    }
+  else
+    {
+      stats.hits(1);
+      return &foundit->second;
+    }
 }
 
 
@@ -226,17 +235,22 @@ Cache::insert(const QueryCtx::shared_pointer& query)
 	  found->erase(*it);
 	}
 
+      stats.qctxno(-remove.size());
+
       //
       // after that, we can insert the new QueryCtx
       //
 
       std::pair<CacheSet::iterator, bool> p = found->insert(query);
+      stats.qctxno(1);
     }
   else // dl-query not found, insert a new entry in the map
     {
       CacheSet cs;
       cs.insert(query);
       cacheMap.insert(std::make_pair(query->getQuery().getDLQuery(), cs));
+      stats.dlqno(1);
+      stats.qctxno(1);
     }
 }
 

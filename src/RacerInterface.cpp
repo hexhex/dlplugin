@@ -41,7 +41,8 @@ using namespace dlvhex::dl::racer;
 
 RacerInterface::RacerInterface()
   : stream(new dlvhex::util::TCPIOStream("localhost", 8088)),
-    cache(new Cache),
+    stats(new CacheStats),
+    cache(new Cache(*stats)),
     rewriter(new HexDLRewriterDriver(std::cin, std::cout)),
     kbManager(new RacerKBManager(*stream))
 { }
@@ -50,6 +51,11 @@ RacerInterface::~RacerInterface()
 {
   try
     {
+      if (Registry::getVerbose() > 1)
+	{
+	  std::cerr << *stats;
+	}
+
       if (stream->isOpen())
 	{
 	  kbManager->removeKB(); // remove temporary abox
@@ -69,6 +75,7 @@ RacerInterface::~RacerInterface()
   delete kbManager;
   delete rewriter;
   delete cache;
+  delete stats;
   delete stream;
 }
 
@@ -181,7 +188,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       if (o != std::string::npos) // no caching at all
 	{
 	  delete cache;
-	  cache = new NullCache;
+	  cache = new NullCache(*stats);
 
 	  found.push_back(it);
 	}
@@ -206,7 +213,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 
 	      // use a verbose cache
 	      delete cache;
-	      cache = new DebugCache;
+	      cache = new DebugCache(*stats);
 	    }
 
 	  found.push_back(it);

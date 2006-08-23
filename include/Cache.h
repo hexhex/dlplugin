@@ -19,18 +19,92 @@
 #include <dlvhex/AtomSet.h>
 
 #include <set>
+#include <iosfwd>
 
 #include <boost/ptr_container/indirect_fun.hpp>
 
 namespace dlvhex {
 namespace dl {
 
+
+  ///@brief cache statistics
+  class CacheStats
+  {
+  protected:
+    unsigned m_hits;
+    unsigned m_miss;
+    unsigned m_dlqno;
+    unsigned m_qctxno;
+
+  public:
+    unsigned
+    hits() const
+    { return this->m_hits; }
+
+    void
+    hits(int n)
+    { this->m_hits += n; }
+
+    unsigned
+    miss() const
+    { return this->m_miss; }
+
+    void
+    miss(int n)
+    { this->m_miss += n; }
+
+    unsigned
+    dlqno() const
+    { return this->m_dlqno; }
+
+    void
+    dlqno(int n)
+    { this->m_dlqno += n; }
+
+    unsigned
+    qctxno() const
+    { return this->m_qctxno; }
+
+    void
+    qctxno(int n)
+    { this->m_qctxno += n; }
+
+  };
+
+  /** 
+   * Output the content of a CacheStats object @a cs.
+   * 
+   * @param os 
+   * @param cs 
+   * 
+   * @return @a os
+   */
+  inline std::ostream&
+  operator<< (std::ostream& os, const CacheStats& cs)
+  {
+    return os << "Cache hits: " << cs.hits() << std::endl
+	      << "Cache miss: " << cs.miss() << std::endl
+	      << "Number of cached dl-queries: " << cs.dlqno() << std::endl
+	      << "Total number of cache queries: " << cs.qctxno() << std::endl;
+  }
+
+
   /**
    * @brief Base class for caching classes.
    */
   class BaseCache
   {
+  protected:
+    /// cache statistics
+    mutable CacheStats& stats;
+
   public:
+    /// Ctor
+    explicit
+    BaseCache(CacheStats& s)
+      : stats(s)
+    { }
+
     /// Dtor.
     virtual
     ~BaseCache()
@@ -101,6 +175,12 @@ namespace dl {
     isValid(const QueryCtx::shared_pointer& q, const CacheSet& f) const;
 
   public:
+    /// ctor
+    explicit
+    Cache(CacheStats& s)
+      : BaseCache(s)
+    { }
+
     virtual QueryCtx::shared_pointer
     cacheHit(const QueryCtx::shared_pointer& query) const;
 
@@ -115,14 +195,27 @@ namespace dl {
   class DebugCache : public Cache
   {
   public:
+    /// ctor
+    explicit
+    DebugCache(CacheStats& s)
+      : Cache(s)
+    { }
+
     virtual QueryCtx::shared_pointer
     cacheHit(const QueryCtx::shared_pointer& query) const;
   };
 
 
+  ///@brief does not cache anything at all.
   class NullCache : public BaseCache
   {
   public:
+    /// ctor
+    explicit
+    NullCache(CacheStats& s)
+      : BaseCache(s)
+    { }
+
     /**
      * @return an empty QueryCtx::shared_pointer.
      */
