@@ -1,5 +1,19 @@
 
-url("http://www.personal-reader.de/rdf/ResearcherOntology.owl").
-per(X) :- &dlC[U,a,b,c,d,"ResearcherOntology"](X), url(U).
-name(Y) :- per(X), &dlDR[U,a,b,c,d,"name"](X,Y), url(U).
+% search for projects and members in an OWL-KB
 
+url("http://www.personal-reader.de/rdf/ResearcherOntology.owl").
+
+% make one model for each project
+p(X) :- &dlC[U,a,b,c,d,"ResearchProject"](X), url(U).
+-project(X) v -project(Y) :- p(X), p(Y), X != Y.
+project(X) :- not -project(X), p(X).
+
+% all members of this model's project
+mem(X) :- &dlR[U,a,b,c,d,"involvedIn"](X,Y), url(U), project(Y).
+
+% get the member's names (Datatype Role Query!)
+name(X,Y) :- mem(X), &dlDR[U,a,b,c,d,"name"](X,Y), url(U).
+
+% filter out all people that have interest in "semantic web"
+interest(X,Y) :- mem(X), &dlDR[U,a,b,c,d,"currentProfessionalInterest"](X,Y), url(U).
+swperson(X,Y) :- name(Z,X), interest(Z,Y), &strstr[Y,"semantic web"].
