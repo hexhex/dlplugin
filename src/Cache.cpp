@@ -7,8 +7,6 @@
  * 
  * @brief  Various DL caches.
  * 
- * @todo   add cache statistics
- * 
  */
 
 
@@ -19,7 +17,10 @@
 
 #include <iterator>
 #include <functional>
+#include <iostream>
+
 #include <boost/iterator/indirect_iterator.hpp>
+#include <boost/shared_ptr.hpp>
 
 using namespace dlvhex::dl;
 
@@ -29,16 +30,7 @@ Cache::find(const QueryCtx::shared_pointer& q) const
 {
   QueryAnswerMap::const_iterator foundit = cacheMap.find(q->getQuery().getDLQuery());
 
-  if (foundit == cacheMap.end())
-    {
-      stats.miss(1);
-      return 0;
-    }
-  else
-    {
-      stats.hits(1);
-      return &foundit->second;
-    }
+  return foundit == cacheMap.end() ? 0 : &foundit->second;
 }
 
 
@@ -94,13 +86,20 @@ QueryCtx::shared_pointer
 Cache::cacheHit(const QueryCtx::shared_pointer& query) const
 {
   const CacheSet* found = find(query);
+  QueryCtx::shared_pointer p;
 
   if (found)
     {
-      return isValid(query, *found);
+      p = isValid(query, *found);
+      if (p) stats.hits(1);
+      else   stats.miss(1);
+    }
+  else // nothing found
+    {
+      stats.miss(1);
     }
 
-  return QueryCtx::shared_pointer(); // nothing found
+  return p;
 }
 
 
@@ -143,23 +142,6 @@ namespace dlvhex {
       }
     };
 
-    struct InterEqual : public std::unary_function<const QueryCtx::shared_pointer&, bool>
-    {
-      const QueryCtx::shared_pointer& q1;
-
-      InterEqual(const QueryCtx::shared_pointer& q)
-	: q1(q)
-      { }
-
-      bool
-      operator() (const QueryCtx::shared_pointer& q2) const
-      {
-	const AtomSet& i = q1->getQuery().getProjectedInterpretation();
-	const AtomSet& j = q2->getQuery().getProjectedInterpretation();
-	return i == j;
-      }
-    };
-
   } // namespace dl
 } // namespace dlvhex
 
@@ -187,9 +169,6 @@ Cache::insert(const QueryCtx::shared_pointer& query)
 	      // we only want to cache minimal interpretations
 	      InterSuperset iss(query);
 
-	      ///@todo maybe we can just insert it and remove all
-	      ///previous (iteratorwise) boolean QueryCtxen with
-	      ///positive answer?
 	      for (CacheSet::iterator it = found->begin(); it != found->end(); ++it)
 		{
 		  if ((*it)->getAnswer().getAnswer() && iss(*it))
@@ -204,9 +183,6 @@ Cache::insert(const QueryCtx::shared_pointer& query)
 	      // we only want to cache maximal interpretations
 	      InterSubset iss(query);
 
-	      ///@todo maybe we can just insert it and remove all
-	      ///coming (iteratorwise) boolean QueryCtxen with
-	      ///negative answer?
 	      for (CacheSet::iterator it = found->begin(); it != found->end(); ++it)
 		{
 		  if (!(*it)->getAnswer().getAnswer() && iss(*it))
@@ -225,7 +201,6 @@ Cache::insert(const QueryCtx::shared_pointer& query)
 	  // a cache-hit.
 	}
 
-
       //
       // that is, we have to remove superfluous QueryCtx objects
       //
@@ -242,15 +217,26 @@ Cache::insert(const QueryCtx::shared_pointer& query)
       //
 
       std::pair<CacheSet::iterator, bool> p = found->insert(query);
-      stats.qctxno(1);
+
+      // only update the statistics if we inserted a fresh QueryCtx
+      if (p.second)
+	{
+	  stats.qctxno(1);
+	}
     }
   else // dl-query not found, insert a new entry in the map
     {
       CacheSet cs;
       cs.insert(query);
-      cacheMap.insert(std::make_pair(query->getQuery().getDLQuery(), cs));
-      stats.dlqno(1);
-      stats.qctxno(1);
+      std::pair<QueryAnswerMap::iterator, bool> p = cacheMap.insert
+	(std::make_pair(query->getQuery().getDLQuery(), cs));
+
+      // only update the statistics if we inserted a fresh QueryCtx
+      if (p.second)
+	{
+	  stats.dlqno(1);
+	  stats.qctxno(1);
+	}
     }
 }
 
@@ -258,7 +244,9 @@ Cache::insert(const QueryCtx::shared_pointer& query)
 QueryCtx::shared_pointer
 DebugCache::cacheHit(const QueryCtx::shared_pointer& query) const
 {
-  std::cerr << "===== cache content:" << std::endl;
+  std::cerr << "===== now looking for dl-query a = " << query->getQuery() << std::endl;
+
+  std::cerr << "----- cache content:" << std::endl;
 
   for (QueryAnswerMap::const_iterator it = cacheMap.begin();
        it != cacheMap.end(); ++it)
@@ -266,24 +254,24 @@ DebugCache::cacheHit(const QueryCtx::shared_pointer& query) const
       std::cerr << *(it->first) << std::endl;
     }
 
-  std::cerr << "----- now looking for dl-query a = " << query->getQuery() << std::endl;
-
   const CacheSet* found = Cache::find(query);
 
   if (found)
     {
       std::cerr << "----- found cache(a): " << std::endl;
 
-      std::copy(boost::make_indirect_iterator(found->begin()),
-		boost::make_indirect_iterator(found->end()),
-		std::ostream_iterator<QueryCtx>(std::cerr, "\n")
-		);
+      for (CacheSet::const_iterator it = found->begin();
+	   it != found->end(); ++it)
+	{
+	  std::cerr << *(*it) << " = " << (*it)->getAnswer() << std::endl;
+	}
 
       QueryCtx::shared_pointer p = Cache::isValid(query, *found);
 
       if (p)
 	{
 	  std::cerr << "===== cache-hit for a is " << *p << std::endl;
+	  stats.hits(1);
 	  return p;
 	}
       else
@@ -295,6 +283,8 @@ DebugCache::cacheHit(const QueryCtx::shared_pointer& query) const
     {
       std::cerr << "===== NOT found in cache" << std::endl;
     }
+
+  stats.miss(1);
 
   return QueryCtx::shared_pointer();
 }

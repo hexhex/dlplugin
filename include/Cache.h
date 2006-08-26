@@ -37,6 +37,11 @@ namespace dl {
     unsigned m_qctxno;
 
   public:
+    /// default ctor
+    CacheStats()
+      : m_hits(0), m_miss(0), m_dlqno(0), m_qctxno(0)
+    { }
+
     unsigned
     hits() const
     { return this->m_hits; }
@@ -143,6 +148,8 @@ namespace dl {
   class Cache : public BaseCache
   {
   protected:
+    /// @brief we order the QueryCtx'en in the CacheSet accourding to
+    /// their interpretations
     struct IntCmp
     {
       bool
