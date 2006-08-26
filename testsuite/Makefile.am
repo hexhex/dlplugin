@@ -1,6 +1,7 @@
 AUTOMAKE_OPTIONS = foreign
 
 noinst_HEADERS = \
+                 TestCache.h \
                  TestDLRewriter.h \
                  TestOWLParser.h \
                  TestRacerBuilder.h \
@@ -22,6 +23,7 @@ TESTS_ENVIRONMENT = EXAMPLES=$(top_srcdir)/examples
 check_PROGRAMS = TestSuite
 
 TestSuite_SOURCES = \
+                    TestCache.cpp \
                     TestDLRewriter.cpp \
                     TestOWLParser.cpp \
                     TestRacerBuilder.cpp \
