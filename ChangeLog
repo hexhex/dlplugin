@@ -1,3 +1,21 @@
+2006-08-26  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/researcher.dlp: Update.
+
+	* testsuite/LineScoop.py: New.
+
+	* testsuite/Makefile.am: Add TestCache to the TestSuite.
+	* testsuite/TestCache.cpp: Likewise.
+	* testsuite/TestCache.h: Likewise.
+
+	* include/Cache.h: Fix cache stats.
+	* src/Cache.cpp: Likewise.
+
+	* include/Answer.h: Add operator<<.
+	* src/Answer.cpp: Likewise.
+
+	* configure.ac: Bump version to 0.3.0.
+
 2006-08-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/Cache.h: Add cache statistics.
@@ -50,6 +68,8 @@
 
 2006-08-20  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	Release version 0.2.0.
+	
 	* include/Ontology.h: Move some operators to the header file.
 	* include/QueryCtx.h: Likewise.
 	* include/RacerNRQL.h: Likewise.
