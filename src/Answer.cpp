@@ -18,8 +18,61 @@
 #include <dlvhex/Term.h>
 
 #include <string>
+#include <iterator>
+#include <iosfwd>
 
 using namespace dlvhex::dl;
+
+namespace dlvhex {
+  namespace dl {
+
+    std::ostream&
+    operator<< (std::ostream& os, const Answer& a)
+    {
+      if (!a.query)
+	{
+	  return os;
+	}
+      
+      if (a.query->getDLQuery()->isBoolean())
+	{
+	  os << a.getAnswer();
+	}
+      else
+	{
+	  const std::vector<Tuple>* tuples = a.getTuples();
+
+	  if (!tuples->empty())
+	    {
+	      for (std::vector<Tuple>::const_iterator it = tuples->begin();
+		   it != --tuples->end(); ++it)
+		{
+		  os.put('(');
+		  if (!it->empty())
+		    {
+		      std::copy(it->begin(), --it->end(),
+				std::ostream_iterator<Term>(os, ", "));
+		      os << it->back();
+		    }
+		  os << "), ";
+		}
+
+	      os.put('(');
+	      if (!tuples->back().empty())
+		{
+		  std::copy(tuples->back().begin(), --tuples->back().end(),
+			    std::ostream_iterator<Term>(os, ", "));
+		  os << tuples->back().back();
+		}
+	      os.put(')');
+	    }
+	}
+      
+      return os;
+    }
+
+  } // namespace dl
+} //namespace dlvhex
 
 
 Answer::Answer(const Query* q)

@@ -18,6 +18,7 @@
 #include <dlvhex/Term.h>
 
 #include <string>
+#include <iosfwd>
 
 namespace dlvhex {
 namespace dl {
@@ -85,7 +86,25 @@ namespace dl {
     virtual void
     addTuple(const Tuple& out);
 
+    friend std::ostream&
+    operator<< (std::ostream& os, const Answer& q);
+
   };
+
+
+  /** 
+   * Determines whether @a a is a boolean or a non-boolean answer and
+   * then puts the string-representation of @a a into @a os.
+   * 
+   * @param os 
+   * @param a 
+   * 
+   * @return @a os
+   */
+  std::ostream&
+  operator<< (std::ostream& os, const Answer& a);
+
+  
 
 } // namespace dl
 } // namespace dlvhex
