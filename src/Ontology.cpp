@@ -12,41 +12,38 @@
 
 #include "Ontology.h"
 #include "OWLParser.h"
-#include "UserDir.h"
 
 #include <string>
 #include <map>
 #include <iterator>
 
+#include <unistd.h> // unlink()
+#include <cstdio>   // tempnam()
+#include <stdlib.h> // free()
+
 using namespace dlvhex::dl;
-using dlvhex::util::UserDir;
 
 
 Ontology::~Ontology()
 {
-  if (isTemp) // remove downloaded temporary file
+  if (!isLocal()) // remove downloaded temporary file
     {
-      UserDir().remove(uri);
+      ::unlink(uri.c_str());
     }
 }
 
 
-Ontology::Ontology(const std::string& u)
+Ontology::Ontology(const std::string& u, const std::string& tempuri)
   : uri(u),
-    realuri(u),
-    isTemp(false)
+    realuri(u)
 {
   OWLParser p(uri);
 
   if (!isLocal())
     {
-      std::string tmp = UserDir().createTemp("owl-");
-
-      p.fetchURI(tmp);
-      uri = tmp;
-      p.open(tmp);
-
-      isTemp = true;
+      p.fetchURI(tempuri); // download tempuri
+      uri = tempuri;
+      p.open(tempuri);
     }
 
   p.parseNamespace(nspace);
@@ -60,34 +57,45 @@ Ontology::Ontology(const Ontology&)
 bool
 Ontology::isLocal() const
 {
-  return uri.find("http://") == std::string::npos;
+  return realuri.find("http://") == std::string::npos;
 }
 
 
 Ontology::shared_pointer
 Ontology::createOntology(const std::string& uri)
 {
-  ///@todo get rid of the static variable: due to an unforseeable
-  ///destruction order during the program exit time, this has a bad
-  ///interaction with UserDir (@see Ontology::~Ontology).
-
   typedef std::map<std::string, Ontology::shared_pointer> OntologyMap;
   static OntologyMap ontomap;
 
   std::string finduri;
+  std::string tempuri;
 
   if (uri.find("file://") != 0 && uri.find("file:") != 0 && uri.find("http://") != 0)
     {
       // must be a pathname
       finduri = "file:" + uri;
+      tempuri = finduri;
     }
   else if (uri.find("file://") == 0) // this needs a special massage
     {
       finduri = "file:" + uri.substr(7);
+      tempuri = finduri;
     }
-  else // a valid URI
+  else if (uri.find("file:") == 0) // use uri as is
     {
       finduri = uri;
+      tempuri = uri;
+    }
+  else // a non-local URI, download it to a local file so we can re-use that file
+    {
+      finduri = uri;
+
+      // create a temporary file for http URIs
+
+      char *tmp = ::tempnam(0, "owl-");
+      tempuri = tmp;
+
+      ::free(tmp);
     }
 
   OntologyMap::const_iterator o = ontomap.find(finduri);
@@ -99,7 +107,7 @@ Ontology::createOntology(const std::string& uri)
 
   try
     {
-      Ontology::shared_pointer osp(new Ontology(finduri));
+      Ontology::shared_pointer osp(new Ontology(finduri, tempuri));
 
       ontomap[finduri] = osp;
 

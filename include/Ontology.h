@@ -43,9 +43,7 @@ namespace dl {
     /// Ontology URI
     std::string uri;
     /// the real ontology URI
-    std::string realuri;
-    /// is this a temporary local file?
-    bool isTemp;
+    const std::string realuri;
 
     /// default namespace of OWL document
     std::string nspace;
@@ -70,7 +68,7 @@ namespace dl {
 
     /// private std::string ctor
     explicit
-    Ontology(const std::string& uri);
+    Ontology(const std::string& uri, const std::string& tempuri);
 
     /// private copy ctor
     Ontology(const Ontology&);
