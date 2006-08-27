@@ -1,3 +1,14 @@
+2006-08-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/Ontology.h: Get rid of UserDir code.
+	* src/Ontology.cpp: Likewise.
+
+	* include/UserDir.h: Remove.
+	* src/UserDir.cpp: Likewise.
+
+	* include/Makefile.am: Remove UserDir.
+	* src/Makefile.am: Likewise.
+
 2006-08-26  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* examples/researcher.dlp: Update.
