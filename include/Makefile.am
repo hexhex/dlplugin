@@ -23,7 +23,6 @@ noinst_HEADERS = \
                  RacerQueryExpr.tcc \
                  Registry.h \
                  TCPStream.h \
-                 UserDir.h \
                  RacerAnswerDriver.h \
                  RacerFlexLexer.h \
                  RacerNRQL.h \
