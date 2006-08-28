@@ -1,3 +1,20 @@
+2006-08-28  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/Makefile.am (noinst_HEADERS): Add RacerExtAtom.tcc.
+
+	* m4/ace.m4: Remove.
+
+	* include/RacerInterface.h: Get rid of ACE_Singleton.
+	* src/RacerInterface.cpp: Likewise.
+
+	* configure.ac: We don't need ACE anymore.
+	* README: Likewise.
+
+	* src/Makefile.am: Don't link with the ACE library.
+
+	* include/TCPStream.h: Use the BSD socket API instead of ACE_SOCK_Stream.
+	* src/TCPStream.cpp: Likewise.
+
 2006-08-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/Ontology.h: Get rid of UserDir code.
