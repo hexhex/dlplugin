@@ -17,7 +17,6 @@
 #include <streambuf>
 #include <iostream>
 
-#include <ace/SOCK_Stream.h>
 
 namespace dlvhex {
 namespace util {
@@ -38,8 +37,8 @@ namespace util {
     /// tcp port
     const unsigned port;
     
-    /// TCP Socket abstraction
-    ACE_SOCK_Stream stream;
+    /// TCP Socket filedescriptor
+    int sockfd;
 
     /// size of i/o sequences
     std::streamsize bufsize;

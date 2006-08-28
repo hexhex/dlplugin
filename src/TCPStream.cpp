@@ -17,11 +17,14 @@
 #include <ios>
 #include <sstream>
 
-#include <ace/SOCK_Connector.h>
-#include <ace/SOCK_Stream.h>
-#include <ace/INET_Addr.h>
-#include <ace/OS.h>
-#include <ace/Signal.h>
+#include <errno.h>      // errno & co.
+#include <signal.h>     // sigaction()
+#include <cstring>      // memset()
+#include <sys/types.h>  // 
+#include <sys/socket.h> // socket()
+#include <unistd.h>     // close()
+#include <netdb.h>      // gethostbyname()
+#include <sys/select.h> // select()
 
 using namespace dlvhex::util;
 
@@ -41,8 +44,7 @@ TCPIOStream::~TCPIOStream()
 
 
 void
-TCPIOStream::setConnection(const std::string& host,
-			   unsigned port)
+TCPIOStream::setConnection(const std::string& host, unsigned port)
 {
   delete rdbuf();		       // delete old streambuf
   rdbuf(new TCPStreamBuf(host, port)); // set new streambuf
@@ -62,12 +64,18 @@ TCPStreamBuf::TCPStreamBuf(const std::string& host,
   : std::streambuf(),
     host(host),
     port(port),
+    sockfd(-1),
     bufsize(bufsize)
 {
   // ignore SIGPIPE
-  ACE_Sig_Set sigpipe;
-  sigpipe.sig_add(SIGPIPE);
-  ACE_Sig_Action siga(SIG_IGN, sigpipe);
+  struct sigaction sa;
+  sa.sa_handler = SIG_IGN;
+
+  if (::sigaction(SIGPIPE, &sa, 0))
+    {
+      ::perror("sigaction");
+      ::exit(1);
+    }
 
   initBuffers(); // don't call virtual methods in the ctor
 }
@@ -77,7 +85,7 @@ TCPStreamBuf::TCPStreamBuf(const TCPStreamBuf& sb)
   : std::streambuf(),
     host(sb.host),
     port(sb.port),
-    stream(sb.stream),
+    sockfd(sb.sockfd),
     bufsize(sb.bufsize)
 {
   initBuffers(); // don't call virtual methods in the ctor
@@ -107,8 +115,8 @@ TCPStreamBuf::initBuffers()
 {
   obuf = new std::streambuf::char_type[bufsize];
   ibuf = new std::streambuf::char_type[bufsize];
-  ACE_OS::memset(obuf, 0, bufsize);
-  ACE_OS::memset(ibuf, 0, bufsize);
+  ::memset(obuf, 0, bufsize);
+  ::memset(ibuf, 0, bufsize);
   setp(obuf, obuf + bufsize);
   setg(ibuf, ibuf, ibuf);
 }
@@ -117,7 +125,7 @@ TCPStreamBuf::initBuffers()
 bool
 TCPStreamBuf::isOpen() const
 {
-  return stream.get_handle() != ACE_INVALID_HANDLE;
+  return sockfd != -1;
 }
 
 
@@ -126,25 +134,62 @@ TCPStreamBuf::open()
 {
   if (!isOpen())
     {
-      ACE_INET_Addr addr(port, host.c_str());
-      ACE_SOCK_Connector conn;
+      //
+      // resolve hostname
+      //
 
-      ACE_Time_Value tv(0, 300000);
+      struct hostent* he = ::gethostbyname(host.c_str());
+      if (he == 0)
+	{
+	  std::ostringstream oss;
+	  oss << "Could not resolve host " << host << ": " << ::hstrerror(h_errno);
+	  throw std::ios_base::failure(oss.str());
+	}
+
+      //
+      // setup connection parameters      
+      //
+
+      struct sockaddr_in sa;
+      ::memset (&sa, 0, sizeof (struct sockaddr_in));
+
+      sa.sin_family = AF_INET;
+      sa.sin_port   = htons(port);
+      ::memcpy(&sa.sin_addr, he->h_addr, he->h_length);
+      
+      struct timeval tv;
+      tv.tv_sec = 0;
+      tv.tv_usec = 300000;
 
       // try for at most 3 seconds (approx. 10 rounds)
       for (unsigned i = 0; i < 10; ++i)
 	{
 	  close();
-      
+
+	  //
+	  // setup socket
+	  //
+
+	  sockfd = ::socket(PF_INET, SOCK_STREAM, 0);
+
+	  if (sockfd < 0)
+	    {
+	      ::perror("socket");
+	      ::exit(1);
+	    }
+
 	  // connect to the TCP server at host:port
-	  if (conn.connect(stream, addr) == 0)
+
+	  if (::connect(sockfd, reinterpret_cast<const struct sockaddr *>(&sa), sizeof sa) == 0)
 	    {
 	      return true; // connection established
 	    }
 
 	  // do a nice power napping after an unsuccessful attempt to
 	  // open the connection
-	  ACE_OS::sleep(tv);
+	  fd_set fs;
+	  FD_ZERO(&fs);
+	  ::select(0, &fs, &fs, &fs, &tv);
 	}
 
       // connection failed
@@ -156,11 +201,13 @@ TCPStreamBuf::open()
   return true;
 }
 
-
+ 
 bool
 TCPStreamBuf::close()
 {
-  return !stream.close();
+  int ret = ::close(sockfd);
+  sockfd = -1;
+  return ret == 0;
 }
 
 
@@ -210,7 +257,7 @@ TCPStreamBuf::underflow()
 	}
 
       // try to receive at most bufsize bytes
-      ssize_t n = stream.recv(ibuf, bufsize, 0);
+      ssize_t n = ::recv(sockfd, ibuf, bufsize, 0);
 
       // Nothing is received (n = 0) when RACER query handling
       // timeouts. In this case RACERs only answer is empty and we
@@ -240,12 +287,12 @@ TCPStreamBuf::sync()
     }
 
   // reset input buffer
-  ACE_OS::memset(ibuf, 0, bufsize);
+  ::memset(ibuf, 0, bufsize);
   setg(ibuf, ibuf, ibuf);
 
   if (pptr() != pbase()) // non-empty obuf -> send data
     {
-      errno = ESUCCESS;
+      errno = 0;
 
       // loops until whole obuf is sent
       //
@@ -256,15 +303,23 @@ TCPStreamBuf::sync()
       // W.R. Stevens: Unix Network Programming Vol.1. FYI: Linux has
       // a MSG_NOSIGNAL flag which does the same, but isn't portable
       // enough...
-      ssize_t n = stream.send_n(pbase(), pptr() - pbase());
+      ssize_t len = pptr() - pbase();
+      ssize_t ret = 0;
+
+      for (ssize_t written = 0;
+	   (written < len) || (ret <= 0);
+	   written += ret)
+	{
+	  ret = ::send (sockfd, pbase() + written, len - written, 0);
+	}
 
       log << "Sent: " << std::string(pbase(), pptr() - pbase()) << std::flush;
 
       // reset output buffer right after sending to the stream
-      ACE_OS::memset(obuf, 0, bufsize);
+      ::memset(obuf, 0, bufsize);
       setp(obuf, obuf + bufsize);
 
-      if (n <= 0 || errno == EPIPE) // EOF or failure
+      if (ret <= 0 || errno == EPIPE) // EOF or failure
 	{
 	  std::ostringstream oss;
 	  oss << "Could not send to peer (errno = " << errno << ").";
