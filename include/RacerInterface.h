@@ -17,9 +17,6 @@
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
 
-#include <ace/Null_Mutex.h>
-#include <ace/Singleton.h>
-
 
 namespace dlvhex {
 
@@ -89,6 +86,9 @@ namespace racer {
     virtual
     ~RacerInterface();
 
+    static RacerInterface*
+    instance();
+
     ///@return the current cache
     BaseCache*
     getCache() const
@@ -129,14 +129,7 @@ namespace racer {
     virtual void
     setOptions(bool doHelp, std::vector<std::string>& argv, std::ostream& out);
 
-    /// transparently allow access from ACE_Singleton<>
-    friend class ACE_Singleton<RacerInterface, ACE_Null_Mutex>;
   };
-
-  /// adapt RacerRunnerAdaptee to a singleton and register it to the
-  /// ACE_Object_Manager facility for automatic object deletion at
-  /// program exit time
-  typedef ACE_Singleton<RacerInterface, ACE_Null_Mutex> TheRacerInterface;
 
 } // namespace racer
 } // namespace dl

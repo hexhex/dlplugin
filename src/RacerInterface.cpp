@@ -29,9 +29,6 @@
 #include <algorithm>
 #include <iterator>
 
-#include <ace/Null_Mutex.h>
-#include <ace/Singleton.h>
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
@@ -80,6 +77,14 @@ RacerInterface::~RacerInterface()
 }
 
 
+RacerInterface*
+RacerInterface::instance()
+{
+  static RacerInterface ri;
+  return &ri;
+}
+
+
 PluginRewriter*
 RacerInterface::createRewriter(std::istream& i, std::ostream& o)
 {
@@ -121,7 +126,7 @@ namespace dlvhex {
 	dlvhex::dl::BaseCache&
 	operator() () const
 	{
-	  return *(TheRacerInterface::instance()->getCache());
+	  return *(RacerInterface::instance()->getCache());
 	}
       };
  
@@ -233,11 +238,8 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 extern "C" PluginInterface*
 PLUGINIMPORTFUNCTION()
 {
-  /// adapt RacerInterface to a singleton and register it to the
-  /// ACE_Object_Manager facility for automatic object deletion at
-  /// program exit time
-  TheRacerInterface::instance()->setVersion(DLPLUGIN_MAJOR,
-					    DLPLUGIN_MINOR,
-					    DLPLUGIN_MICRO);
-  return TheRacerInterface::instance();
+  RacerInterface::instance()->setVersion(DLPLUGIN_MAJOR,
+					 DLPLUGIN_MINOR,
+					 DLPLUGIN_MICRO);
+  return RacerInterface::instance();
 }
