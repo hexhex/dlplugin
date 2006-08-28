@@ -17,6 +17,7 @@ noinst_HEADERS = \
                  QueryDirector.tcc \
                  RacerBuilder.h \
                  RacerExtAtom.h \
+                 RacerExtAtom.tcc \
                  RacerInterface.h \
                  RacerKBManager.h \
                  RacerQueryExpr.h \
