@@ -95,25 +95,22 @@ FLEX_MICRO=33
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src \
-	$(ACE_CFLAGS) \
 	$(RAPTOR_CFLAGS) \
 	$(DLVHEX_CFLAGS)
 
 # -avoid-version: only create libdlvhexracer.so
 # -module: library will be dlopened
-libdlvhexracer_la_LDFLAGS = -avoid-version -module $(ACE_LIBS) $(RAPTOR_LIBS)
+libdlvhexracer_la_LDFLAGS = -avoid-version -module $(RAPTOR_LIBS)
 
 
 #
 # adapt path and dependency libraries as needed
 #
 RAPTOR_PATH = $(HOME)/local/lib
-ACE_PATH = $(HOME)/local/lib
 RAPTOR_STATIC_LIBS =  -lxml2 -lxslt -lcurl $(RAPTOR_PATH)/libraptor.a
-ACE_STATIC_LIBS = -lpthread -lrt $(ACE_PATH)/libACE.a
 
 libdlvhexracer-static.la: $(libdlvhexracer_la_OBJECTS)
-	$(CXXLINK) -avoid-version -module -rpath $(dlvhexlibdir) $(libdlvhexracer_la_OBJECTS) $(RAPTOR_STATIC_LIBS) $(ACE_STATIC_LIBS)
+	$(CXXLINK) -avoid-version -module -rpath $(dlvhexlibdir) $(libdlvhexracer_la_OBJECTS) $(RAPTOR_STATIC_LIBS)
 
 install-static: libdlvhexracer-static.la
 	$(LIBTOOL) --mode=install $(INSTALL) -s libdlvhexracer-static.la $(DESTDIR)$(dlvhexlibdir)/libdlvhexracer-static.la
