@@ -82,12 +82,12 @@ AM_PATH_CPPUNIT([1.10.2])
 AC_PATH_BOOST
 
 # in case we couldn't find ACE.pc, fall back to the old scheme
-PKG_CHECK_MODULES([ACE], [ACE >= 5.5.1], [:],
-			 [echo $ACE_PKG_ERROR
-			 AM_PATH_ACE
-			 if test "$HAVE_ACE" != "yes" ; then
-			    AC_MSG_ERROR([ACE not found. Download it at http://www.cs.wustl.edu/~schmidt/ACE.html])
-			 fi])
+#PKG_CHECK_MODULES([ACE], [ACE >= 5.5.1], [:],
+#			 [echo $ACE_PKG_ERROR
+#			 AM_PATH_ACE
+#			 if test "$HAVE_ACE" != "yes" ; then
+#			    AC_MSG_ERROR([ACE not found. Download it at http://www.cs.wustl.edu/~schmidt/ACE.html])
+#			 fi])
 
 # we need 1.4.8 for namespace parsing support
 PKG_CHECK_MODULES([RAPTOR], [raptor >= 1.4.8])
