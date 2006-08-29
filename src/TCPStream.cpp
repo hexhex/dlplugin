@@ -156,12 +156,12 @@ TCPStreamBuf::open()
       sa.sin_family = AF_INET;
       sa.sin_port   = htons(port);
       ::memcpy(&sa.sin_addr, he->h_addr, he->h_length);
-      
-      struct timeval tv;
-      tv.tv_sec = 0;
-      tv.tv_usec = 300000;
 
-      // try for at most 3 seconds (approx. 10 rounds)
+      //
+      // retry to connect to peer for at most 3 seconds (approx. 10 rounds)
+      //
+      struct timeval tv;
+
       for (unsigned i = 0; i < 10; ++i)
 	{
 	  close();
@@ -186,10 +186,11 @@ TCPStreamBuf::open()
 	    }
 
 	  // do a nice power napping after an unsuccessful attempt to
-	  // open the connection
-	  fd_set fs;
-	  FD_ZERO(&fs);
-	  ::select(0, &fs, &fs, &fs, &tv);
+	  // open the connection. We have to refill tv since select()
+	  // returns time left through tv.
+	  tv.tv_sec = 0;
+	  tv.tv_usec = 300000;
+	  ::select(0, 0, 0, 0, &tv);
 	}
 
       // connection failed
@@ -198,7 +199,7 @@ TCPStreamBuf::open()
       throw std::ios_base::failure(oss.str());
     }
 
-  return true;
+  return true; // connection already established
 }
 
  
