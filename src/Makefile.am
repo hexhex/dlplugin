@@ -26,6 +26,8 @@ dlvhexlib_LTLIBRARIES = libdlvhexracer.la
 libdlvhexracer_la_SOURCES = \
 Answer.cpp \
 Cache.cpp \
+DLQuery.cpp \
+HexDLRewriter.cpp \
 HexDLRewriterParser.ypp \
 HexDLRewriterScanner.lpp \
 HexDLRewriterDriver.cpp \
@@ -100,7 +102,8 @@ AM_CPPFLAGS = \
 
 # -avoid-version: only create libdlvhexracer.so
 # -module: library will be dlopened
-libdlvhexracer_la_LDFLAGS = -avoid-version -module $(RAPTOR_LIBS)
+# -no-undefined: windows dlls don't allow undefined external symbols
+libdlvhexracer_la_LDFLAGS = -avoid-version -module -no-undefined $(RAPTOR_LIBS)
 
 
 #
