@@ -42,6 +42,13 @@ namespace dl {
     Query* q;  /// the Query object
     Answer* a; /// the Answer object
 
+    /// private copy ctor
+    QueryCtx(const QueryCtx&);
+
+    /// private assignment operator
+    QueryCtx&
+    operator= (const QueryCtx&);
+
   public:
     /** 
      * Ctor which utilizes PluginAtom::Query to fill the members of
@@ -50,7 +57,6 @@ namespace dl {
      * @param query 
      * @param kb
      */
-    explicit
     QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError);
 
 
@@ -60,9 +66,8 @@ namespace dl {
      * @param qq 
      * @param aa 
      */
-    QueryCtx(Query* qq, Answer* aa)
-      : q(qq), a(aa)
-    { }
+    QueryCtx(Query* qq, Answer* aa);
+
 
     virtual
     ~QueryCtx();

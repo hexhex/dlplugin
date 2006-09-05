@@ -131,6 +131,23 @@ namespace dlvhex {
 } //namespace dlvhex
 
 
+
+QueryCtx::QueryCtx(const QueryCtx&)
+{ }
+
+
+QueryCtx&
+QueryCtx::operator= (const QueryCtx&)
+{
+  return *this;
+}
+
+
+QueryCtx::QueryCtx(Query* qq, Answer* aa)
+  : q(qq), a(aa)
+{ }
+
+
 QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError)
 {
   const Tuple& inputtuple = query.getInputTuple();
