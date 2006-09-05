@@ -27,7 +27,7 @@ else
 fi
 
 if test "$RACERPATH" = notfound; then
-    AC_MSG_ERROR([Racer not found. Download it at http://www.racer-systems.com])
+    AC_MSG_ERROR([Racer not found. Download it at http://www.racer-systems.com/])
 fi
 
 
@@ -57,6 +57,7 @@ AC_HEADER_STDBOOL
 AC_C_CONST
 
 # Checks for libtool library functions.
+AC_LIBTOOL_WIN32_DLL # enable win32 dll-building support
 AC_LIBTOOL_DLOPEN # we build a module library
 AC_DISABLE_STATIC # we don't need a static library
 AC_PROG_LIBTOOL
