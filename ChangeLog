@@ -1,3 +1,42 @@
+2006-09-05  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* README: Testsuite works with cppunit 1.12.0.
+
+	* include/Answer.h: Fix documentation.
+
+	* src/RacerAnswerParser.ypp: %require at least bison 2.2.
+
+	* src/TCPStream.cpp (TCPStreamBuf::TCPStreamBuf): Setup struct
+	sigaction properly.
+	(TCPStreamBuf::close): Only close() valid filedescriptors.
+
+	* include/HexDLRewriter.h: Move rewriting code to HexDLRewriter.
+	* include/HexDLRewriterDriver.h: Likewise.
+	* src/HexDLRewriter.cpp: Likewise.
+	* src/HexDLRewriterDriver.cpp: Likewise.
+	* src/HexDLRewriterParser.ypp: Likewise.
+
+	* include/QueryCtx.h: Disallow copying through private copy ctor
+	and assignment operator.
+	* src/QueryCtx.cpp: Likewise.
+
+	* include/Makefile.am (noinst_HEADERS): Add DLQuery.h and HexDLRewriter.h.
+
+	* src/Makefile.am (libdlvhexracer_la_SOURCES): Add DLQuery.cpp and HexDLRewriter.cpp.
+	(libdlvhexracer_la_LDFLAGS): Add -no-undefined.
+	
+	* include/DLQuery.h: Move DLQuery to its own file.
+	* include/Query.h: Likewise.
+	* src/DLQuery.cpp: Likewise.
+	* src/Query.cpp: Likewise.
+	
+	* configure.ac: Add ACE_LIBTOOL_WIN32_DLL.
+
+2006-08-29  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/TCPStream.cpp (TCPStreamBuf::open): Fix waiting for the
+	connection.
+
 2006-08-28  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/Makefile.am (noinst_HEADERS): Add RacerExtAtom.tcc.
