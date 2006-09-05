@@ -5,6 +5,8 @@ noinst_HEADERS = \
                  Answer.h \
                  Cache.h \
                  DLError.h \
+                 DLQuery.h \
+                 HexDLRewriter.h \
                  HexDLRewriterDriver.h \
                  HexDLRewriterFlexLexer.h \
                  KBManager.h \
