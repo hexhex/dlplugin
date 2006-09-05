@@ -87,7 +87,7 @@ namespace dl {
     addTuple(const Tuple& out);
 
     friend std::ostream&
-    operator<< (std::ostream& os, const Answer& q);
+    operator<< (std::ostream& os, const Answer& a);
 
   };
 
