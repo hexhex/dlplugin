@@ -15,6 +15,7 @@
 %define "parser_class_name" "RacerAnswerParser"
 %defines
 %file-prefix = "RacerAnswerParser"
+%require "2.2"
 
 %{
 #include <dlvhex/Term.h>
