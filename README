@@ -58,7 +58,8 @@ namespace parsing support.
 
 *** cppunit
 Follow the instructions of the INSTALL file found in the distributions
-tarball. dlvhex-racerplugin has been tested with cppunit 1.10.2.
+tarball. dlvhex-racerplugin has been tested with cppunit 1.10.2 and
+1.12.0.
 
 
 *** flex + bison
