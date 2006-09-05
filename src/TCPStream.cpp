@@ -70,6 +70,8 @@ TCPStreamBuf::TCPStreamBuf(const std::string& host,
   // ignore SIGPIPE
   struct sigaction sa;
   sa.sa_handler = SIG_IGN;
+  sa.sa_flags = 0;
+  ::sigemptyset(&sa.sa_mask);
 
   if (::sigaction(SIGPIPE, &sa, 0))
     {
@@ -206,8 +208,14 @@ TCPStreamBuf::open()
 bool
 TCPStreamBuf::close()
 {
-  int ret = ::close(sockfd);
-  sockfd = -1;
+  int ret = 0;
+
+  if (sockfd != -1)
+    {
+      ::close(sockfd);
+      sockfd = -1;
+    }
+     
   return ret == 0;
 }
 
