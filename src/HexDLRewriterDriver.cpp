@@ -71,6 +71,27 @@ HexDLRewriterDriver::setUri(const std::string& s)
 }
 
 
+const std::string&
+HexDLRewriterDriver::getUri() const
+{
+  return this->uri;
+}
+
+
+void
+HexDLRewriterDriver::addExtAtomNo(int offset)
+{
+  this->extAtomNo += offset;
+}
+
+
+unsigned
+HexDLRewriterDriver::getExtAtomNo() const
+{
+  return this->extAtomNo;
+}
+
+
 void
 HexDLRewriterDriver::setStreams(std::istream* i, std::ostream* o)
 {
@@ -128,14 +149,14 @@ HexDLRewriterDriver::rewrite()
 
   // output rewritten dl-atoms
 
-  for (boost::ptr_vector<RewriteDLAtom>::const_iterator it = rewrittenDLAtoms.begin();
+  for (boost::ptr_vector<DLAtomOp>::const_iterator it = rewrittenDLAtoms.begin();
        it != rewrittenDLAtoms.end(); ++it)
     {
       std::ostringstream aux;
 
-      aux << "dl_" << it->opChar;
+      aux << "dl_" << (it->op == DLAtomOp::plus ? 'p' : 'm');
 
-      std::string s = onto->getNamespace() + it->lhs;
+      std::string s = onto->getNamespace() + *(it->lhs);
       Term t(s);
 
       if (concepts->find(t) != concepts->end())
@@ -144,9 +165,9 @@ HexDLRewriterDriver::rewrite()
 
 	  *output << aux.str()
 		  << "(\""
-		  << it->lhs
+		  << *(it->lhs)
 		  << "\",X) :- "
-		  << it->rhs
+		  << *(it->rhs)
 		  << "(X)."
 		  << std::endl;
 	}
@@ -156,9 +177,9 @@ HexDLRewriterDriver::rewrite()
 
 	  *output << aux.str()
 		  << "(\""
-		  << it->lhs
+		  << *(it->lhs)
 		  << "\",X,Y) :- "
-		  << it->rhs
+		  << *(it->rhs)
 		  << "(X,Y)."
 		  << std::endl;
 	}
@@ -183,100 +204,9 @@ HexDLRewriterDriver::rewrite()
 
 
 void
-HexDLRewriterDriver::registerDLOp(char op, const std::string& lhs, const std::string& rhs)
+HexDLRewriterDriver::registerDLOp(DLAtomOp* op)
 {
-  if (op != 'p' && op != 'm')
-    {
-      return;
-    }
-
-  // append a fresh RewriteRule
-  rewrittenDLAtoms.push_back(new RewriteDLAtom(this->extAtomNo, op, lhs, rhs));
-}
-
-
-std::string
-HexDLRewriterDriver::rewriteDLAtom(const std::string& query, const std::string& t1)
-{
-  ///@todo let the HexDLRewriter bison parser rewrite the dl-atoms
-
-  if (uri.empty())
-    {
-      throw PluginError("Couldn't rewrite dl-atom, ontology URI is empty.");
-    }
-
-  // first commandment: stream thy strings
-  std::ostringstream extAtom;
-
-  extAtom << "&dlC";
-
-  // output external atoms input list
-  extAtom << "[\"" 
-	  << uri 
-	  << "\",dl_pc_"
-	  << extAtomNo
-	  << ",dl_mc_"
-	  << extAtomNo
-	  << ",dl_pr_"
-	  << extAtomNo
-	  << ",dl_mr_"
-	  << extAtomNo
-	  << ','
-	  << (query[0] != '"' ? "\"" + query + "\"" : query)
-	  << ']';
-
-  // append output list of the ext. atom
-  extAtom << '(' << t1 << ')';
-
-  //
-  // now we are done, increment external atom counter and return the
-  // external atom
-  //
-
-  this->extAtomNo++;
-
-  return extAtom.str();
-}
-
-
-std::string
-HexDLRewriterDriver::rewriteDLAtom(const std::string& query,
-				   const std::string& t1,
-				   const std::string& t2)
-{
-  ///@todo let the HexDLRewriter bison parser rewrite the dl-atoms
-
-  // first commandment: stream thy strings
-  std::ostringstream extAtom;
-
-  extAtom << "&dlR";
-
-  // output external atoms input list
-  extAtom << "[\"" 
-	  << uri 
-	  << "\",dl_pc_"
-	  << extAtomNo
-	  << ",dl_mc_"
-	  << extAtomNo
-	  << ",dl_pr_"
-	  << extAtomNo
-	  << ",dl_mr_"
-	  << extAtomNo
-	  << ','
-	  << (query[0] != '"' ? "\"" + query + "\"" : query)
-	  << ']';
-
-  // append output list of the ext. atom
-  extAtom << '(' << t1 << ',' << t2 << ')';
-
-  //
-  // now we are done, increment external atom counter and return the
-  // external atom
-  //
-
-  this->extAtomNo++;
-
-  return extAtom.str();
+  rewrittenDLAtoms.push_back(op);
 }
 
 

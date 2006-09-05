@@ -15,9 +15,11 @@
 %define "parser_class_name" "HexDLRewriterParser"
 %defines
 %file-prefix = "HexDLRewriterParser"
+%require "2.2"
 
 %{
 #include "HexDLRewriterDriver.h"
+#include "HexDLRewriter.h"
 
 #include <dlvhex/Term.h>
 
@@ -40,7 +42,6 @@
 // yy::HexDLRewriterParser ctor
 %parse-param { dlvhex::dl::HexDLRewriterDriver& driver }
 
-
 // bison passes the driver as additional parameter to the lexer
 // function YY_DECL, so we can abuse the driver to get the real lexer
 // object and call the yylex() method
@@ -58,16 +59,18 @@
 %union {
   std::string* sval;
   int ival;
-  boost::ptr_vector<std::string>* bodylist;
   Term* termval;
   Tuple* tupleval;
+  dlvhex::dl::BodyRewriter* bodyval;
+  dlvhex::dl::HexDLRewriterBase* rewriterval;
 }
 
 %token <sval> STRING LITERAL
 %token <ival> NUMBER
 %token DLATOM CQATOM NOT
-%type <bodylist> body
-%type <sval> dlquery cqatom dlatom literal
+%type <sval> dlquery
+%type <bodyval> body
+%type <rewriterval> cqatom dlatom literal
 %type <termval> term
 %type <tupleval> terms output
 
@@ -103,18 +106,10 @@ prog: /* empty */
     ;
 
 
-// we only parse the body of a rule
+// we only rewrite the body of a rule
 rule: body '.'
       {
-	driver.getOutput() << ' ';
-
-	std::copy($1->begin(), $1->end() - 1,
-		  std::ostream_iterator<std::string>(driver.getOutput(), ", ")
-		  );
-	driver.getOutput() << $1->back();
-
-	driver.getOutput() << '.';
-
+	driver.getOutput() << ' ' << *$1 << '.';
 	delete $1;
       }
     ;
@@ -123,13 +118,13 @@ rule: body '.'
 // the body contains literals
 body: literal
       {
-	$$ = new boost::ptr_vector<std::string>;
-	$$->push_back($1);
+	$$ = new dlvhex::dl::BodyRewriter;
+	$$->add($1);
       }
     | body ',' literal
       {
 	$$ = $1;
-	$$->push_back($3);
+	$$->add($3);
       }
     ;
 
@@ -138,7 +133,7 @@ body: literal
 // i.e. anything but dl-atoms and cq-atoms, or a cq-atom/dl-atom
 literal: LITERAL
          {
-	   $$ = $1;
+	   $$ = new dlvhex::dl::LiteralRewriter($1);
  	 }
        | cqatom
          {
@@ -150,12 +145,12 @@ literal: LITERAL
 	 }
        | NOT cqatom
          {
-	   $2->insert(0, "not ");
+	   $2->setNAF(true);
 	   $$ = $2;
  	 }
        | NOT dlatom
          {
-	   $2->insert(0, "not ");
+	   $2->setNAF(true);
 	   $$ = $2;
 	 }
        ;
@@ -165,37 +160,7 @@ literal: LITERAL
 // rewrite it to &dlCQn[uri,a,b,c,d,q](X_1,...,X_n)
 cqatom: CQATOM '[' terms ']' output
         {
-	  std::ostringstream oss;
-
-	  // rewrite external atom
-
-	  oss << "&dlCQ" << $5->size() << '[';
-
-	  // append input list
-
-	  std::copy($3->begin(), $3->end() - 1,
-		    std::ostream_iterator<Term>(oss, ",")
-		    );
-
-	  oss << $3->back() << ']';
-
-	  // append output list
-
-	  if (!$5->empty())
-	    {
-	      oss << '(';
-	      
-	      std::copy($5->begin(), $5->end() - 1,
-			std::ostream_iterator<Term>(oss, ",")
-			);
-	      
-	      oss << $5->back() << ')';
-	    }
-	  
-	  $$ = new std::string(oss.str());
-
-	  delete $3;
-	  delete $5;
+	  $$ = new dlvhex::dl::CQAtomRewriter($3, $5);
 	}
       ;
 
@@ -251,18 +216,20 @@ term: STRING
 // we rewrite dl-atoms to &dlC/&dlR external atoms
 dlatom: DLATOM dlquery '(' STRING ')'
         {
-	  $$ = new std::string(driver.rewriteDLAtom(*$2, *$4));
-
-	  delete $2;
-	  delete $4;
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getUri(),
+					      driver.getExtAtomNo(),
+					      $2,
+					      $4);
+	  driver.addExtAtomNo(1);
 	}
       | DLATOM dlquery '(' STRING ',' STRING ')'
         {
-	  $$ = new std::string(driver.rewriteDLAtom(*$2, *$4, *$6));
-
-	  delete $2;
-	  delete $4;
-	  delete $6;
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getUri(),
+					      driver.getExtAtomNo(),
+					      $2,
+					      $4,
+					      $6);
+	  driver.addExtAtomNo(1);
 	}
       ;
 
@@ -291,15 +258,23 @@ ops: op
 // dl-atoms after the parsing process.
 op: STRING '+' '=' STRING
     {
-      driver.registerDLOp('p', *$1, *$4);
-      delete $1;
-      delete $4;
+      driver.registerDLOp(new dlvhex::dl::HexDLRewriterDriver::DLAtomOp
+			  (driver.getExtAtomNo(),
+			   dlvhex::dl::HexDLRewriterDriver::DLAtomOp::plus,
+			   $1,
+			   $4
+			   )
+			  );
     }
   | STRING '-' '=' STRING
     {
-      driver.registerDLOp('m', *$1, *$4);
-      delete $1;
-      delete $4;
+      driver.registerDLOp(new dlvhex::dl::HexDLRewriterDriver::DLAtomOp
+			  (driver.getExtAtomNo(),
+			   dlvhex::dl::HexDLRewriterDriver::DLAtomOp::minus,
+			   $1,
+			   $4
+			   )
+			  );
     }
   ;
 

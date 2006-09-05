@@ -6,9 +6,6 @@
  * @date   Tue Jul 25 09:16:44 2006
  * 
  * @brief  Driver class for the Hex DL Rewriters bison/flex parser.
- *
- * @todo Introduce a Rewriter hierarchy, use the HexDLRewriterDriver
- * just for the actual parsing stuff.
  * 
  */
 
@@ -43,6 +40,32 @@ namespace dl {
    */
   class HexDLRewriterDriver : public PluginRewriter
   {
+  public:
+    /// some information for the rewritten dl-atoms
+    struct DLAtomOp
+    {
+      static const int minus = 0;
+      static const int plus = 1;
+
+      unsigned extAtomNo;	/// every external atom has its own number
+      int op;		        /// 'p'(lus) or 'm'(inus) operator
+      const std::string* lhs;	/// term of operator
+      const std::string* rhs;	/// term of operator
+
+      DLAtomOp(unsigned e, int o, const std::string* l, const std::string* r)
+	: extAtomNo(e), op(o), lhs(l), rhs(r)
+      {
+	assert(op == minus || op == plus);
+      }
+    
+      ~DLAtomOp()
+      {
+	delete lhs;
+	delete rhs;
+      }
+    };
+
+
   private:
     /// lexer object which scans the stream
     HexDLRewriterFlexLexer* lexer;
@@ -50,24 +73,9 @@ namespace dl {
     std::string uri; /// OWL URI
 
     unsigned extAtomNo; /// counter for external atoms
-
-    /// some information for the rewritten dl-atoms
-    struct RewriteDLAtom
-    {
-      unsigned extAtomNo;	/// every external atom has its own number
-      char opChar;		/// 'p'(lus) or 'm'(inus) operator
-      std::string lhs;		/// term of operator
-      std::string rhs;		/// term of operator
-
-      RewriteDLAtom(unsigned e, char o,
-		    const std::string& l,
-		    const std::string& r)
-	: extAtomNo(e), opChar(o), lhs(l), rhs(r)
-      { }
-    };
  
     /// keep track of rewritten dl-atoms
-    boost::ptr_vector<RewriteDLAtom> rewrittenDLAtoms;
+    boost::ptr_vector<DLAtomOp> rewrittenDLAtoms;
 
     /// reset counter and other stuff
     void
@@ -91,6 +99,15 @@ namespace dl {
     void
     setUri(const std::string& u);
 
+    const std::string&
+    getUri() const;
+
+    void
+    addExtAtomNo(int offset);
+
+    unsigned
+    getExtAtomNo() const;
+
     void
     rewrite();
 
@@ -98,16 +115,8 @@ namespace dl {
     error(const yy::location& l, const std::string& m) const throw (DLParsingError);
 
     /// callback for dl-atoms
-    std::string
-    rewriteDLAtom(const std::string& query, const std::string& t1);
-
-    /// callback for dl-atoms
-    std::string
-    rewriteDLAtom(const std::string& query, const std::string& t1, const std::string& t2);
-
-    /// callback for dl-atoms
     void
-    registerDLOp(char op, const std::string& lhs, const std::string& rhs);
+    registerDLOp(DLAtomOp* op);
   };
 
 } // namespace dl
