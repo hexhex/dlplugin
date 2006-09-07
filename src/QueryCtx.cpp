@@ -71,7 +71,7 @@ namespace dlvhex {
 	if (next == end)
 	  {
 	    if (state == PARENCLOSE) return false;
-	    else throw DLParsingError("this is foo"); ///@todo not very informative exception
+	    else throw DLParsingError("No closing parenthesis found.");
 	  }
 
 	bool unexpected = false;
