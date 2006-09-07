@@ -67,8 +67,10 @@ namespace racer {
   class ABoxQueryExpr : public QueryExpr
   {
   protected:
-    const Term symbol; /// symbol term
-    std::string nsid;   /// namespace identifier
+    /// symbol term
+    const Term symbol;
+    /// namespace identifier
+    std::string nsid;
 
     /// @return true if #symbol is an URI, false otw.
     virtual bool
@@ -140,7 +142,8 @@ namespace racer {
       };
 
   protected:
-    unsigned typeFlags; /// the type of this nRQL query variable
+    /// the type of this nRQL query variable
+    unsigned typeFlags;
 
     std::ostream&
     output(std::ostream& s) const;
@@ -298,7 +301,8 @@ namespace racer {
   class ABoxQueryRole : public ABoxRoleDescrExpr
   {
   private:
-    bool isDatatype; /// flag takes care of datatype role querying
+    /// flag takes care of datatype role querying
+    bool isDatatype;
 
     std::ostream&
     output(std::ostream& s) const;

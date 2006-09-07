@@ -45,7 +45,7 @@ namespace dl {
     /// a boolean answer
     bool answer;
     /// keep a reference to our query, so we can determine if we need
-    /// to fill tuples in some query flavours
+    /// to fill tuples in a specific way
     const Query* query;
 
   public:

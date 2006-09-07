@@ -44,13 +44,19 @@ namespace dl {
     /// some information for the rewritten dl-atoms
     struct DLAtomOp
     {
+      /// minus operator
       static const int minus = 0;
+      /// plus operator
       static const int plus = 1;
 
-      unsigned extAtomNo;	/// every external atom has its own number
-      int op;		        /// 'p'(lus) or 'm'(inus) operator
-      const std::string* lhs;	/// term of operator
-      const std::string* rhs;	/// term of operator
+      /// every external atom has its own number
+      unsigned extAtomNo;
+      /// plus or minus operator
+      int op;
+      /// LHS of operator
+      const std::string* lhs;
+      /// RHS of operator
+      const std::string* rhs;
 
       DLAtomOp(unsigned e, int o, const std::string* l, const std::string* r)
 	: extAtomNo(e), op(o), lhs(l), rhs(r)
@@ -70,9 +76,11 @@ namespace dl {
     /// lexer object which scans the stream
     HexDLRewriterFlexLexer* lexer;
 
-    std::string uri; /// OWL URI
+    /// Ontology URI
+    std::string uri;
 
-    unsigned extAtomNo; /// counter for external atoms
+    /// counter for external atoms
+    unsigned extAtomNo;
  
     /// keep track of rewritten dl-atoms
     boost::ptr_vector<DLAtomOp> rewrittenDLAtoms;

@@ -35,12 +35,23 @@ namespace dl {
 
   /**
    * @brief Encapsulates a Query and the corresponding Answer.
+   *
+   * Used for wrapping a whole querying context into a handy
+   * object. Also allows to instantiate Query and Answer objects from
+   * PluginAtom::Query.
    */
   class QueryCtx
   {
   private:
-    Query* q;  /// the Query object
-    Answer* a; /// the Answer object
+    /// the encapsulated Query object
+    Query* q;
+    /// the encapsulated Answer object
+    Answer* a;
+
+    //
+    // keep copy ctor and assignment operator private, we don't want
+    // to copy QueryCtx objects
+    //
 
     /// private copy ctor
     QueryCtx(const QueryCtx&);
@@ -51,8 +62,8 @@ namespace dl {
 
   public:
     /** 
-     * Ctor which utilizes PluginAtom::Query to fill the members of
-     * @a q and creates @a a with a reference to @a q.
+     * Ctor which utilizes PluginAtom::Query to fill the members of #q
+     * and creates #a with a reference to #q.
      * 
      * @param query 
      * @param kb
@@ -68,7 +79,7 @@ namespace dl {
      */
     QueryCtx(Query* qq, Answer* aa);
 
-
+    /// dtor.
     virtual
     ~QueryCtx();
 
@@ -84,7 +95,8 @@ namespace dl {
     virtual Answer&
     getAnswer() const;
 
-    typedef boost::shared_ptr<QueryCtx> shared_pointer; /// managed QueryCtx
+    /// managed QueryCtx
+    typedef boost::shared_ptr<QueryCtx> shared_pointer;
 
     friend std::ostream&
     operator<< (std::ostream& os, const QueryCtx& q);

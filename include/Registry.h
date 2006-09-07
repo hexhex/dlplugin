@@ -25,8 +25,11 @@ namespace dl {
   class Registry
   {
   private:
+    /// verbosity level
     static unsigned verbose;
+    /// did we set UNA?
     static bool una;
+    /// did we set datasubstrate mirroring?
     static bool datasubstrate;
 
     /// pure virtual dtor, we don't want an instance or a child
