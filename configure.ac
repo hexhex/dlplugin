@@ -94,7 +94,7 @@ AC_PATH_BOOST
 PKG_CHECK_MODULES([RAPTOR], [raptor >= 1.4.8])
 
 # we want dlvhex
-PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 1.1])
+PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 1.2])
 
 
 AC_ARG_ENABLE(userinstall, 
