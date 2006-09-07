@@ -81,11 +81,4 @@ This is a brief overview of the Racer plugin with its components and
 
 @defgroup DLCache The DL Cache
 
-@todo We could store Term objectes more efficiently using some kind of
-Term Repository which takes care of objects like
-boost::shared_ptr<Term>. All other components like the DLCache could
-benefit from such a utility. Maybe we have to adapt the
-PluginInterface to use boost::shared_ptr<Term> instead of plain Term
-objects.
-
 */
