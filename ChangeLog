@@ -1,3 +1,21 @@
+2006-09-07  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* configure.ac: We need at least dlvhex 1.2.
+
+	* src/Answer.cpp: Use boost::shared_ptr<> instead of a pointer to
+	the output tuples.
+	* testsuite/TestRacerDirector.cpp: Likewise.
+
+	* documentation.dox: Remove bogus todo item.
+
+	* src/QueryCtx.cpp (AtomSeparator::operator()): Fix exception.
+
+	* include/Answer.h: Fix doxygen doc.
+	* include/HexDLRewriterDriver.h: Likewise.
+	* include/QueryCtx.h: Likewise.
+	* include/RacerQueryExpr.h: Likewise.
+	* include/Registry.h: Likewise.
+
 2006-09-05  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* README: Testsuite works with cppunit 1.12.0.
