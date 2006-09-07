@@ -77,6 +77,6 @@ TestRacerDirector::runRacerAllIndividualsTest()
   CPPUNIT_ASSERT_NO_THROW( q = aiq.query(q) );
   CPPUNIT_ASSERT(q->getAnswer().getTuples()->size() > 0);
   
-  const std::vector<Tuple> *tv = q->getAnswer().getTuples();
+  boost::shared_ptr<std::vector<Tuple> > tv = q->getAnswer().getTuples();
   output(*tv);
 }

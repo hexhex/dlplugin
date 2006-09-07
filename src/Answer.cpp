@@ -40,7 +40,7 @@ namespace dlvhex {
 	}
       else
 	{
-	  const std::vector<Tuple>* tuples = a.getTuples();
+	  boost::shared_ptr<std::vector<Tuple> > tuples = a.getTuples();
 
 	  if (!tuples->empty())
 	    {
