@@ -48,7 +48,8 @@ RacerNRQL.cpp \
 RacerNRQLBuilder.cpp \
 RacerQueryExpr.cpp \
 Registry.cpp \
-TCPStream.cpp
+TCPStream.cpp \
+URI.cpp
 
 #
 # in maintainer-mode we check for a sufficient version of the bison/flex combo
