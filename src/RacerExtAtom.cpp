@@ -97,7 +97,7 @@ RacerExtAtom::openOntology(const dlvhex::dl::Query& query,
   // check if Racer has an open KB with the name of the real URI of
   // the query's ontology, we can reuse it
 
-  const std::string& kbname = query.getDLQuery()->getOntology()->getRealURI();
+  const std::string& kbname = query.getDLQuery()->getOntology()->getRealURI().getString();
 
   if (!kbManager.isOpenKB(kbname))
     {

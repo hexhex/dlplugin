@@ -279,14 +279,14 @@ RacerOpenOWLBuilder::RacerOpenOWLBuilder(std::ostream& s)
 bool
 RacerOpenOWLBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
-  const std::string& realuri = query.getDLQuery()->getOntology()->getRealURI();
-  const std::string& uri = query.getDLQuery()->getOntology()->getURI();
+  const URI& realuri = query.getDLQuery()->getOntology()->getRealURI();
+  const URI& uri = query.getDLQuery()->getOntology()->getURI();
 
   // we read the owl document uri into kb-name uri
 
   try
     {
-      if (uri.find("http://") == 0) // a http document
+      if (!uri.isLocal()) // a http document
 	{
 	  stream << "(owl-read-document \""
 		 << uri
@@ -297,24 +297,8 @@ RacerOpenOWLBuilder::buildCommand(Query& query) throw (DLBuildingError)
 	}
       else // a file document
 	{
-	  std::string tmpuri;
-
-	  if (uri.find("file:") == 0) // get rid of file prefix
-	    {
-	      tmpuri = uri.substr(5);
-
-	      if (tmpuri.find("//") == 0)
-		{
-		  tmpuri.erase(0, 2);
-		}
-	    }
-	  else
-	    {
-	      tmpuri = uri;
-	    }
-
 	  stream << "(owl-read-file \""
-		 << tmpuri
+		 << uri.getPath()
 		 << "\" :kb-name |"
 		 << realuri
 		 << "|)"

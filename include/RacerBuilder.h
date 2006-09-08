@@ -305,7 +305,7 @@ namespace racer {
     operator() (Query& query)
     {
       return "(clone-abox |"
-	+ query.getDLQuery()->getOntology()->getRealURI() 
+	+ query.getDLQuery()->getOntology()->getRealURI().getString() 
 	+ "| :new-name "
 	+ query.getKBManager().getKBName()
 	+ " :overwrite t)";
@@ -359,7 +359,7 @@ namespace racer {
     const std::string
     operator() (Query& query)
     {
-      return "(kb-ontologies |" + query.getDLQuery()->getOntology()->getRealURI() + "|)";
+      return "(kb-ontologies |" + query.getDLQuery()->getOntology()->getRealURI().getString() + "|)";
     }
   };
 

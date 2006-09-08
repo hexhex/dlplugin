@@ -14,6 +14,8 @@
 #ifndef _ONTOLOGY_H
 #define _ONTOLOGY_H
 
+#include "URI.h"
+
 #include <dlvhex/Term.h>
 
 #include <iosfwd>
@@ -41,9 +43,9 @@ namespace dl {
 
   private:
     /// Ontology URI
-    std::string uri;
+    URI uri;
     /// the real ontology URI
-    const std::string realuri;
+    const URI realuri;
 
     /// default namespace of OWL document
     std::string nspace;
@@ -68,14 +70,10 @@ namespace dl {
 
     /// private std::string ctor
     explicit
-    Ontology(const std::string& uri, const std::string& tempuri);
+    Ontology(const URI& uri, const std::string& tempfile = "");
 
     /// private copy ctor
     Ontology(const Ontology&);
-
-    /// @return true if #uri is a local file, false otw.
-    bool
-    isLocal() const;
 
   public:
     virtual
@@ -85,10 +83,10 @@ namespace dl {
     static Ontology::shared_pointer
     createOntology(const std::string& uri);
 
-    const std::string&
+    const URI&
     getURI() const;
 
-    const std::string&
+    const URI&
     getRealURI() const;
     
     const std::string&

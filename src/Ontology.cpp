@@ -12,6 +12,7 @@
 
 #include "Ontology.h"
 #include "OWLParser.h"
+#include "URI.h"
 
 #include <string>
 #include <map>
@@ -19,84 +20,51 @@
 
 #include <unistd.h> // unlink()
 #include <cstdio>   // tempnam()
-#include <stdlib.h> // free()
+#include <cstdlib>  // free()
 
 using namespace dlvhex::dl;
 
 
 Ontology::~Ontology()
 {
-  if (!isLocal()) // remove downloaded temporary file
+  if (!realuri.isLocal()) // remove downloaded temporary file
     {
-      ::unlink(uri.c_str());
+      ::unlink(uri.getString().c_str());
     }
 }
 
 
-Ontology::Ontology(const std::string& u, const std::string& tempuri)
+Ontology::Ontology(const URI& u, const std::string& tempfile)
   : uri(u),
     realuri(u)
 {
   OWLParser p(uri);
 
-  if (!isLocal())
+  if (!realuri.isLocal() && !tempfile.empty())
     {
-      p.fetchURI(tempuri); // download tempuri
-      uri = tempuri;
-      p.open(tempuri);
+      p.fetchURI(tempfile); // download uri to tempfile
+      uri = tempfile;
+      p.open(uri);
     }
 
   p.parseNamespace(nspace);
 }
 
 
-Ontology::Ontology(const Ontology&)
+Ontology::Ontology(const Ontology& o)
+  : uri(o.uri),
+    realuri(o.realuri)
 { }
-
-
-bool
-Ontology::isLocal() const
-{
-  return realuri.find("http://") == std::string::npos;
-}
 
 
 Ontology::shared_pointer
 Ontology::createOntology(const std::string& uri)
 {
-  typedef std::map<std::string, Ontology::shared_pointer> OntologyMap;
+  // we only want one Ontology instance per uri
+  typedef std::map<URI, Ontology::shared_pointer> OntologyMap;
   static OntologyMap ontomap;
 
-  std::string finduri;
-  std::string tempuri;
-
-  if (uri.find("file://") != 0 && uri.find("file:") != 0 && uri.find("http://") != 0)
-    {
-      // must be a pathname
-      finduri = "file:" + uri;
-      tempuri = finduri;
-    }
-  else if (uri.find("file://") == 0) // this needs a special massage
-    {
-      finduri = "file:" + uri.substr(7);
-      tempuri = finduri;
-    }
-  else if (uri.find("file:") == 0) // use uri as is
-    {
-      finduri = uri;
-      tempuri = uri;
-    }
-  else // a non-local URI, download it to a local file so we can re-use that file
-    {
-      finduri = uri;
-
-      // create a temporary file for http URIs
-
-      char *tmp = ::tempnam(0, "owl-");
-      tempuri = tmp;
-
-      ::free(tmp);
-    }
+  URI finduri = uri;
 
   OntologyMap::const_iterator o = ontomap.find(finduri);
 
@@ -107,8 +75,23 @@ Ontology::createOntology(const std::string& uri)
 
   try
     {
-      Ontology::shared_pointer osp(new Ontology(finduri, tempuri));
+      Ontology::shared_pointer osp;
 
+      if (finduri.isLocal())
+	{
+	  osp = Ontology::shared_pointer(new Ontology(finduri));
+	}
+      else // a non-local URI, download it to a local file so we can re-use that file
+	{
+	  // create a temporary file for http URIs
+	  char *tmp = ::tempnam(0, "owl-");
+
+	  osp = Ontology::shared_pointer(new Ontology(finduri, tmp));
+
+	  std::free(tmp);
+	}
+
+      // identify finduri with osp
       ontomap[finduri] = osp;
 
       return osp;
@@ -120,14 +103,14 @@ Ontology::createOntology(const std::string& uri)
 }
 
 
-const std::string&
+const URI&
 Ontology::getURI() const
 {
   return uri;
 }
 
 
-const std::string&
+const URI&
 Ontology::getRealURI() const
 {
   return realuri;
@@ -165,7 +148,7 @@ Ontology::getConcepts() const
 	}
       catch (DLParsingError& e)
 	{
-	  throw DLParsingError("Couldn't parse document " + uri + ": " + e.what());
+	  throw DLParsingError("Couldn't parse document " + uri.getString() + ": " + e.what());
 	}
 
       concepts = c;
@@ -200,7 +183,7 @@ Ontology::getRoles() const
 	}
       catch (DLParsingError& e)
 	{
-	  throw DLParsingError("Couldn't parse document " + uri + ": " + e.what());
+	  throw DLParsingError("Couldn't parse document " + uri.getString() + ": " + e.what());
 	}
 
       concepts = c;
@@ -225,7 +208,7 @@ Ontology::getIndividuals() const
 	}
       catch (DLParsingError& e)
 	{
-	  throw DLParsingError("Couldn't parse document " + uri + ": " + e.what());
+	  throw DLParsingError("Couldn't parse document " + uri.getString() + ": " + e.what());
 	}
 
       individuals = i;

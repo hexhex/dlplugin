@@ -12,6 +12,7 @@
  */
 
 #include "OWLParser.h"
+#include "URI.h"
 #include "DLError.h"
 #include "Ontology.h"
 
@@ -36,42 +37,18 @@ const std::string OWLParser::owlObjectProperty = "http://www.w3.org/2002/07/owl#
 const std::string OWLParser::owlInverseOf = "http://www.w3.org/2002/07/owl#inverseOf";
 
 
-OWLParser::OWLParser(const std::string& uri)
-{
-  open(uri);
-}
+OWLParser::OWLParser(const URI& u)
+  : uri(u)
+{ }
 
 OWLParser::~OWLParser()
 { }
 
 
 void
-OWLParser::open(const std::string& uri)
+OWLParser::open(const URI& uri)
 {
-  if (uri.find("http://") == 0) // a http URI can be used as is
-    {
-      this->uri = uri;
-    }
-  else if (uri.find("file:") == 0) // a file URI must be prepared, it
-				   // is not allowed to use
-				   // file://PATH, only file:PATH can
-				   // be used by raptor
-    {
-      std::string tmp = uri.substr(5);
-
-      if (tmp.find("//") == 0)
-	{
-	  this->uri = "file:" + tmp.substr(2);
-	}
-      else
-	{
-	  this->uri = "file:" + tmp;
-	}
-    }
-  else // a plain file
-    {
-      this->uri = "file:" + uri;
-    }
+  this->uri = uri;
 }
 
 
@@ -236,7 +213,7 @@ OWLParser::parse(void* userData, const HandlerFuns* handler) throw (DLParsingErr
   raptor_set_error_handler(parser, &error, errorHandler);
   raptor_set_warning_handler(parser, 0, errorHandler);
 
-  raptor_uri* parseURI  = raptor_new_uri((const unsigned char*) uri.c_str());
+  raptor_uri* parseURI  = raptor_new_uri((const unsigned char*) uri.getString().c_str());
 
   if (handler->stmHandler)
     {
@@ -292,7 +269,7 @@ OWLParser::fetchURI(const std::string& file)
 
   raptor_www_init();
 
-  raptor_uri* fetchURI = raptor_new_uri((const unsigned char*) uri.c_str());
+  raptor_uri* fetchURI = raptor_new_uri((const unsigned char*) uri.getString().c_str());
 
   raptor_iostream* io = raptor_new_iostream_to_filename(file.c_str());
 

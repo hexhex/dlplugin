@@ -15,6 +15,7 @@
 
 #include "DLError.h"
 #include "Ontology.h"
+#include "URI.h"
 
 #include <string>
 
@@ -30,7 +31,7 @@ namespace dl {
   {
   private:
     /// URI to the OWL KB
-    std::string uri;
+    URI uri;
 
     /// helper struct for parsing concept and role names
     struct HandlerFuns;
@@ -66,7 +67,7 @@ namespace dl {
 
     /// Ctor
     explicit
-    OWLParser(const std::string& uri);
+    OWLParser(const URI& uri);
 
     /// Dtor
     virtual
@@ -79,7 +80,7 @@ namespace dl {
      * @param uri the new OWL uri
      */
     void
-    open(const std::string& uri);
+    open(const URI& uri);
 
     /**
      * get universe of OWL document
