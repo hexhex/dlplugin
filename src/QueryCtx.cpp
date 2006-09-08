@@ -16,6 +16,7 @@
 #include "Answer.h"
 #include "DLError.h"
 #include "KBManager.h"
+#include "URI.h"
 
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string/trim.hpp>
@@ -264,7 +265,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
 	  std::string querystr = inputtuple[5].getUnquotedString();
 
 	  // no namespace in query
-	  if (querystr.find(':') == std::string::npos) ///@todo is : sufficient for a namespace?
+	  if (!URI::isValid(querystr))
 	    {
 	      if (querystr[0] == '-') // negated query
 		{

@@ -13,6 +13,7 @@
 
 #include "Answer.h"
 #include "Query.h"
+#include "URI.h"
 
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Term.h>
@@ -199,7 +200,7 @@ Answer::addTuple(const Tuple& out)
 
 	  std::string p = pat[1].getUnquotedString();
 
-	  if (p.find(':') == std::string::npos) ///@todo is this condition too weak for an URI?
+	  if (!URI::isValid(p))
 	    {
 	      tmp.push_back(Term(nspace + p, true));
 	    }
@@ -216,7 +217,7 @@ Answer::addTuple(const Tuple& out)
 
 	  std::string p = pat[0].getUnquotedString();
 
-	  if (p.find(':') == std::string::npos) ///@todo is this condition too weak for an URI?
+	  if (!URI::isValid(p))
 	    {
 	      tmp.push_back(Term(nspace + p, true));
 	    }

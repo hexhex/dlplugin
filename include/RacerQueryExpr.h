@@ -70,11 +70,7 @@ namespace racer {
     /// symbol term
     const Term symbol;
     /// namespace identifier
-    std::string nsid;
-
-    /// @return true if #symbol is an URI, false otw.
-    virtual bool
-    isURI() const;
+    const std::string nsid;
 
     /**
      * output the content of #symbol in proper Racer syntax.

@@ -10,6 +10,7 @@
  */
 
 #include "RacerQueryExpr.h"
+#include "URI.h"
 
 #include <dlvhex/Term.h>
 
@@ -17,20 +18,6 @@
 #include <string>
 
 using namespace dlvhex::dl::racer;
-
-
-bool
-ABoxQueryExpr::isURI() const
-{
-  if (symbol.isVariable() || symbol.isAnon() || symbol.isInt())
-    {
-      return false;
-    }
-  else // term is a symbol or string
-    {
-      return symbol.getString().find(':') != std::string::npos; ///@todo is this URI to simple?
-    }
-}
 
 
 std::ostream&
@@ -45,11 +32,11 @@ ABoxQueryExpr::output(std::ostream& s) const
   // negated term.
   //
 
-  if (!isURI() && nsid.empty()) // no uri + no namespace = plain symbol
+  if (!URI::isValid(symbol) && nsid.empty()) // no uri + no namespace = plain symbol
     {
       return s << sym;
     }
-  else if (!isURI() && !nsid.empty()) // symbol + namespace = URI
+  else if (!URI::isValid(symbol) && !nsid.empty()) // symbol + namespace = URI
     {
       return s << '|' << nsid << (sym[0] == '-' ? sym.substr(1) : sym) << '|';
     }
