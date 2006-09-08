@@ -43,7 +43,7 @@ AC_PROG_YACC
 # Checks for libraries.
 
 # Checks for header files.
-AC_CHECK_HEADERS([sys/stat.h sys/time.h sys/types.h unistd.h])
+AC_CHECK_HEADERS([sys/select.h sys/socket.h sys/stat.h sys/time.h sys/types.h unistd.h])
 AC_HEADER_STAT
 AC_HEADER_STDC
 AC_HEADER_TIME
