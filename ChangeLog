@@ -1,5 +1,13 @@
 2006-09-08  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* include/URI.h (URI::isValid): Add static URI validity checkers.
+	* src/URI.cpp: Likewise.
+
+	* include/RacerQueryExpr.h: Use URI::isValid.
+	* src/Answer.cpp: Likewise.
+	* src/QueryCtx.cpp: Likewise.
+	* src/RacerQueryExpr.cpp: Likewise.
+	
 	* configure.ac: Check sys/select.h and sys/socket.h headers.
 
 	* src/RacerKBManager.cpp: Use std namespace for C-library functions.
@@ -13,6 +21,7 @@
 	* include/Ontology.h: Likewise.
 	* include/RacerBuilder.h: Likewise.
 	* include/URI.h: Likewise.
+
 	* src/OWLParser.cpp: Likewise.
 	* src/Ontology.cpp: Likewise.
 	* src/RacerBuilder.cpp: Likewise.
