@@ -80,6 +80,20 @@ namespace dl {
       return uri.compare(u2.getString());
     }
 
+
+    /** 
+     * @return true if @a s is a valid URI, otw. false
+     */
+    static bool
+    isValid(const std::string& s);
+
+    /** 
+     * @return true if @a t is a valid URI term, otw. false
+     */
+    static bool
+    isValid(const Term& t);
+
+
     friend std::ostream&
     operator<< (std::ostream& os, const URI& u);
 
