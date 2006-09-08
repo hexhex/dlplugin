@@ -30,4 +30,5 @@ noinst_HEADERS = \
                  RacerFlexLexer.h \
                  RacerNRQL.h \
                  RacerNRQL.tcc \
-                 RacerNRQLBuilder.h
+                 RacerNRQLBuilder.h \
+                 URI.h
