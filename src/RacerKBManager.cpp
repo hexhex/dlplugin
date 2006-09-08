@@ -49,7 +49,7 @@ RacerKBManager::RacerKBManager(std::iostream& s, const std::string& name)
   if (name.empty())
     {
       // create a temporary file
-      FILE* fp = ::tmpfile();
+      std::FILE* fp = std::tmpfile();
 
       // get file descriptor
       int fd = ::fileno(fp);

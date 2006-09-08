@@ -17,8 +17,8 @@
 #include <ios>
 #include <sstream>
 
-#include <errno.h>      // errno & co.
-#include <signal.h>     // sigaction()
+#include <csignal>      // sigaction()
+#include <cerrno>       // errno & co.
 #include <cstring>      // memset()
 #include <sys/types.h>  // 
 #include <sys/socket.h> // socket()
@@ -75,8 +75,8 @@ TCPStreamBuf::TCPStreamBuf(const std::string& host,
 
   if (::sigaction(SIGPIPE, &sa, 0))
     {
-      ::perror("sigaction");
-      ::exit(1);
+      std::perror("sigaction");
+      std::exit(1);
     }
 
   initBuffers(); // don't call virtual methods in the ctor
@@ -117,8 +117,8 @@ TCPStreamBuf::initBuffers()
 {
   obuf = new std::streambuf::char_type[bufsize];
   ibuf = new std::streambuf::char_type[bufsize];
-  ::memset(obuf, 0, bufsize);
-  ::memset(ibuf, 0, bufsize);
+  std::memset(obuf, 0, bufsize);
+  std::memset(ibuf, 0, bufsize);
   setp(obuf, obuf + bufsize);
   setg(ibuf, ibuf, ibuf);
 }
@@ -153,11 +153,11 @@ TCPStreamBuf::open()
       //
 
       struct sockaddr_in sa;
-      ::memset (&sa, 0, sizeof (struct sockaddr_in));
+      std::memset (&sa, 0, sizeof (struct sockaddr_in));
 
       sa.sin_family = AF_INET;
       sa.sin_port   = htons(port);
-      ::memcpy(&sa.sin_addr, he->h_addr, he->h_length);
+      std::memcpy(&sa.sin_addr, he->h_addr, he->h_length);
 
       //
       // retry to connect to peer for at most 3 seconds (approx. 10 rounds)
@@ -176,8 +176,8 @@ TCPStreamBuf::open()
 
 	  if (sockfd < 0)
 	    {
-	      ::perror("socket");
-	      ::exit(1);
+	      std::perror("socket");
+	      std::exit(1);
 	    }
 
 	  // connect to the TCP server at host:port
@@ -296,7 +296,7 @@ TCPStreamBuf::sync()
     }
 
   // reset input buffer
-  ::memset(ibuf, 0, bufsize);
+  std::memset(ibuf, 0, bufsize);
   setg(ibuf, ibuf, ibuf);
 
   if (pptr() != pbase()) // non-empty obuf -> send data
@@ -325,7 +325,7 @@ TCPStreamBuf::sync()
       log << "Sent: " << std::string(pbase(), pptr() - pbase()) << std::flush;
 
       // reset output buffer right after sending to the stream
-      ::memset(obuf, 0, bufsize);
+      std::memset(obuf, 0, bufsize);
       setp(obuf, obuf + bufsize);
 
       if (ret <= 0 || errno == EPIPE) // EOF or failure
