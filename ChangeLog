@@ -1,3 +1,24 @@
+2006-09-08  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* configure.ac: Check sys/select.h and sys/socket.h headers.
+
+	* src/RacerKBManager.cpp: Use std namespace for C-library functions.
+	* src/TCPStream.cpp: Likewise.
+
+	* src/Makefile.am (libdlvhexracer_la_SOURCES): Add URI.cpp.
+
+	* include/Makefile.am (noinst_HEADERS): Add URI.h.
+
+	* include/OWLParser.h: Introduce URI class.
+	* include/Ontology.h: Likewise.
+	* include/RacerBuilder.h: Likewise.
+	* include/URI.h: Likewise.
+	* src/OWLParser.cpp: Likewise.
+	* src/Ontology.cpp: Likewise.
+	* src/RacerBuilder.cpp: Likewise.
+	* src/RacerExtAtom.cpp: Likewise.
+	* src/URI.cpp: Likewise.
+
 2006-09-07  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* configure.ac: We need at least dlvhex 1.2.
