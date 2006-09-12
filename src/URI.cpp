@@ -93,6 +93,11 @@ namespace dlvhex {
 bool
 URI::isValid(const std::string& s)
 {
+  if (s.length() < 2)
+    {
+      return false;
+    }
+
   // URI scheme part: [A-Za-z][A-Za-z0-9+-.]*
 
   std::string::const_iterator it;
