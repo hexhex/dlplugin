@@ -18,8 +18,7 @@
 #include <map>
 #include <iterator>
 
-#include <unistd.h> // unlink()
-#include <cstdio>   // tempnam()
+#include <cstdio>   // tempnam(), remove()
 #include <cstdlib>  // free()
 
 using namespace dlvhex::dl;
@@ -29,7 +28,7 @@ Ontology::~Ontology()
 {
   if (!realuri.isLocal()) // remove downloaded temporary file
     {
-      ::unlink(uri.getString().c_str());
+      std::remove(uri.getPath().c_str());
     }
 }
 
@@ -64,7 +63,7 @@ Ontology::createOntology(const std::string& uri)
   typedef std::map<URI, Ontology::shared_pointer> OntologyMap;
   static OntologyMap ontomap;
 
-  URI finduri = uri;
+  URI finduri(uri, true); // we want absolute pathnames
 
   OntologyMap::const_iterator o = ontomap.find(finduri);
 
@@ -83,7 +82,7 @@ Ontology::createOntology(const std::string& uri)
 	}
       else // a non-local URI, download it to a local file so we can re-use that file
 	{
-	  // create a temporary file for http URIs
+	  // create an absolute temporary filename for http URIs
 	  char *tmp = ::tempnam(0, "owl-");
 
 	  osp = Ontology::shared_pointer(new Ontology(finduri, tmp));

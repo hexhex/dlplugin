@@ -33,13 +33,16 @@ namespace dl {
     /// the string representation of an URI
     std::string uri;
 
+    std::string
+    getAbsolutePath(const std::string&);
+
     void
-    setupURI(const std::string&);
+    setupURI(const std::string&, bool);
 
   public:
-    URI(const std::string&);
+    URI(const std::string&, bool absolute = false);
 
-    URI(const Term&);
+    URI(const Term&, bool absolute = false);
 
     /** 
      * @return #uri

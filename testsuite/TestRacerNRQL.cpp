@@ -96,5 +96,6 @@ TestRacerNRQL::runRacerPremiseRetrieveTest()
  
   std::cout << s << std::endl;
 
-  CPPUNIT_ASSERT(s == "(retrieve-under-premise ((related |http://www.test.com/test#a| |http://www.test.com/test#b| |http://www.test.com/test#moo|) (instance |http://www.test.com/test#a| |http://www.test.com/test#foo|)) ($?X $?Y) (and ($?X $?Y |http://www.test.com/test#moo|) ($?X |http://www.test.com/test#foo|)) :abox |" + testuri + "|)");
+  URI u(testuri, true); // absolute pathname
+  CPPUNIT_ASSERT(s == "(retrieve-under-premise ((related |http://www.test.com/test#a| |http://www.test.com/test#b| |http://www.test.com/test#moo|) (instance |http://www.test.com/test#a| |http://www.test.com/test#foo|)) ($?X $?Y) (and ($?X $?Y |http://www.test.com/test#moo|) ($?X |http://www.test.com/test#foo|)) :abox |" + u.getString() + "|)");
 }

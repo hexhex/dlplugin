@@ -14,53 +14,89 @@
 #include "URI.h"
 
 #include <dlvhex/Term.h>
+
 #include <string>
 #include <algorithm>
-#include <cctype>
+
+#include <cctype>   // toupper()
+#include <cerrno>   // perror
+#include <climits>  // PATH_MAX
+#include <unistd.h> // getcwd()
+
 
 using namespace dlvhex::dl;
 
 
-URI::URI(const std::string& u)
+URI::URI(const std::string& u, bool absolute)
 {
-  setupURI(u);
+  setupURI(u, absolute);
 }
 
 
-URI::URI(const Term& t)
+URI::URI(const Term& t, bool absolute)
 {
   std::string s = t.getUnquotedString();
 
   if (s[0] == '-')
     {
       s.erase(0);
-      setupURI(s);
+      setupURI(s, absolute);
       uri.insert(0, 1, '-');
     }
   else
     {
-      setupURI(s);
+      setupURI(s, absolute);
+    }
+}
+
+
+std::string
+URI::getAbsolutePath(const std::string& s)
+{
+  if (s[0] != '/') // relative path
+    {
+      char buf[PATH_MAX];
+
+      if (::getcwd(buf, PATH_MAX) == 0)
+	{
+	  std::perror("getcwd");
+	  std::exit(1);
+	}
+
+      return buf + std::string("/") + s;
+    }
+  else // absolute path
+    {
+      return s;
     }
 }
 
 
 void
-URI::setupURI(const std::string& u)
+URI::setupURI(const std::string& u, bool absolute)
 {
   if (u.find("file://") != 0 && u.find("file:") != 0 && u.find("http://") != 0)
     {
       // must be a plain pathname
-      uri = "file:" + u;
+      uri = "file:" + (absolute ? getAbsolutePath(u) : u);
     }
   else if (u.find("file://") == 0) // this needs a special massage
     {
-      uri = "file:" + u.substr(7);
+      std::string tmp = u.substr(7);
+      uri = "file:" + (absolute ? getAbsolutePath(tmp) : tmp);
     }
-  else if (u.find("file:") == 0) // use uri as is
+  else if (u.find("file:") == 0)
     {
-      uri = u;
+      if (absolute)
+	{
+	  uri = "file:" + getAbsolutePath(u.substr(5));
+	}
+      else // use uri as is
+	{
+	  uri = u;
+	}
     }
-  else // a non-local URI
+  else // use non-local URI as is
     {
       uri = u;
     }
