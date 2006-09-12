@@ -3,9 +3,9 @@ AC_INIT([dlvhex-racerplugin],[0.3.0],[tkren@kr.tuwien.ac.at])
 AC_CONFIG_SRCDIR([src/RacerInterface.cpp])
 AC_CONFIG_HEADER([src/config.h])
 
-MAJOR=`echo $PACKAGE_VERSION | sed "s/^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/"`
-MINOR=`echo $PACKAGE_VERSION | sed "s/^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/"`
-MICRO=`echo $PACKAGE_VERSION | sed "s/^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/"`
+MAJOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\),\1,"`
+MINOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\),\2,"`
+MICRO=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\),\3,"`
 
 AC_DEFINE_UNQUOTED([DLPLUGIN_MAJOR], [$MAJOR], [Major version number of the dl-plugin])
 AC_DEFINE_UNQUOTED([DLPLUGIN_MINOR], [$MINOR], [Minor version number of the dl-plugin])
@@ -38,6 +38,7 @@ AC_PROG_CXX
 AC_PROG_CC
 AM_PROG_LEX
 AC_PROG_YACC
+AC_PROG_LN_S
 
 
 # Checks for libraries.
@@ -48,9 +49,41 @@ AC_HEADER_STAT
 AC_HEADER_STDC
 AC_HEADER_TIME
 
-AC_LANG_PUSH([C++])
-AC_CHECK_HEADER([FlexLexer.h])
-AC_LANG_POP([C++])
+#
+# search for FlexLexer.h so we can add it at "make dist" time
+#
+if test -f $top_builddir/src/FlexLexer.h ; then : ; else
+
+   AC_LANG_PUSH([C++])
+   AC_CHECK_HEADER([FlexLexer.h])
+   AC_LANG_POP([C++])
+
+   AC_MSG_CHECKING([for FlexLexer.h path])
+
+   include_paths="/usr/include /usr/local/include" # TODO: get default include paths from compiler?
+   for f in "$CPPFLAGS $CXXFLAGS $CFLAGS" ; do
+   case $f in
+   -I*) include_paths="$include_paths $f" ;;
+   esac
+   done
+
+   # get rid of -I compiler flags
+   paths=`echo $include_paths | sed s,-I,,g`
+
+   # get the FIRST occurence of FlexLexer.h
+   FLEXLEXER_H=`find $paths -name FlexLexer.h 2>/dev/null | head -n1`
+
+   AC_MSG_RESULT([$FLEXLEXER_H])
+
+   if test -z "$FLEXLEXER_H" ; then AC_MSG_ERROR([Could not find FlexLexer.h]) fi
+
+   # link FlexLexer.h to the src directory at the end of the configuration phase
+   AC_SUBST([FLEXLEXER_H])
+
+fi
+
+
+
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
