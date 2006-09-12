@@ -3,6 +3,7 @@
 	* src/Makefile.am (dist-hook): Add FlexLexer.h to the distribution.
 
 	* configure.ac: Search for FlexLexer.h path.
+	Use srcdir instead of top_srcdir.
 
 	* src/URI.cpp (URI::isValid): Add length check.
 
