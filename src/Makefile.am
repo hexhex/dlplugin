@@ -22,6 +22,12 @@ location.hh \
 position.hh \
 stack.hh
 
+
+# before we package ourselves, we add FlexLexer.h to the distribution directory
+dist-hook:
+	$(LN_S) @FLEXLEXER_H@ $(top_distdir)/src
+
+
 dlvhexlib_LTLIBRARIES = libdlvhexracer.la
 libdlvhexracer_la_SOURCES = \
 Answer.cpp \
