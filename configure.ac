@@ -52,33 +52,33 @@ AC_HEADER_TIME
 #
 # search for FlexLexer.h so we can add it at "make dist" time
 #
-if test -f $top_builddir/src/FlexLexer.h ; then : ; else
+if test -r $srcdir/src/FlexLexer.h ; then : ; else
 
-   AC_LANG_PUSH([C++])
-   AC_CHECK_HEADER([FlexLexer.h])
-   AC_LANG_POP([C++])
+	AC_LANG_PUSH([C++])
+	AC_CHECK_HEADER([FlexLexer.h])
+	AC_LANG_POP([C++])
 
-   AC_MSG_CHECKING([for FlexLexer.h path])
+	AC_MSG_CHECKING([for FlexLexer.h path])
 
-   include_paths="/usr/include /usr/local/include" # TODO: get default include paths from compiler?
-   for f in "$CPPFLAGS $CXXFLAGS $CFLAGS" ; do
-   case $f in
-   -I*) include_paths="$include_paths $f" ;;
-   esac
-   done
+	include_paths="/usr/include /usr/local/include" # TODO: get default include paths from compiler?
+	for f in "$CPPFLAGS $CXXFLAGS $CFLAGS"
+	do
+		case $f in
+		-I*) include_paths="$include_paths $f" ;;
+		esac
+	done
 
-   # get rid of -I compiler flags
-   paths=`echo $include_paths | sed s,-I,,g`
+	# get rid of -I compiler flags
+	paths=`echo $include_paths | sed s,-I,,g`
 
-   # get the FIRST occurence of FlexLexer.h
-   FLEXLEXER_H=`find $paths -name FlexLexer.h 2>/dev/null | head -n1`
+	# get the FIRST occurence of FlexLexer.h
+	FLEXLEXER_H=`find $paths -name FlexLexer.h 2>/dev/null | head -n1`
 
-   AC_MSG_RESULT([$FLEXLEXER_H])
+	AC_MSG_RESULT([$FLEXLEXER_H])
 
-   if test -z "$FLEXLEXER_H" ; then AC_MSG_ERROR([Could not find FlexLexer.h]) fi
+	if test -z "$FLEXLEXER_H" ; then AC_MSG_ERROR([Could not find FlexLexer.h]) fi
 
-   # link FlexLexer.h to the src directory at the end of the configuration phase
-   AC_SUBST([FLEXLEXER_H])
+	AC_SUBST([FLEXLEXER_H])
 
 fi
 
