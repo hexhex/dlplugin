@@ -1,5 +1,11 @@
 2006-09-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* include/URI.h: Allow conversion of relative filenames to
+	absolute filename.
+	* src/Ontology.cpp: Likewise.
+	* src/URI.cpp: Likewise.
+	* testsuite/TestRacerNRQL.cpp: Likewise.
+
 	* src/Makefile.am (dist-hook): Add FlexLexer.h to the distribution.
 
 	* configure.ac: Search for FlexLexer.h path.
