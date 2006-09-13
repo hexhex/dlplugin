@@ -65,7 +65,9 @@ TCPStreamBuf::TCPStreamBuf(const std::string& host,
     host(host),
     port(port),
     sockfd(-1),
-    bufsize(bufsize)
+    bufsize(bufsize),
+    obuf(0),
+    ibuf(0)
 {
   // ignore SIGPIPE
   struct sigaction sa;
@@ -88,11 +90,19 @@ TCPStreamBuf::TCPStreamBuf(const TCPStreamBuf& sb)
     host(sb.host),
     port(sb.port),
     sockfd(sb.sockfd),
-    bufsize(sb.bufsize)
+    bufsize(sb.bufsize),
+    obuf(0),
+    ibuf(0)
 {
   initBuffers(); // don't call virtual methods in the ctor
 }
 
+
+TCPStreamBuf&
+TCPStreamBuf::operator= (const TCPStreamBuf&)
+{
+  return *this; // ignore
+}
 
 TCPStreamBuf::~TCPStreamBuf()
 {

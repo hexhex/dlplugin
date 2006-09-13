@@ -49,9 +49,18 @@ namespace dl {
     const Query* query;
 
   public:
+    /// ctor
     explicit
     Answer(const Query* q);
 
+    /// copy ctor
+    Answer(const Answer& a);
+
+    /// assignment op
+    Answer&
+    operator= (const Answer& a);
+
+    /// dtor
     virtual
     ~Answer()
     { }

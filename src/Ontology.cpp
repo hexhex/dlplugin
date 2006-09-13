@@ -35,7 +35,11 @@ Ontology::~Ontology()
 
 Ontology::Ontology(const URI& u, const std::string& tempfile)
   : uri(u),
-    realuri(u)
+    realuri(u),
+    nspace(),
+    concepts(),
+    roles(),
+    individuals()
 {
   OWLParser p(uri);
 
@@ -52,7 +56,11 @@ Ontology::Ontology(const URI& u, const std::string& tempfile)
 
 Ontology::Ontology(const Ontology& o)
   : uri(o.uri),
-    realuri(o.realuri)
+    realuri(o.realuri),
+    nspace(o.nspace),
+    concepts(o.concepts),
+    roles(o.roles),
+    individuals(o.individuals)
 { }
 
 

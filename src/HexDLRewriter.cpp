@@ -54,6 +54,11 @@ BodyRewriter::rewrite(std::ostream& os) const
 }
 
 
+BodyRewriter::BodyRewriter()
+  : body()
+{ }
+
+
 void
 BodyRewriter::add(HexDLRewriterBase* atom)
 {
@@ -64,6 +69,19 @@ BodyRewriter::add(HexDLRewriterBase* atom)
 LiteralRewriter::LiteralRewriter(const std::string* l)
   : literal(l)
 { }
+
+
+LiteralRewriter::LiteralRewriter(const LiteralRewriter& r)
+  : HexDLRewriterBase(),
+    literal(new std::string(*r.literal))
+{ }
+
+
+LiteralRewriter&
+LiteralRewriter::operator= (const LiteralRewriter&)
+{
+  return *this; // ignore
+}
 
 
 LiteralRewriter::~LiteralRewriter()
@@ -84,6 +102,20 @@ CQAtomRewriter::CQAtomRewriter(Tuple* in, Tuple* out)
 {
   assert(input != 0);
   assert(output != 0);
+}
+
+
+CQAtomRewriter::CQAtomRewriter(const CQAtomRewriter& c)
+  : HexDLRewriterBase(),
+    input(c.input),
+    output(c.output)
+{ }
+
+
+CQAtomRewriter&
+CQAtomRewriter::operator= (const CQAtomRewriter&)
+{
+  return *this; // ignore
 }
 
 
@@ -142,6 +174,23 @@ DLAtomRewriter::DLAtomRewriter(const std::string& u, int e,
     {
       throw PluginError("Couldn't rewrite dl-atom, ontology URI is empty.");
     }
+}
+
+
+DLAtomRewriter::DLAtomRewriter(const DLAtomRewriter& d)
+  : HexDLRewriterBase(),
+    uri(d.uri),
+    extAtomNo(d.extAtomNo),
+    query(d.query),
+    out1(d.out1),
+    out2(d.out2)
+{ }
+
+
+DLAtomRewriter&
+DLAtomRewriter::operator= (const DLAtomRewriter&)
+{
+  return *this; // ignore
 }
 
 

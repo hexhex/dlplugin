@@ -37,12 +37,32 @@ namespace dlvhex {
 struct HexDLRewriterFlexLexer : public yyHexFlexLexer
 {
   explicit
-  HexDLRewriterFlexLexer(dlvhex::dl::HexDLRewriterDriver* d) : lexdrv(d) { }
-  virtual
+  HexDLRewriterFlexLexer(dlvhex::dl::HexDLRewriterDriver* d)
+    : lexdrv(d), lexloc(0), lexval(0)
+  { }
+
+  HexDLRewriterFlexLexer(const HexDLRewriterFlexLexer& r)
+    : yyHexFlexLexer(), lexdrv(r.lexdrv), lexloc(r.lexloc), lexval(r.lexval)
+  { }
+
+  HexDLRewriterFlexLexer&
+  operator= (const HexDLRewriterFlexLexer& r)
+  {
+    if (this != &r)
+      {
+	lexdrv = r.lexdrv;
+	lexloc = r.lexloc;
+	lexval = r.lexval;
+      }
+    return *this;
+  }
+
   ~HexDLRewriterFlexLexer() { }
+
   dlvhex::dl::HexDLRewriterDriver* lexdrv;
   yy::HexDLRewriterParser::location_type* lexloc;
   yy::HexDLRewriterParser::semantic_type* lexval;
+
   int yylex(); // implemented in HexDLRewriterScanner.lpp
 };
 

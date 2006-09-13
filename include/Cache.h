@@ -185,7 +185,8 @@ namespace dl {
     /// ctor
     explicit
     Cache(CacheStats& s)
-      : BaseCache(s)
+      : BaseCache(s),
+	cacheMap()
     { }
 
     virtual QueryCtx::shared_pointer

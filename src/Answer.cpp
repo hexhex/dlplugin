@@ -78,10 +78,38 @@ namespace dlvhex {
 
 Answer::Answer(const Query* q)
   : PluginAtom::Answer(),
+    errorMsg(),
+    warningMsg(),
     isIncoherent(false),
     answer(false),
     query(q)
 { }
+
+
+Answer::Answer(const Answer& a)
+  : PluginAtom::Answer(a),
+    errorMsg(a.errorMsg),
+    warningMsg(a.warningMsg),
+    isIncoherent(a.isIncoherent),
+    answer(a.answer),
+    query(a.query)
+{ }
+
+
+Answer&
+Answer::operator=(const Answer& a)
+{
+  if (this != &a)
+    {
+      errorMsg = a.errorMsg;
+      warningMsg = a.warningMsg;
+      isIncoherent = a.isIncoherent;
+      answer = a.answer;
+      query = a.query;
+    }
+
+  return *this;
+}
 
 
 void

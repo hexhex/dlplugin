@@ -58,7 +58,7 @@ namespace racer {
 
   template <class GetCache>
   RacerCachingAtom<GetCache>::RacerCachingAtom(std::iostream& s, RacerKBManager& k)
-    : RacerExtAtom(s,k)
+    : RacerExtAtom(s,k), getCache()
   { }
 
 

@@ -56,7 +56,15 @@ namespace racer {
     explicit
     RacerBaseAnswerDriver(std::istream&);
 
+    /// protected copy ctor
+    RacerBaseAnswerDriver(const RacerBaseAnswerDriver&);
+
+    /// protected assignment op
+    RacerBaseAnswerDriver&
+    operator= (const RacerBaseAnswerDriver&);
+
   public:
+    /// dtor
     ~RacerBaseAnswerDriver();
 
     /// Error handling.

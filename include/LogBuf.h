@@ -33,6 +33,21 @@ namespace util {
     /// execution
     std::ostringstream sstream;
 
+
+    /// private copy ctor
+    LogBuf(const LogBuf&)
+      : std::streambuf(), out(0), sstream()
+    { /* ignore */ }
+
+
+    /// private assignment op
+    LogBuf&
+    operator= (const LogBuf&)
+    {
+      return *this; // ignore
+    }
+
+
   protected:
     /**
      * Write @a n bytes of @a s to #sstream.

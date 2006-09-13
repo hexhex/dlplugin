@@ -29,9 +29,37 @@ HexDLRewriterDriver::HexDLRewriterDriver(std::istream& i, std::ostream& o)
   : PluginRewriter(i, o),
     lexer(new HexDLRewriterFlexLexer(this)),
     uri(""),
-    extAtomNo(0)
+    extAtomNo(0),
+    rewrittenDLAtoms()
 {
   lexer->switch_streams(&i, &o);
+}
+
+
+HexDLRewriterDriver::HexDLRewriterDriver(const HexDLRewriterDriver& d)
+  : PluginRewriter(*d.input, *d.output),
+    lexer(new HexDLRewriterFlexLexer(this)),
+    uri(d.uri),
+    extAtomNo(d.extAtomNo),
+    rewrittenDLAtoms()
+{
+  lexer->switch_streams(d.input, d.output);
+}
+
+
+HexDLRewriterDriver&
+HexDLRewriterDriver::operator= (const HexDLRewriterDriver& d)
+{
+  if (this != &d)
+    {
+      delete lexer;
+      lexer = new HexDLRewriterFlexLexer(this);
+      uri = d.uri;
+      extAtomNo = d.extAtomNo;
+      setStreams(d.input, d.output);
+    }
+
+  return *this;
 }
 
 

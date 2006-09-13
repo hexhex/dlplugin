@@ -84,6 +84,7 @@ namespace racer {
 
     /// protected default ctor
     ABoxQueryExpr()
+      : symbol(), nsid()
     { }
     
     /** 
@@ -284,10 +285,8 @@ namespace racer {
 
   public:
     ABoxOneOfConcept(IndividualVector& l)
-    {
-      // release the managed content of l and move it to list
-      list = l.release();
-    }
+      : list(l.release()) // release the managed content of l and move it to list
+    { }
   };
 
 

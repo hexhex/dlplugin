@@ -58,12 +58,37 @@ namespace dl {
       /// RHS of operator
       const std::string* rhs;
 
+      /// ctor
       DLAtomOp(unsigned e, int o, const std::string* l, const std::string* r)
 	: extAtomNo(e), op(o), lhs(l), rhs(r)
       {
 	assert(op == minus || op == plus);
       }
-    
+
+      /// copy ctor
+      DLAtomOp(const DLAtomOp& o)
+	: extAtomNo(o.extAtomNo),
+	  op(o.op),
+	  lhs(new std::string(*o.lhs)),
+	  rhs(new std::string(*o.rhs))
+      { }
+
+      DLAtomOp&
+      operator= (const DLAtomOp& o)
+      {
+	if (this != &o)
+	  {
+	    extAtomNo = o.extAtomNo;
+	    op = o.op;
+	    delete lhs;
+	    delete rhs;
+	    lhs = new std::string(*o.lhs);
+	    rhs = new std::string(*o.rhs);
+	  }
+	return *this;
+      }
+
+      /// dtor
       ~DLAtomOp()
       {
 	delete lhs;
@@ -90,8 +115,17 @@ namespace dl {
     reset();
 
   public:
+    /// ctor
     HexDLRewriterDriver(std::istream& i, std::ostream& o);
 
+    /// copy ctor
+    HexDLRewriterDriver(const HexDLRewriterDriver&);
+
+    /// assignment op
+    HexDLRewriterDriver&
+    operator= (const HexDLRewriterDriver&);
+
+    /// dtor
     virtual
     ~HexDLRewriterDriver();
 

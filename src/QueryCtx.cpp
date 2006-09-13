@@ -134,6 +134,7 @@ namespace dlvhex {
 
 
 QueryCtx::QueryCtx(const QueryCtx&)
+  : q(0), a(0)
 { }
 
 
@@ -150,6 +151,7 @@ QueryCtx::QueryCtx(Query* qq, Answer* aa)
 
 
 QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError)
+  : q(0), a(0)
 {
   const Tuple& inputtuple = query.getInputTuple();
 

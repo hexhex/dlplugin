@@ -48,11 +48,13 @@ namespace util {
     /// input character sequence
     std::streambuf::char_type* ibuf;
 
-    /**
-     * Allocates the buffers at initialization time.
-     */
+    /// Allocates the buffers at initialization time.
     void
     initBuffers();
+
+    /// private assignment op
+    TCPStreamBuf&
+    operator= (const TCPStreamBuf&);
 
 
   protected:

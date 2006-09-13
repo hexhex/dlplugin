@@ -23,7 +23,7 @@ namespace racer {
 
   template <class Builder>
   NRQLQuery<Builder>::NRQLQuery(const Query& q)
-    : query(q)
+    : builder(), query(q)
   { }
 
 

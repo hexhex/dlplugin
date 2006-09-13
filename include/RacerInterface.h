@@ -76,8 +76,15 @@ namespace racer {
 
     /// private copy ctor
     RacerInterface(const RacerInterface&)
-      : PluginInterface()
-    { }
+      : PluginInterface(), stream(0), stats(0), cache(0), rewriter(0), kbManager(0)
+    { /* ignore */ }
+
+    /// private assignment op
+    RacerInterface&
+    operator= (const RacerInterface&)
+    {
+      return *this; // ignore
+    }
 
     /// private default ctor
     RacerInterface();

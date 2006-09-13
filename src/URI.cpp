@@ -28,12 +28,14 @@ using namespace dlvhex::dl;
 
 
 URI::URI(const std::string& u, bool absolute)
+  : uri()
 {
   setupURI(u, absolute);
 }
 
 
 URI::URI(const Term& t, bool absolute)
+  : uri()
 {
   std::string s = t.getUnquotedString();
 

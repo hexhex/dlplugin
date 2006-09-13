@@ -75,14 +75,23 @@ namespace dl {
   private:
     const std::string* const literal;
 
+    /// private assignment op
+    LiteralRewriter&
+    operator= (const LiteralRewriter&);
+
   protected:
     std::ostream&
     rewrite(std::ostream& os) const;
 
   public:
+    /// ctor
     explicit
     LiteralRewriter(const std::string* l);
 
+    /// copy ctor
+    LiteralRewriter(const LiteralRewriter&);
+
+    /// dtor
     virtual
     ~LiteralRewriter();
   };
@@ -95,13 +104,16 @@ namespace dl {
    */
   class BodyRewriter : public HexDLRewriterBase
   {
-  protected:
+  private:
     boost::ptr_vector<HexDLRewriterBase> body;
 
     std::ostream&
     rewrite(std::ostream& os) const;
 
   public:
+    /// default ctor
+    BodyRewriter();
+
     void
     add(HexDLRewriterBase* atom);
   };
@@ -116,12 +128,20 @@ namespace dl {
     Tuple* const input;
     Tuple* const output;
 
+    /// private assignment op
+    CQAtomRewriter&
+    operator= (const CQAtomRewriter&);
+
   protected:
     std::ostream&
     rewrite(std::ostream& os) const;
 
   public:
+    /// ctor
     CQAtomRewriter(Tuple* input, Tuple* output);
+
+    /// copy ctor
+    CQAtomRewriter(const CQAtomRewriter&);
 
     virtual
     ~CQAtomRewriter();
@@ -133,23 +153,31 @@ namespace dl {
    */
   class DLAtomRewriter : public HexDLRewriterBase
   {
-  protected:
+  private:
     const std::string uri;
     const int extAtomNo;
 
-    const std::string* query;
-    const std::string* out1;
-    const std::string* out2;
+    const std::string* const query;
+    const std::string* const out1;
+    const std::string* const out2;
+
+    /// private assignment op
+    DLAtomRewriter&
+    operator= (const DLAtomRewriter&);
 
     std::ostream&
     rewrite(std::ostream& os) const;
 
   public:
+    /// ctor
     DLAtomRewriter(const std::string& uri,
 		   int extAtomNo,
 		   const std::string* q,
 		   const std::string* t1,
 		   const std::string* t2 = 0);
+
+    /// copy ctor
+    DLAtomRewriter(const DLAtomRewriter&);
 
     ~DLAtomRewriter();
   };

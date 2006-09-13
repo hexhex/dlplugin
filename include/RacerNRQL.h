@@ -126,6 +126,11 @@ namespace racer {
     output(std::ostream& s) const;
 
   public:
+    /// default ctor
+    NRQLConjunction()
+      : list()
+    { }
+
     /** 
      * add @a e to #list.
      * 

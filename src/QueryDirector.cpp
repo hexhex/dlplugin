@@ -28,6 +28,7 @@ using namespace dlvhex::dl;
 
 QueryCompositeDirector::QueryCompositeDirector(std::iostream& s)
   : QueryBaseDirector(),
+    dirs(),
     stream(s)
 { }
 

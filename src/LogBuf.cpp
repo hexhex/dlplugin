@@ -29,7 +29,8 @@ std::ostream dlvhex::util::log(new LogBuf);
 
 LogBuf::LogBuf(std::ostream* stream)
   : std::streambuf(),
-    out(stream)
+    out(stream),
+    sstream()
 { }
 
 

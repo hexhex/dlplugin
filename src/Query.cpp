@@ -29,6 +29,7 @@ Query::Query(KBManager& kb,
 	     const Term& mr,
 	     const AtomSet& i)
   : kbManager(kb),
+    proj(),
     query(q)
 {
   setInterpretation(i, pc, mc, pr, mr);

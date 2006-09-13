@@ -110,7 +110,10 @@ namespace dl {
 
 DLQuery::DLQuery(Ontology::shared_pointer o, const Term& q, const Tuple& p)
   : ontology(o),
-    query(q)
+    query(q),
+    conj(),
+    pattern(),
+    typeFlags(0)
 {
   setPatternTuple(p);
 }
@@ -118,7 +121,10 @@ DLQuery::DLQuery(Ontology::shared_pointer o, const Term& q, const Tuple& p)
 
 DLQuery::DLQuery(Ontology::shared_pointer o, const AtomSet& cq, const Tuple& p)
   : ontology(o),
-    conj(cq)
+    query(),
+    conj(cq),
+    pattern(),
+    typeFlags(0)
 {
   setPatternTuple(p);
 }

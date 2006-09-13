@@ -24,9 +24,22 @@ using namespace dlvhex::dl::racer;
 RacerBaseAnswerDriver::RacerBaseAnswerDriver(std::istream& i)
   : QueryBaseParser(i),
     lexer(new RacerFlexLexer(this))
+{ }
+
+
+RacerBaseAnswerDriver::RacerBaseAnswerDriver(const RacerBaseAnswerDriver& d)
+  : QueryBaseParser(d),
+    lexer(new RacerFlexLexer(this))
+{ }
+
+
+RacerBaseAnswerDriver&
+RacerBaseAnswerDriver::operator= (const RacerBaseAnswerDriver&)
 {
+  return *this; // ignore
 }
-     
+
+
 RacerBaseAnswerDriver::~RacerBaseAnswerDriver()
 {
   delete lexer;
