@@ -58,9 +58,18 @@ if test -r $srcdir/src/FlexLexer.h ; then : ; else
 	AC_CHECK_HEADER([FlexLexer.h])
 	AC_LANG_POP([C++])
 
-	AC_MSG_CHECKING([for FlexLexer.h path])
+	# first we guess the prefix of flex
+	AC_PATH_PROG([flexexec], [flex], [notfound])
+	flexbindir=`AS_DIRNAME(["$flexexec"])`
+	flexprefix=`AS_DIRNAME(["$flexbindir"])`
 
-	include_paths="/usr/include /usr/local/include" # TODO: get default include paths from compiler?
+	if test "$flexexec" = notfound; then
+	   AC_MSG_ERROR([flex not found. Download it at http://flex.sourceforge.net/])
+	fi
+
+	include_paths="$flexprefix/include"
+
+	# then we check all compiler flags for include paths
 	for f in "$CPPFLAGS $CXXFLAGS $CFLAGS"
 	do
 		case $f in
@@ -68,8 +77,13 @@ if test -r $srcdir/src/FlexLexer.h ; then : ; else
 		esac
 	done
 
+	# TODO: get default include paths from compiler?
+	include_paths="$include_paths /usr/local/include /usr/include"
+
 	# get rid of -I compiler flags
 	paths=`echo $include_paths | sed s,-I,,g`
+
+	AC_MSG_CHECKING([for FlexLexer.h path in $paths])
 
 	# get the FIRST occurence of FlexLexer.h
 	FLEXLEXER_H=`find $paths -name FlexLexer.h 2>/dev/null | head -n1`
