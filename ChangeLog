@@ -1,5 +1,8 @@
 2006-09-13  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* testsuite/Makefile.am: Start only one RacerPro instance for the testsuite.
+	* testsuite/run-dlvhex-tests.sh: Likewise.
+
 	* configure.ac: Fix FlexLexer.h searching.
 
 	* include/Answer.h: Eliminate some -Weffc++ compiler warnings.
