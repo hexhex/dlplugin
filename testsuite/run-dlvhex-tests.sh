@@ -19,9 +19,7 @@ do
     do
 	let ntests++
 
-	$RACER -http 0 >/dev/null 2>&1 &
 	$DLVHEX -s $HEXPROGRAM | egrep -v "^$" > $TMPFILE
-	kill $(pidof $RACER)
 
 	if cmp -s $TMPFILE $ANSWERSETS
 	then
