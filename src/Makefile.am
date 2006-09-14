@@ -110,7 +110,8 @@ AM_CPPFLAGS = \
 # -avoid-version: only create libdlvhexracer.so
 # -module: library will be dlopened
 # -no-undefined: windows dlls don't allow undefined external symbols
-libdlvhexracer_la_LDFLAGS = -avoid-version -module -no-undefined $(RAPTOR_LIBS)
+#libdlvhexracer_la_LDFLAGS = -avoid-version -module -no-undefined $(RAPTOR_LIBS)
+libdlvhexracer_la_LDFLAGS = -avoid-version -module $(RAPTOR_LIBS)
 
 
 #
