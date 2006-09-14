@@ -1,3 +1,18 @@
+2006-09-14  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* m4/cppunit.m4: Include updated macros from cppunit 1.12.0.
+
+	* m4/boost.m4: Fix boost version checking on macosx.
+
+	* configure.ac: Don't follow subdirectories when searching for
+	FlexLexer.h.
+
+	* src/TCPStream.cpp (TCPStreamBuf): sigemptyset() is a macro on
+	macosx.
+
+	* src/Makefile.am (libdlvhexracer_la_LDFLAGS): Remove
+	-no-undefined, the macosx linker is pretty picky.
+
 2006-09-13  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* testsuite/Makefile.am: Start only one RacerPro instance for the testsuite.
