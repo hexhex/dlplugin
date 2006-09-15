@@ -1,5 +1,7 @@
 2006-09-15  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* configure.ac: Bump version to 0.4.0.
+
 	* include/HexDLRewriter.h: Add support for rewriting dl-atoms to
 	&dlDR ext-atoms.
 	* include/HexDLRewriterDriver.h: Likewise.
@@ -31,6 +33,8 @@
 
 2006-09-13  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	Release version 0.3.0.
+	
 	* testsuite/Makefile.am: Start only one RacerPro instance for the testsuite.
 	* testsuite/run-dlvhex-tests.sh: Likewise.
 
