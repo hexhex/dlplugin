@@ -1,3 +1,19 @@
+2006-09-15  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/HexDLRewriter.h: Add support for rewriting dl-atoms to
+	&dlDR ext-atoms.
+	* include/HexDLRewriterDriver.h: Likewise.
+	* include/OWLParser.h: Likewise.
+	* include/Ontology.h: Likewise.
+	* src/HexDLRewriter.cpp: Likewise.
+	* src/HexDLRewriterDriver.cpp: Likewise.
+	* src/HexDLRewriterParser.ypp: Likewise.
+	* src/OWLParser.cpp: Likewise.
+	* src/Ontology.cpp: Likewise.
+	* src/QueryDirector.cpp: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+	* testsuite/TestOWLParser.cpp: Likewise.
+
 2006-09-14  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* m4/cppunit.m4: Include updated macros from cppunit 1.12.0.
