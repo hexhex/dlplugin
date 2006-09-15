@@ -70,7 +70,8 @@ if test -r $srcdir/src/FlexLexer.h ; then : ; else
 	include_paths="$flexprefix/include"
 
 	# then we check all compiler flags for include paths
-	for f in "$CPPFLAGS $CXXFLAGS $CFLAGS"
+	flags="$CPPFLAGS $CXXFLAGS $CFLAGS"
+	for f in $flags
 	do
 		case $f in
 		-I*) include_paths="$include_paths $f" ;;
