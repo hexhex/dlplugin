@@ -19,12 +19,15 @@
 
 2006-09-14  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	Release version 0.3.1.
+
 	* m4/cppunit.m4: Include updated macros from cppunit 1.12.0.
 
 	* m4/boost.m4: Fix boost version checking on macosx.
 
 	* configure.ac: Don't follow subdirectories when searching for
 	FlexLexer.h.
+	Bump version to 0.3.1.
 
 	* src/TCPStream.cpp (TCPStreamBuf): sigemptyset() is a macro on
 	macosx.
