@@ -28,7 +28,7 @@ using namespace dlvhex::dl;
 HexDLRewriterDriver::HexDLRewriterDriver(std::istream& i, std::ostream& o)
   : PluginRewriter(i, o),
     lexer(new HexDLRewriterFlexLexer(this)),
-    uri(""),
+    ontology(),
     extAtomNo(0),
     rewrittenDLAtoms()
 {
@@ -39,7 +39,7 @@ HexDLRewriterDriver::HexDLRewriterDriver(std::istream& i, std::ostream& o)
 HexDLRewriterDriver::HexDLRewriterDriver(const HexDLRewriterDriver& d)
   : PluginRewriter(*d.input, *d.output),
     lexer(new HexDLRewriterFlexLexer(this)),
-    uri(d.uri),
+    ontology(d.ontology),
     extAtomNo(d.extAtomNo),
     rewrittenDLAtoms()
 {
@@ -54,7 +54,7 @@ HexDLRewriterDriver::operator= (const HexDLRewriterDriver& d)
     {
       delete lexer;
       lexer = new HexDLRewriterFlexLexer(this);
-      uri = d.uri;
+      ontology = d.ontology;
       extAtomNo = d.extAtomNo;
       setStreams(d.input, d.output);
     }
@@ -95,14 +95,21 @@ HexDLRewriterDriver::getOutput() const
 void
 HexDLRewriterDriver::setUri(const std::string& s)
 {
-  this->uri = s;
+  try
+    {
+      this->ontology = Ontology::createOntology(s);
+    }
+  catch (DLError& e)
+    {
+      throw PluginError(e.what());
+    }
 }
 
 
-const std::string&
-HexDLRewriterDriver::getUri() const
+Ontology::shared_pointer
+HexDLRewriterDriver::getOntology() const
 {
-  return this->uri;
+  return this->ontology;
 }
 
 
@@ -148,10 +155,10 @@ HexDLRewriterDriver::rewrite()
     }
 
   //
-  // if we don't have an URI, we skip the dl-atom rewriting
+  // if we don't have an Ontology, we skip the dl-atom rewriting
   //
   
-  if (uri.empty())
+  if (!ontology)
     {
       return;
     }
@@ -161,19 +168,9 @@ HexDLRewriterDriver::rewrite()
   // corresponding additional rules to the HEX program
   //
 
-  Ontology::shared_pointer onto;
-
-  try
-    {
-      onto = Ontology::createOntology(uri);
-    }
-  catch (DLError& e)
-    {
-      throw PluginError(e.what());
-    }
-
-  Ontology::ObjectsPtr concepts = onto->getConcepts();
-  Ontology::ObjectsPtr roles = onto->getRoles();
+  TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
+  TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
+  TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
 
   // output rewritten dl-atoms
 
@@ -184,7 +181,7 @@ HexDLRewriterDriver::rewrite()
 
       aux << "dl_" << (it->op == DLAtomOp::plus ? 'p' : 'm');
 
-      std::string s = onto->getNamespace() + *(it->lhs);
+      std::string s = ontology->getNamespace() + *(it->lhs); ///@todo always add namespace?
       Term t(s);
 
       if (concepts->find(t) != concepts->end())
@@ -199,7 +196,9 @@ HexDLRewriterDriver::rewrite()
 		  << "(X)."
 		  << std::endl;
 	}
-      else if (roles->find(t) != roles->end())
+      else if (roles->find(t) != roles->end() || 
+	       datatypeRoles->find(t) != datatypeRoles->end()
+	       )
 	{
 	  aux << "r_" << it->extAtomNo;
 

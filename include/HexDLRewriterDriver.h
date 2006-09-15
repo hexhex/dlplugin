@@ -13,6 +13,11 @@
 #ifndef _HEXDLREWRITERDRIVER_H
 #define _HEXDLREWRITERDRIVER_H
 
+
+#include "HexDLRewriterParser.hpp"
+#include "Ontology.h"
+#include "DLError.h"
+
 #include <dlvhex/PluginInterface.h>
 
 #include <iosfwd>
@@ -20,9 +25,6 @@
 #include <map>
 
 #include <boost/ptr_container/ptr_vector.hpp>
-
-#include "HexDLRewriterParser.hpp"
-#include "DLError.h"
 
 //
 // forward declarations
@@ -101,8 +103,8 @@ namespace dl {
     /// lexer object which scans the stream
     HexDLRewriterFlexLexer* lexer;
 
-    /// Ontology URI
-    std::string uri;
+    /// current Ontology
+    Ontology::shared_pointer ontology;
 
     /// counter for external atoms
     unsigned extAtomNo;
@@ -141,8 +143,8 @@ namespace dl {
     void
     setUri(const std::string& u);
 
-    const std::string&
-    getUri() const;
+    Ontology::shared_pointer
+    getOntology() const;
 
     void
     addExtAtomNo(int offset);

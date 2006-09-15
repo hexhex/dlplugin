@@ -28,35 +28,35 @@ TestOWLParser::runParserTest()
 {
   OWLParser p(shop);
   std::string defaultNS;
-  Ontology::Objects indvs;
-  p.parseIndividuals(indvs);
+  ABox abox;
+  p.parseABox(abox);
 
-  if (!indvs.empty())
+  if (!abox.getIndividuals()->empty())
     {
       std::cout << "{";
-      std::copy(indvs.begin(),
-		--indvs.end(),
+      std::copy(abox.getIndividuals()->begin(),
+		--abox.getIndividuals()->end(),
 		std::ostream_iterator<Term>(std::cout, ",")
 		);
-      std::cout << *(--indvs.end()) << "}" << std::endl;
+      std::cout << *(--abox.getIndividuals()->end()) << "}" << std::endl;
     }
 
   p.parseNamespace(defaultNS);
   CPPUNIT_ASSERT(defaultNS == "http://www.kr.tuwien.ac.at/staff/roman/shop#");
 
   OWLParser p2(test);
-  indvs.clear();
+  ABox abox2;
   defaultNS.clear();
-  p2.parseIndividuals(indvs);
+  p2.parseABox(abox2);
 
-  if (!indvs.empty())
+  if (!abox2.getIndividuals()->empty())
     {
       std::cout << "{";
-      std::copy(indvs.begin(),
-		--indvs.end(),
+      std::copy(abox2.getIndividuals()->begin(),
+		--abox2.getIndividuals()->end(),
 		std::ostream_iterator<Term>(std::cout, ",")
 		);
-      std::cout << *(--indvs.end()) << "}" << std::endl;
+      std::cout << *(--abox2.getIndividuals()->end()) << "}" << std::endl;
     }
 
   p2.parseNamespace(defaultNS);

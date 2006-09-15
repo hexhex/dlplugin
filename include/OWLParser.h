@@ -59,11 +59,9 @@ namespace dl {
     /// owl namespace
     static const std::string owlNspace;
 
-    static const std::string rdfsSubPropertyOf;
     static const std::string owlClass;
-    static const std::string owlSubClassOf;
     static const std::string owlObjectProperty;
-    static const std::string owlInverseOf;
+    static const std::string owlDatatypeProperty;
 
     /// Ctor
     explicit
@@ -85,10 +83,16 @@ namespace dl {
     /**
      * get universe of OWL document
      *
-     * @param indvs add individuals to set
+     * @param abox add individuals to @a abox
      */
     virtual void
-    parseIndividuals(Ontology::Objects& indvs) throw (DLParsingError);
+    parseABox(ABox& abox) throw (DLParsingError);
+
+    /**
+     * get all possible concept and role names.
+     */
+    virtual void
+    parseTBox(TBox& tbox) throw (DLParsingError);
 
     /**
      * get default namespace
@@ -97,12 +101,6 @@ namespace dl {
      */
     virtual void
     parseNamespace(std::string& ns) throw (DLParsingError);
-
-    /**
-     * get all possible concept and role names.
-     */
-    virtual void
-    parseNames(Ontology::Objects& concepts, Ontology::Objects& roles) throw (DLParsingError);
 
     /** 
      * Fetch uri to file.

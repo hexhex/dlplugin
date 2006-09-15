@@ -99,7 +99,7 @@ RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
     {
       Ontology::shared_pointer onto = Ontology::createOntology(uri);
 
-      Ontology::ObjectsPtr indvs = onto->getIndividuals();
+      ABox::ObjectsPtr indvs = onto->getABox().getIndividuals();
       
       std::insert_iterator<std::list<Term> > ins = std::inserter(uni, uni.begin());
       std::copy(indvs->begin(), indvs->end(), ins);

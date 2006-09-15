@@ -27,18 +27,107 @@
 namespace dlvhex {
 namespace dl {
 
+
   /**
-   * @brief Basic information about ontologies.
-   *
-   * This factory stores all available ontologies and provides fast
-   * access to them, i.e. it caches concepts/roles/individuals and
-   * downloads non-local OWL ontologies.
+   * @brief Represents the ABox component of an Ontology.
    */
-  class Ontology
+  class ABox
   {
   public:
     typedef std::set<Term> Objects;
     typedef boost::shared_ptr<Objects> ObjectsPtr;
+
+  private:
+    /// set of individual names
+    ObjectsPtr individuals;
+
+  public:
+    /// default ctor
+    ABox() : individuals(new Objects) { }
+
+    inline ObjectsPtr
+    getIndividuals() const
+    {
+      return individuals;
+    }
+
+    inline void
+    addIndividual(const Term& t)
+    {
+      individuals->insert(t);
+    }
+  };
+
+
+  /**
+   * @brief Represents the TBox component of an Ontology.
+   */
+  class TBox
+  {
+  public:
+    typedef std::set<Term> Objects;
+    typedef boost::shared_ptr<Objects> ObjectsPtr;
+
+  private:
+    /// set of concept names
+    ObjectsPtr concepts;
+    /// set of role names
+    ObjectsPtr roles;
+    /// set of datatype role names
+    ObjectsPtr datatypeRoles;
+
+  public:
+    /// default ctor
+    TBox() : concepts(new Objects), roles(new Objects), datatypeRoles(new Objects) { }
+
+    inline ObjectsPtr
+    getConcepts() const
+    {
+      return concepts;
+    }
+
+    inline void
+    addConcept(const Term& t)
+    {
+      concepts->insert(t);
+    }
+
+    inline ObjectsPtr
+    getRoles() const
+    {
+      return roles;
+    }
+
+    inline void
+    addRole(const Term& t)
+    {
+      roles->insert(t);
+    }
+
+    inline ObjectsPtr
+    getDatatypeRoles() const
+    {
+      return datatypeRoles;
+    }
+
+    inline void
+    addDatatypeRole(const Term& t)
+    {
+      datatypeRoles->insert(t);
+    }
+  };
+
+
+  /**
+   * @brief Basic information about ontologies.
+   *
+   * This factory stores all available ontologies and provides fast
+   * access to them, i.e. it caches TBox/ABox components and provides
+   * download support for non-local OWL ontologies.
+   */
+  class Ontology
+  {
+  public:
     typedef boost::shared_ptr<Ontology> shared_pointer;
 
   private:
@@ -55,12 +144,10 @@ namespace dl {
     // declare the getter methods with a const qualifier
     //
 
-    /// concept names
-    mutable ObjectsPtr concepts;
-    /// role names
-    mutable ObjectsPtr roles;
+    /// concept/role names
+    mutable TBox* tbox;
     /// individual names
-    mutable ObjectsPtr individuals;
+    mutable ABox* abox;
 
     //
     // we don't want Ontology to be constructed by the user, so keep
@@ -74,6 +161,10 @@ namespace dl {
 
     /// private copy ctor
     Ontology(const Ontology&);
+
+    /// private assignment op
+    Ontology&
+    operator= (const Ontology&);
 
   public:
     virtual
@@ -92,14 +183,11 @@ namespace dl {
     const std::string&
     getNamespace() const;
 
-    ObjectsPtr
-    getConcepts() const;
+    const ABox&
+    getABox() const;
     
-    ObjectsPtr
-    getRoles() const;
-
-    ObjectsPtr
-    getIndividuals() const;
+    const TBox&
+    getTBox() const;
 
     friend std::ostream&
     operator<< (std::ostream& os, const Ontology& o);

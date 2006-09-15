@@ -13,6 +13,8 @@
 #ifndef _HEXDLREWRITER_H
 #define _HEXDLREWRITER_H
 
+#include "Ontology.h"
+
 #include <iosfwd>
 #include <string>
 
@@ -154,7 +156,7 @@ namespace dl {
   class DLAtomRewriter : public HexDLRewriterBase
   {
   private:
-    const std::string uri;
+    const Ontology::shared_pointer ontology;
     const int extAtomNo;
 
     const std::string* const query;
@@ -170,7 +172,7 @@ namespace dl {
 
   public:
     /// ctor
-    DLAtomRewriter(const std::string& uri,
+    DLAtomRewriter(const Ontology::shared_pointer& onto,
 		   int extAtomNo,
 		   const std::string* q,
 		   const std::string* t1,

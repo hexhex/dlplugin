@@ -216,7 +216,7 @@ term: STRING
 // we rewrite dl-atoms to &dlC/&dlR external atoms
 dlatom: DLATOM dlquery '(' STRING ')'
         {
-	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getUri(),
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(),
 					      driver.getExtAtomNo(),
 					      $2,
 					      $4);
@@ -224,7 +224,7 @@ dlatom: DLATOM dlquery '(' STRING ')'
 	}
       | DLATOM dlquery '(' STRING ',' STRING ')'
         {
-	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getUri(),
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(),
 					      driver.getExtAtomNo(),
 					      $2,
 					      $4,

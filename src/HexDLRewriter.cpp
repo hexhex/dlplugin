@@ -161,25 +161,26 @@ CQAtomRewriter::rewrite(std::ostream& os) const
 
 
 
-DLAtomRewriter::DLAtomRewriter(const std::string& u, int e,
+DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
+			       int e,
 			       const std::string* q,
 			       const std::string* t1,
 			       const std::string* t2)
-  : uri(u), extAtomNo(e), query(q), out1(t1), out2(t2)
+  : ontology(onto), extAtomNo(e), query(q), out1(t1), out2(t2)
 {
   assert(query != 0);
   assert(out1 != 0);
 
-  if (uri.empty())
+  if (!ontology)
     {
-      throw PluginError("Couldn't rewrite dl-atom, ontology URI is empty.");
+      throw PluginError("Couldn't rewrite dl-atom, ontology is empty.");
     }
 }
 
 
 DLAtomRewriter::DLAtomRewriter(const DLAtomRewriter& d)
   : HexDLRewriterBase(),
-    uri(d.uri),
+    ontology(d.ontology),
     extAtomNo(d.extAtomNo),
     query(d.query),
     out1(d.out1),
@@ -207,18 +208,55 @@ DLAtomRewriter::rewrite(std::ostream& os) const
 {
   // first commandment: stream thy strings
 
-  if (out2) // concept or role dl-atom?
+  TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
+  TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
+  TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
+
+  std::string tmpquery;
+  bool isNegated = false;
+
+  ///@todo always add namespace?
+  if (query->find("\"-") == 0)
     {
-      os << "&dlR";
+      isNegated = true;
+      tmpquery = ontology->getNamespace() + query->substr(2, query->length() - 3);
+    }
+  else if (query->find("\"") == 0)
+    {
+      tmpquery = ontology->getNamespace() + query->substr(1, query->length() - 2);
+    }
+  else if (query->find("-") == 0)
+    {
+      isNegated = true;
+      tmpquery = ontology->getNamespace() + query->substr(1, query->length() - 1);
     }
   else
     {
+      tmpquery = ontology->getNamespace() + *query;
+    }
+
+  Term t(tmpquery);
+
+  if (concepts->find(t) != concepts->end())
+    {
       os << "&dlC";
+    }
+  else if (roles->find(t) != roles->end() && out2)
+    {
+      os << "&dlR";
+    }
+  else if (datatypeRoles->find(t) != datatypeRoles->end() && out2)
+    {
+      os << "&dlDR";
+    }
+  else
+    {
+      throw PluginError("Incompatible dl-atom query supplied.");
     }
 
   // output external atoms input list
   os << "[\"" 
-     << uri 
+     << ontology->getRealURI() 
      << "\",dl_pc_"
      << extAtomNo
      << ",dl_mc_"
@@ -227,9 +265,9 @@ DLAtomRewriter::rewrite(std::ostream& os) const
      << extAtomNo
      << ",dl_mr_"
      << extAtomNo
-     << ','
-     << ((*query)[0] != '"' ? "\"" + *query + "\"" : *query)
-     << ']';
+     << ",\""
+     << (isNegated ? "-" + tmpquery : tmpquery)
+     << "\"]";
 
   // append output list of the ext. atom
 

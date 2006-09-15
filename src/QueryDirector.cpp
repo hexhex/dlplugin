@@ -74,8 +74,8 @@ namespace dlvhex {
     private:
       std::vector<Tuple>& tuples;
       Tuple tuple;
-      Ontology::Objects::const_iterator ubeg;
-      Ontology::Objects::const_iterator uend;
+      ABox::Objects::const_iterator ubeg;
+      ABox::Objects::const_iterator uend;
       Tuple::const_iterator pbeg;
       Tuple::const_iterator pend;
       
@@ -97,7 +97,7 @@ namespace dlvhex {
 	      }
 	    else
 	      {
-		for (Ontology::Objects::const_iterator it = ubeg; it != uend; ++it)
+		for (ABox::Objects::const_iterator it = ubeg; it != uend; ++it)
 		  {
 		    *ins = *it;
 		    ground(++p, ++ins);
@@ -119,8 +119,8 @@ namespace dlvhex {
        * @param pe end of the output list
        */
       Grounder(std::vector<Tuple>& t,
-	       Ontology::Objects::const_iterator ub,
-	       Ontology::Objects::const_iterator ue,
+	       ABox::Objects::const_iterator ub,
+	       ABox::Objects::const_iterator ue,
 	       Tuple::const_iterator pb,
 	       Tuple::const_iterator pe)
 	: tuples(t),
@@ -160,13 +160,13 @@ QueryCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
     {
       // just get all individuals
       
-      Ontology::ObjectsPtr universe = dlq->getOntology()->getIndividuals();
+      ABox::ObjectsPtr universe = dlq->getOntology()->getABox().getIndividuals();
 
       //
       // add individuals from the interpretation of qctx to universe
       //
 
-      std::insert_iterator<Ontology::Objects> ii = std::inserter(*universe, universe->begin());
+      std::insert_iterator<ABox::Objects> ii = std::inserter(*universe, universe->begin());
 
       for (AtomSet::const_iterator it1 = qctx->getQuery().getProjectedInterpretation().begin();
 	   it1 != qctx->getQuery().getProjectedInterpretation().end();
@@ -208,7 +208,7 @@ QueryCachingDirector::QueryCachingDirector(BaseCache& c,
 QueryCtx::shared_pointer
 QueryCachingDirector::query(QueryCtx::shared_pointer qctx) throw(DLError)
 {
-  if (director.get() != 0)
+  if (director)
     {
       QueryCtx::shared_pointer found = cache.cacheHit(qctx);
 
