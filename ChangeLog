@@ -1,6 +1,7 @@
 2006-09-15  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* configure.ac: Bump version to 0.4.0.
+	Fix bashism.
 
 	* include/HexDLRewriter.h: Add support for rewriting dl-atoms to
 	&dlDR ext-atoms.
