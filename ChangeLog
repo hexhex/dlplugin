@@ -1,5 +1,8 @@
 2006-09-17  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* testsuite/TestDLRewriter.cpp: Open files in read-only mode,
+	otw. we would silently skip read-only hex-programs.
+
 	* configure.ac: Always define FLEXLEXER_H, otw. make distcheck is
 	a no-op.
 
