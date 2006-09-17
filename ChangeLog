@@ -1,3 +1,10 @@
+2006-09-17  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* configure.ac: Always define FLEXLEXER_H, otw. make distcheck is
+	a no-op.
+
+	* testsuite/Makefile.am (AM_CPPFLAGS): Add -I$(top_srcdir)/src.
+
 2006-09-15  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* configure.ac: Bump version to 0.4.0.
