@@ -38,6 +38,7 @@ TestSuite_SOURCES = \
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/src \
 	$(ACE_CPPFLAGS) \
 	$(RAPTOR_CFLAGS) \
 	$(DLVHEX_CFLAGS)
