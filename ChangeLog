@@ -1080,6 +1080,8 @@
 
 2006-06-15  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	Release version 0.1.0.
+	
 	* src/RacerAnswerScanner.lpp: Adapt parser to bison 2.2/2.3. 
 	* src/RacerAnswerParser.ypp: Likewise.
 	* include/RacerFlexLexer.h: Likewise.
