@@ -25,7 +25,9 @@ void
 TestDLRewriter::runDLRewrite()
 {
  {
-   std::fstream fs((examples + "/tweety_bird.dlp").c_str());
+   std::fstream fs((examples + "/tweety_bird.dlp").c_str(), std::fstream::in);
+   CPPUNIT_ASSERT( fs.is_open() );
+
    std::ostringstream os;
    
    HexDLRewriterDriver dr(fs, os);
@@ -37,7 +39,9 @@ TestDLRewriter::runDLRewrite()
  }
 
  {
-   std::fstream fs((examples + "/dl-shop.dlp").c_str());
+   std::fstream fs((examples + "/dl-shop.dlp").c_str(), std::fstream::in);
+   CPPUNIT_ASSERT( fs.is_open() );
+
    std::ostringstream os;
    
    HexDLRewriterDriver dr(fs, os);
@@ -67,7 +71,9 @@ TestDLRewriter::runDLRewrite()
 void
 TestDLRewriter::runDLNoRewrite()
 {
-  std::fstream fs((examples + "/shop.dlp").c_str());
+  std::fstream fs((examples + "/shop.dlp").c_str(), std::fstream::in);
+  CPPUNIT_ASSERT( fs.is_open() );
+  
   std::ostringstream os;
 
   HexDLRewriterDriver dr(fs, os);
@@ -75,7 +81,9 @@ TestDLRewriter::runDLNoRewrite()
   dr.setStreams(&fs, &os);
   dr.rewrite();
 
-  std::fstream fs2((examples + "/shop.dlp").c_str());
+  std::fstream fs2((examples + "/shop.dlp").c_str(), std::fstream::in);
+  CPPUNIT_ASSERT( fs2.is_open() );
+
   std::stringbuf cmp;
   fs2.get(cmp, 0);
 
