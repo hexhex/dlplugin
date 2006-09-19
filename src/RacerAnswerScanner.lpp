@@ -181,7 +181,7 @@ yylloc->step();
 
 <*>{BLANK}+       /* skip blanks */ yylloc->step();
 
-{NEWLINE}         yylloc->lines(yyleng); return yy::RacerAnswerParser::token_type(*yytext);
+{NEWLINE}         yylloc->lines(1); return yy::RacerAnswerParser::token_type(*yytext);
 
 .                 driver.error(*yylloc, "invalid character");
 
