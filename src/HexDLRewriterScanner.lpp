@@ -33,7 +33,7 @@ NUMBER          (\-)?[0-9]+
 
 COMMENT         {BLANK}*%.*{NEWLINE}
 
-CONS            (:-|<-)
+CONS            (:-|<-|:~)
 
 INPUTLIST       \[[^\]]+\]
 OUTPUTLIST      \([^\)]*\)
@@ -149,7 +149,7 @@ typedef yy::HexDLRewriterParser::token token;
 }
 
 
-<*>{NEWLINE}  yylloc->lines(yyleng); ECHO;
+<*>{NEWLINE}  yylloc->lines(1); ECHO;
 
 <*>.          ECHO;
 
