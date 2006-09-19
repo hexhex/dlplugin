@@ -206,6 +206,8 @@ TCPStreamBuf::open()
 	}
 
       // connection failed
+      close();
+
       std::ostringstream oss;
       oss << "Could not open connection to " << host << ':' << port << '.';
       throw std::ios_base::failure(oss.str());
