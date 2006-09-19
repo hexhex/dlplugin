@@ -38,8 +38,8 @@ do
 	    while read
 	    do
 		# translate both answersets to python lists
-		a1=$(echo $REPLY | cut -f1 | sed s/"{"/"['"/ | sed s/", "/"', '"/g | sed s/"}"/"']"/)
-		a2=$(echo $REPLY | cut -f2 | sed s/"{"/"['"/ | sed s/", "/"', '"/g | sed s/"}"/"']"/)
+		a1=$(echo $REPLY | cut -f1 | sed s/"'"/"\\\'"/g | sed s/"{"/"['"/ | sed s/", "/"', '"/g | sed s/"}"/"']"/)
+		a2=$(echo $REPLY | cut -f2 | sed s/"'"/"\\\'"/g | sed s/"{"/"['"/ | sed s/", "/"', '"/g | sed s/"}"/"']"/)
 
 		# now check if set difference yields incomparability
 		if cat <<EOF | python
