@@ -1,5 +1,13 @@
 2006-09-19  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* src/TCPStream.cpp (TCPStream::open): Close socket after a
+	connection failure.
+
+	* src/HexDLRewriterScanner.lpp: Add support for weak constraints.
+	Fix line counter.
+
+	* src/RacerAnswerScanner.lpp: Fix line counter.
+
 	* testsuite/run-dlvhex-tests.sh: Escape ' chars in python lists.
 
 	* bootstrap.sh: Rename bootstrap to bootstrap.sh.
