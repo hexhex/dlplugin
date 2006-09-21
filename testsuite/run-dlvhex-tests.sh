@@ -1,9 +1,8 @@
 #!/bin/bash
 
 DLVHEX=dlvhex
-RACER=RacerPro
 
-TMPFILE=$(mktemp)
+TMPFILE=$(mktemp /tmp/dlvhex-XXXXXX)
 
 cd $EXAMPLES
 
@@ -13,7 +12,7 @@ ntests=0
 
 echo ============ dlvhex tests start ============
 
-for t in $(find -name '*.test' -type f)
+for t in $(find ./ -name '*.test' -type f)
 do
     while read HEXPROGRAM ANSWERSETS
     do
@@ -27,7 +26,7 @@ do
 	else
 	    # and now check which answersets differ
 
-	    pasted=$(mktemp)
+	    pasted=$(mktemp /tmp/dlvhex-XXXXXX)
 	    paste $ANSWERSETS $TMPFILE > $pasted
 
 	    OLDIFS=$IFS
@@ -38,8 +37,8 @@ do
 	    while read
 	    do
 		# translate both answersets to python lists
-		a1=$(echo $REPLY | cut -f1 | sed s/"'"/"\\\'"/g | sed s/"{"/"['"/ | sed s/", "/"', '"/g | sed s/"}"/"']"/)
-		a2=$(echo $REPLY | cut -f2 | sed s/"'"/"\\\'"/g | sed s/"{"/"['"/ | sed s/", "/"', '"/g | sed s/"}"/"']"/)
+		a1=$(echo $REPLY | cut -f1 | sed s/"{"/"['"/ | sed s/", "/"', '"/g | sed s/"}"/"']"/)
+		a2=$(echo $REPLY | cut -f2 | sed s/"{"/"['"/ | sed s/", "/"', '"/g | sed s/"}"/"']"/)
 
 		# now check if set difference yields incomparability
 		if cat <<EOF | python
