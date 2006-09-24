@@ -65,7 +65,7 @@
   dlvhex::dl::HexDLRewriterBase* rewriterval;
 }
 
-%token <sval> STRING LITERAL
+%token <sval> STRING ATOM
 %token <ival> NUMBER
 %token DLATOM CQATOM NOT
 %type <sval> dlquery
@@ -93,11 +93,11 @@ YY_DECL;
 
 // automagically delete all dynamically allocated objects after the
 // parsing process
-%destructor { delete $$; } STRING body
+%destructor { delete $$; } STRING ATOM body
 
 // in debugging mode output the content of the corresponding terminal
 // symbol
-%printer    { debug_stream() << *$$; } STRING LITERAL dlquery dlatom cqatom literal
+%printer    { debug_stream() << *$$; } STRING ATOM dlquery dlatom cqatom literal
 
 %%
 
@@ -131,10 +131,15 @@ body: literal
 
 // a literal is either an expression we don't care about,
 // i.e. anything but dl-atoms and cq-atoms, or a cq-atom/dl-atom
-literal: LITERAL
+literal: ATOM
          {
 	   $$ = new dlvhex::dl::LiteralRewriter($1);
  	 }
+       | NOT ATOM
+         {
+	   $$ = new dlvhex::dl::LiteralRewriter($2);
+	   $$->setNAF(true);
+	 }
        | cqatom
          {
 	   $$ = $1;

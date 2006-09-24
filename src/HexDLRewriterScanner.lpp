@@ -43,8 +43,8 @@ CQATOM          &dlCQ{INPUTLIST}{OUTPUTLIST}?
 
 NAF             ("not"|"non"){BLANK}+
 
-LITERAL         {NAF}?({STRING}|{QUOTED_STRING}){OUTPUTLIST}?
-EXTATOM         {NAF}?&{STRING}{INPUTLIST}{OUTPUTLIST}?
+ATOM            ({STRING}|{QUOTED_STRING}){OUTPUTLIST}?
+EXTATOM         &{STRING}{INPUTLIST}{OUTPUTLIST}?
 INFIXATOM       {STRING}{BLANK}*("="|"!="|"<>"|"=="|"<"|">"|"<="|">="){BLANK}*({STRING}|{NUMBER})({BLANK}*("+"|"-"|"*"|"/"){BLANK}*({STRING}|{NUMBER}))?
 AGGREGATE       #{STRING}{OUTPUTLIST}
 
@@ -102,7 +102,7 @@ typedef yy::HexDLRewriterParser::token token;
 
 <body>{
 
-  ("not"|"non") {
+  {NAF} {
     return token::NOT;
   }
 
@@ -118,10 +118,10 @@ typedef yy::HexDLRewriterParser::token token;
     return token::CQATOM;
   }
 
-  ({EXTATOM}|{INFIXATOM}|{AGGREGATE}|{LITERAL}) {
+  ({EXTATOM}|{INFIXATOM}|{AGGREGATE}|{ATOM}) {
     // all other kinds of literals are passed as is
     yylval.sval = new std::string(yytext);
-    return token::LITERAL;
+    return token::ATOM;
   }
 
 }
