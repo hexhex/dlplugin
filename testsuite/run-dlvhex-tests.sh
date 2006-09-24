@@ -42,6 +42,7 @@ do
 
 		# now check if set difference yields incomparability
 		if cat <<EOF | python
+# -*- coding: utf-8 -*-
 import sys, sets
 a1 = $a1
 a2 = $a2
