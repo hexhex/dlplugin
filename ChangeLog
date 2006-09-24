@@ -1,3 +1,23 @@
+2006-09-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/OWLParser.cpp: Add some @todo items.
+	* src/QueryDirector.cpp: Likewise.
+
+	* testsuite/run-dlvhex-tests.sh: Add python encoding.
+
+	* README: Move maintainer relevant information to
+	MAINTAINER-README.
+	* MAINTAINER-README: Likewise.
+
+	* src/HexDLRewriterParser.ypp: Fix default negated ext-atoms.
+	* src/HexDLRewriterScanner.lpp: Likewise.
+
+2006-09-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* testsuite/run-dlvhex-tests.sh: BSD mktemp and find are a bit
+	different from their GNU counterparts.
+	Escape ' chars in python lists.
+	
 2006-09-19  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/TCPStream.cpp (TCPStream::open): Close socket after a
@@ -7,8 +27,6 @@
 	Fix line counter.
 
 	* src/RacerAnswerScanner.lpp: Fix line counter.
-
-	* testsuite/run-dlvhex-tests.sh: Escape ' chars in python lists.
 
 	* bootstrap.sh: Rename bootstrap to bootstrap.sh.
 
