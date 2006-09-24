@@ -84,7 +84,11 @@ namespace dlvhex {
       
       const char* pred = (const char*) statement->predicate;
       const char* obj  = (const char*) statement->object;
-      
+
+      ///@todo owl:TransitiveProperty, owl:SymmtericProperty,
+      ///owl:InverseFunctionalProperty and owl:FunctionalProperty are
+      ///missing
+
       if (OWLParser::rdfType.compare(pred) == 0 &&
 	  OWLParser::owlObjectProperty.compare(obj) == 0
 	  )

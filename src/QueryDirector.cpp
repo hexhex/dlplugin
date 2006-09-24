@@ -159,7 +159,9 @@ QueryCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
   else // retrieval modes
     {
       // just get all individuals
-      
+
+      ///@todo this is not complete, since we ignore owl:import
+      ///statements in the ontology.
       ABox::ObjectsPtr universe = dlq->getOntology()->getABox().getIndividuals();
 
       //
