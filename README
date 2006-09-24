@@ -1,4 +1,10 @@
--*- outline -*-
+-*- org -*-
+
+This is dlvhex-racerplugin, a plugin for `dlvhex'.
+
+This file includes some information regarding installation and needed
+tools and libraries in order to build the source package of
+dlvhex-racerplugin.
 
 * Dependencies
 dlvhex-racerplugin depends on following libraries and programs:
@@ -13,14 +19,10 @@ http://www.racer-systems.com/
 http://www.boost.org/
 
 ** libraptor
-http://librdf.org/raptor/
+http://www.librdf.org/raptor/
 
 ** cppunit (optional, only used in make check)
 http://cppunit.sourceforge.net/
-
-** flex + bison (optional, only used in maintainer-mode)
-http://www.gnu.org/software/flex/
-http://www.gnu.org/software/bison/
 
 
 * Building and installing dlvhex-racerplugin
@@ -32,9 +34,10 @@ See dlvhex installation instructions.
 
 
 *** Racer
-Download the Racer/RacerPro binary and install it in your favourite
-location. dlvhex-racerplugin has been tested with RacerPro 1.8 and
-1.9.
+Download the Racer/RacerPro binary and install it into your favourite
+location accourding to the installation instructions of Racer. Add the
+installation path to the PATH environment variable. dlvhex-racerplugin
+has been tested with RacerPro 1.8 and 1.9.
 
 
 *** boost
@@ -46,7 +49,7 @@ If you need to build boost by yourself, I suggest using bjam and stow:
 
 $ bjam "--prefix=/install/to/this/dir" "-sTOOLS=gcc" stage
 $ bjam "--prefix=/install/to/this/dir/stow/boost-VERSION" "-sTOOLS=gcc" install
-$ cd /path/to/stow/dir
+$ cd /install/to/this/dir/stow
 $ stow boost-VERSION
 
 
@@ -62,33 +65,31 @@ tarball. dlvhex-racerplugin has been tested with cppunit 1.10.2 and
 1.12.0.
 
 
-*** flex + bison
-dlvhex-racerplugin uses relatively new features of flex and bison, so
-install the newest versions of flex + bison. dlvhex-racerplugin was
-tested with flex 2.5.33 and bison 2.3. For installation instruction
-see the corresponding INSTALL files of the source packages.
-
-
 ** Configuration
 
-*** bootstrap.sh
-Generates Makefile.in's and the configure script with help of the
-autotools.
+`configure --enable-userinstall' will adjust the installation-path to
+`~/.dlvhex/plugins', if the plugin should not be installed
+system-wide. Other configure-switches are shown with `configure
+--help'.
+
+Other influental environment variables include:
 
 *** PKG_CONFIG_PATH
 Set this environment variable to the absolute path of dlvhex pkgconfig
-directory.
+directory. Usually, this directory can be found in
+`$prefix/lib/pkgconfig'.
 
-*** RACERPATH
-Set this environment variable to the absolute path of the Racer
-binary. Defaults to "RacerPro".
+*** RACER
+`configure' searches for an executable called `RacerPro' during its
+execution. If PATH is not setup properly, you can set the RACER
+variable to the absolute path of `RacerPro'.
 
 
 ** Testing
-Run "make check" to build and execute the cppunit-based regression
+Run `make check' to build and execute the cppunit-based regression
 testsuite.
 
 
 ** Installation
-Run "make install" to install dlvhex-racerplugin into a system-wide
+Run `make install' to install dlvhex-racerplugin into a system-wide
 plugin directory provided by dlvhex.

@@ -1,0 +1,129 @@
+-*- org -*-
+
+This is the README file for maintainers and CVS users. Do not include
+this file in the distribution.
+
+
+* Dependencies
+
+** Dependencies mentioned in README
+
+** flex
+http://flex.sourceforge.net/
+
+** bison
+http://www.gnu.org/software/bison/
+
+** autoconf
+http://www.gnu.org/software/autoconf/
+
+** automake
+http://www.gnu.org/software/automake/
+
+** libtool
+http://www.gnu.org/software/libtool/
+
+
+* Building, installing and testing dlvhex-racerplugin
+
+** Prerequisites
+
+See README for all the basic tools and libraries needed in order to
+build dlvhex-racerplugin.
+
+The development tools include:
+
+*** flex + bison
+This plugin uses relatively new features of flex and bison, so install
+the newest versions of these tools. dlvhex-racerplugin was tested with
+flex 2.5.33 and bison 2.3. For installation instruction see the
+corresponding INSTALL files of the source packages.
+
+*** autotools
+The autotools include autoconf, automake and libtool. See the
+installation instructions of the corresponding packages.
+
+
+** Configuration
+
+The `configure' script is being built using the `bootstrap.sh'
+script. After its execution, follow the configuration instructions in
+the README file.
+
+*** bootstrap.sh
+Generates Makefile.in's and the `configure' script with help of the
+autotools.
+
+*** Build and compiler flags
+You can either globally or locally setup the compiler and compiler
+flags. For a package-wide setup set CXX and CXXFLAGS during the
+`configure' execution. If you want to do a build with another compiler
+or other compiler-flags, set CXX and CXXFLAGS in the `make' run.
+
+**** CXX
+Set this variable to the C++ compiler you want to use to build
+dlvhex-racerplugin. You can also use this variable to set some
+compiler frontends such as `ccache' or `distcc'.
+
+**** CXXFLAGS
+Add `-O2' and `-W -Wall' for a descent performance boost and warning
+output. For even more pedantic compiler warnings, add `-Weffc++'.
+
+
+** Build
+
+Invoke `make' to build the plugin. If you want to create a
+"self-contained" library with statically linked libraptor, use the
+following command:
+
+*** make -C src -e RAPTOR_PATH=/path/to/libraptor libdlvhexracer-static.la
+Builds a "self-contained" libdlvhexracer-static.so with a statically
+linked libraptor. Use the variable RAPTOR_PATH to tell make the path
+to `libraptor.a'.
+
+
+** Installation
+
+Invoke `make install'.
+
+
+** Testsuite
+
+Execute `make check' to build an run the testsuite. Make sure there is
+no running `RacerPro' instance before you invoke the testsuite. Also
+make sure you installed the plugin such that `dlvhex' can find it.
+
+
+** Cleanup
+
+To clean a build, you can choose from a bunch of cleanup targets of
+the automatically generated Makefile's:
+
+*** make clean
+Just removes the object files and the plugin, but does not remove the
+generated flex scanner and bison parser source code.
+
+*** make -C src maintainer-clean-generic
+Invoke this command in the toplevel build directory to remove the flex
+scanner and bison parser.
+
+*** make distclean
+This target removes the compiled objects and generated Makefiles from
+the build directory.
+
+*** make maintainer-clean
+This target removes almost everything in the build directory.
+
+
+* Distributing the plugin
+
+There are two targets for creating a dlvhex-racerplugin package:
+
+** make distcheck
+Creates a tarball called dlvhex-racerplugin-VERSION.tar.gz,
+configures, builds and invokes the testsuite. Afterwards it runs some
+checks on the fresh package. This is the prefered way for creating a
+package.
+
+** make dist
+Creates the package dlvhex-racerplugin-VERSION.tar.gz.
