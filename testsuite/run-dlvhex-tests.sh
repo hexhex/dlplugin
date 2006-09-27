@@ -1,6 +1,7 @@
 #!/bin/bash
 
 DLVHEX=dlvhex
+DLVHEXPARMS="--keepnsprefix --silent --allmodels"
 
 TMPFILE=$(mktemp /tmp/dlvhex-XXXXXX)
 
@@ -18,7 +19,7 @@ do
     do
 	let ntests++
 
-	$DLVHEX -s $HEXPROGRAM | egrep -v "^$" > $TMPFILE
+	$DLVHEX $DLVHEXPARMS $HEXPROGRAM | egrep -v "^$" > $TMPFILE
 
 	if cmp -s $TMPFILE $ANSWERSETS
 	then
