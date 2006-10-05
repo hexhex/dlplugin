@@ -16,6 +16,11 @@
 #include "Registry.h"
 #include "DLError.h"
 
+#include <dlvhex/Program.h>
+#include <dlvhex/GraphBuilder.h>
+#include <dlvhex/DependencyGraph.h>
+#include <dlvhex/ComponentFinder.h>
+
 #include <iosfwd>
 
 #include <boost/tokenizer.hpp>
@@ -28,9 +33,7 @@ using namespace dlvhex::dl;
 HexDLRewriterDriver::HexDLRewriterDriver(std::istream& i, std::ostream& o)
   : PluginRewriter(i, o),
     lexer(new HexDLRewriterFlexLexer(this)),
-    ontology(),
-    extAtomNo(0),
-    rewrittenDLAtoms()
+    ontology()
 {
   lexer->switch_streams(&i, &o);
 }
@@ -39,9 +42,7 @@ HexDLRewriterDriver::HexDLRewriterDriver(std::istream& i, std::ostream& o)
 HexDLRewriterDriver::HexDLRewriterDriver(const HexDLRewriterDriver& d)
   : PluginRewriter(*d.input, *d.output),
     lexer(new HexDLRewriterFlexLexer(this)),
-    ontology(d.ontology),
-    extAtomNo(d.extAtomNo),
-    rewrittenDLAtoms()
+    ontology(d.ontology)
 {
   lexer->switch_streams(d.input, d.output);
 }
@@ -55,7 +56,6 @@ HexDLRewriterDriver::operator= (const HexDLRewriterDriver& d)
       delete lexer;
       lexer = new HexDLRewriterFlexLexer(this);
       ontology = d.ontology;
-      extAtomNo = d.extAtomNo;
       setStreams(d.input, d.output);
     }
 
@@ -66,15 +66,6 @@ HexDLRewriterDriver::operator= (const HexDLRewriterDriver& d)
 HexDLRewriterDriver::~HexDLRewriterDriver()
 {
   delete lexer;
-}
-
-
-void
-HexDLRewriterDriver::reset()
-{
-  // reset counter and rewritten dl-atoms
-  extAtomNo = 0;
-  rewrittenDLAtoms.clear();
 }
 
 
@@ -114,20 +105,6 @@ HexDLRewriterDriver::getOntology() const
 
 
 void
-HexDLRewriterDriver::addExtAtomNo(int offset)
-{
-  this->extAtomNo += offset;
-}
-
-
-unsigned
-HexDLRewriterDriver::getExtAtomNo() const
-{
-  return this->extAtomNo;
-}
-
-
-void
 HexDLRewriterDriver::setStreams(std::istream* i, std::ostream* o)
 {
   input = i;
@@ -143,9 +120,11 @@ HexDLRewriterDriver::rewrite()
   // parse and rewrite that thing
   //
 
+  Program prog;
+
   try
     {
-      yy::HexDLRewriterParser parser(*this);
+      yy::HexDLRewriterParser parser(*this, prog);
       parser.set_debug_level(Registry::getVerbose() > 2 ? true : false);
       parser.parse();
     }
@@ -155,85 +134,30 @@ HexDLRewriterDriver::rewrite()
     }
 
   //
-  // if we don't have an Ontology, we skip the dl-atom rewriting
+  // build dependency graph
   //
-  
-  if (!ontology)
+
+  GraphBuilder gb;
+  SimpleComponentFinder cf;
+
+  DependencyGraph dg(prog, &gb, &cf);
+
+  //  Subgraph* sg = 0;
+
+//   while (sg = dg.getNextSubgraph())
+//     {
+//       sg->dump(std::cerr);
+//     }
+
+  //
+  // now add parsed rules to the output
+  //
+
+  for (Program::const_iterator it = prog.begin();
+       it != prog.end(); ++it)
     {
-      return;
+      getOutput() << *(*it) << std::endl;
     }
-
-  //
-  // otherwise we get all concept and role names and add the
-  // corresponding additional rules to the HEX program
-  //
-
-  TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
-  TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
-  TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
-
-  // output rewritten dl-atoms
-
-  for (boost::ptr_vector<DLAtomOp>::const_iterator it = rewrittenDLAtoms.begin();
-       it != rewrittenDLAtoms.end(); ++it)
-    {
-      std::ostringstream aux;
-
-      aux << "dl_" << (it->op == DLAtomOp::plus ? 'p' : 'm');
-
-      std::string s = ontology->getNamespace() + *(it->lhs); ///@todo always add namespace?
-      Term t(s);
-
-      if (concepts->find(t) != concepts->end())
-	{
-	  aux << "c_" << it->extAtomNo;
-
-	  *output << aux.str()
-		  << "(\""
-		  << *(it->lhs)
-		  << "\",X) :- "
-		  << *(it->rhs)
-		  << "(X)."
-		  << std::endl;
-	}
-      else if (roles->find(t) != roles->end() || 
-	       datatypeRoles->find(t) != datatypeRoles->end()
-	       )
-	{
-	  aux << "r_" << it->extAtomNo;
-
-	  *output << aux.str()
-		  << "(\""
-		  << *(it->lhs)
-		  << "\",X,Y) :- "
-		  << *(it->rhs)
-		  << "(X,Y)."
-		  << std::endl;
-	}
-      else
-	{
-	  std::ostringstream err;
-	  err << "Couldn't rewrite DL atom "
-	      << it->extAtomNo
-	      << ", "
-	      << s
-	      << " is not a concept and not a role.";
-	  throw PluginError(err.str());
-	}
-
-      // we don't want dl_XY_N to show up in the answer set
-      Term::registerAuxiliaryName(aux.str());
-    }
-
-  reset();
-}
-
-
-
-void
-HexDLRewriterDriver::registerDLOp(DLAtomOp* op)
-{
-  rewrittenDLAtoms.push_back(op);
 }
 
 

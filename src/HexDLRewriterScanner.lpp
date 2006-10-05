@@ -33,7 +33,8 @@ NUMBER          (\-)?[0-9]+
 
 COMMENT         {BLANK}*%.*{NEWLINE}
 
-CONS            (:-|<-|:~)
+CONS            (:-|<-)
+WCONS           :~
 
 INPUTLIST       \[[^\]]+\]
 OUTPUTLIST      \([^\)]*\)
@@ -42,13 +43,16 @@ DLATOM          DL{INPUTLIST}{OUTPUTLIST}
 CQATOM          &dlCQ{INPUTLIST}{OUTPUTLIST}?
 
 NAF             ("not"|"non"){BLANK}+
+DISJ            {BLANK}+v{BLANK}+
 
 ATOM            ({STRING}|{QUOTED_STRING}){OUTPUTLIST}?
 EXTATOM         &{STRING}{INPUTLIST}{OUTPUTLIST}?
 INFIXATOM       {STRING}{BLANK}*("="|"!="|"<>"|"=="|"<"|">"|"<="|">="){BLANK}*({STRING}|{NUMBER})({BLANK}*("+"|"-"|"*"|"/"){BLANK}*({STRING}|{NUMBER}))?
 AGGREGATE       #{STRING}{OUTPUTLIST}
 
-%x body atom list
+AGGREGATELINE   {AGGREGATE}{NEWLINE}
+
+%x head body atom list
 
 %{
 // advance the end location after each tokenizing step
@@ -68,36 +72,63 @@ typedef yy::HexDLRewriterParser::token token;
 %}
 
 
-<*>{COMMENT} {
-  yylloc->lines(1);
-  // we take care of comments ourselves since we don't want to rewrite
-  // commented out dl/cq-atoms
-  ECHO;
-}
+<*>{COMMENT}  yylloc->lines(1);
 
 
-<body,atom>{
+<INITIAL>{
 
-  "." {
-    // start over again when the body of a rule is done
-    BEGIN(INITIAL);
-    return yy::HexDLRewriterParser::token_type(*yytext);
+  {AGGREGATELINE} {
+    // in INITIAL state, we ignore aggregates such as #namespace, #int, ...
+    ECHO;
   }
 
+  {ATOM} {
+    BEGIN(head);
+    // all other kinds of literals are passed as is
+    yylval.sval = new std::string(yytext);
+    return token::ATOM;
+  }
 
-  "," {
-    // we got a body separator element, continue as body
+  {WCONS} {
     BEGIN(body);
+    return token::WCONS;
+  }
+
+  {CONS} {
+    BEGIN(body);
+    return token::CONS;
+  }
+
+  {NUMBER} {
+    std::istringstream(yytext) >> yylval.ival;
+    return token::NUMBER; 
+  }
+
+  [\[\]:] {
     return yy::HexDLRewriterParser::token_type(*yytext);
   }
 
 }
 
 
-{CONS}        BEGIN(body); ECHO;
+<head>{
 
+  {DISJ} {
+    return token::DISJ;
+  }
 
-<body,atom,list>{BLANK}+    /* skip blanks */ yylloc->step();
+  {ATOM} {
+    // all other kinds of literals are passed as is
+    yylval.sval = new std::string(yytext);
+    return token::ATOM;
+  }
+
+  {CONS} {
+    BEGIN(body);
+    return token::CONS;
+  }
+
+}
 
 
 <body>{
@@ -118,10 +149,33 @@ typedef yy::HexDLRewriterParser::token token;
     return token::CQATOM;
   }
 
-  ({EXTATOM}|{INFIXATOM}|{AGGREGATE}|{ATOM}) {
+  {INFIXATOM} {
+    yylval.sval = new std::string(yytext);
+    return token::INFIXATOM;
+  }
+
+  ({EXTATOM}|{AGGREGATE}|{ATOM}) {
     // all other kinds of literals are passed as is
     yylval.sval = new std::string(yytext);
     return token::ATOM;
+  }
+
+}
+
+
+<head,body,atom>{
+
+  "." {
+    // start over again when the body of a rule is done
+    BEGIN(INITIAL);
+    return yy::HexDLRewriterParser::token_type(*yytext);
+  }
+
+
+  "," {
+    // we got a body separator element, continue as body
+    BEGIN(body);
+    return yy::HexDLRewriterParser::token_type(*yytext);
   }
 
 }
@@ -148,10 +202,11 @@ typedef yy::HexDLRewriterParser::token token;
 
 }
 
+<*>{BLANK}+   /* skip blanks */ yylloc->step();
 
-<*>{NEWLINE}  yylloc->lines(1); ECHO;
+<*>{NEWLINE}  yylloc->lines(1);
 
-<*>.          ECHO;
+<*>.          driver.error(*yylloc, "invalid character");
 
 %%
 

@@ -22,6 +22,8 @@
 #include "HexDLRewriter.h"
 
 #include <dlvhex/Term.h>
+#include <dlvhex/Program.h>
+#include <dlvhex/Rule.h>
 
 #include <iosfwd>
 #include <string>
@@ -41,6 +43,7 @@
 // this is the parsing context, passed as parameters to the
 // yy::HexDLRewriterParser ctor
 %parse-param { dlvhex::dl::HexDLRewriterDriver& driver }
+%parse-param { Program& program }
 
 // bison passes the driver as additional parameter to the lexer
 // function YY_DECL, so we can abuse the driver to get the real lexer
@@ -61,16 +64,21 @@
   int ival;
   Term* termval;
   Tuple* tupleval;
+  RuleHead_t* headval;
+  AtomPtr* opval;
+  AtomSet* opsval;
   dlvhex::dl::BodyRewriter* bodyval;
   dlvhex::dl::HexDLRewriterBase* rewriterval;
 }
 
-%token <sval> STRING ATOM
+%token <sval> STRING ATOM INFIXATOM
 %token <ival> NUMBER
-%token DLATOM CQATOM NOT
-%type <sval> dlquery
+%token DLATOM CQATOM NOT DISJ CONS WCONS
+%type <headval> head
 %type <bodyval> body
 %type <rewriterval> cqatom dlatom literal
+%type <opval> op
+%type <opsval> ops
 %type <termval> term
 %type <tupleval> terms output
 
@@ -93,26 +101,127 @@ YY_DECL;
 
 // automagically delete all dynamically allocated objects after the
 // parsing process
-%destructor { delete $$; } STRING ATOM body
+%destructor { delete $$; } STRING ATOM INFIXATOM head body
 
 // in debugging mode output the content of the corresponding terminal
 // symbol
-%printer    { debug_stream() << *$$; } STRING ATOM dlquery dlatom cqatom literal
+%printer    { debug_stream() << *$$; } STRING ATOM INFIXATOM dlatom cqatom literal
 
 %%
 
+// either an empty program or a list of rules
 prog: /* empty */
     | prog rule
     ;
 
 
-// we only rewrite the body of a rule
-rule: body '.'
+// a rule is one of these
+rule: head CONS body '.'
       {
-	driver.getOutput() << ' ' << *$1 << '.';
+	//
+	// create new rule
+	//
+	RuleBody_t* body = $3->getBody();
+	Rule* r = new Rule(*$1, *body);
+	program.addRule(r);
+
+	delete $1;
+	delete body;
+	delete $3;
+      }
+    | head '.'
+      {
+	//
+	// add new fact
+	//
+	Rule* r = new Rule(*$1, RuleBody_t());
+	program.addRule(r);
+
 	delete $1;
       }
+    | CONS body '.'
+      {
+	//
+	// create new constraint
+	//
+	RuleBody_t* body = $2->getBody();
+	Rule* r = new Rule(RuleHead_t(), *body);
+	program.addRule(r);
+
+	delete body;
+	delete $2;
+      }
+    | WCONS body '.' '[' NUMBER ':' NUMBER ']'
+      {
+	Term w($5);
+	Term l($7);
+	RuleBody_t* body = $2->getBody();
+
+	WeakConstraint* wc = new WeakConstraint(*body, w, l);
+
+	program.addWeakConstraint(wc);
+
+	delete body;
+	delete $2;
+      }
+    | WCONS body '.' '[' NUMBER ':' ']'
+      {
+	Term w($5);
+	Term l(1);
+	RuleBody_t* body = $2->getBody();
+
+	WeakConstraint* wc = new WeakConstraint(*body, w, l);
+
+	program.addWeakConstraint(wc);
+
+	delete body;
+	delete $2;
+      }
+    | WCONS body '.' '[' NUMBER ']'
+      {
+	Term w(1);
+	Term l($5);
+	RuleBody_t* body = $2->getBody();
+
+	WeakConstraint* wc = new WeakConstraint(*body, w, l);
+
+	program.addWeakConstraint(wc);
+
+	delete body;
+	delete $2;
+      }
+    | WCONS body '.'
+      {
+	Term w(1);
+	Term l(1);
+	RuleBody_t* body = $2->getBody();
+
+	WeakConstraint* wc = new WeakConstraint(*body, w, l);
+
+	program.addWeakConstraint(wc);
+
+	delete body;
+	delete $2;
+      }
     ;
+
+
+head: ATOM
+      {
+	$$ = new RuleHead_t;
+	AtomPtr ap(new Atom(*$1));
+	$$->push_back(ap);
+	delete $1;
+      }
+    | head DISJ ATOM
+      {
+	$$ = $1;
+
+	AtomPtr ap(new Atom(*$3));
+	$$->push_back(ap);
+
+	delete $3;
+      }
 
 
 // the body contains literals
@@ -134,11 +243,27 @@ body: literal
 literal: ATOM
          {
 	   $$ = new dlvhex::dl::LiteralRewriter($1);
+	   delete $1;
  	 }
        | NOT ATOM
          {
 	   $$ = new dlvhex::dl::LiteralRewriter($2);
 	   $$->setNAF(true);
+	   delete $2;
+	 }
+       | INFIXATOM
+         {
+	   std::string::size_type pbeg = $1->find_first_of("!=<>");
+	   std::string::size_type pend = $1->find_first_not_of("!=<>", pbeg);
+
+	   std::string pred = $1->substr(pbeg, pend - pbeg);
+
+	   std::string tmp = $1->substr(0, pbeg);
+	   Term t1(tmp.substr(0, tmp.find_first_of(" \t")));
+	   Term t2($1->substr($1->find_first_not_of(" \t", pend)));
+
+	   $$ = new dlvhex::dl::LiteralRewriter(new BuiltinPredicate(t1, t2, pred));
+	   delete $1;
 	 }
        | cqatom
          {
@@ -218,43 +343,52 @@ term: STRING
     ;
 
 
-// we rewrite dl-atoms to &dlC/&dlR external atoms
-dlatom: DLATOM dlquery '(' STRING ')'
+// we rewrite dl-atoms to &dlC/&dlR/&dlDR external atoms
+dlatom: DLATOM '[' STRING ']' output
         {
-	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(),
-					      driver.getExtAtomNo(),
-					      $2,
-					      $4);
-	  driver.addExtAtomNo(1);
+	  AtomSet as; // no dl-atom ops
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), as, $3, $5);
 	}
-      | DLATOM dlquery '(' STRING ',' STRING ')'
+      | DLATOM '[' ops ';' STRING ']' output
         {
-	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(),
-					      driver.getExtAtomNo(),
-					      $2,
-					      $4,
-					      $6);
-	  driver.addExtAtomNo(1);
+	  dlvhex::dl::DLAtomRewriter* dlatomrewriter =
+	    new dlvhex::dl::DLAtomRewriter(driver.getOntology(),
+					   *$3, $5, $7);
+
+	  $$ = dlatomrewriter;
+
+	  delete $3;
+
+	  //
+	  // add the input rules to the program
+	  //
+
+	  std::vector<Rule*> rules = dlatomrewriter->getDLInputRules();
+
+	  for (std::vector<Rule*>::const_iterator it = rules.begin();
+	       it != rules.end(); ++it)
+	    {
+	      ///@todo if 2 dl-atoms have the same input-predicate, we
+	      ///get the same rules twice -> use a set in Program?
+	      program.addRule(*it);
+	    }
 	}
       ;
 
 
-// a dlquery is either an input list with operations and a query or
-// just a query
-dlquery: '[' ops ';' STRING ']'
-         {
-	   $$ = $4;
-	 }
-       | '[' STRING ']'
-         {
-	   $$ = $2;
-	 }
-       ;
-
-
 // list of operations
 ops: op
+     {
+       $$ = new AtomSet;
+       $$->insert(*$1);
+       delete $1;
+     }
    | ops ',' op
+     {
+       $$ = $1;
+       $$->insert(*$3);
+       delete $3;
+     }
    ;
 
 
@@ -263,23 +397,25 @@ ops: op
 // dl-atoms after the parsing process.
 op: STRING '+' '=' STRING
     {
-      driver.registerDLOp(new dlvhex::dl::HexDLRewriterDriver::DLAtomOp
-			  (driver.getExtAtomNo(),
-			   dlvhex::dl::HexDLRewriterDriver::DLAtomOp::plus,
-			   $1,
-			   $4
-			   )
-			  );
+      Tuple t;
+      t.push_back(Term(*$1, true));
+      t.push_back(Term(*$4));
+
+      $$ = new AtomPtr(new Atom("p", t));
+
+      delete $1;
+      delete $4;
     }
   | STRING '-' '=' STRING
     {
-      driver.registerDLOp(new dlvhex::dl::HexDLRewriterDriver::DLAtomOp
-			  (driver.getExtAtomNo(),
-			   dlvhex::dl::HexDLRewriterDriver::DLAtomOp::minus,
-			   $1,
-			   $4
-			   )
-			  );
+      Tuple t;
+      t.push_back(Term(*$1, true));
+      t.push_back(Term(*$4));
+
+      $$ = new AtomPtr(new Atom("m", t));
+
+      delete $1;
+      delete $4;
     }
   ;
 
