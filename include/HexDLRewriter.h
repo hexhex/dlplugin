@@ -20,7 +20,10 @@
 
 #include <boost/ptr_container/ptr_vector.hpp>
 
+#include <dlvhex/Atom.h>
+#include <dlvhex/Literal.h>
 #include <dlvhex/Term.h>
+#include <dlvhex/Rule.h>
 
 namespace dlvhex {
 namespace dl {
@@ -48,6 +51,9 @@ namespace dl {
     void
     setNAF(bool n);
     
+    virtual Literal*
+    getLiteral() const;
+
     friend std::ostream&
     operator<< (std::ostream&, const HexDLRewriterBase&);
   };
@@ -75,7 +81,7 @@ namespace dl {
   class LiteralRewriter : public HexDLRewriterBase
   {
   private:
-    const std::string* const literal;
+    AtomPtr literal;
 
     /// private assignment op
     LiteralRewriter&
@@ -90,12 +96,18 @@ namespace dl {
     explicit
     LiteralRewriter(const std::string* l);
 
+    explicit
+    LiteralRewriter(Atom* a);
+
     /// copy ctor
     LiteralRewriter(const LiteralRewriter&);
 
     /// dtor
     virtual
     ~LiteralRewriter();
+
+    Literal*
+    getLiteral() const;
   };
 
 
@@ -118,6 +130,9 @@ namespace dl {
 
     void
     add(HexDLRewriterBase* atom);
+
+    RuleBody_t*
+    getBody() const;
   };
 
 
@@ -150,6 +165,7 @@ namespace dl {
   };
 
 
+
   /**
    * Rewrites dl-atoms to &dlC/&dlR external atoms.
    */
@@ -157,11 +173,17 @@ namespace dl {
   {
   private:
     const Ontology::shared_pointer ontology;
-    const int extAtomNo;
 
     const std::string* const query;
-    const std::string* const out1;
-    const std::string* const out2;
+    const Tuple* const out;
+
+    AtomSet pc;
+    AtomSet mc;
+    AtomSet pr;
+    AtomSet mr;
+
+    /// private copy ctor
+    DLAtomRewriter(const DLAtomRewriter&);
 
     /// private assignment op
     DLAtomRewriter&
@@ -170,18 +192,24 @@ namespace dl {
     std::ostream&
     rewrite(std::ostream& os) const;
 
+    std::string
+    addNamespace(const std::string& s) const;
+
+    unsigned
+    getInputNo(const AtomSet& as) const;
+
+
   public:
     /// ctor
     DLAtomRewriter(const Ontology::shared_pointer& onto,
-		   int extAtomNo,
+		   const AtomSet& o,
 		   const std::string* q,
-		   const std::string* t1,
-		   const std::string* t2 = 0);
-
-    /// copy ctor
-    DLAtomRewriter(const DLAtomRewriter&);
+		   const Tuple* out);
 
     ~DLAtomRewriter();
+
+    std::vector<Rule*>
+    getDLInputRules() const;
   };
 
 } // namespace dl
