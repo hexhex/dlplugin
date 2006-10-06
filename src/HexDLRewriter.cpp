@@ -72,6 +72,13 @@ BodyRewriter::rewrite(std::ostream& os) const
 		);
       os << body.back();
     }
+  if (!dlbody.empty())
+    {
+      std::copy(dlbody.begin(), dlbody.end() - 1,
+		std::ostream_iterator<HexDLRewriterBase>(os, ", ")
+		);
+      os << dlbody.back();
+    }
   return os;
 }
 
@@ -82,9 +89,28 @@ BodyRewriter::BodyRewriter()
 
 
 void
-BodyRewriter::add(HexDLRewriterBase* atom)
+BodyRewriter::add(LiteralRewriter* atom)
 {
   body.push_back(atom);
+}
+
+void
+BodyRewriter::add(BodyRewriter* body0)
+{
+  body.transfer(body.end(), body0->body);
+  dlbody.transfer(dlbody.end(), body0->dlbody);
+}
+
+void
+BodyRewriter::add(CQAtomRewriter* atom)
+{
+  dlbody.push_back(atom);
+}
+
+void
+BodyRewriter::add(DLAtomRewriter* atom)
+{
+  dlbody.push_back(atom);
 }
 
 
@@ -95,6 +121,11 @@ BodyRewriter::getBody() const
 
   for (boost::ptr_vector<HexDLRewriterBase>::const_iterator it = body.begin();
        it != body.end(); ++it)
+    {
+      b->push_back(it->getLiteral());
+    }
+  for (boost::ptr_vector<HexDLRewriterBase>::const_iterator it = dlbody.begin();
+       it != dlbody.end(); ++it)
     {
       b->push_back(it->getLiteral());
     }

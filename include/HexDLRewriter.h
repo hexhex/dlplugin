@@ -112,31 +112,6 @@ namespace dl {
 
 
   /**
-   * Composite for HexDLRewriterBase objects.
-   *
-   * @todo add body optimization code.
-   */
-  class BodyRewriter : public HexDLRewriterBase
-  {
-  private:
-    boost::ptr_vector<HexDLRewriterBase> body;
-
-    std::ostream&
-    rewrite(std::ostream& os) const;
-
-  public:
-    /// default ctor
-    BodyRewriter();
-
-    void
-    add(HexDLRewriterBase* atom);
-
-    RuleBody_t*
-    getBody() const;
-  };
-
-
-  /**
    * Rewrites &dlCQ ext-atoms to &dlCQn ext-atoms.
    */
   class CQAtomRewriter : public HexDLRewriterBase
@@ -167,7 +142,7 @@ namespace dl {
 
 
   /**
-   * Rewrites dl-atoms to &dlC/&dlR external atoms.
+   * Rewrites dl-atoms to &dlC/&dlR/&dlDR external atoms.
    */
   class DLAtomRewriter : public HexDLRewriterBase
   {
@@ -211,6 +186,45 @@ namespace dl {
     std::vector<Rule*>
     getDLInputRules() const;
   };
+
+
+  /**
+   * Composite for HexDLRewriterBase objects.
+   *
+   * @todo add body optimization code, i.e. go through dlbody and push
+   * each compatible dl- resp. cq-atom.
+   */
+  class BodyRewriter : public HexDLRewriterBase
+  {
+  private:
+    // just plain literals
+    boost::ptr_vector<HexDLRewriterBase> body;
+    // the dl- and cq-atoms are stored here
+    boost::ptr_vector<HexDLRewriterBase> dlbody;
+
+    std::ostream&
+    rewrite(std::ostream& os) const;
+
+  public:
+    /// default ctor
+    BodyRewriter();
+
+    void
+    add(BodyRewriter* body0);
+
+    void
+    add(LiteralRewriter* atom);
+
+    void
+    add(CQAtomRewriter* atom);
+
+    void
+    add(DLAtomRewriter* atom);
+
+    RuleBody_t*
+    getBody() const;
+  };
+
 
 } // namespace dl
 } // namespace dlvhex

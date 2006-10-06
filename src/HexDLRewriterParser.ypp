@@ -68,15 +68,19 @@
   AtomPtr* opval;
   AtomSet* opsval;
   dlvhex::dl::BodyRewriter* bodyval;
-  dlvhex::dl::HexDLRewriterBase* rewriterval;
+  dlvhex::dl::LiteralRewriter* litrewriterval;
+  dlvhex::dl::CQAtomRewriter* cqrewriterval;
+  dlvhex::dl::DLAtomRewriter* dlrewriterval;
 }
 
 %token <sval> STRING ATOM INFIXATOM
 %token <ival> NUMBER
 %token DLATOM CQATOM NOT DISJ CONS WCONS
 %type <headval> head
-%type <bodyval> body
-%type <rewriterval> cqatom dlatom literal
+%type <bodyval> body body0
+%type <litrewriterval> literal
+%type <cqrewriterval> cqatom
+%type <dlrewriterval> dlatom
 %type <opval> op
 %type <opsval> ops
 %type <termval> term
@@ -206,6 +210,7 @@ rule: head CONS body '.'
     ;
 
 
+// the head of a rule
 head: ATOM
       {
 	$$ = new RuleHead_t;
@@ -225,21 +230,52 @@ head: ATOM
 
 
 // the body contains literals
-body: literal
+body: body0
       {
-	$$ = new dlvhex::dl::BodyRewriter;
-	$$->add($1);
+	$$ = $1;
       }
-    | body ',' literal
+    | body ',' body0
       {
 	$$ = $1;
 	$$->add($3);
+	delete $3;
       }
     ;
 
 
-// a literal is either an expression we don't care about,
-// i.e. anything but dl-atoms and cq-atoms, or a cq-atom/dl-atom
+// dispatch the different kinds of literals
+body0: literal
+       {
+	 $$ = new dlvhex::dl::BodyRewriter;
+	 $$->add($1);
+       }
+     | cqatom
+       {
+	 $$ = new dlvhex::dl::BodyRewriter;
+	 $$->add($1);
+       }
+     | dlatom
+       {
+	 $$ = new dlvhex::dl::BodyRewriter;
+	 $$->add($1);
+       }
+     | NOT cqatom
+       {
+	 $2->setNAF(true);
+	 $$ = new dlvhex::dl::BodyRewriter;
+	 $$->add($2);
+       }
+     | NOT dlatom
+       {
+	 $2->setNAF(true);
+	 $$ = new dlvhex::dl::BodyRewriter;
+	 $$->add($2);
+       }
+     ;
+
+
+
+// a literal is an expression we don't realy care about (yet)
 literal: ATOM
          {
 	   $$ = new dlvhex::dl::LiteralRewriter($1);
@@ -264,24 +300,6 @@ literal: ATOM
 
 	   $$ = new dlvhex::dl::LiteralRewriter(new BuiltinPredicate(t1, t2, pred));
 	   delete $1;
-	 }
-       | cqatom
-         {
-	   $$ = $1;
- 	 }
-       | dlatom
-         {
-	   $$ = $1;
-	 }
-       | NOT cqatom
-         {
-	   $2->setNAF(true);
-	   $$ = $2;
- 	 }
-       | NOT dlatom
-         {
-	   $2->setNAF(true);
-	   $$ = $2;
 	 }
        ;
 
@@ -346,11 +364,17 @@ term: STRING
 // we rewrite dl-atoms to &dlC/&dlR/&dlDR external atoms
 dlatom: DLATOM '[' STRING ']' output
         {
-	  AtomSet as; // no dl-atom ops
-	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), as, $3, $5);
+	  //
+	  // create a rewriter without dl-atom ops
+	  //
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), AtomSet(), $3, $5);
 	}
       | DLATOM '[' ops ';' STRING ']' output
         {
+	  //
+	  // create a rewriter with dl-atom ops
+	  //
+
 	  dlvhex::dl::DLAtomRewriter* dlatomrewriter =
 	    new dlvhex::dl::DLAtomRewriter(driver.getOntology(),
 					   *$3, $5, $7);
@@ -392,9 +416,10 @@ ops: op
    ;
 
 
-// an operation is either lhs += rhs or lhs -= rhs. We register them
-// at so we can append the rewritten rules for the input of the
-// dl-atoms after the parsing process.
+// an operation is either lhs += rhs or lhs -= rhs. For each lhs+=rhs
+// resp. lhs-=rhs we create a p(lhs,rhs) resp. m(lhs,rhs) atom. Then,
+// the DLAtomRewriter takes care of adding rules and input terms to
+// the ext-atoms.
 op: STRING '+' '=' STRING
     {
       Tuple t;
