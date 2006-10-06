@@ -1,5 +1,10 @@
 2006-10-06  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* include/HexDLRewriter.h: BodyRewriter now contains a list of
+	literals and a list of dl- resp. cq-atoms.
+	* src/HexDLRewriterParser.ypp: Likewise.
+	* src/HexDLRewriter.cpp: Likewise.
+
 	* src/HexDLRewriterDriver.cpp (HexDLRewriterDriver::rewrite):
 	Don't forget to clean-up after program parsing.
 
