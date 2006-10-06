@@ -156,7 +156,24 @@ HexDLRewriterDriver::rewrite()
   for (Program::const_iterator it = prog.begin();
        it != prog.end(); ++it)
     {
-      getOutput() << *(*it) << std::endl;
+      const Rule* r = *it;
+
+      getOutput() << *r << std::endl;
+
+      ///@todo this burns the readers eyes, but for now it prevents
+      //memory leaks
+
+      // delete unmanaged objects in the program
+
+      const RuleBody_t& body = r->getBody();
+
+      // delete each literal in the body
+      for (RuleBody_t::const_iterator it = body.begin(); it != body.end(); ++it)
+	{
+	  delete *it;
+	}
+
+      delete r;
     }
 }
 
