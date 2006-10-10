@@ -320,11 +320,9 @@ std::string
 DLAtomRewriter::addNamespace(const std::string& s) const
 {
   std::string tmp;
-  bool isNegated = false;
 
   if (s.find("\"-") == 0)
     {
-      isNegated = true;
       tmp = ontology->getNamespace() + s.substr(2, s.length() - 3);
     }
   else if (s.find("\"") == 0)
@@ -333,7 +331,6 @@ DLAtomRewriter::addNamespace(const std::string& s) const
     }
   else if (s.find("-") == 0)
     {
-      isNegated = true;
       tmp = ontology->getNamespace() + s.substr(1, s.length() - 1);
     }
   else
@@ -380,6 +377,12 @@ DLAtomRewriter::rewrite(std::ostream& os) const
   std::string tmpquery = addNamespace(*query);
   Term q(tmpquery);
 
+  // check if query is strongly negated
+  if (query->find("\"-") == 0 || query->find("-") == 0)
+    {
+      tmpquery = "-" + tmpquery;
+    }
+
   if (concepts->find(q) != concepts->end())
     {
       os << "&dlC";
@@ -397,21 +400,22 @@ DLAtomRewriter::rewrite(std::ostream& os) const
       throw PluginError("Incompatible dl-atom query supplied.");
     }
 
+  //
   // output external atoms input list
-  os << "[\"" 
-     << ontology->getRealURI() 
-     << "\",";
+  //
+
+  os << "[\"" << ontology->getRealURI() << "\",";
 
   os << "dl_pc_" << getInputNo(pc) << ',';
   os << "dl_mc_" << getInputNo(mc) << ',';
   os << "dl_pr_" << getInputNo(pr) << ',';
   os << "dl_mr_" << getInputNo(mr) << ',';
 
-  os << '\"'
-     << ((*query)[0] == '-' ? "-" + tmpquery : tmpquery)
-     << "\"]";
+  os << '\"' << tmpquery << "\"]";
 
+  //
   // append output list of the ext. atom
+  //
 
   if (out->size() == 2)
     {
