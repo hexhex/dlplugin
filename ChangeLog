@@ -1,3 +1,15 @@
+2006-10-10  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/HexDLRewriter.h: Add body pushing mainloop.
+	* src/HexDLRewriter.cpp: Likewise.
+
+	* examples/wine.rdf: Add a local file importing wine+food ontology.
+	* examples/food.rdf: Likewise.
+
+	* src/HexDLRewriter.cpp: Fix negated dl-queries.
+
+	* examples/region.dlp: New example.
+
 2006-10-06  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/HexDLRewriter.h: BodyRewriter now contains a list of
