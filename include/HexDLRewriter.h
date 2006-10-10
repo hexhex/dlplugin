@@ -19,6 +19,7 @@
 #include <string>
 
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/ptr_container/ptr_deque.hpp>
 
 #include <dlvhex/Atom.h>
 #include <dlvhex/Literal.h>
@@ -112,14 +113,55 @@ namespace dl {
 
 
   /**
-   * Rewrites &dlCQ ext-atoms to &dlCQn ext-atoms.
+   * Base class for dl- and cq-atom rewriters.
    */
-  class CQAtomRewriter : public HexDLRewriterBase
+  class DLAtomRewriterBase : public HexDLRewriterBase
   {
   private:
-    Tuple* const input;
-    Tuple* const output;
+    const Tuple* input;
+    const Tuple* output;
 
+  protected:
+    explicit
+    DLAtomRewriterBase(const Tuple* input = 0, const Tuple* output = 0);
+
+    DLAtomRewriterBase(const DLAtomRewriterBase& b);
+
+  public:
+    virtual
+    ~DLAtomRewriterBase();
+
+    virtual std::auto_ptr<DLAtomRewriterBase>
+    push(const std::auto_ptr<DLAtomRewriterBase>& b);
+
+    virtual const Tuple*
+    getInputTuple() const;
+
+    virtual const Tuple*
+    getOutputTuple() const;
+
+    inline void
+    setInputTuple(const Tuple* in)
+    {
+      delete input;
+      input = in;
+    }
+
+    inline void
+    setOutputTuple(const Tuple* out)
+    {
+      delete output;
+      output = out;
+    }
+  };
+
+
+  /**
+   * Rewrites &dlCQ ext-atoms to &dlCQn ext-atoms.
+   */
+  class CQAtomRewriter : public DLAtomRewriterBase
+  {
+  private:
     /// private assignment op
     CQAtomRewriter&
     operator= (const CQAtomRewriter&);
@@ -130,13 +172,10 @@ namespace dl {
 
   public:
     /// ctor
-    CQAtomRewriter(Tuple* input, Tuple* output);
+    CQAtomRewriter(const Tuple* input, const Tuple* output);
 
     /// copy ctor
     CQAtomRewriter(const CQAtomRewriter&);
-
-    virtual
-    ~CQAtomRewriter();
   };
 
 
@@ -144,13 +183,12 @@ namespace dl {
   /**
    * Rewrites dl-atoms to &dlC/&dlR/&dlDR external atoms.
    */
-  class DLAtomRewriter : public HexDLRewriterBase
+  class DLAtomRewriter : public DLAtomRewriterBase
   {
   private:
     const Ontology::shared_pointer ontology;
 
     const std::string* const query;
-    const Tuple* const out;
 
     AtomSet pc;
     AtomSet mc;
@@ -185,6 +223,9 @@ namespace dl {
 
     std::vector<Rule*>
     getDLInputRules() const;
+
+    const Tuple*
+    getInputTuple() const;
   };
 
 
@@ -200,7 +241,7 @@ namespace dl {
     // just plain literals
     boost::ptr_vector<HexDLRewriterBase> body;
     // the dl- and cq-atoms are stored here
-    boost::ptr_vector<HexDLRewriterBase> dlbody;
+    mutable boost::ptr_deque<DLAtomRewriterBase> dlbody;
 
     std::ostream&
     rewrite(std::ostream& os) const;
