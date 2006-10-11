@@ -16,6 +16,7 @@
 
 #include <iosfwd>
 #include <string>
+#include <sstream>
 
 using namespace dlvhex::dl::racer;
 
@@ -23,7 +24,18 @@ using namespace dlvhex::dl::racer;
 std::ostream&
 ABoxQueryExpr::output(std::ostream& s) const
 {
-  const std::string& sym = symbol.getUnquotedString();
+  std::string sym;
+
+  if (symbol.isString() || symbol.isSymbol())
+    {
+      sym = symbol.getUnquotedString();
+    }
+  else
+    {
+      std::ostringstream oss;
+      oss << symbol;
+      sym = oss.str();
+    }
 
   //
   // Now check the possibilities for the symbol. If we have got an
