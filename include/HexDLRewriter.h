@@ -141,7 +141,7 @@ namespace dl {
     ~DLAtomRewriterBase();
 
     virtual std::auto_ptr<DLAtomRewriterBase>
-    push(const std::auto_ptr<DLAtomRewriterBase>& b);
+    push(const std::auto_ptr<DLAtomRewriterBase>& b) const = 0;
 
     virtual const Tuple*
     getInputTuple() const;
@@ -187,7 +187,7 @@ namespace dl {
     CQAtomRewriter(const CQAtomRewriter&);
 
     std::auto_ptr<DLAtomRewriterBase>
-    push(const std::auto_ptr<DLAtomRewriterBase>& b);
+    push(const std::auto_ptr<DLAtomRewriterBase>& b) const;
   };
 
 
@@ -238,6 +238,9 @@ namespace dl {
 
     const Tuple*
     getInputTuple() const;
+
+    std::auto_ptr<DLAtomRewriterBase>
+    push(const std::auto_ptr<DLAtomRewriterBase>& b) const;
   };
 
 
@@ -269,10 +272,7 @@ namespace dl {
     add(LiteralRewriter* atom);
 
     void
-    add(CQAtomRewriter* atom);
-
-    void
-    add(DLAtomRewriter* atom);
+    add(DLAtomRewriterBase* atom);
 
     RuleBody_t*
     getBody() const;

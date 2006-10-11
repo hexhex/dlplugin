@@ -64,7 +64,7 @@ TestDLRewriter::runDLRewrite()
    
    std::cout << "## " << std::endl << s << std::endl;
 
-   CPPUNIT_ASSERT("p(X,Y) :- &dlCQ2[\"my.owl\",a,b,c,d,\"Q1(X),Q2(Y)\"](X,Y), &dlCQ2[\"my.owl\",a,b,c,d,\"Q3(Y),Q4(Z)\"](Y,Z).\n" == s);
+   CPPUNIT_ASSERT("p(X,Y) :- &dlCQ3[\"my.owl\",a,b,c,d,\"Q1(X),Q2(Y),Q3(Y),Q4(Z)\"](X,Y,Z).\n" == s);
  }
 }
 
