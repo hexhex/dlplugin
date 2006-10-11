@@ -1,3 +1,14 @@
+2006-10-11  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/HexDLRewriter.h: Add preliminary cq-atom pushing.
+	* src/HexDLRewriter.cpp: Likewise.
+
+	* include/AtomSeparator.h: Add AtomSeparator.
+	* include/Makefile.am: Likewise.
+	* src/Makefile.am: Likewise.
+	* src/AtomSeparator.cpp: Likewise.
+	* src/QueryCtx.cpp: Likewise.
+
 2006-10-10  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/HexDLRewriter.h: Add body pushing mainloop.
