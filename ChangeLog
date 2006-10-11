@@ -1,5 +1,15 @@
 2006-10-11  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* src/RacerQueryExpr.cpp (ABoxQueryExpr::output): Fix Term
+	handling.
+
+	* src/AtomSeparator.cpp (AtomSeparator::parse): Don't quote
+	predicates, set atoms FO.
+
+	* include/HexDLRewriter.h: cq-atom pushing works now.
+	* src/HexDLRewriter.cpp: Likewise.
+	* testsuite/TestDLRewriter.cpp: Likewise.
+
 	* include/HexDLRewriter.h: Add preliminary cq-atom pushing.
 	* src/HexDLRewriter.cpp: Likewise.
 
