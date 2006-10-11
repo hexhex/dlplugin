@@ -170,9 +170,6 @@ AtomSeparator::parse() throw (DLParsingError)
       std::string::size_type t1 = atom.find(',');
       std::string::size_type t2 = atom.find(')');
 
-      // predicate is always quoted, otherwise we would end up
-      // in a higher-order atom if concept or role name is
-      // uppercase
       predicate = atom.substr(0, pred);
       boost::trim(predicate);
 
@@ -180,11 +177,7 @@ AtomSeparator::parse() throw (DLParsingError)
       
       if (isNegated)
 	{
-	  predicate = "\"" + predicate.substr(1) + "\"";
-	}
-      else
-	{
-	  predicate = "\"" + predicate + "\"";
+	  predicate.erase(0);
 	}
 
       if (t1 != std::string::npos)
@@ -205,8 +198,10 @@ AtomSeparator::parse() throw (DLParsingError)
 	  tup.push_back(Term(a1));
 	}
 
+      // ap is always first-order, otherwise we would end up in a
+      // higher-order atom if concept or role name is uppercase
       AtomPtr ap(new Atom(predicate, tup, isNegated));
-
+      ap->setAlwaysFO();
       atoms.insert(ap);
     }
 }
