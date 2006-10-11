@@ -11,7 +11,7 @@
  */
 
 #include "HexDLRewriter.h"
-
+#include "AtomSeparator.h"
 #include "DLError.h"
 
 #include <dlvhex/Error.h>
@@ -31,13 +31,6 @@ HexDLRewriterBase::HexDLRewriterBase()
 
 HexDLRewriterBase::~HexDLRewriterBase()
 { }
-
-
-void
-HexDLRewriterBase::setNAF(bool n)
-{
-  this->naf = n;
-}
 
 
 Literal*
@@ -132,7 +125,7 @@ BodyRewriter::getBody() const
   if (!dlbody.empty())
     {
       boost::ptr_deque<DLAtomRewriterBase> done; // all pushed atoms end up here
-      boost::ptr_deque<DLAtomRewriterBase> park; // park some dl-/cq-atoms for later
+      boost::ptr_deque<DLAtomRewriterBase> park; // park some dl-/cq-atoms until we can push them
 
       do
 	{
@@ -279,6 +272,73 @@ CQAtomRewriter&
 CQAtomRewriter::operator= (const CQAtomRewriter&)
 {
   return *this; // ignore
+}
+
+
+std::auto_ptr<DLAtomRewriterBase>
+CQAtomRewriter::push(const std::auto_ptr<DLAtomRewriterBase>& b)
+{
+  const Tuple* input1 = getInputTuple();
+  const Tuple* input2 = b->getInputTuple();
+  const Tuple* output1 = getOutputTuple();
+  const Tuple* output2 = b->getOutputTuple();
+
+#if 0
+  ///@todo for now we don't take unused predicates into account
+  if (std::equal(input1->begin(), input1->end() - 1, input2->begin()) &&
+      input1->size() == input2->size() &&
+      !this->isNAF() && !b->isNAF()
+      )
+    {
+      //
+      // create output tuple
+      //
+      std::set<Term> termset;
+      std::insert_iterator<std::set<Term> > ins = std::inserter(termset, termset.begin());
+      std::copy(output1->begin(), output1->end(), ins);
+      std::copy(output2->begin(), output2->end(), ins);
+      Tuple* output3 = new Tuple(termset.begin(), termset.end());
+
+      //
+      // create input tuple
+      //
+      Tuple* input3 = new Tuple(input1->begin(), input1()->end() - 1);
+
+      const std::string& query1 = input1->back().getUnquotedString();
+      const std::string& query2 = input2->back().getUnquotedString();
+
+      AtomSet as1;
+      AtomSet as2;
+
+      if (query2.find("(") != std::string::npos) // b is a cq-atom
+	{
+	  AtomSeparator(query1, as1).parse();
+	  AtomSeparator(query2, as2).parse();
+	}
+      else // b is a dl-atom
+	{
+	  AtomSeparator(query1, as1).parse();
+
+	  // prepare as1 as a singleton atomset
+	  if (query2[0] == '-')
+	    {
+	      AtomPtr ap(new Atom(query2.substr(1), *output2, true));
+	      as2.insert(ap);
+	    }
+	  else
+	    {
+	      AtomPtr ap(new Atom(query2, *output2, true));
+	      as2.insert(ap);	      
+	    }
+	}
+
+      ///@todo add cq1 + cq2 code and add it to input3
+
+      return new CQAtomRewriter(input3, output3);
+    }
+#endif // 0
+
+  return std::auto_ptr<DLAtomRewriterBase>();
 }
 
 

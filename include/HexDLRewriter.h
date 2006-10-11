@@ -49,8 +49,17 @@ namespace dl {
     virtual
     ~HexDLRewriterBase();
 
-    void
-    setNAF(bool n);
+    inline void
+    setNAF(bool n)
+    {
+      this->naf = n;
+    }
+
+    inline bool
+    isNAF() const
+    {
+      return this->naf;
+    }
     
     virtual Literal*
     getLiteral() const;
@@ -176,6 +185,9 @@ namespace dl {
 
     /// copy ctor
     CQAtomRewriter(const CQAtomRewriter&);
+
+    std::auto_ptr<DLAtomRewriterBase>
+    push(const std::auto_ptr<DLAtomRewriterBase>& b);
   };
 
 
