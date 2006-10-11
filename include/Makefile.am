@@ -3,6 +3,7 @@ AUTOMAKE_OPTIONS = foreign
 # including headers for make dist
 noinst_HEADERS = \
                  Answer.h \
+                 AtomSeparator.h \
                  Cache.h \
                  DLError.h \
                  DLQuery.h \

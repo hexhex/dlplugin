@@ -31,6 +31,7 @@ dist-hook:
 dlvhexlib_LTLIBRARIES = libdlvhexracer.la
 libdlvhexracer_la_SOURCES = \
 Answer.cpp \
+AtomSeparator.cpp \
 Cache.cpp \
 DLQuery.cpp \
 HexDLRewriter.cpp \
