@@ -1,5 +1,13 @@
 2006-10-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* include/HexDLRewriter.h: Add --norewrite to turn off dl-rewriting.
+	* include/HexDLRewriterDriver.h: Likewise.
+	* src/HexDLRewriter.cpp: Likewise.
+	* src/HexDLRewriterDriver.cpp: Likewise.
+	* src/HexDLRewriterParser.ypp: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+	* testsuite/TestDLRewriter.cpp: Likewise.
+
 	* src/HexDLRewriterDriver.cpp: Decouple static dlinput map.
 
 	* include/HexDLRewriter.h: Forgot to handle dlC/dlR extatoms.
