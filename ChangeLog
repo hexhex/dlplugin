@@ -1,5 +1,12 @@
 2006-10-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* src/HexDLRewriterDriver.cpp: Decouple static dlinput map.
+
+	* include/HexDLRewriter.h: Forgot to handle dlC/dlR extatoms.
+	* src/HexDLRewriter.cpp: Likewise.
+	* src/HexDLRewriterParser.ypp: Likewise.
+	* src/HexDLRewriterScanner.lpp: Likewise.
+
 	* include/HexDLRewriter.h: dl-atom pushing works now.
 	* src/HexDLRewriter.cpp: Likewise.
 
