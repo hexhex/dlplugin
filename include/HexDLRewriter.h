@@ -136,12 +136,17 @@ namespace dl {
 
     DLAtomRewriterBase(const DLAtomRewriterBase& b);
 
+    void
+    getCQ(const std::string& query,
+	  const Tuple& output,
+	  AtomSet& cq) const;
+
   public:
     virtual
     ~DLAtomRewriterBase();
 
-    virtual std::auto_ptr<DLAtomRewriterBase>
-    push(const std::auto_ptr<DLAtomRewriterBase>& b) const = 0;
+    std::auto_ptr<DLAtomRewriterBase>
+    push(const std::auto_ptr<DLAtomRewriterBase>& b) const;
 
     virtual const Tuple*
     getInputTuple() const;
@@ -185,9 +190,6 @@ namespace dl {
 
     /// copy ctor
     CQAtomRewriter(const CQAtomRewriter&);
-
-    std::auto_ptr<DLAtomRewriterBase>
-    push(const std::auto_ptr<DLAtomRewriterBase>& b) const;
   };
 
 
@@ -238,9 +240,6 @@ namespace dl {
 
     const Tuple*
     getInputTuple() const;
-
-    std::auto_ptr<DLAtomRewriterBase>
-    push(const std::auto_ptr<DLAtomRewriterBase>& b) const;
   };
 
 

@@ -244,28 +244,37 @@ DLAtomRewriterBase::getOutputTuple() const
 }
 
 
-CQAtomRewriter::CQAtomRewriter(const Tuple* in, const Tuple* out)
-  : DLAtomRewriterBase(in,out)
+void
+DLAtomRewriterBase::getCQ(const std::string& query, const Tuple& output, AtomSet& cq) const
 {
-  assert(in != 0);
-  assert(out != 0);
-}
+  //
+  // check if query is a dl-query resp. cq-query and parse it into an
+  // AtomSet accordingly
+  //
 
-
-CQAtomRewriter::CQAtomRewriter(const CQAtomRewriter& c)
-  : DLAtomRewriterBase(c)
-{ }
-
-
-CQAtomRewriter&
-CQAtomRewriter::operator= (const CQAtomRewriter&)
-{
-  return *this; // ignore
+  if (query.find("(") != std::string::npos) // query is a cq-atom
+    {
+      AtomSeparator(query, cq).parse();
+    }
+  else // query is a dl-atom
+    {
+      // prepare cq as a singleton atomset
+      if (query[0] == '-')
+	{
+	  AtomPtr ap(new Atom(query.substr(1), output, true));
+	  cq.insert(ap);
+	}
+      else
+	{
+	  AtomPtr ap(new Atom(query, output));
+	  cq.insert(ap);
+	}
+    }
 }
 
 
 std::auto_ptr<DLAtomRewriterBase>
-CQAtomRewriter::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
+DLAtomRewriterBase::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
 {
   const Tuple* input1 = getInputTuple();
   const Tuple* input2 = b->getInputTuple();
@@ -281,16 +290,20 @@ CQAtomRewriter::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
       //
       // create output tuple
       //
-      std::set<Term> termset;
-      std::insert_iterator<std::set<Term> > ins = std::inserter(termset, termset.begin());
-      std::copy(output1->begin(), output1->end(), ins);
-      std::copy(output2->begin(), output2->end(), ins);
+      std::set<Term> termset(output1->begin(), output1->end());
+      termset.insert(output2->begin(), output2->end());
       Tuple* output3 = new Tuple(termset.begin(), termset.end());
 
       //
       // create input tuple
       //
+
+      // add the lambda components to input3
       Tuple* input3 = new Tuple(input1->begin(), input1->end() - 1);
+
+      //
+      // parse both queries to an AtomSet
+      //
 
       const std::string& query1 = input1->back().getUnquotedString();
       const std::string& query2 = input2->back().getUnquotedString();
@@ -298,26 +311,12 @@ CQAtomRewriter::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
       AtomSet cq1;
       AtomSet cq2;
 
-      AtomSeparator(query1, cq1).parse();
+      getCQ(query1, *output1, cq1);
+      getCQ(query2, *output2, cq2);
 
-      if (query2.find("(") != std::string::npos) // b is a cq-atom
-	{
-	  AtomSeparator(query2, cq2).parse();
-	}
-      else // b is a dl-atom
-	{
-	  // prepare cq2 as a singleton atomset
-	  if (query2[0] == '-')
-	    {
-	      AtomPtr ap(new Atom(query2.substr(1), *output2, true));
-	      cq2.insert(ap);
-	    }
-	  else
-	    {
-	      AtomPtr ap(new Atom(query2, *output2));
-	      cq2.insert(ap);	      
-	    }
-	}
+      //
+      // get the variables of cq1 and cq2
+      //
 
       std::set<Term> X1; // variables of cq1
       std::set<Term> X2; // variables of cq2
@@ -344,6 +343,10 @@ CQAtomRewriter::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
 	    }
 	}
 
+      //
+      // prepare for renaming the variables of cq2
+      //
+
       // get output variables and constants of cq2
       std::set<Term> Y2(output2->begin(), output2->end());
 
@@ -355,25 +358,33 @@ CQAtomRewriter::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
 
       // this is the variable mapping for cq2
       std::map<Term,Term> variablemapping;
-      
-      // we append a counter to the last variable of X1, so whatever
-      // variables may appear in cq1, lastvar + n will be
-      // lexicographically greater than lastvar and thus unique in cq1 + cq2
-      const char* lastvar = X1.empty() ? "X" : (--X1.end())->getVariable().c_str();
-      unsigned n = 0;
-      std::ostringstream nvar;
 
-      //
-      // for each variable z of Z2 : if z \in X1 then rename z
-      //
-      for (std::set<Term>::const_iterator z = Z2.begin(); z != Z2.end(); ++z)
+      if (!Z2.empty())
 	{
-	  if (X1.find(*z) != X1.end())
+	  // the set of all possible variables of cq1 and cq2
+	  std::set<Term> vars(X1.begin(), X1.end());
+	  vars.insert(X2.begin(), X2.end());
+      
+	  // we append a counter to the last variable of vars, so whatever
+	  // variables may appear in cq1 or cq2, lastvar + n will be
+	  // lexicographically greater than lastvar and thus unique in cq1
+	  // or cq2
+	  const char* lastvar = vars.empty() ? "X" : (--vars.end())->getVariable().c_str();
+	  unsigned n = 0;
+	  std::ostringstream nvar;
+
+	  //
+	  // for each variable z of Z2 : if z \in X1 then rename z
+	  //
+	  for (std::set<Term>::const_iterator z = Z2.begin(); z != Z2.end(); ++z)
 	    {
-	      // rename variable z to lastvar+n and increase n
-	      nvar.str("");
-	      nvar << lastvar << n++;
-	      variablemapping[*z] = Term(nvar.str());
+	      if (X1.find(*z) != X1.end())
+		{
+		  // rename variable z to lastvar+n and increase n
+		  nvar.str("");
+		  nvar << lastvar << n++;
+		  variablemapping[*z] = Term(nvar.str());
+		}
 	    }
 	}
 
@@ -407,7 +418,7 @@ CQAtomRewriter::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
 	}
 
       //
-      // append the new conjunctive query to input3
+      // append the new conjunctive query cq3 to input3
       //
 
       std::ostringstream cq3;
@@ -426,6 +437,26 @@ CQAtomRewriter::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
 
   // b is incompatible to this cq-atom
   return std::auto_ptr<DLAtomRewriterBase>();
+}
+
+
+CQAtomRewriter::CQAtomRewriter(const Tuple* in, const Tuple* out)
+  : DLAtomRewriterBase(in,out)
+{
+  assert(in != 0);
+  assert(out != 0);
+}
+
+
+CQAtomRewriter::CQAtomRewriter(const CQAtomRewriter& c)
+  : DLAtomRewriterBase(c)
+{ }
+
+
+CQAtomRewriter&
+CQAtomRewriter::operator= (const CQAtomRewriter&)
+{
+  return *this; // ignore
 }
 
 
@@ -533,13 +564,6 @@ DLAtomRewriter::operator= (const DLAtomRewriter&)
 DLAtomRewriter::~DLAtomRewriter()
 {
   delete query;
-}
-
-
-std::auto_ptr<DLAtomRewriterBase>
-DLAtomRewriter::push(const std::auto_ptr<DLAtomRewriterBase>&) const
-{
-  return std::auto_ptr<DLAtomRewriterBase>(); // for now we just create an empty ptr
 }
 
 
