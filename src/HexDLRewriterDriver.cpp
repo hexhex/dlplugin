@@ -121,10 +121,11 @@ HexDLRewriterDriver::rewrite()
   //
 
   Program prog;
+  DLAtomInput dlinput;
 
   try
     {
-      yy::HexDLRewriterParser parser(*this, prog);
+      yy::HexDLRewriterParser parser(*this, prog, dlinput);
       parser.set_debug_level(Registry::getVerbose() > 2 ? true : false);
       parser.parse();
     }
