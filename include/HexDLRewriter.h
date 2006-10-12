@@ -171,6 +171,20 @@ namespace dl {
 
 
   /**
+   * Rewriter for &dlC and &dlR ext-atoms.
+   */
+  class SimpleDLAtomRewriter : public DLAtomRewriterBase
+  {
+  protected:
+    std::ostream&
+    rewrite(std::ostream& os) const;
+
+  public:
+    SimpleDLAtomRewriter(const Tuple* i, const Tuple* o);
+  };
+
+
+  /**
    * Rewrites &dlCQ ext-atoms to &dlCQn ext-atoms.
    */
   class CQAtomRewriter : public DLAtomRewriterBase
@@ -194,6 +208,37 @@ namespace dl {
 
 
 
+  class DLAtomInput
+  {
+  private:
+    typedef std::map<AtomSet,unsigned> AtomSetMap;
+    AtomSetMap asmap;
+
+    unsigned ncnt;
+
+  public:
+    DLAtomInput() : asmap(), ncnt(1) { }
+
+    unsigned
+    getInputNo(const AtomSet& as)
+    {
+      if (as.empty())
+	{
+	  return 0; // no dl-atom-ops
+	}
+
+      std::pair<AtomSetMap::iterator,bool> p = asmap.insert(std::make_pair(as, ncnt));
+      
+      if (p.second) // dl-atom-ops number found
+	{
+	  ncnt++;
+	}
+
+      return p.first->second;
+    }
+  };
+
+
   /**
    * Rewrites dl-atoms to &dlC/&dlR/&dlDR external atoms.
    */
@@ -201,8 +246,10 @@ namespace dl {
   {
   private:
     const Ontology::shared_pointer ontology;
-
+    
     const std::string* const query;
+
+    DLAtomInput& dlinput;
 
     AtomSet pc;
     AtomSet mc;
@@ -222,13 +269,10 @@ namespace dl {
     std::string
     addNamespace(const std::string& s) const;
 
-    unsigned
-    getInputNo(const AtomSet& as) const;
-
-
   public:
     /// ctor
     DLAtomRewriter(const Ontology::shared_pointer& onto,
+		   DLAtomInput& dlinput,
 		   const AtomSet& o,
 		   const std::string* q,
 		   const Tuple* out);

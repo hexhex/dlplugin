@@ -44,6 +44,7 @@
 // yy::HexDLRewriterParser ctor
 %parse-param { dlvhex::dl::HexDLRewriterDriver& driver }
 %parse-param { Program& program }
+%parse-param { dlvhex::dl::DLAtomInput& dlinput }
 
 // bison passes the driver as additional parameter to the lexer
 // function YY_DECL, so we can abuse the driver to get the real lexer
@@ -69,17 +70,15 @@
   AtomSet* opsval;
   dlvhex::dl::BodyRewriter* bodyval;
   dlvhex::dl::LiteralRewriter* litrewriterval;
-  dlvhex::dl::CQAtomRewriter* cqrewriterval;
-  dlvhex::dl::DLAtomRewriter* dlrewriterval;
+  dlvhex::dl::DLAtomRewriterBase* dlrewriterval;
 }
 
 %token <sval> STRING ATOM INFIXATOM
 %token <ival> NUMBER
-%token DLATOM CQATOM NOT DISJ CONS WCONS
+%token DLATOM DLEXTATOM CQATOM NOT DISJ CONS WCONS
 %type <headval> head
 %type <bodyval> body body0
 %type <litrewriterval> literal
-%type <cqrewriterval> cqatom
 %type <dlrewriterval> dlatom
 %type <opval> op
 %type <opsval> ops
@@ -105,11 +104,11 @@ YY_DECL;
 
 // automagically delete all dynamically allocated objects after the
 // parsing process
-%destructor { delete $$; } STRING ATOM INFIXATOM head body
+%destructor { delete $$; } STRING ATOM INFIXATOM head body dlatom literal
 
 // in debugging mode output the content of the corresponding terminal
 // symbol
-%printer    { debug_stream() << *$$; } STRING ATOM INFIXATOM dlatom cqatom literal
+%printer    { debug_stream() << *$$; } STRING ATOM INFIXATOM dlatom literal
 
 %%
 
@@ -249,21 +248,10 @@ body0: literal
 	 $$ = new dlvhex::dl::BodyRewriter;
 	 $$->add($1);
        }
-     | cqatom
-       {
-	 $$ = new dlvhex::dl::BodyRewriter;
-	 $$->add($1);
-       }
      | dlatom
        {
 	 $$ = new dlvhex::dl::BodyRewriter;
 	 $$->add($1);
-       }
-     | NOT cqatom
-       {
-	 $2->setNAF(true);
-	 $$ = new dlvhex::dl::BodyRewriter;
-	 $$->add($2);
        }
      | NOT dlatom
        {
@@ -304,14 +292,58 @@ literal: ATOM
        ;
 
 
-// a cq-atom is the external atom &dlCQ[uri,a,b,c,d,q](X_1,...X_n), we
-// rewrite it to &dlCQn[uri,a,b,c,d,q](X_1,...,X_n)
-cqatom: CQATOM '[' terms ']' output
+// This rule keeps track of the various forms of the dl-atom
+// rewriters. We rewrite dl-atoms to &dlC/&dlR/&dlDR external atoms,
+// &dl{C,R} and &dlCQ external atoms are handled here as well.
+dlatom: DLATOM '[' STRING ']' output
         {
+	  //
+	  // create a rewriter without dl-atom ops
+	  //
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, AtomSet(), $3, $5);
+	}
+      | DLATOM '[' ops ';' STRING ']' output
+        {
+	  //
+	  // create a rewriter with dl-atom ops
+	  //
+
+	  dlvhex::dl::DLAtomRewriter* dlatomrewriter =
+	    new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput,
+					   *$3,$5, $7);
+
+	  $$ = dlatomrewriter;
+
+	  delete $3;
+
+	  //
+	  // add the input rules to the program
+	  //
+
+	  std::vector<Rule*> rules = dlatomrewriter->getDLInputRules();
+
+	  for (std::vector<Rule*>::const_iterator it = rules.begin();
+	       it != rules.end(); ++it)
+	    {
+	      ///@todo if 2 dl-atoms have the same input-predicate, we
+	      ///get the same rules twice -> use a set in Program?
+	      program.addRule(*it);
+	    }
+	}
+      | CQATOM '[' terms ']' output
+        { 
+	  // a cq-atom is the external atom
+	  // &dlCQ[uri,a,b,c,d,q](X_1,...X_n), we rewrite it to
+	  // &dlCQn[uri,a,b,c,d,q](X_1,...,X_n)
 	  $$ = new dlvhex::dl::CQAtomRewriter($3, $5);
 	}
+      | DLEXTATOM '[' terms ']' output
+        {
+	  // create simple dlatom rewriter
+	  $$ = new dlvhex::dl::SimpleDLAtomRewriter($3, $5);
+	}
       ;
-
+              
 
 // the output list
 output: /* empty */
@@ -360,44 +392,6 @@ term: STRING
       }
     ;
 
-
-// we rewrite dl-atoms to &dlC/&dlR/&dlDR external atoms
-dlatom: DLATOM '[' STRING ']' output
-        {
-	  //
-	  // create a rewriter without dl-atom ops
-	  //
-	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), AtomSet(), $3, $5);
-	}
-      | DLATOM '[' ops ';' STRING ']' output
-        {
-	  //
-	  // create a rewriter with dl-atom ops
-	  //
-
-	  dlvhex::dl::DLAtomRewriter* dlatomrewriter =
-	    new dlvhex::dl::DLAtomRewriter(driver.getOntology(),
-					   *$3, $5, $7);
-
-	  $$ = dlatomrewriter;
-
-	  delete $3;
-
-	  //
-	  // add the input rules to the program
-	  //
-
-	  std::vector<Rule*> rules = dlatomrewriter->getDLInputRules();
-
-	  for (std::vector<Rule*>::const_iterator it = rules.begin();
-	       it != rules.end(); ++it)
-	    {
-	      ///@todo if 2 dl-atoms have the same input-predicate, we
-	      ///get the same rules twice -> use a set in Program?
-	      program.addRule(*it);
-	    }
-	}
-      ;
 
 
 // list of operations

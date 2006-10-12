@@ -27,7 +27,7 @@
 
 NEWLINE         \r?\n
 BLANK           [ \t]
-STRING          ("-"|"~")?[A-Za-z][A-Za-z_0-9]*
+STRING          ("-"|"~")?[A-Za-z][A-Za-z_0-9\']*
 QUOTED_STRING   \"[^\"]*\"
 NUMBER          (\-)?[0-9]+
 
@@ -40,6 +40,9 @@ INPUTLIST       \[[^\]]+\]
 OUTPUTLIST      \([^\)]*\)
 
 DLATOM          DL{INPUTLIST}{OUTPUTLIST}
+DLCATOM         &dlC{INPUTLIST}{OUTPUTLIST}
+DLRATOM         &dlR{INPUTLIST}{OUTPUTLIST}
+DLDRATOM        &dlDR{INPUTLIST}{OUTPUTLIST}
 CQATOM          &dlCQ{INPUTLIST}{OUTPUTLIST}?
 
 NAF             ("not"|"non"){BLANK}+
@@ -141,6 +144,18 @@ typedef yy::HexDLRewriterParser::token token;
     yyless(2); // skip DL, but rescan the input/output list
     BEGIN(atom);
     return token::DLATOM;
+  }
+
+  ({DLCATOM}|{DLRATOM}) {
+    yyless(4); // skip &dlC/&dlR, but rescan the input/output list
+    BEGIN(atom);
+    return token::DLEXTATOM;
+  }
+
+  {DLDRATOM} {
+    ///@todo right now we skip dldr-atoms
+    yylval.sval = new std::string(yytext);
+    return token::ATOM;
   }
 
   {CQATOM} {

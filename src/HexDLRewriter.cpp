@@ -118,7 +118,7 @@ BodyRewriter::getBody() const
   // dl-body pushing
   //
 
-  if (!dlbody.empty())
+  if (dlbody.size() > 1)
     {
       boost::ptr_deque<DLAtomRewriterBase> done; // all pushed atoms end up here
       boost::ptr_deque<DLAtomRewriterBase> park; // park some dl-/cq-atoms until we can push them
@@ -154,13 +154,13 @@ BodyRewriter::getBody() const
       
       // done contains all pushed dl-atoms
       dlbody = done.release();
+    }
       
-      // now get the literals of the pushed dl-atoms
-      for (boost::ptr_deque<DLAtomRewriterBase>::const_iterator it = dlbody.begin();
-	   it != dlbody.end(); ++it)
-	{
-	  b->push_back(it->getLiteral());
-	}
+  // now get the literals of the pushed dl-atoms
+  for (boost::ptr_deque<DLAtomRewriterBase>::const_iterator it = dlbody.begin();
+       it != dlbody.end(); ++it)
+    {
+      b->push_back(it->getLiteral());
     }
 
   return b;
@@ -448,6 +448,43 @@ CQAtomRewriter::CQAtomRewriter(const Tuple* in, const Tuple* out)
 }
 
 
+SimpleDLAtomRewriter::SimpleDLAtomRewriter(const Tuple* i, const Tuple* o)
+  : DLAtomRewriterBase(i, o)
+{
+  assert(i != 0);
+  assert(o != 0);
+}
+
+
+std::ostream&
+SimpleDLAtomRewriter::rewrite(std::ostream& os) const
+{
+  const Tuple* i = getInputTuple();
+  const Tuple* o = getOutputTuple();
+
+  if (o->size() == 2)
+    {
+      os << "&dlR[";
+    }
+  else if (o->size() == 1)
+    {
+      os << "&dlC[";
+    }
+  else
+    {
+      throw PluginError("Wrong output tuple size for dl-atom");
+    }
+
+  // input tuple
+  std::copy(i->begin(), i->end() - 1, std::ostream_iterator<Term>(os, ","));
+  os << i->back() << "](";
+
+  // output tuple
+  std::copy(o->begin(), o->end() - 1, std::ostream_iterator<Term>(os, ","));
+  return os << o->back() << ')';
+}
+
+
 CQAtomRewriter::CQAtomRewriter(const CQAtomRewriter& c)
   : DLAtomRewriterBase(c)
 { }
@@ -493,10 +530,11 @@ CQAtomRewriter::rewrite(std::ostream& os) const
 
 
 DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
+			       DLAtomInput& d,
 			       const AtomSet& ops,
 			       const std::string* q,
 			       const Tuple* o)
-  : DLAtomRewriterBase(0, o), ontology(onto), query(q)
+  : DLAtomRewriterBase(0, o), ontology(onto), query(q), dlinput(d)
 {
   assert(query != 0);
   assert(o != 0);
@@ -511,6 +549,9 @@ DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
   TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
 
   // dispatch dl-atom-ops
+  Term p("p");
+  Term m("m");
+
   for (AtomSet::atomset_t::const_iterator it = ops.atoms.begin();
        it != ops.atoms.end(); ++it)
     {
@@ -526,17 +567,17 @@ DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
 
       if (concepts->find(t) != concepts->end())
 	{
-	  if (pred == Term("p"))
+	  if (pred == p)
 	    pc.insert(ap);
-	  else if (pred == Term("m"))
+	  else if (pred == m)
 	    mc.insert(ap);
 	}
       else if (roles->find(t) != roles->end() ||
 	       datatypeRoles->find(t) != datatypeRoles->end())
 	{
-	  if (pred == Term("p"))
+	  if (pred == p)
 	    pr.insert(ap);
-	  else if (pred == Term("m"))
+	  else if (pred == m)
 	    mr.insert(ap);
 	}
       else
@@ -550,7 +591,8 @@ DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
 DLAtomRewriter::DLAtomRewriter(const DLAtomRewriter& d)
   : DLAtomRewriterBase(d),
     ontology(d.ontology),
-    query(d.query)
+    query(d.query),
+    dlinput(d.dlinput)
 { }
 
 
@@ -578,19 +620,19 @@ DLAtomRewriter::getInputTuple() const
 
       std::ostringstream oss;
 
-      oss << "dl_pc_" << getInputNo(pc);
+      oss << "dl_pc_" << dlinput.getInputNo(pc);
       t->push_back(Term(oss.str()));
       oss.str("");
 
-      oss << "dl_mc_" << getInputNo(mc);
+      oss << "dl_mc_" << dlinput.getInputNo(mc);
       t->push_back(Term(oss.str()));
       oss.str("");
 
-      oss << "dl_pr_" << getInputNo(pr);
+      oss << "dl_pr_" << dlinput.getInputNo(pr);
       t->push_back(Term(oss.str()));
       oss.str("");
 
-      oss << "dl_mr_" << getInputNo(mr);
+      oss << "dl_mr_" << dlinput.getInputNo(mr);
       t->push_back(Term(oss.str()));
       oss.str("");
 
@@ -634,29 +676,6 @@ DLAtomRewriter::addNamespace(const std::string& s) const
     }
 
   return tmp;
-}
-
-
-unsigned
-DLAtomRewriter::getInputNo(const AtomSet& as) const
-{
-  typedef std::map<AtomSet,unsigned> AtomSetMap;
-  static unsigned ncnt = 1;
-  static AtomSetMap asmap;
-
-  if (as.empty())
-    {
-      return 0; // no dl-atom-ops
-    }
-
-  std::pair<AtomSetMap::iterator,bool> p = asmap.insert(std::make_pair(as, ncnt));
-
-  if (p.second)
-    {
-      ncnt++;
-    }
-
-  return p.first->second;
 }
 
 
@@ -727,10 +746,10 @@ DLAtomRewriter::getDLInputRules() const
 {
   std::vector<Rule*> rules;
 
-  unsigned pcno = getInputNo(pc);
-  unsigned mcno = getInputNo(mc);
-  unsigned prno = getInputNo(pr);
-  unsigned mrno = getInputNo(mr);
+  unsigned pcno = dlinput.getInputNo(pc);
+  unsigned mcno = dlinput.getInputNo(mc);
+  unsigned prno = dlinput.getInputNo(pr);
+  unsigned mrno = dlinput.getInputNo(mr);
 
   std::ostringstream oss;
 
