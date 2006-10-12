@@ -167,6 +167,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       out << "DL-plugin: " << std::endl << std::endl;
       out << " --ontology=URI       Use URI as ontology for dl-atoms." << std::endl;
       out << " --nocache            Turn off dl-caching." << std::endl;
+      out << " --norewrite          Turn off dl-rewriting." << std::endl;
       out << " --debug=LEVEL        Set debug log level to LEVEL." << std::endl;
       return;
     }
@@ -184,7 +185,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       if (o != std::string::npos)
 	{
 	  std::string uri = it->substr(o + 11); // length of parameter = 11
-	  rewriter->setUri(uri);
+	  rewriter->setURI(uri);
 	  found.push_back(it);
 	}
 
@@ -195,6 +196,14 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	  delete cache;
 	  cache = new NullCache(*stats);
 
+	  found.push_back(it);
+	}
+
+      o = it->find("--norewrite");
+
+      if (o != std::string::npos) // no rewriting at all
+	{
+	  rewriter->setRewriting(false);
 	  found.push_back(it);
 	}
 

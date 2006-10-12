@@ -31,7 +31,7 @@ TestDLRewriter::runDLRewrite()
    std::ostringstream os;
    
    HexDLRewriterDriver dr(fs, os);
-   dr.setUri("file:" + examples + "/tweety_bird.owl");
+   dr.setURI("file:" + examples + "/tweety_bird.owl");
    dr.setStreams(&fs, &os);
    dr.rewrite();
    
@@ -45,7 +45,7 @@ TestDLRewriter::runDLRewrite()
    std::ostringstream os;
    
    HexDLRewriterDriver dr(fs, os);
-   dr.setUri(shopuri);
+   dr.setURI(shopuri);
    dr.setStreams(&fs, &os);
    dr.rewrite();
    
@@ -77,7 +77,7 @@ TestDLRewriter::runDLNoRewrite()
   std::ostringstream os;
 
   HexDLRewriterDriver dr(fs, os);
-  dr.setUri(shop);
+  dr.setURI(shop);
   dr.setStreams(&fs, &os);
   dr.rewrite();
 

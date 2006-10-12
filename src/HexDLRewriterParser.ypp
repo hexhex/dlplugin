@@ -245,18 +245,18 @@ body: body0
 // dispatch the different kinds of literals
 body0: literal
        {
-	 $$ = new dlvhex::dl::BodyRewriter;
+	 $$ = driver.getRewriting() ? new dlvhex::dl::BodyRewriter : new dlvhex::dl::NullBodyRewriter;
 	 $$->add($1);
        }
      | dlatom
        {
-	 $$ = new dlvhex::dl::BodyRewriter;
+	 $$ = driver.getRewriting() ? new dlvhex::dl::BodyRewriter : new dlvhex::dl::NullBodyRewriter;
 	 $$->add($1);
        }
      | NOT dlatom
        {
 	 $2->setNAF(true);
-	 $$ = new dlvhex::dl::BodyRewriter;
+	 $$ = driver.getRewriting() ? new dlvhex::dl::BodyRewriter : new dlvhex::dl::NullBodyRewriter;
 	 $$->add($2);
        }
      ;

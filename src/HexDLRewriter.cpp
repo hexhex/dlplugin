@@ -67,6 +67,8 @@ BodyRewriter::rewrite(std::ostream& os) const
     }
   if (!dlbody.empty())
     {
+      if (!body.empty()) os << ", "; // add a body delimiter in case body was non-empty
+
       std::copy(dlbody.begin(), dlbody.end() - 1,
 		std::ostream_iterator<HexDLRewriterBase>(os, ", ")
 		);
@@ -78,6 +80,10 @@ BodyRewriter::rewrite(std::ostream& os) const
 
 BodyRewriter::BodyRewriter()
   : body()
+{ }
+
+
+BodyRewriter::~BodyRewriter()
 { }
 
 

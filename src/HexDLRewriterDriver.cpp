@@ -33,7 +33,8 @@ using namespace dlvhex::dl;
 HexDLRewriterDriver::HexDLRewriterDriver(std::istream& i, std::ostream& o)
   : PluginRewriter(i, o),
     lexer(new HexDLRewriterFlexLexer(this)),
-    ontology()
+    ontology(),
+    doRewriting(true)
 {
   lexer->switch_streams(&i, &o);
 }
@@ -42,7 +43,8 @@ HexDLRewriterDriver::HexDLRewriterDriver(std::istream& i, std::ostream& o)
 HexDLRewriterDriver::HexDLRewriterDriver(const HexDLRewriterDriver& d)
   : PluginRewriter(*d.input, *d.output),
     lexer(new HexDLRewriterFlexLexer(this)),
-    ontology(d.ontology)
+    ontology(d.ontology),
+    doRewriting(d.doRewriting)
 {
   lexer->switch_streams(d.input, d.output);
 }
@@ -84,7 +86,21 @@ HexDLRewriterDriver::getOutput() const
 
 
 void
-HexDLRewriterDriver::setUri(const std::string& s)
+HexDLRewriterDriver::setRewriting(bool yesno)
+{
+  doRewriting = yesno;
+}
+
+
+bool
+HexDLRewriterDriver::getRewriting()
+{
+  return doRewriting;
+}
+
+
+void
+HexDLRewriterDriver::setURI(const std::string& s)
 {
   try
     {

@@ -49,6 +49,9 @@ namespace dl {
     /// current Ontology
     Ontology::shared_pointer ontology;
 
+    /// set to true if you want to turn on the rewriting facility
+    bool doRewriting;
+
   public:
     /// ctor
     HexDLRewriterDriver(std::istream& i, std::ostream& o);
@@ -74,7 +77,13 @@ namespace dl {
     setStreams(std::istream* i, std::ostream* o);
 
     void
-    setUri(const std::string& u);
+    setURI(const std::string& u);
+
+    void
+    setRewriting(bool = true);
+
+    bool
+    getRewriting();
 
     Ontology::shared_pointer
     getOntology() const;

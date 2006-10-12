@@ -289,13 +289,10 @@ namespace dl {
 
   /**
    * Composite for HexDLRewriterBase objects.
-   *
-   * @todo add body optimization code, i.e. go through dlbody and push
-   * each compatible dl- resp. cq-atom.
    */
   class BodyRewriter : public HexDLRewriterBase
   {
-  private:
+  protected:
     // just plain literals
     boost::ptr_vector<HexDLRewriterBase> body;
     // the dl- and cq-atoms are stored here
@@ -308,18 +305,37 @@ namespace dl {
     /// default ctor
     BodyRewriter();
 
-    void
+    virtual
+    ~BodyRewriter();
+
+    virtual void
     add(BodyRewriter* body0);
 
-    void
+    virtual void
     add(LiteralRewriter* atom);
 
-    void
+    virtual void
     add(DLAtomRewriterBase* atom);
 
     RuleBody_t*
     getBody() const;
   };
+
+
+  /**
+   * A BodyRewriter which adds dl-atoms to the normal body s.t. the
+   * dl-atoms won't get rewritten.
+   */
+  class NullBodyRewriter : public BodyRewriter
+  {
+  public:
+    void
+    add(DLAtomRewriterBase* atom)
+    {
+      body.push_back(atom);
+    }
+  };
+
 
 
 } // namespace dl
