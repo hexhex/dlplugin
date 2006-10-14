@@ -175,9 +175,9 @@ AtomSeparator::parse() throw (DLParsingError)
 
       bool isNegated = (predicate[0] == '-');
       
-      if (isNegated)
+      if (isNegated) // remove '-' from predicate name
 	{
-	  predicate.erase(0);
+	  predicate.erase(0, 1);
 	}
 
       if (t1 != std::string::npos)
