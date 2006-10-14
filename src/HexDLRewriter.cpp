@@ -20,6 +20,7 @@
 #include <iterator>
 
 #include <cassert>
+#include <cstdlib>
 
 using namespace dlvhex::dl;
 
@@ -146,6 +147,8 @@ BodyRewriter::getBody() const
 		}
 	      else
 		{
+		  //std::cerr << "rewriting " << *b1 << " and " << *b2 << " to " << *b3 << std::endl;
+
 		  // we continue with b3 and forget b1,b2
 		  dlbody.push_front(b3.release());
 		}
@@ -353,19 +356,28 @@ DLAtomRewriterBase::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
       // prepare for renaming the variables of cq2
       //
 
+      // get output variables and constants of cq1
+      std::set<Term> Y1(output1->begin(), output1->end());
       // get output variables and constants of cq2
       std::set<Term> Y2(output2->begin(), output2->end());
 
+      // Z1 = X1 \ Y1 , i.e. Z1 contains only existential variables of cq1
+      std::set<Term> Z1;
+      std::set_difference(X1.begin(), X1.end(), Y1.begin(), Y1.end(),
+			  std::inserter(Z1, Z1.begin())
+			  );
       // Z2 = X2 \ Y2 , i.e. Z2 contains only existential variables of cq2
       std::set<Term> Z2;
       std::set_difference(X2.begin(), X2.end(), Y2.begin(), Y2.end(),
 			  std::inserter(Z2, Z2.begin())
 			  );
 
+      // this is the variable mapping for cq1
+      std::map<Term,Term> vm1;
       // this is the variable mapping for cq2
-      std::map<Term,Term> variablemapping;
+      std::map<Term,Term> vm2;
 
-      if (!Z2.empty())
+      if (!Z1.empty() || !Z2.empty())
 	{
 	  // the set of all possible variables of cq1 and cq2
 	  std::set<Term> vars(X1.begin(), X1.end());
@@ -375,12 +387,40 @@ DLAtomRewriterBase::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
 	  // variables may appear in cq1 or cq2, lastvar + n will be
 	  // lexicographically greater than lastvar and thus unique in cq1
 	  // or cq2
-	  const char* lastvar = vars.empty() ? "X" : (--vars.end())->getVariable().c_str();
+	  std::string lastvar = vars.empty() ? "X" : (--vars.end())->getVariable();
+
+	  // we start at 0
 	  unsigned n = 0;
+	  
+	  std::string::size_type i = lastvar.find_first_of("0123456789");
+	  std::string::size_type j = lastvar.find_first_not_of("0123456789", i);
+
+	  // if last variable ends in a number i, we can reuse i and
+	  // set n = i + 1
+	  if (i != std::string::npos && j == std::string::npos)
+	    {
+	      lastvar = lastvar.substr(0, i); // lastvar is the string component
+	      n = atoi(lastvar.substr(i).c_str()) + 1; // n = i + 1
+	    }
+
 	  std::ostringstream nvar;
 
 	  //
-	  // for each variable z of Z2 : if z \in X1 then rename z
+	  // for each ex. variable z of Z1 : if z \in X2 then rename z in cq1
+	  //
+	  for (std::set<Term>::const_iterator z = Z1.begin(); z != Z1.end(); ++z)
+	    {
+	      if (X2.find(*z) != X2.end())
+		{
+		  // rename variable z to lastvar+n and increase n
+		  nvar.str("");
+		  nvar << lastvar << n++;
+		  vm1[*z] = Term(nvar.str());
+		}
+	    }
+
+	  //
+	  // for each ex. variable z of Z2 : if z \in X1 then rename z in cq2
 	  //
 	  for (std::set<Term>::const_iterator z = Z2.begin(); z != Z2.end(); ++z)
 	    {
@@ -389,13 +429,45 @@ DLAtomRewriterBase::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
 		  // rename variable z to lastvar+n and increase n
 		  nvar.str("");
 		  nvar << lastvar << n++;
-		  variablemapping[*z] = Term(nvar.str());
+		  vm2[*z] = Term(nvar.str());
 		}
 	    }
 	}
 
+      // the new pushed conjunctive query
+      AtomSet cq3;
+
       //
-      // insert variablemapped cq2 into cq1
+      // insert variablemapped cq1 into cq3
+      //
+      for (AtomSet::const_iterator a1 = cq1.begin(); a1 != cq1.end(); ++a1)
+	{
+	  Tuple nargs(1, a1->getPredicate()); // a1's predicate + new arguments
+
+	  const Tuple& args = a1->getArguments();
+
+	  // rename variables of a1
+	  for (Tuple::const_iterator it = args.begin(); it != args.end(); ++it)
+	    {
+	      std::map<Term,Term>::const_iterator var = vm1.find(*it);
+
+	      if (var != vm1.end()) // rename it to var
+		{
+		  nargs.push_back(var->second);
+		}
+	      else // leave it as is
+		{
+		  nargs.push_back(*it);
+		}
+	    }
+
+	  AtomPtr ap(new Atom(nargs, a1->isStronglyNegated()));
+	  ap->setAlwaysFO();
+	  cq3.insert(ap);
+	}
+
+      //
+      // insert variablemapped cq2 into cq3
       //
       for (AtomSet::const_iterator a2 = cq2.begin(); a2 != cq2.end(); ++a2)
 	{
@@ -406,9 +478,9 @@ DLAtomRewriterBase::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
 	  // rename variables of a2
 	  for (Tuple::const_iterator it = args.begin(); it != args.end(); ++it)
 	    {
-	      std::map<Term,Term>::const_iterator var = variablemapping.find(*it);
+	      std::map<Term,Term>::const_iterator var = vm2.find(*it);
 
-	      if (var != variablemapping.end()) // rename it to var
+	      if (var != vm2.end()) // rename it to var
 		{
 		  nargs.push_back(var->second);
 		}
@@ -420,22 +492,20 @@ DLAtomRewriterBase::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
 
 	  AtomPtr ap(new Atom(nargs, a2->isStronglyNegated()));
 	  ap->setAlwaysFO();
-	  cq1.insert(ap);
+	  cq3.insert(ap);
 	}
 
       //
       // append the new conjunctive query cq3 to input3
       //
 
-      std::ostringstream cq3;
+      std::ostringstream cq3str;
 
-      if (!cq1.empty())
-	{
-	  std::copy(cq1.begin(), --cq1.end(), std::ostream_iterator<Atom>(cq3, ","));
-	  cq3 << *(--cq1.end());
-	}
+      // cq3 shouldn't be empty
+      std::copy(cq3.begin(), --cq3.end(), std::ostream_iterator<Atom>(cq3str, ","));
+      cq3str << *(--cq3.end());
 
-      input3->push_back(Term(cq3.str(), true));
+      input3->push_back(Term(cq3str.str(), true));
 
       // and return a new cq-atom rewriter waiting for more to push
       return std::auto_ptr<DLAtomRewriterBase>(new CQAtomRewriter(input3, output3));
