@@ -1,3 +1,9 @@
+2006-10-14  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/HexDLRewriter.cpp (DLAtomRewriterBase::push): Fix variable renaming.
+
+	* src/AtomSeparator.cpp (AtomSeparator::parse): Fix handling of negated atoms.
+
 2006-10-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/HexDLRewriter.h: Add --norewrite to turn off dl-rewriting.
