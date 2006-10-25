@@ -18,6 +18,7 @@
 
 #include <iosfwd>
 #include <iterator>
+#include <sstream>
 
 #include <cassert>
 #include <cstdlib>
@@ -34,73 +35,13 @@ HexDLRewriterBase::~HexDLRewriterBase()
 { }
 
 
-Literal*
-HexDLRewriterBase::getLiteral() const
-{
-  std::ostringstream oss;
-
-  rewrite(oss);
-
-  std::string at = oss.str();
-  bool neg = false;
-
-  if (at[0] == '-')
-    {
-      at.erase(0);
-      neg = true;
-    }
-
-  AtomPtr ap(new Atom(at, neg));
-
-  return new Literal(ap, naf);
-}
-
-
-std::ostream&
-BodyRewriter::rewrite(std::ostream& os) const
-{
-  if (!body.empty())
-    {
-      std::copy(body.begin(), body.end() - 1,
-		std::ostream_iterator<HexDLRewriterBase>(os, ", ")
-		);
-      os << body.back();
-    }
-  if (!dlbody.empty())
-    {
-      if (!body.empty()) os << ", "; // add a body delimiter in case body was non-empty
-
-      std::copy(dlbody.begin(), dlbody.end() - 1,
-		std::ostream_iterator<HexDLRewriterBase>(os, ", ")
-		);
-      os << dlbody.back();
-    }
-  return os;
-}
-
-
 BodyRewriter::BodyRewriter()
-  : body()
+  : dlbody()
 { }
 
 
 BodyRewriter::~BodyRewriter()
 { }
-
-
-void
-BodyRewriter::add(LiteralRewriter* atom)
-{
-  body.push_back(atom);
-}
-
-
-void
-BodyRewriter::add(BodyRewriter* body0)
-{
-  body.transfer(body.end(), body0->body);
-  dlbody.transfer(dlbody.end(), body0->dlbody);
-}
 
 
 void
@@ -113,14 +54,6 @@ BodyRewriter::add(DLAtomRewriterBase* atom)
 RuleBody_t*
 BodyRewriter::getBody() const
 {
-  RuleBody_t* b = new RuleBody_t;
-
-  for (boost::ptr_vector<HexDLRewriterBase>::const_iterator it = body.begin();
-       it != body.end(); ++it)
-    {
-      b->push_back(it->getLiteral());
-    }
-
   //
   // dl-body pushing
   //
@@ -165,6 +98,8 @@ BodyRewriter::getBody() const
       dlbody = done.release();
     }
       
+  RuleBody_t* b = new RuleBody_t;
+
   // now get the literals of the pushed dl-atoms
   for (boost::ptr_deque<DLAtomRewriterBase>::const_iterator it = dlbody.begin();
        it != dlbody.end(); ++it)
@@ -173,50 +108,6 @@ BodyRewriter::getBody() const
     }
 
   return b;
-}
-
-
-LiteralRewriter::LiteralRewriter(const std::string* l)
-  : literal((*l)[0] == '-' ?
-	    new Atom(l->substr(1), true) :
-	    new Atom(*l)
-	    )
-{ }
-
-
-LiteralRewriter::LiteralRewriter(Atom* a)
-  : literal(a)
-{ }
-
-
-LiteralRewriter::LiteralRewriter(const LiteralRewriter& r)
-  : HexDLRewriterBase(),
-    literal(new Atom(*r.literal))
-{ }
-
-
-LiteralRewriter&
-LiteralRewriter::operator= (const LiteralRewriter&)
-{
-  return *this; // ignore
-}
-
-
-LiteralRewriter::~LiteralRewriter()
-{ }
-
-
-std::ostream&
-LiteralRewriter::rewrite(std::ostream& os) const
-{
-  return os << *literal;
-}
-
-
-Literal*
-LiteralRewriter::getLiteral() const
-{
-  return new Literal(literal, this->naf);
 }
 
 
@@ -236,6 +127,14 @@ DLAtomRewriterBase::~DLAtomRewriterBase()
 {
   delete input;
   delete output;
+}
+
+
+Literal*
+DLAtomRewriterBase::getLiteral() const
+{
+  AtomPtr ap(new ExternalAtom(getName(), *getOutputTuple(), *getInputTuple(), 0));
+  return new Literal(ap, isNAF());
 }
 
 
@@ -516,48 +415,18 @@ DLAtomRewriterBase::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
 }
 
 
-CQAtomRewriter::CQAtomRewriter(const Tuple* in, const Tuple* out)
-  : DLAtomRewriterBase(in,out)
+CQAtomRewriter&
+CQAtomRewriter::operator= (const CQAtomRewriter&)
 {
-  assert(in != 0);
-  assert(out != 0);
+  return *this; // ignore
 }
 
 
-SimpleDLAtomRewriter::SimpleDLAtomRewriter(const Tuple* i, const Tuple* o)
+CQAtomRewriter::CQAtomRewriter(const Tuple* i, const Tuple* o)
   : DLAtomRewriterBase(i, o)
 {
   assert(i != 0);
   assert(o != 0);
-}
-
-
-std::ostream&
-SimpleDLAtomRewriter::rewrite(std::ostream& os) const
-{
-  const Tuple* i = getInputTuple();
-  const Tuple* o = getOutputTuple();
-
-  if (o->size() == 2)
-    {
-      os << "&dlR[";
-    }
-  else if (o->size() == 1)
-    {
-      os << "&dlC[";
-    }
-  else
-    {
-      throw PluginError("Wrong output tuple size for dl-atom");
-    }
-
-  // input tuple
-  std::copy(i->begin(), i->end() - 1, std::ostream_iterator<Term>(os, ","));
-  os << i->back() << "](";
-
-  // output tuple
-  std::copy(o->begin(), o->end() - 1, std::ostream_iterator<Term>(os, ","));
-  return os << o->back() << ')';
 }
 
 
@@ -566,42 +435,38 @@ CQAtomRewriter::CQAtomRewriter(const CQAtomRewriter& c)
 { }
 
 
-CQAtomRewriter&
-CQAtomRewriter::operator= (const CQAtomRewriter&)
+std::string
+CQAtomRewriter::getName() const
 {
-  return *this; // ignore
+  std::ostringstream oss;
+  oss << "dlCQ" << getOutputTuple()->size();
+  return oss.str();
 }
 
 
-std::ostream&
-CQAtomRewriter::rewrite(std::ostream& os) const
+SimpleDLAtomRewriter::SimpleDLAtomRewriter(const std::string* n, const Tuple* i, const Tuple* o)
+  : DLAtomRewriterBase(i, o), name(n)
 {
-  // rewrite external cq-atom plus arity
+  assert(i != 0);
+  assert(o != 0);
 
-  os << "&dlCQ" << getOutputTuple()->size();
-
-  // append input list (we assume a non-empty input list)
-
-  os << '[';
-
-  std::copy(getInputTuple()->begin(), getInputTuple()->end() - 1,
-	    std::ostream_iterator<Term>(os, ",")
-	    );
-
-  os << getInputTuple()->back() << "](";
-
-  // append output list
-
-  if (!getOutputTuple()->empty())
+  if (getOutputTuple()->size() != 1 && getOutputTuple()->size() != 2)
     {
-      std::copy(getOutputTuple()->begin(), getOutputTuple()->end() - 1,
-		std::ostream_iterator<Term>(os, ",")
-		);
-      
-      os << getOutputTuple()->back();
+      throw PluginError("dl-atom " + *name + " has wrong arity.");
     }
+}
 
-  return os << ')';
+
+SimpleDLAtomRewriter::~SimpleDLAtomRewriter()
+{
+  delete name;
+}
+
+
+std::string
+SimpleDLAtomRewriter::getName() const
+{
+  return *name;
 }
 
 
@@ -618,6 +483,11 @@ DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
   if (!ontology)
     {
       throw PluginError("Couldn't rewrite dl-atom, ontology is empty.");
+    }
+
+  if (getOutputTuple()->size() != 1 && getOutputTuple()->size() != 2)
+    {
+      throw PluginError("dl-atom has wrong arity.");
     }
 
   TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
@@ -755,11 +625,9 @@ DLAtomRewriter::addNamespace(const std::string& s) const
 }
 
 
-std::ostream&
-DLAtomRewriter::rewrite(std::ostream& os) const
+std::string
+DLAtomRewriter::getName() const
 {
-  // first commandment: stream thy strings
-
   TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
   TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
   TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
@@ -769,51 +637,21 @@ DLAtomRewriter::rewrite(std::ostream& os) const
 
   if (concepts->find(q) != concepts->end())
     {
-      os << "&dlC";
+      return "dlC";
     }
   else if (getOutputTuple()->size() == 2 && roles->find(q) != roles->end())
     {
-      os << "&dlR";
+      return "dlR";
     }
   else if (getOutputTuple()->size() == 2 && datatypeRoles->find(q) != datatypeRoles->end())
     {
-      os << "&dlDR";
+      return "dlDR";
     }
   else
     {
       throw PluginError("Incompatible dl-atom query supplied.");
     }
 
-  //
-  // output external atoms input list
-  //
-
-  os << '[';
-
-  std::copy(getInputTuple()->begin(), getInputTuple()->end() - 1,
-	    std::ostream_iterator<Term>(os, ","));
-  os << getInputTuple()->back();
-
-  os << ']';
-
-  //
-  // append output list of the ext. atom
-  //
-
-  if (getOutputTuple()->size() == 2)
-    {
-      os << '(' << getOutputTuple()->front() << ',' << getOutputTuple()->back() << ')';
-    }
-  else if (getOutputTuple()->size() == 1)
-    {
-      os << '(' << getOutputTuple()->front() << ')';
-    }
-  else
-    {
-      throw PluginError("Incompatible output list for dl-atom.");
-    }
-
-  return os;
 }
 
 

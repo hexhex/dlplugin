@@ -15,6 +15,8 @@
 #include "HexDLRewriterDriver.h"
 #include "HexDLRewriterFlexLexer.h"
 
+#include <sstream>
+
 // keep the HexDLRewriterFlexLexer as close as possible to the C version
 #define yylval (*(yy::HexDLRewriterParser::semantic_type*)lexval)
 #define yylloc ((yy::HexDLRewriterParser::location_type*)lexloc)
@@ -27,35 +29,34 @@
 
 NEWLINE         \r?\n
 BLANK           [ \t]
-STRING          ("-"|"~")?[A-Za-z][A-Za-z_0-9\']*
+STRING          [A-Za-z][A-Za-z_0-9\'\_]*
 QUOTED_STRING   \"[^\"]*\"
 NUMBER          (\-)?[0-9]+
 
 COMMENT         {BLANK}*%.*{NEWLINE}
 
-CONS            (:-|<-)
-WCONS           :~
+CONS            (":-"|"<-")
+WCONS           ":~"
+
+NEG             ("-"|"~")
+NAF             ("not"|"non"){BLANK}+
+DISJ            {BLANK}+v{BLANK}+
+COMP            ("="|"!="|"<>"|"=="|"<"|">"|"<="|">=")
+PLUSOP          "+="
+MINUSOP         "-="
 
 INPUTLIST       \[[^\]]+\]
-OUTPUTLIST      \([^\)]*\)
+OUTPUTLIST      \([^\)]+\)
 
 DLATOM          DL{INPUTLIST}{OUTPUTLIST}
 DLCATOM         &dlC{INPUTLIST}{OUTPUTLIST}
 DLRATOM         &dlR{INPUTLIST}{OUTPUTLIST}
 DLDRATOM        &dlDR{INPUTLIST}{OUTPUTLIST}
-CQATOM          &dlCQ{INPUTLIST}{OUTPUTLIST}?
+DLCQATOM        &dlCQ{INPUTLIST}{OUTPUTLIST}?
 
-NAF             ("not"|"non"){BLANK}+
-DISJ            {BLANK}+v{BLANK}+
+BUILTINLINE     #{STRING}{BLANK}*\([^\)]*\){BLANK}*{NEWLINE}
 
-ATOM            ({STRING}|{QUOTED_STRING}){OUTPUTLIST}?
-EXTATOM         &{STRING}{INPUTLIST}{OUTPUTLIST}?
-INFIXATOM       {STRING}{BLANK}*("="|"!="|"<>"|"=="|"<"|">"|"<="|">="){BLANK}*({STRING}|{NUMBER})({BLANK}*("+"|"-"|"*"|"/"){BLANK}*({STRING}|{NUMBER}))?
-AGGREGATE       #{STRING}{OUTPUTLIST}
-
-AGGREGATELINE   {AGGREGATE}{NEWLINE}
-
-%x head body atom list
+%x head body
 
 %{
 // advance the end location after each tokenizing step
@@ -78,23 +79,17 @@ typedef yy::HexDLRewriterParser::token token;
 <*>{COMMENT}  yylloc->lines(1);
 
 
+<*>{NEG} {
+  return token::NEG;
+}
+
+
 <INITIAL>{
 
-  {AGGREGATELINE} {
-    // in INITIAL state, we ignore aggregates such as #namespace, #int, ...
+  {BUILTINLINE} {
+    yylloc->lines(1);
+    // in INITIAL state, we ignore aggregates such as #namespace, #maxint, ...
     ECHO;
-  }
-
-  {ATOM} {
-    BEGIN(head);
-    // all other kinds of literals are passed as is
-    yylval.sval = new std::string(yytext);
-    return token::ATOM;
-  }
-
-  {WCONS} {
-    BEGIN(body);
-    return token::WCONS;
   }
 
   {CONS} {
@@ -102,12 +97,19 @@ typedef yy::HexDLRewriterParser::token token;
     return token::CONS;
   }
 
-  {NUMBER} {
-    std::istringstream(yytext) >> yylval.ival;
-    return token::NUMBER; 
+  {WCONS} {
+    BEGIN(body);
+    return token::WCONS;
   }
 
-  [\[\]:] {
+  ({STRING}|{QUOTED_STRING}) {
+    BEGIN(head); // we need this to distinguish 'v' as disjunction in the head
+    yylval.sval = new std::string(yytext);
+    return token::STRING;
+  }
+
+  [\[\]\:] {
+    // for weak constraints
     return yy::HexDLRewriterParser::token_type(*yytext);
   }
 
@@ -120,15 +122,18 @@ typedef yy::HexDLRewriterParser::token token;
     return token::DISJ;
   }
 
-  {ATOM} {
-    // all other kinds of literals are passed as is
+  ({STRING}|{QUOTED_STRING}) {
     yylval.sval = new std::string(yytext);
-    return token::ATOM;
+    return token::STRING;
   }
 
   {CONS} {
     BEGIN(body);
     return token::CONS;
+  }
+
+  [\(\)\,\_] {
+    return yy::HexDLRewriterParser::token_type(*yytext);
   }
 
 }
@@ -141,85 +146,70 @@ typedef yy::HexDLRewriterParser::token token;
   }
 
   {DLATOM} {
-    yyless(2); // skip DL, but rescan the input/output list
-    BEGIN(atom);
+    yyless(2); // throw away "DL" and continue
     return token::DLATOM;
   }
 
   ({DLCATOM}|{DLRATOM}) {
-    yyless(4); // skip &dlC/&dlR, but rescan the input/output list
-    BEGIN(atom);
+    yylval.sval = new std::string(yytext + 1, 3);
+    yyless(4); // throw away "&dl(C|R)" and continue
     return token::DLEXTATOM;
   }
 
   {DLDRATOM} {
-    ///@todo right now we skip dldr-atoms
-    yylval.sval = new std::string(yytext);
-    return token::ATOM;
+    yylval.sval = new std::string(yytext + 1, 4);
+    yyless(5); // throw away "&dlDR" and continue
+    return token::DLEXTATOM;
   }
 
-  {CQATOM} {
-    yyless(5); // skip &dlCQ, but rescan the input/output list
-    BEGIN(atom);
+  {DLCQATOM} {
+    yyless(5); // throw away "&dlCQ" and continue
     return token::CQATOM;
   }
-
-  {INFIXATOM} {
-    yylval.sval = new std::string(yytext);
-    return token::INFIXATOM;
-  }
-
-  ({EXTATOM}|{AGGREGATE}|{ATOM}) {
-    // all other kinds of literals are passed as is
-    yylval.sval = new std::string(yytext);
-    return token::ATOM;
-  }
-
-}
-
-
-<head,body,atom>{
-
-  "." {
-    // start over again when the body of a rule is done
-    BEGIN(INITIAL);
-    return yy::HexDLRewriterParser::token_type(*yytext);
-  }
-
-
-  "," {
-    // we got a body separator element, continue as body
-    BEGIN(body);
-    return yy::HexDLRewriterParser::token_type(*yytext);
-  }
-
-}
-
-
-<atom>[\(\[]  BEGIN(list); return yy::HexDLRewriterParser::token_type(*yytext);
-
-
-<list>{
 
   ({STRING}|{QUOTED_STRING}) {
     yylval.sval = new std::string(yytext);
     return token::STRING;
   }
 
-  {NUMBER} {
-    std::istringstream(yytext) >> yylval.ival;
-    return token::NUMBER; 
+  {COMP} {
+    yylval.sval = new std::string(yytext);
+    return token::COMP;
   }
 
-  [\)\]]      BEGIN(atom); return yy::HexDLRewriterParser::token_type(*yytext);
+  {PLUSOP} {
+    return token::PLUSOP;
+  }
 
-  [\_+-=,]    return yy::HexDLRewriterParser::token_type(*yytext);
+  {MINUSOP} {
+    return token::MINUSOP;
+  }
+
+  [\(\)\[\]\{\}\,\;\_\+\-\#\&\:] {
+    return yy::HexDLRewriterParser::token_type(*yytext);
+  }
 
 }
 
+
+<head,body>"." {
+  // start over again when the body of a rule is done
+  BEGIN(INITIAL);
+  return yy::HexDLRewriterParser::token_type(*yytext);
+}
+
+
+<*>{NUMBER} {
+  std::istringstream(yytext) >> yylval.ival;
+  return token::NUMBER; 
+}
+
+
 <*>{BLANK}+   /* skip blanks */ yylloc->step();
 
+
 <*>{NEWLINE}  yylloc->lines(1);
+
 
 <*>.          driver.error(*yylloc, "invalid character");
 

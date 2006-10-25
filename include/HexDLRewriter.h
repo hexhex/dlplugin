@@ -36,10 +36,8 @@ namespace dl {
   class HexDLRewriterBase
   {
   protected:
+    /// is this rewriter negated?
     bool naf;
-
-    virtual std::ostream&
-    rewrite(std::ostream& os) const = 0;
 
   public:
     /// default ctor
@@ -62,62 +60,8 @@ namespace dl {
     }
     
     virtual Literal*
-    getLiteral() const;
-
-    friend std::ostream&
-    operator<< (std::ostream&, const HexDLRewriterBase&);
-  };
-
-
-  /** 
-   * Output @a r to @a os.
-   * 
-   * @param os 
-   * @param r 
-   * 
-   * @return @a os
-   */
-  inline std::ostream&
-  operator<< (std::ostream& os, const HexDLRewriterBase& r)
-  {
-    os << (r.naf ? "not " : "");
-    return r.rewrite(os);
-  }
-
-
-  /**
-   * Just output the literal string.
-   */
-  class LiteralRewriter : public HexDLRewriterBase
-  {
-  private:
-    AtomPtr literal;
-
-    /// private assignment op
-    LiteralRewriter&
-    operator= (const LiteralRewriter&);
-
-  protected:
-    std::ostream&
-    rewrite(std::ostream& os) const;
-
-  public:
-    /// ctor
-    explicit
-    LiteralRewriter(const std::string* l);
-
-    explicit
-    LiteralRewriter(Atom* a);
-
-    /// copy ctor
-    LiteralRewriter(const LiteralRewriter&);
-
-    /// dtor
-    virtual
-    ~LiteralRewriter();
-
-    Literal*
-    getLiteral() const;
+    getLiteral() const
+    { return 0; }
   };
 
 
@@ -145,8 +89,14 @@ namespace dl {
     virtual
     ~DLAtomRewriterBase();
 
+    virtual Literal*
+    getLiteral() const;
+
     std::auto_ptr<DLAtomRewriterBase>
     push(const std::auto_ptr<DLAtomRewriterBase>& b) const;
+
+    virtual std::string
+    getName() const = 0;
 
     virtual const Tuple*
     getInputTuple() const;
@@ -175,12 +125,16 @@ namespace dl {
    */
   class SimpleDLAtomRewriter : public DLAtomRewriterBase
   {
-  protected:
-    std::ostream&
-    rewrite(std::ostream& os) const;
+  private:
+    const std::string* name;
 
   public:
-    SimpleDLAtomRewriter(const Tuple* i, const Tuple* o);
+    SimpleDLAtomRewriter(const std::string* n, const Tuple* i, const Tuple* o);
+
+    ~SimpleDLAtomRewriter();
+
+    std::string
+    getName() const;
   };
 
 
@@ -194,16 +148,15 @@ namespace dl {
     CQAtomRewriter&
     operator= (const CQAtomRewriter&);
 
-  protected:
-    std::ostream&
-    rewrite(std::ostream& os) const;
-
   public:
     /// ctor
-    CQAtomRewriter(const Tuple* input, const Tuple* output);
+    CQAtomRewriter(const Tuple* i, const Tuple* o);
 
     /// copy ctor
-    CQAtomRewriter(const CQAtomRewriter&);
+    CQAtomRewriter(const CQAtomRewriter& c);
+
+    std::string
+    getName() const;
   };
 
 
@@ -263,9 +216,6 @@ namespace dl {
     DLAtomRewriter&
     operator= (const DLAtomRewriter&);
 
-    std::ostream&
-    rewrite(std::ostream& os) const;
-
     std::string
     addNamespace(const std::string& s) const;
 
@@ -284,6 +234,9 @@ namespace dl {
 
     const Tuple*
     getInputTuple() const;
+
+    std::string
+    getName() const;
   };
 
 
@@ -293,13 +246,8 @@ namespace dl {
   class BodyRewriter : public HexDLRewriterBase
   {
   protected:
-    // just plain literals
-    boost::ptr_vector<HexDLRewriterBase> body;
     // the dl- and cq-atoms are stored here
     mutable boost::ptr_deque<DLAtomRewriterBase> dlbody;
-
-    std::ostream&
-    rewrite(std::ostream& os) const;
 
   public:
     /// default ctor
@@ -309,33 +257,11 @@ namespace dl {
     ~BodyRewriter();
 
     virtual void
-    add(BodyRewriter* body0);
-
-    virtual void
-    add(LiteralRewriter* atom);
-
-    virtual void
     add(DLAtomRewriterBase* atom);
 
     RuleBody_t*
     getBody() const;
   };
-
-
-  /**
-   * A BodyRewriter which adds dl-atoms to the normal body s.t. the
-   * dl-atoms won't get rewritten.
-   */
-  class NullBodyRewriter : public BodyRewriter
-  {
-  public:
-    void
-    add(DLAtomRewriterBase* atom)
-    {
-      body.push_back(atom);
-    }
-  };
-
 
 
 } // namespace dl
