@@ -9,14 +9,15 @@
  * 
  */
 
-#include <iostream>
-
 #include "RacerAnswerDriver.h"
 #include "Answer.h"
 #include "RacerFlexLexer.h"
 #include "RacerAnswerParser.hpp"
 #include "DLError.h"
 #include "Registry.h"
+
+#include <iostream>
+#include <sstream>
 
 using namespace dlvhex::dl::racer;
 

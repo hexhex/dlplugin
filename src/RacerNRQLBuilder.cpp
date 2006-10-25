@@ -16,6 +16,7 @@
 #include "DLError.h"
 
 #include <iosfwd>
+#include <sstream>
 
 using namespace dlvhex::dl::racer;
 
