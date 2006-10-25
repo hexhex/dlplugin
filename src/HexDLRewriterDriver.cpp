@@ -131,6 +131,145 @@ HexDLRewriterDriver::setStreams(std::istream* i, std::ostream* o)
 }
 
 
+
+class RewritingVisitor : public BaseVisitor
+{
+private:
+  Program& rewritten;
+
+  const RuleBody_t*
+  rewriteBody(const RuleBody_t& body) const
+  {
+    BodyRewriter br;
+
+    RuleBody_t* body1 = new RuleBody_t;
+
+    for (RuleBody_t::const_iterator it = body.begin(); it != body.end(); ++it)
+      {
+	Literal* l = *it;
+
+	///@todo maybe we should use the visiting method to dispatch
+	///the type
+	
+	if (typeid(*l->getAtom()) == typeid(ExternalAtom))
+	  {
+	    ExternalAtom* ea = dynamic_cast<ExternalAtom*>(l->getAtom().get());
+	    
+	    const std::string& fn = ea->getFunctionName();
+	    
+	    if (fn == "dlC" || fn == "dlR" || fn == "dlDR")
+	      {
+		const std::string* n = new std::string(fn);
+		const Tuple* in = new Tuple(ea->getInputTerms());
+		const Tuple* out = new Tuple(ea->getArguments());
+		
+		br.add(new SimpleDLAtomRewriter(n, in, out));
+		
+		///@todo this burns the readers eyes, but for now it
+		///prevents memory leaks
+		delete l;
+	      }
+	    else if (fn.find("dlCQ") == 0)
+	      {
+		const Tuple* in = new Tuple(ea->getInputTerms());
+		const Tuple* out = new Tuple(ea->getArguments());
+		
+		br.add(new CQAtomRewriter(in, out));
+		
+		///@todo this burns the readers eyes, but for now it
+		///prevents memory leaks
+		delete l;
+	      }
+	    else
+	      {
+		body1->push_back(l); // non-dl extatom
+	      }
+	  }
+	else
+	  {
+	    body1->push_back(l); // non-extatom
+	  }
+      }
+	  
+	  
+    const RuleBody_t* dl_body = br.getBody();
+	  
+    body1->insert(body1->end(), dl_body->begin(), dl_body->end());
+	  
+    delete dl_body;
+
+    return body1;
+  }
+
+
+public:
+  RewritingVisitor(Program& r)
+    : rewritten(r)
+  { }
+  
+
+  // these methods are no-ops (as for now)
+
+  virtual void
+  visitAtomSet(const AtomSet*)
+  { }
+  virtual void
+  visitLiteral(const Literal*)
+  { }
+  virtual void
+  visitAtom(const Atom*)
+  { }
+  virtual void
+  visitExternalAtom(const ExternalAtom*)
+  { }
+  virtual void
+  visitBuiltinPredicate(const BuiltinPredicate*)
+  { }
+  virtual void
+  visitAggregateAtom(const AggregateAtom*)
+  { }
+  virtual void
+  visitLiteral(const Atom*)
+  { }
+
+
+  virtual void
+  visitRule(const Rule* r)
+  {
+    //
+    // rewrite the body the rule
+    //
+
+    const RuleHead_t& head = r->getHead();
+    const RuleBody_t& body = r->getBody();
+
+    const RuleBody_t* body1 = rewriteBody(body);
+
+    rewritten.addRule(new Rule(head, *body1));
+
+    delete body1;
+  }
+
+
+  virtual void
+  visitWeakConstraint(const WeakConstraint* wc)
+  {
+    //
+    // rewrite the body the weak constraint
+    //
+
+    const RuleBody_t& body = wc->getBody();
+
+    const RuleBody_t* body1 = rewriteBody(body);
+
+    rewritten.addRule(new WeakConstraint(*body1, wc->getWeight(), wc->getLevel()));
+
+    delete body1;
+  }
+
+};
+
+
 void
 HexDLRewriterDriver::rewrite()
 {
@@ -198,6 +337,7 @@ HexDLRewriterDriver::rewrite()
   //
 
   Program rewritten;
+  RewritingVisitor rv(rewritten);
 
   for (Program::const_iterator it = prog.begin(); it != prog.end(); ++it)
     {
@@ -205,87 +345,16 @@ HexDLRewriterDriver::rewrite()
 
       const Rule* r = *it;
 
-      if (!getRewriting())
+      if (!getRewriting()) // don't rewrite the rule
 	{
-	  //
-	  // don't rewrite the body
-	  //
 	  rewritten.addRule(r);
 	}
-      else
+      else // rewrite the rule
 	{
-	  //
-	  // rewrite the body of each rule
-	  //
+	  r->accept(rv);
 
-	  const RuleHead_t& head = r->getHead();
-	  const RuleBody_t& body = r->getBody();
-
-	  BodyRewriter br;
-	  RuleBody_t body1;
-
-	  for (RuleBody_t::const_iterator it = body.begin(); it != body.end(); ++it)
-	    {
-	      Literal* l = *it;
-	      
-	      if (typeid(*l->getAtom()) == typeid(ExternalAtom))
-		{
-		  ExternalAtom* ea = dynamic_cast<ExternalAtom*>(l->getAtom().get());
-
-		  const std::string& fn = ea->getFunctionName();
-		  
-		  if (fn == "dlC" || fn == "dlR" || fn == "dlDR")
-		    {
-		      std::cerr << "found dl" << std::endl;
-
-		      const std::string* n = new std::string(fn);
-		      const Tuple* in = new Tuple(ea->getInputTerms());
-		      const Tuple* out = new Tuple(ea->getArguments());
-		      
-		      br.add(new SimpleDLAtomRewriter(n, in, out));
-
-		      ///@todo this burns the readers eyes, but for
-		      ///now it prevents memory leaks
-		      delete l;
-		    }
-		  else if (fn.find("dlCQ") == 0)
-		    {
-		      std::cerr << "found dlcq" << std::endl;
-
-		      const Tuple* in = new Tuple(ea->getInputTerms());
-		      const Tuple* out = new Tuple(ea->getArguments());
-		      
-		      br.add(new CQAtomRewriter(in, out));
-
-		      ///@todo this burns the readers eyes, but for
-		      ///now it prevents memory leaks
-		      delete l;
-		    }
-		  else
-		    {
-		      body1.push_back(l); // non-dl extatom
-		    }
-		}
-	      else
-		{
-		  body1.push_back(l); // non-extatom
-		}
-	    }
-	  
-	  
-	  const RuleBody_t* dl_body = br.getBody();
-	  
-	  body1.insert(body1.end(), dl_body->begin(), dl_body->end());
-	  
-	  delete dl_body;
-	  
-	  const Rule* r1 = new Rule(head, body1);
-	  
-	  rewritten.addRule(r1);
-	  
-	  ///@todo this burns the readers eyes, but for now it prevents
-	  ///memory leaks
-
+	  ///@todo this burns the readers eyes, but for now it
+	  ///prevents memory leaks
 	  delete r;
 	}
     }
