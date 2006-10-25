@@ -1,8 +1,11 @@
 2006-10-25  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
-	* include/HexDLRewriter.h: Add support for aggregates and PrintVisitor.
+	* src/HexDLRewriterDriver.cpp: Use RewritingVisitor to distinguish
+	Rules/WeakConstraints when rewriting the body of a rule.
+
+	* include/HexDLRewriter.h: Add support for aggregates.
 	* src/HexDLRewriter.cpp: Likewise.
-	* src/HexDLRewriterDriver.cpp: Likewise.
+
 	* src/HexDLRewriterParser.ypp: Likewise.
 	* src/HexDLRewriterScanner.lpp: Likewise.
 
