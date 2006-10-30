@@ -167,7 +167,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       out << "DL-plugin: " << std::endl << std::endl;
       out << " --ontology=URI       Use URI as ontology for dl-atoms." << std::endl;
       out << " --nocache            Turn off dl-caching." << std::endl;
-      out << " --norewrite          Turn off dl-rewriting." << std::endl;
+      out << " --nopush             Turn off dl-pushing." << std::endl;
       out << " --debug=LEVEL        Set debug log level to LEVEL." << std::endl;
       return;
     }
@@ -199,7 +199,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	  found.push_back(it);
 	}
 
-      o = it->find("--norewrite");
+      o = it->find("--nopush");
 
       if (o != std::string::npos) // no rewriting at all
 	{
