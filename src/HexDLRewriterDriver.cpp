@@ -151,7 +151,7 @@ private:
 	///@todo maybe we should use the visiting method to dispatch
 	///the type
 	
-	if (typeid(*l->getAtom()) == typeid(ExternalAtom))
+	if (typeid(*l->getAtom()) == typeid(ExternalAtom) && !l->isNAF())
 	  {
 	    ExternalAtom* ea = dynamic_cast<ExternalAtom*>(l->getAtom().get());
 	    
@@ -187,7 +187,7 @@ private:
 	  }
 	else
 	  {
-	    body1->push_back(l); // non-extatom
+	    body1->push_back(l); // non-extatom or naf atom
 	  }
       }
 	  
