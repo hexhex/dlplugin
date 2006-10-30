@@ -79,6 +79,7 @@
 %token <sval> STRING COMP DLEXTATOM
 %token <ival> NUMBER
 %token NEG PLUSOP MINUSOP DLATOM CQATOM NOT DISJ CONS WCONS
+%type <sval> dlquery
 %type <headval> head
 %type <bodyval> body
 %type <litval> literal
@@ -360,14 +361,14 @@ agg: '#' STRING '{' terms ':' body '}'
 // This rule keeps track of the various forms of the dl-atom
 // rewriters. We rewrite dl-atoms to &dlC/&dlR/&dlDR external atoms,
 // &dl{C,R} and &dlCQ external atoms are handled here as well.
-dlatom: DLATOM '[' STRING ']' output
+dlatom: DLATOM '[' dlquery ']' output
         {
 	  //
 	  // create a rewriter without dl-atom ops
 	  //
 	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, AtomSet(), $3, $5);
 	}
-      | DLATOM '[' ops ';' STRING ']' output
+      | DLATOM '[' ops ';' dlquery ']' output
         {
 	  //
 	  // create a rewriter with dl-atom ops
@@ -407,7 +408,20 @@ dlatom: DLATOM '[' STRING ']' output
 	  $$ = new dlvhex::dl::SimpleDLAtomRewriter($1, $3, $5);
 	}
       ;
-              
+
+
+// a dl-query is a STRING or a negated STRING
+dlquery: STRING
+         {
+	   $$ = $1;
+	 }
+       | NEG STRING
+         {
+	   $$ = $2;
+	   $$->insert(0, 1, '-');
+	 }
+       ;
+
 
 // the output list
 output: /* empty */
