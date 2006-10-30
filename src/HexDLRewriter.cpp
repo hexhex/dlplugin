@@ -166,15 +166,31 @@ DLAtomRewriterBase::getCQ(const std::string& query, const Tuple& output, AtomSet
     }
   else // query is a dl-atom
     {
+      // first check if output has quoted individuals
+
+      Tuple tmpout;
+
+      for (Tuple::const_iterator it = output.begin(); it != output.end(); ++it)
+	{
+	  if (it->isString()) // remove the quotation
+	    {
+	      tmpout.push_back(Term(it->getUnquotedString()));
+	    }
+	  else
+	    {
+	      tmpout.push_back(*it);
+	    }
+	}
+
       // prepare cq as a singleton atomset
       if (query[0] == '-')
 	{
-	  AtomPtr ap(new Atom(query.substr(1), output, true));
+	  AtomPtr ap(new Atom(query.substr(1), tmpout, true));
 	  cq.insert(ap);
 	}
       else
 	{
-	  AtomPtr ap(new Atom(query, output));
+	  AtomPtr ap(new Atom(query, tmpout));
 	  cq.insert(ap);
 	}
     }
