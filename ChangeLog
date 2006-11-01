@@ -1,3 +1,7 @@
+2006-11-01  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* configure.ac: Bump version to 0.5.0.
+
 2006-10-30  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	Release version 0.4.0.
