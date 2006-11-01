@@ -1,5 +1,7 @@
 2006-10-30  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	Release version 0.4.0.
+	
 	* src/RacerInterface.cpp (RacerInterface::setOptions): Rename
 	--norewrite to --nopush.
 
