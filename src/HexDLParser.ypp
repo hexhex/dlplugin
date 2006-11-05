@@ -1,0 +1,370 @@
+/* -*- C++ -*- */
+
+/**
+ * @file   HexDLParser.ypp
+ * @author Thomas Krennwallner
+ * @date   Sun Nov  5 09:46:05 2006
+ * 
+ * @brief  A bison C++ parser.
+ * 
+ * 
+ */
+
+
+%skeleton "lalr1.cc"
+%define "parser_class_name" "HexDLParser"
+%defines
+%file-prefix = "HexDLParser"
+%require "2.2"
+
+%{
+#include "HexDLRewriterDriver.h"
+#include "HexDLRewriter.h"
+
+#include <dlvhex/Term.h>
+#include <dlvhex/Atom.h>
+
+#include <iosfwd>
+#include <string>
+#include <iterator>
+
+#include <boost/ptr_container/ptr_vector.hpp>
+
+  // why do we need this forward declaration?
+  namespace dlvhex {
+    namespace dl {
+      class HexDLRewriterDriver;
+    }
+  }
+
+%}
+
+// this is the parsing context, passed as parameters to the
+// yy::HexDLRewriterParser ctor
+%parse-param { dlvhex::dl::HexDLRewriterDriver& driver }
+%parse-param { dlvhex::dl::DLAtomInput& dlinput }
+
+// bison passes the driver as additional parameter to the lexer
+// function YY_DECL, so we can abuse the driver to get the real lexer
+// object and call the yylex() method
+%lex-param   { dlvhex::dl::HexDLRewriterDriver& driver }
+
+// use a yy::location object to keep track of the location information
+%locations
+
+// debug parser
+%debug
+%error-verbose
+%verbose /* really verbose output */
+
+// this is YYSTYPE, the semantics
+%union {
+  std::string* sval;
+  int ival;
+  Term* termval;
+  Tuple* tupleval;
+  AtomPtr* atomval;
+  AtomSet* opsval;
+  dlvhex::dl::DLAtomRewriterBase* dlrewriterval;
+  boost::ptr_vector<dlvhex::dl::DLAtomRewriterBase>* dlatomsval;
+}
+
+%token <sval> STRING COMP DLEXTATOM
+%token <ival> NUMBER
+%token NEG PLUSOP MINUSOP DLATOM DLCQATOM CQATOM
+%type <sval> dlquery
+%type <dlatomsval> dlatoms
+%type <dlrewriterval> dlatom
+%type <atomval> op
+%type <opsval> ops
+%type <termval> term
+%type <tupleval> terms output
+
+// define FlexLexer part *after* the definitions of the various types
+%{
+
+#include "HexDLFlexLexer.h"
+
+// Announce to bison the prototype we want for the lexing function
+#define YY_DECL                                                 \
+yy::HexDLParser::token_type                                     \
+yylex (yy::HexDLParser::semantic_type* yylval,                  \
+       yy::HexDLParser::location_type* yylloc,                  \
+       dlvhex::dl::HexDLRewriterDriver& driver)
+
+// declare YY_DECL function for the parser
+YY_DECL;
+
+%}
+
+// automagically delete all dynamically allocated objects after the
+// parsing process
+%destructor { delete $$; } STRING dlatom
+
+// in debugging mode output the content of the corresponding terminal
+// symbol
+%printer    { debug_stream() << *$$; } STRING
+
+%%
+
+// either no dlatoms or a bunch of dlatoms
+dlatoms: /* empty */
+       | dlatoms dlatom
+         {
+	   // replace the parsed dl-atom
+	   driver.getOutput() << *$2->getLiteral();
+	   delete $2;
+	 }
+       ;
+
+
+// This rule keeps track of the various forms of the dl-atom
+// rewriters. We rewrite dl-atoms to &dlC/&dlR/&dlDR external atoms,
+// &dl{C,R} and &dlCQ external atoms are handled here as well.
+dlatom: DLATOM '[' dlquery ']' output
+        {
+	  //
+	  // create a rewriter without dl-atom ops
+	  //
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, AtomSet(), $3, $5);
+	}
+      | DLATOM '[' ops ';' dlquery ']' output
+        {
+	  //
+	  // create a rewriter with dl-atom ops
+	  //
+
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, *$3, $5, $7);
+	  delete $3;
+	}
+      | CQATOM '[' terms ']' output
+        { 
+	  // a cq-atom is the external atom
+	  // &dlCQ[uri,a,b,c,d,q](X_1,...X_n), we rewrite it to
+	  // &dlCQn[uri,a,b,c,d,q](X_1,...,X_n)
+	  $$ = new dlvhex::dl::CQAtomRewriter($3, $5);
+	}
+      | DLEXTATOM '[' terms ']' output
+        {
+	  // create simple dlatom rewriter
+	  $$ = new dlvhex::dl::SimpleDLAtomRewriter($1, $3, $5);
+	}
+      ;
+
+
+// a dl-query is a STRING or a negated STRING
+dlquery: STRING
+         {
+	   $$ = $1;
+	 }
+       | NEG STRING
+         {
+	   $$ = $2;
+	   $$->insert(0, 1, '-');
+	 }
+       ;
+
+
+// the output list
+output: /* empty */
+        {
+	  $$ = new Tuple;
+	}
+      | '(' ')'
+        {
+	  $$ = new Tuple;
+	}
+      | '(' terms ')'
+        {
+	  $$ = $2;
+	}
+      ;
+
+
+// list of terms
+terms: term
+       {
+	 $$ = new Tuple(1, *$1);
+	 delete $1;
+       }
+     | terms ',' term
+       {
+	 $$ = $1;
+	 $$->push_back(*$3);
+	 delete $3;
+       }
+     ;
+
+
+// a term is either a string, a number or an anonymous variable
+term: STRING
+      {
+	$$ = new Term(*$1);
+	delete $1;
+      }
+    | NUMBER
+      {
+	$$ = new Term($1);
+      }
+    | '_'
+      {
+	$$ = new Term;
+      }
+    ;
+
+
+
+// list of operations
+ops: op
+     {
+       $$ = new AtomSet;
+       $$->insert(*$1);
+       delete $1;
+     }
+   | ops ',' op
+     {
+       $$ = $1;
+       $$->insert(*$3);
+       delete $3;
+     }
+   ;
+
+
+// an operation is either lhs += rhs or lhs -= rhs. For each lhs+=rhs
+// resp. lhs-=rhs we create a pc(lhs,rhs) or pr(lhs,rhs)
+// resp. mc(lhs,rhs) or mr(lhs,rhs) atom. Then, the DLAtomRewriter
+// takes care of adding rules and input terms to the ext-atoms.
+op: STRING PLUSOP STRING
+    {
+      if (!ontology)
+	{
+	  throw PluginError("Couldn't rewrite dl-atom, ontology is empty.");
+	}
+
+      std::string tmp;
+
+      if ($1->find("\"-") == 0)
+	{
+	  tmp = ontology->getNamespace() + $1->substr(2, $1->length() - 3);
+	}
+      else if ($1->find("\"") == 0)
+	{
+	  tmp = ontology->getNamespace() + $1->substr(1, $1->length() - 2);
+	}
+      else if ($1->find("-") == 0)
+	{
+	  tmp = ontology->getNamespace() + $1->substr(1, $1->length() - 1);
+	}
+      else
+	{
+	  tmp = ontology->getNamespace() + *$1;
+	}
+
+      Tuple t;
+      t.push_back(Term(tmp, true));
+      t.push_back(Term(*$3));
+
+      Term q(tmp);
+
+      TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
+      TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
+      TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
+
+      if (concepts->find(q) != concepts->end())
+	{
+	  $$ = new AtomPtr(new Atom("pc", t));
+	}
+      else if (roles->find(1) != roles->end() ||
+	       datatypeRoles->find(1) != datatypeRoles->end())
+	{
+	  $$ = new AtomPtr(new Atom("pr", t));
+	}
+      else
+	{
+	  throw PluginError("Incompatible dl-atom-op " + *$1 + "+=" + *$3 + " supplied.");
+	}
+
+      delete $1;
+      delete $3;
+    }
+  | STRING MINUSOP STRING
+    {
+      if (!ontology)
+	{
+	  throw PluginError("Couldn't rewrite dl-atom, ontology is empty.");
+	}
+
+      std::string tmp;
+
+      if ($1->find("\"-") == 0)
+	{
+	  tmp = ontology->getNamespace() + $1->substr(2, $1->length() - 3);
+	}
+      else if ($1->find("\"") == 0)
+	{
+	  tmp = ontology->getNamespace() + $1->substr(1, $1->length() - 2);
+	}
+      else if ($1->find("-") == 0)
+	{
+	  tmp = ontology->getNamespace() + $1->substr(1, $1->length() - 1);
+	}
+      else
+	{
+	  tmp = ontology->getNamespace() + *$1;
+	}
+
+      Tuple t;
+      t.push_back(Term(tmp, true));
+      t.push_back(Term(*$3));
+
+      Term q(tmp);
+
+      TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
+      TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
+      TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
+
+      if (concepts->find(q) != concepts->end())
+	{
+	  $$ = new AtomPtr(new Atom("mc", t));
+	}
+      else if (roles->find(1) != roles->end() ||
+	       datatypeRoles->find(1) != datatypeRoles->end())
+	{
+	  $$ = new AtomPtr(new Atom("mr", t));
+	}
+      else
+	{
+	  throw PluginError("Incompatible dl-atom-op " + *$1 + "-=" + *$3 + " supplied.");
+	}
+
+      delete $1;
+      delete $3;
+    }
+  ;
+
+
+%%
+
+
+//
+// error method of bison parser -> call error method of the
+// corresponding driver
+//
+void
+yy::HexDLRewriterParser::error(const yy::HexDLRewriterParser::location_type& l,
+			       const std::string& m)
+{
+  driver.error(l, m);
+}
+
+
+//
+// abuse YY_DECL as bison callback for a pure C++ parsing engine
+//
+YY_DECL
+{
+  HexDLFlexLexer* lex = driver.getLexer();
+  lex->lexval = yylval; // set current semantic value
+  lex->lexloc = yylloc; // and the current location,
+  return (yy::HexDLRewriterParser::token_type) lex->yylex (); // finally call the drivers lexer
+} 

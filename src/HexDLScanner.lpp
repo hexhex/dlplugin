@@ -1,0 +1,156 @@
+/* -*- C++ -*- */
+
+/**
+ * @file   HexDLScanner.lpp
+ * @author Thomas Krennwallner
+ * @date   Sat Nov  4 15:24:36 2006
+ * 
+ * @brief  Defines HexDLFlexLexer::yylex() method.
+ * 
+ * 
+ */
+
+%{
+#include "HexDLRewriterDriver.h"
+#include "HexDLFlexLexer.h"
+
+#include <sstream>
+
+// keep the HexDLRewriterFlexLexer as close as possible to the C version
+#define yylval (*(yy::HexDLRewriterParser::semantic_type*)lexval)
+#define yylloc ((yy::HexDLRewriterParser::location_type*)lexloc)
+#define driver (*lexdrv)
+%}
+
+%option c++ noyywrap nounput batch debug
+%option yyclass="HexDLFlexLexer"
+%option prefix="yyDL"
+
+NEWLINE         \r?\n
+BLANK           [ \t]
+STRING          [A-Za-z][A-Za-z_0-9\'\_]*
+QUOTED_STRING   \"[^\"]*\"
+NUMBER          (\-)?[0-9]+
+
+COMMENT         {BLANK}*%.*{NEWLINE}
+
+PLUSOP          "+="
+MINUSOP         "-="
+
+INPUTLIST       \[[^\]]+\]
+OUTPUTLIST      \([^\)]+\)
+
+DLATOM          DL{INPUTLIST}{OUTPUTLIST}
+DLCQATOM        DLCQ{INPUTLIST}{OUTPUTLIST}
+DLCATOM         &dlC{INPUTLIST}{OUTPUTLIST}
+DLRATOM         &dlR{INPUTLIST}{OUTPUTLIST}
+DLDRATOM        &dlDR{INPUTLIST}{OUTPUTLIST}
+DLCQATOM        &dlCQ{INPUTLIST}{OUTPUTLIST}?
+
+%x dlatom dlatomend
+
+%%
+
+%{
+// abbreviate it as token
+typedef yy::HexDLRewriterParser::token token;
+%}
+
+
+<INITIAL>{
+
+  {COMMENT}  ECHO; yylloc->lines(1);
+
+  {DLATOM} {
+    yyless(2); // throw away "DL" and continue
+    BEGIN(dlatom);
+    return token::DLATOM;
+  }
+
+  {DLCQATOM} {
+    yyless(4); // throw away "DLCQ" and continue
+    BEGIN(dlatom);
+    return token::DLCQATOM;
+  }
+
+  ({DLCATOM}|{DLRATOM}) {
+    yylval.sval = new std::string(yytext + 1, 3);
+    yyless(4); // throw away "&dl(C|R)" and continue
+    BEGIN(dlatom);
+    return token::DLEXTATOM;
+  }
+
+  {DLDRATOM} {
+    yylval.sval = new std::string(yytext + 1, 4);
+    yyless(5); // throw away "&dlDR" and continue
+    BEGIN(dlatom);
+    return token::DLEXTATOM;
+  }
+
+  {DLCQATOM} {
+    yyless(5); // throw away "&dlCQ" and continue
+    BEGIN(dlatom);
+    return token::CQATOM;
+  }
+
+}
+
+
+<dlatom>{
+
+  ({STRING}|{QUOTED_STRING}) {
+    yylval.sval = new std::string(yytext);
+    return token::STRING;
+  }
+
+  {NUMBER} {
+    std::istringstream(yytext) >> yylval.ival;
+    return token::NUMBER; 
+  }
+
+  {PLUSOP} {
+    return token::PLUSOP;
+  }
+
+  {MINUSOP} {
+    return token::MINUSOP;
+  }
+
+  [\[\,\;\_] {
+    return yy::HexDLParser::token_type(*yytext);
+  }
+
+  [\]\)] {
+    // these 2 symbols may end a dl-atom
+    BEGIN(dlatomend);
+    return yy::HexDLParser::token_type(*yytext);
+  }
+
+}
+
+
+<dlatomend>{
+
+  [\(] {
+    // we got an output list -> scan it in dlatom mode
+    BEGIN(dlatom);
+    return yy::HexDLParser::token_type(*yytext);
+  }
+
+  [\,\.] {
+    // _after_ a dl-atom we can only get a , or a .
+    BEGIN(INITIAL);
+    ECHO;
+  }
+
+}
+
+
+<*>{NEWLINE}  yylloc->lines(1); ECHO;
+
+
+<*>.          ECHO;
+
+
+%%
+
