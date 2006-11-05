@@ -1,3 +1,11 @@
+2006-11-05  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/HexDLFlexLexer.h: Add non-functional dl-atom rewriter
+	without hex parser.
+	* src/HexDLDriver.cpp: Likewise.
+	* src/HexDLParser.ypp: Likewise.
+	* src/HexDLScanner.lpp: Likewise.
+
 2006-11-01  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* configure.ac: Bump version to 0.5.0.
