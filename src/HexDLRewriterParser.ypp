@@ -46,7 +46,6 @@
 %parse-param { dlvhex::dl::HexDLRewriterDriver& driver }
 %parse-param { Program& program }
 %parse-param { AtomSet& edb }
-%parse-param { dlvhex::dl::DLAtomInput& dlinput }
 
 // bison passes the driver as additional parameter to the lexer
 // function YY_DECL, so we can abuse the driver to get the real lexer
@@ -67,26 +66,21 @@
   int ival;
   Term* termval;
   Tuple* tupleval;
+  AtomPtr* atomval;
   AggregateAtom* aggval;
   Literal* litval;
   RuleHead_t* headval;
   RuleBody_t* bodyval;
-  AtomPtr* atomval;
-  AtomSet* opsval;
-  dlvhex::dl::DLAtomRewriterBase* dlrewriterval;
 }
 
-%token <sval> STRING COMP DLEXTATOM
+%token <sval> STRING COMP
 %token <ival> NUMBER
-%token NEG PLUSOP MINUSOP DLATOM CQATOM NOT DISJ CONS WCONS
-%type <sval> dlquery
+%token NEG NOT DISJ CONS WCONS
 %type <headval> head
 %type <bodyval> body
 %type <litval> literal
-%type <dlrewriterval> dlatom
-%type <atomval> op atom builtin aggregate
+%type <atomval> atom builtin aggregate
 %type <aggval> agg
-%type <opsval> ops
 %type <termval> term
 %type <tupleval> terms output
 
@@ -109,7 +103,7 @@ YY_DECL;
 
 // automagically delete all dynamically allocated objects after the
 // parsing process
-%destructor { delete $$; } STRING head body dlatom literal
+%destructor { delete $$; } STRING head body literal
 
 // in debugging mode output the content of the corresponding terminal
 // symbol
@@ -235,17 +229,6 @@ literal: atom
 	   $$ = new Literal(*$2, true);
 	   delete $2;
 	 }
-       | dlatom
-         {
-	   $$ = $1->getLiteral();
-	   delete $1;
-	 }
-       | NOT dlatom
-         {
-	   $2->setNAF(true);
-	   $$ = $2->getLiteral();
-	   delete $2;
-	 }
        | builtin
          {
 	   $$ = new Literal(*$1);
@@ -358,71 +341,6 @@ agg: '#' STRING '{' terms ':' body '}'
    ;
 
 
-// This rule keeps track of the various forms of the dl-atom
-// rewriters. We rewrite dl-atoms to &dlC/&dlR/&dlDR external atoms,
-// &dl{C,R} and &dlCQ external atoms are handled here as well.
-dlatom: DLATOM '[' dlquery ']' output
-        {
-	  //
-	  // create a rewriter without dl-atom ops
-	  //
-	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, AtomSet(), $3, $5);
-	}
-      | DLATOM '[' ops ';' dlquery ']' output
-        {
-	  //
-	  // create a rewriter with dl-atom ops
-	  //
-
-	  dlvhex::dl::DLAtomRewriter* dlatomrewriter =
-	    new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, *$3, $5, $7);
-
-	  $$ = dlatomrewriter;
-
-	  delete $3;
-
-	  //
-	  // add the input rules to the program
-	  //
-
-	  std::vector<Rule*> rules = dlatomrewriter->getDLInputRules();
-
-	  for (std::vector<Rule*>::const_iterator it = rules.begin();
-	       it != rules.end(); ++it)
-	    {
-	      ///@todo if 2 dl-atoms have the same input-predicate, we
-	      ///get the same rules twice -> use a set in Program?
-	      program.addRule(*it);
-	    }
-	}
-      | CQATOM '[' terms ']' output
-        { 
-	  // a cq-atom is the external atom
-	  // &dlCQ[uri,a,b,c,d,q](X_1,...X_n), we rewrite it to
-	  // &dlCQn[uri,a,b,c,d,q](X_1,...,X_n)
-	  $$ = new dlvhex::dl::CQAtomRewriter($3, $5);
-	}
-      | DLEXTATOM '[' terms ']' output
-        {
-	  // create simple dlatom rewriter
-	  $$ = new dlvhex::dl::SimpleDLAtomRewriter($1, $3, $5);
-	}
-      ;
-
-
-// a dl-query is a STRING or a negated STRING
-dlquery: STRING
-         {
-	   $$ = $1;
-	 }
-       | NEG STRING
-         {
-	   $$ = $2;
-	   $$->insert(0, 1, '-');
-	 }
-       ;
-
-
 // the output list
 output: /* empty */
         {
@@ -469,53 +387,6 @@ term: STRING
 	$$ = new Term;
       }
     ;
-
-
-
-// list of operations
-ops: op
-     {
-       $$ = new AtomSet;
-       $$->insert(*$1);
-       delete $1;
-     }
-   | ops ',' op
-     {
-       $$ = $1;
-       $$->insert(*$3);
-       delete $3;
-     }
-   ;
-
-
-// an operation is either lhs += rhs or lhs -= rhs. For each lhs+=rhs
-// resp. lhs-=rhs we create a p(lhs,rhs) resp. m(lhs,rhs) atom. Then,
-// the DLAtomRewriter takes care of adding rules and input terms to
-// the ext-atoms.
-op: STRING PLUSOP STRING
-    {
-      Tuple t;
-      t.push_back(Term(*$1, true));
-      t.push_back(Term(*$3));
-
-      $$ = new AtomPtr(new Atom("p", t));
-
-      delete $1;
-      delete $3;
-    }
-  | STRING MINUSOP STRING
-    {
-      Tuple t;
-      t.push_back(Term(*$1, true));
-      t.push_back(Term(*$3));
-
-      $$ = new AtomPtr(new Atom("m", t));
-
-      delete $1;
-      delete $3;
-    }
-  ;
-
 
 %%
 

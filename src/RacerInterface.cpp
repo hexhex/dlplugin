@@ -15,6 +15,7 @@
 #include "RacerExtAtom.h"
 #include "Ontology.h"
 #include "HexDLRewriterDriver.h"
+#include "HexDLDriver.h"
 #include "LogBuf.h"
 #include "Registry.h"
 #include "TCPStream.h"
@@ -40,7 +41,8 @@ RacerInterface::RacerInterface()
   : stream(new dlvhex::util::TCPIOStream("localhost", 8088)),
     stats(new CacheStats),
     cache(new Cache(*stats)),
-    rewriter(new HexDLRewriterDriver(std::cin, std::cout)),
+    dlrewriter(new HexDLDriver(std::cin, std::cout)),
+    rewriter(new HexDLRewriterDriver(dlrewriter, std::cin, std::cout)),
     kbManager(new RacerKBManager(*stream))
 { }
 
@@ -71,6 +73,7 @@ RacerInterface::~RacerInterface()
 
   delete kbManager;
   delete rewriter;
+  delete dlrewriter;
   delete cache;
   delete stats;
   delete stream;
@@ -88,6 +91,7 @@ RacerInterface::instance()
 PluginRewriter*
 RacerInterface::createRewriter(std::istream& i, std::ostream& o)
 {
+  dlrewriter->setStreams(&i, &o);
   rewriter->setStreams(&i, &o);
   return rewriter;
 }
@@ -185,7 +189,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       if (o != std::string::npos)
 	{
 	  std::string uri = it->substr(o + 11); // length of parameter = 11
-	  rewriter->setURI(uri);
+	  dlrewriter->setURI(uri);
 	  found.push_back(it);
 	}
 

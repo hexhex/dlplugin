@@ -18,7 +18,7 @@
 %require "2.2"
 
 %{
-#include "HexDLRewriterDriver.h"
+#include "HexDLDriver.h"
 #include "HexDLRewriter.h"
 
 #include <dlvhex/Term.h>
@@ -28,12 +28,10 @@
 #include <string>
 #include <iterator>
 
-#include <boost/ptr_container/ptr_vector.hpp>
-
   // why do we need this forward declaration?
   namespace dlvhex {
     namespace dl {
-      class HexDLRewriterDriver;
+      class HexDLDriver;
     }
   }
 
@@ -41,13 +39,13 @@
 
 // this is the parsing context, passed as parameters to the
 // yy::HexDLRewriterParser ctor
-%parse-param { dlvhex::dl::HexDLRewriterDriver& driver }
+%parse-param { dlvhex::dl::HexDLDriver& driver }
 %parse-param { dlvhex::dl::DLAtomInput& dlinput }
 
 // bison passes the driver as additional parameter to the lexer
 // function YY_DECL, so we can abuse the driver to get the real lexer
 // object and call the yylex() method
-%lex-param   { dlvhex::dl::HexDLRewriterDriver& driver }
+%lex-param   { dlvhex::dl::HexDLDriver& driver }
 
 // use a yy::location object to keep track of the location information
 %locations
@@ -66,14 +64,12 @@
   AtomPtr* atomval;
   AtomSet* opsval;
   dlvhex::dl::DLAtomRewriterBase* dlrewriterval;
-  boost::ptr_vector<dlvhex::dl::DLAtomRewriterBase>* dlatomsval;
 }
 
-%token <sval> STRING COMP DLEXTATOM
+%token <sval> STRING DLEXTATOM
 %token <ival> NUMBER
-%token NEG PLUSOP MINUSOP DLATOM DLCQATOM CQATOM
+%token PLUSOP MINUSOP DLATOM CQATOM
 %type <sval> dlquery
-%type <dlatomsval> dlatoms
 %type <dlrewriterval> dlatom
 %type <atomval> op
 %type <opsval> ops
@@ -90,7 +86,7 @@
 yy::HexDLParser::token_type                                     \
 yylex (yy::HexDLParser::semantic_type* yylval,                  \
        yy::HexDLParser::location_type* yylloc,                  \
-       dlvhex::dl::HexDLRewriterDriver& driver)
+       dlvhex::dl::HexDLDriver& driver)
 
 // declare YY_DECL function for the parser
 YY_DECL;
@@ -111,8 +107,10 @@ YY_DECL;
 dlatoms: /* empty */
        | dlatoms dlatom
          {
+	   Literal* l = $2->getLiteral();
 	   // replace the parsed dl-atom
-	   driver.getOutput() << *$2->getLiteral();
+	   driver.getOutput() << *l;
+	   delete l;
 	   delete $2;
 	 }
        ;
@@ -157,7 +155,7 @@ dlquery: STRING
          {
 	   $$ = $1;
 	 }
-       | NEG STRING
+       | '-' STRING
          {
 	   $$ = $2;
 	   $$->insert(0, 1, '-');
@@ -236,6 +234,8 @@ ops: op
 // takes care of adding rules and input terms to the ext-atoms.
 op: STRING PLUSOP STRING
     {
+      dlvhex::dl::Ontology::shared_pointer ontology = driver.getOntology();
+
       if (!ontology)
 	{
 	  throw PluginError("Couldn't rewrite dl-atom, ontology is empty.");
@@ -266,16 +266,16 @@ op: STRING PLUSOP STRING
 
       Term q(tmp);
 
-      TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
-      TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
-      TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
+      dlvhex::dl::TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
+      dlvhex::dl::TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
+      dlvhex::dl::TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
 
       if (concepts->find(q) != concepts->end())
 	{
 	  $$ = new AtomPtr(new Atom("pc", t));
 	}
-      else if (roles->find(1) != roles->end() ||
-	       datatypeRoles->find(1) != datatypeRoles->end())
+      else if (roles->find(q) != roles->end() ||
+	       datatypeRoles->find(q) != datatypeRoles->end())
 	{
 	  $$ = new AtomPtr(new Atom("pr", t));
 	}
@@ -289,6 +289,8 @@ op: STRING PLUSOP STRING
     }
   | STRING MINUSOP STRING
     {
+      dlvhex::dl::Ontology::shared_pointer ontology = driver.getOntology();
+
       if (!ontology)
 	{
 	  throw PluginError("Couldn't rewrite dl-atom, ontology is empty.");
@@ -319,16 +321,16 @@ op: STRING PLUSOP STRING
 
       Term q(tmp);
 
-      TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
-      TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
-      TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
+      dlvhex::dl::TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
+      dlvhex::dl::TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
+      dlvhex::dl::TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
 
       if (concepts->find(q) != concepts->end())
 	{
 	  $$ = new AtomPtr(new Atom("mc", t));
 	}
-      else if (roles->find(1) != roles->end() ||
-	       datatypeRoles->find(1) != datatypeRoles->end())
+      else if (roles->find(q) != roles->end() ||
+	       datatypeRoles->find(q) != datatypeRoles->end())
 	{
 	  $$ = new AtomPtr(new Atom("mr", t));
 	}
@@ -351,8 +353,7 @@ op: STRING PLUSOP STRING
 // corresponding driver
 //
 void
-yy::HexDLRewriterParser::error(const yy::HexDLRewriterParser::location_type& l,
-			       const std::string& m)
+yy::HexDLParser::error(const yy::HexDLParser::location_type& l, const std::string& m)
 {
   driver.error(l, m);
 }
@@ -366,5 +367,5 @@ YY_DECL
   HexDLFlexLexer* lex = driver.getLexer();
   lex->lexval = yylval; // set current semantic value
   lex->lexloc = yylloc; // and the current location,
-  return (yy::HexDLRewriterParser::token_type) lex->yylex (); // finally call the drivers lexer
+  return (yy::HexDLParser::token_type) lex->yylex (); // finally call the drivers lexer
 } 

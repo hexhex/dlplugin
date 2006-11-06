@@ -12,7 +12,7 @@
 
 #include "HexDLRewriterDriver.h"
 #include "HexDLRewriterFlexLexer.h"
-#include "Ontology.h"
+#include "HexDLDriver.h"
 #include "Registry.h"
 #include "DLError.h"
 
@@ -25,17 +25,13 @@
 
 #include <iosfwd>
 
-#include <boost/tokenizer.hpp>
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/algorithm/string/erase.hpp>
-
 using namespace dlvhex::dl;
 
 
-HexDLRewriterDriver::HexDLRewriterDriver(std::istream& i, std::ostream& o)
+HexDLRewriterDriver::HexDLRewriterDriver(HexDLDriver* d, std::istream& i, std::ostream& o)
   : PluginRewriter(i, o),
     lexer(new HexDLRewriterFlexLexer(this)),
-    ontology(),
+    rewriter(d),
     doRewriting(true)
 {
   lexer->switch_streams(&i, &o);
@@ -45,7 +41,7 @@ HexDLRewriterDriver::HexDLRewriterDriver(std::istream& i, std::ostream& o)
 HexDLRewriterDriver::HexDLRewriterDriver(const HexDLRewriterDriver& d)
   : PluginRewriter(*d.input, *d.output),
     lexer(new HexDLRewriterFlexLexer(this)),
-    ontology(d.ontology),
+    rewriter(d.rewriter),
     doRewriting(d.doRewriting)
 {
   lexer->switch_streams(d.input, d.output);
@@ -59,7 +55,7 @@ HexDLRewriterDriver::operator= (const HexDLRewriterDriver& d)
     {
       delete lexer;
       lexer = new HexDLRewriterFlexLexer(this);
-      ontology = d.ontology;
+      rewriter = d.rewriter;
       setStreams(d.input, d.output);
     }
 
@@ -80,13 +76,6 @@ HexDLRewriterDriver::getLexer() const
 }
 
 
-std::ostream&
-HexDLRewriterDriver::getOutput() const
-{
-  return *output;
-}
-
-
 void
 HexDLRewriterDriver::setRewriting(bool yesno)
 {
@@ -98,27 +87,6 @@ bool
 HexDLRewriterDriver::getRewriting()
 {
   return doRewriting;
-}
-
-
-void
-HexDLRewriterDriver::setURI(const std::string& s)
-{
-  try
-    {
-      this->ontology = Ontology::createOntology(s);
-    }
-  catch (DLError& e)
-    {
-      throw PluginError(e.what());
-    }
-}
-
-
-Ontology::shared_pointer
-HexDLRewriterDriver::getOntology() const
-{
-  return this->ontology;
 }
 
 
@@ -277,13 +245,36 @@ HexDLRewriterDriver::rewrite()
   // parse and rewrite that thing
   //
 
+  try
+    {
+      rewriter->rewrite();
+
+      //
+      // swap the buffers
+      //
+
+      ///@todo here is an intentionally memory leak we can only get
+      ///rid of it when we can split the rewriters into two calls
+      std::streambuf* obuf = output->rdbuf();
+      std::streambuf* ibuf = input->rdbuf();
+      input->rdbuf(obuf);
+      output->rdbuf(new std::stringbuf);
+    }
+  catch (DLParsingError& e)
+    {
+      throw PluginError(e.what());
+    }
+
+  //
+  // and now optimize it
+  //
+
   Program prog;
   AtomSet edb;
-  DLAtomInput dlinput;
 
   try
     {
-      yy::HexDLRewriterParser parser(*this, prog, edb, dlinput);
+      yy::HexDLRewriterParser parser(*this, prog, edb);
       lexer->set_debug(Registry::getVerbose() > 2);
       parser.set_debug_level(Registry::getVerbose() > 2);
       parser.parse();
@@ -330,7 +321,7 @@ HexDLRewriterDriver::rewrite()
   // now add parsed rules and facts to the output
   //
 
-  std::copy(edb.begin(), edb.end(), std::ostream_iterator<Atom>(getOutput(), ".\n"));
+  std::copy(edb.begin(), edb.end(), std::ostream_iterator<Atom>(*output, ".\n"));
 
   //
   // rewrite the rules
@@ -363,13 +354,13 @@ HexDLRewriterDriver::rewrite()
   // and now output the rewritten program
   //
 
-  RawPrintVisitor rpv(getOutput());
+  RawPrintVisitor rpv(*output);
 
   for (Program::const_iterator rit = rewritten.begin(); rit != rewritten.end(); ++rit)
     {
       const Rule* r = *rit;
       r->accept(rpv);
-      getOutput() << std::endl;
+      *output << std::endl;
 
       ///@todo this burns the readers eyes, but for now it prevents
       ///memory leaks

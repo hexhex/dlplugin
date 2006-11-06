@@ -21,15 +21,16 @@
 #include <dlvhex/PluginInterface.h>
 
 #include <iosfwd>
-#include <string>
-#include <map>
-
-#include <boost/ptr_container/ptr_vector.hpp>
 
 //
 // forward declarations
 //
 class HexDLRewriterFlexLexer;
+namespace dlvhex {
+namespace dl {
+  class HexDLDriver;
+}
+}
 
 
 namespace dlvhex {
@@ -46,15 +47,15 @@ namespace dl {
     /// lexer object which scans the stream
     HexDLRewriterFlexLexer* lexer;
 
-    /// current Ontology
-    Ontology::shared_pointer ontology;
+    ///@todo this is a temporary solution
+    HexDLDriver* rewriter;
 
     /// set to true if you want to turn on the rewriting facility
     bool doRewriting;
 
   public:
     /// ctor
-    HexDLRewriterDriver(std::istream& i, std::ostream& o);
+    HexDLRewriterDriver(HexDLDriver* d, std::istream& i, std::ostream& o);
 
     /// copy ctor
     HexDLRewriterDriver(const HexDLRewriterDriver&);
@@ -70,23 +71,14 @@ namespace dl {
     HexDLRewriterFlexLexer*
     getLexer() const;
 
-    std::ostream&
-    getOutput() const;
-
     void
     setStreams(std::istream* i, std::ostream* o);
-
-    void
-    setURI(const std::string& u);
 
     void
     setRewriting(bool = true);
 
     bool
     getRewriting();
-
-    Ontology::shared_pointer
-    getOntology() const;
 
     void
     rewrite();

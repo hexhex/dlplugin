@@ -34,6 +34,7 @@ namespace dl {
   //
   class BaseCache;
   class CacheStats;
+  class HexDLDriver;
   class HexDLRewriterDriver;
 
 namespace racer {
@@ -66,6 +67,8 @@ namespace racer {
     /// the cache for RACER queries
     BaseCache* cache;
     /// DL Rewriter facility
+    HexDLDriver* dlrewriter;
+    /// DL Rewriter facility
     HexDLRewriterDriver* rewriter;
     /// the kb-manager for RACER
     RacerKBManager* kbManager;
@@ -76,7 +79,7 @@ namespace racer {
 
     /// private copy ctor
     RacerInterface(const RacerInterface&)
-      : PluginInterface(), stream(0), stats(0), cache(0), rewriter(0), kbManager(0)
+      : PluginInterface(), stream(0), stats(0), cache(0), dlrewriter(0), rewriter(0), kbManager(0)
     { /* ignore */ }
 
     /// private assignment op

@@ -10,24 +10,13 @@
  * 
  */
 
-#include "HexDLRewriterDriver.h"
-#include "HexDLRewriterFlexLexer.h"
+#include "HexDLDriver.h"
+#include "HexDLFlexLexer.h"
 #include "Ontology.h"
 #include "Registry.h"
 #include "DLError.h"
 
-#include <dlvhex/Program.h>
-#include <dlvhex/GraphBuilder.h>
-#include <dlvhex/DependencyGraph.h>
-#include <dlvhex/ComponentFinder.h>
-#include <dlvhex/BoostComponentFinder.h>
-#include <dlvhex/PrintVisitor.h>
-
-#include <iosfwd>
-
-#include <boost/tokenizer.hpp>
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/algorithm/string/erase.hpp>
+#include <sstream>
 
 using namespace dlvhex::dl;
 
@@ -141,7 +130,7 @@ HexDLDriver::rewrite()
 
       for (std::vector<Rule*>::const_iterator it = rules.begin(); it != rules.end(); ++it)
 	{
-	  driver.getOutput() << *(*it) << std::endl;
+	  getOutput() << *(*it) << std::endl;
 	  delete *it;
 	}
     }

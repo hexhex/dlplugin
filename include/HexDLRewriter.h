@@ -161,6 +161,9 @@ namespace dl {
 
 
 
+  /**
+   * Keeps track of dl-input operations.
+   */
   class DLAtomInput
   {
   private:
@@ -170,25 +173,13 @@ namespace dl {
     unsigned ncnt;
 
   public:
-    DLAtomInput() : asmap(), ncnt(1) { }
+    DLAtomInput();
 
     unsigned
-    getInputNo(const AtomSet& as)
-    {
-      if (as.empty())
-	{
-	  return 0; // no dl-atom-ops
-	}
+    getInputNo(const AtomSet& as);
 
-      std::pair<AtomSetMap::iterator,bool> p = asmap.insert(std::make_pair(as, ncnt));
-      
-      if (p.second) // dl-atom-ops number found
-	{
-	  ncnt++;
-	}
-
-      return p.first->second;
-    }
+    std::vector<Rule*>
+    getDLInputRules() const;
   };
 
 
@@ -228,9 +219,6 @@ namespace dl {
 		   const Tuple* out);
 
     ~DLAtomRewriter();
-
-    std::vector<Rule*>
-    getDLInputRules() const;
 
     const Tuple*
     getInputTuple() const;

@@ -80,8 +80,6 @@ BodyRewriter::getBody() const
 		}
 	      else
 		{
-		  //std::cerr << "rewriting " << *b1 << " and " << *b2 << " to " << *b3 << std::endl;
-
 		  // we continue with b3 and forget b1,b2
 		  dlbody.push_front(b3.release());
 		}
@@ -506,47 +504,10 @@ DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
       throw PluginError("dl-atom has wrong arity.");
     }
 
-  TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
-  TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
-  TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
-
-  // dispatch dl-atom-ops
-  Term p("p");
-  Term m("m");
-
-  for (AtomSet::atomset_t::const_iterator it = ops.atoms.begin();
-       it != ops.atoms.end(); ++it)
-    {
-      const Term& pred = (*it)->getPredicate();
-
-      const Tuple tup = (*it)->getArguments();
-      const Term& tmp = tup[0];
-      const std::string& tmpstr = tmp.getString();
-
-      Term t(addNamespace(tmpstr));
-      
-      AtomPtr ap(*it);
-
-      if (concepts->find(t) != concepts->end())
-	{
-	  if (pred == p)
-	    pc.insert(ap);
-	  else if (pred == m)
-	    mc.insert(ap);
-	}
-      else if (roles->find(t) != roles->end() ||
-	       datatypeRoles->find(t) != datatypeRoles->end())
-	{
-	  if (pred == p)
-	    pr.insert(ap);
-	  else if (pred == m)
-	    mr.insert(ap);
-	}
-      else
-	{
-	  throw PluginError("Incompatible dl-atom-op " + tmpstr + " supplied.");
-	}
-    }
+  ops.matchPredicate("pc", pc);
+  ops.matchPredicate("pr", pr);
+  ops.matchPredicate("mc", mc);
+  ops.matchPredicate("mr", mr);
 }
 
 
@@ -671,147 +632,80 @@ DLAtomRewriter::getName() const
 }
 
 
+DLAtomInput::DLAtomInput()
+  : asmap(), ncnt(1)
+{ }
+
+
+unsigned
+DLAtomInput::getInputNo(const AtomSet& as)
+{
+  if (as.empty())
+    {
+      return 0; // no dl-atom-ops
+    }
+
+  std::pair<AtomSetMap::iterator,bool> p = asmap.insert(std::make_pair(as, ncnt));
+      
+  if (p.second) // dl-atom-ops number found
+    {
+      ncnt++;
+    }
+
+  return p.first->second;
+}
+
+
 std::vector<Rule*>
-DLAtomRewriter::getDLInputRules() const
+DLAtomInput::getDLInputRules() const
 {
   std::vector<Rule*> rules;
 
-  unsigned pcno = dlinput.getInputNo(pc);
-  unsigned mcno = dlinput.getInputNo(mc);
-  unsigned prno = dlinput.getInputNo(pr);
-  unsigned mrno = dlinput.getInputNo(mr);
-
   std::ostringstream oss;
+  std::string aux;
 
-  oss << "dl_pc_" << pcno;
-  std::string spc = oss.str();
-  oss.str("");
+  // temp. variable and predicate names
+  const Term x("X");
+  const Term y("Y");
+  const Term pr("pr");
+  const Term mr("mr");
 
-  oss << "dl_mc_" << mcno;
-  std::string smc = oss.str();
-  oss.str("");
-
-  oss << "dl_pr_" << prno;
-  std::string spr = oss.str();
-  oss.str("");
-
-  oss << "dl_mr_" << mrno;
-  std::string smr = oss.str();
-  oss.str("");
-
-  //
-  // register aux. predicate names, we don't want them to occur in the
-  // answer sets
-  //
-
-  if (!pc.empty())
+  for (AtomSetMap::const_iterator it = asmap.begin(); it != asmap.end(); ++it)
     {
-      Term::registerAuxiliaryName(spc);
-    }
-  if (!mc.empty())
-    {
-      Term::registerAuxiliaryName(smc);
-    }
-  if (!pr.empty())
-    {
-      Term::registerAuxiliaryName(spr);
-    }
-  if (!mr.empty())
-    {
-      Term::registerAuxiliaryName(smr);
-    }
+      for (AtomSet::atomset_t::const_iterator a = it->first.atoms.begin();
+	   a != it->first.atoms.end(); ++a)
+	{
+	  // pred \in { pc,mc,pr,mr }
+	  Term pred = (*a)->getPredicate();
 
+	  // register aux. predicate names, we don't want them to
+	  // occur in the answer sets
 
-  // temp. variable names
-  Term x("X");
-  Term y("Y");
+	  oss.str("");
+	  oss << "dl_" << pred << '_' << it->second;
+	  aux = oss.str();
+	  Term::registerAuxiliaryName(aux);
 
-  //
-  // for each dl-atom operation we create a rule
-  //
+	  // create output variables 
 
-  for (AtomSet::const_iterator it = pc.begin(); it != pc.end(); ++it)
-    {
-      Tuple t;
+	  Tuple t;
+	  t.push_back(x);
+	  if (pred == pr || pred == mr)
+	    {
+	      t.push_back(y);
+	    }
 
-      t.push_back(it->getArgument(1));
-      t.push_back(x);
+	  AtomPtr b(new Atom((*a)->getArgument(2).getString(), t));
+	  RuleBody_t body(1, new Literal(b));
 
-      AtomPtr h(new Atom(spc, t));
-      RuleHead_t head(1, h);
+	  // add concept or role to the front of t
+	  t.insert(t.begin(), (*a)->getArgument(1));
 
-      t.clear();
-      t.push_back(it->getArgument(2));
-      t.push_back(x);
-
-      AtomPtr b(new Atom(t));
-      RuleBody_t body(1, new Literal(b));
-
-      rules.push_back(new Rule(head, body));
-    }
-
-  for (AtomSet::const_iterator it = mc.begin(); it != mc.end(); ++it)
-    {
-      Tuple t;
-
-      t.push_back(it->getArgument(1));
-      t.push_back(x);
-
-      AtomPtr h(new Atom(smc, t));
-      RuleHead_t head(1, h);
-
-      t.clear();
-      t.push_back(it->getArgument(2));
-      t.push_back(x);
-
-      AtomPtr b(new Atom(t));
-      RuleBody_t body(1, new Literal(b));
-
-      rules.push_back(new Rule(head, body));
-    }
-
-  for (AtomSet::const_iterator it = pr.begin(); it != pr.end(); ++it)
-    {
-      Tuple t;
-
-      t.push_back(it->getArgument(1));
-      t.push_back(x);
-      t.push_back(y);
-
-      AtomPtr h(new Atom(spr, t));
-      RuleHead_t head(1, h);
-
-      t.clear();
-      t.push_back(it->getArgument(2));
-      t.push_back(x);
-      t.push_back(y);
-
-      AtomPtr b(new Atom(t));
-      RuleBody_t body(1, new Literal(b));
-
-      rules.push_back(new Rule(head, body));
-    }
-
-  for (AtomSet::const_iterator it = mr.begin(); it != mr.end(); ++it)
-    {
-      Tuple t;
-
-      t.push_back(it->getArgument(1));
-      t.push_back(x);
-      t.push_back(y);
-
-      AtomPtr h(new Atom(smr, t));
-      RuleHead_t head(1, h);
-
-      t.clear();
-      t.push_back(it->getArgument(2));
-      t.push_back(x);
-      t.push_back(y);
-
-      AtomPtr b(new Atom(t));
-      RuleBody_t body(1, new Literal(b));
-
-      rules.push_back(new Rule(head, body));
+	  AtomPtr h(new Atom(aux, t));
+	  RuleHead_t head(1, h);
+	  
+	  rules.push_back(new Rule(head, body));
+ 	}
     }
 
   return rules;

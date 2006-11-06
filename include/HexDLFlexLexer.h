@@ -24,7 +24,7 @@
 namespace dlvhex {
   namespace dl {
     // forward declaration
-    class HexDLRewriterDriver;
+    class HexDLDriver;
   } // namespace dl
 } // namespace dlvhex
 
@@ -37,16 +37,16 @@ namespace dlvhex {
 struct HexDLFlexLexer : public yyDLFlexLexer
 {
   explicit
-  HexDLFlexLexer(dlvhex::dl::HexDLRewriterDriver* d)
+  HexDLFlexLexer(dlvhex::dl::HexDLDriver* d)
     : lexdrv(d), lexloc(0), lexval(0)
   { }
 
-  HexDLFlexLexer(const HexDLRewriterFlexLexer& r)
+  HexDLFlexLexer(const HexDLFlexLexer& r)
     : yyDLFlexLexer(), lexdrv(r.lexdrv), lexloc(r.lexloc), lexval(r.lexval)
   { }
 
-  HexDLRewriterFlexLexer&
-  operator= (const HexDLRewriterFlexLexer& r)
+  HexDLFlexLexer&
+  operator= (const HexDLFlexLexer& r)
   {
     if (this != &r)
       {
@@ -57,11 +57,11 @@ struct HexDLFlexLexer : public yyDLFlexLexer
     return *this;
   }
 
-  ~HexDLRewriterFlexLexer() { }
+  ~HexDLFlexLexer() { }
 
-  dlvhex::dl::HexDLRewriterDriver* lexdrv;
-  yy::HexDLRewriterParser::location_type* lexloc;
-  yy::HexDLRewriterParser::semantic_type* lexval;
+  dlvhex::dl::HexDLDriver* lexdrv;
+  yy::HexDLParser::location_type* lexloc;
+  yy::HexDLParser::semantic_type* lexval;
 
   int yylex(); // implemented in HexDLScanner.lpp
 };

@@ -9,6 +9,7 @@
  */
 
 #include "HexDLRewriterDriver.h"
+#include "HexDLDriver.h"
 
 #include "TestDLRewriter.h"
 
@@ -30,12 +31,13 @@ TestDLRewriter::runDLRewrite()
 
    std::ostringstream os;
    
-   HexDLRewriterDriver dr(fs, os);
-   dr.setURI("file:" + examples + "/tweety_bird.owl");
-   dr.setStreams(&fs, &os);
+   HexDLDriver* dlr = new HexDLDriver(fs, os);
+   HexDLRewriterDriver dr(dlr, fs, os);
+   dlr->setURI("file:" + examples + "/tweety_bird.owl");
    dr.rewrite();
    
    std::cout << "## " << std::endl << os.str() << std::endl;
+   delete dlr;
  }
 
  {
@@ -44,19 +46,21 @@ TestDLRewriter::runDLRewrite()
 
    std::ostringstream os;
    
-   HexDLRewriterDriver dr(fs, os);
-   dr.setURI(shopuri);
-   dr.setStreams(&fs, &os);
+   HexDLDriver* dlr = new HexDLDriver(fs, os);
+   HexDLRewriterDriver dr(dlr, fs, os);
+   dlr->setURI(shopuri);
    dr.rewrite();
    
    std::cout << "## " << std::endl << os.str() << std::endl;
+   delete dlr;
  }
 
  {
    std::istringstream is("p(X,Y) :- &dlCQ[\"my.owl\",a,b,c,d,\"Q1(X),Q2(Y)\"](X, Y), &dlCQ[\"my.owl\",a,b,c,d,\"Q3(Y),Q4(Z)\"](Y,Z).");
    std::ostringstream os;
-   
-   HexDLRewriterDriver dr(is, os);
+
+   HexDLDriver* dlr = new HexDLDriver(is, os);
+   HexDLRewriterDriver dr(dlr, is, os);
    dr.setStreams(&is, &os);
    dr.rewrite();
 
@@ -65,6 +69,7 @@ TestDLRewriter::runDLRewrite()
    std::cout << "## " << std::endl << s << std::endl;
 
    CPPUNIT_ASSERT("p(X,Y) :- &dlCQ3[\"my.owl\",a,b,c,d,\"Q1(X),Q2(Y),Q3(Y),Q4(Z)\"](X,Y,Z).\n" == s);
+   delete dlr;
  }
 }
 
@@ -76,9 +81,9 @@ TestDLRewriter::runDLNoRewrite()
   
   std::ostringstream os;
 
-  HexDLRewriterDriver dr(fs, os);
-  dr.setURI(shop);
-  dr.setStreams(&fs, &os);
+  HexDLDriver* dlr = new HexDLDriver(fs, os);
+  HexDLRewriterDriver dr(dlr, fs, os);
+  dlr->setURI(shop);
   dr.rewrite();
 
   std::fstream fs2((examples + "/shop.dlp").c_str(), std::fstream::in);
@@ -86,6 +91,8 @@ TestDLRewriter::runDLNoRewrite()
 
   std::stringbuf cmp;
   fs2.get(cmp, 0);
+
+  delete dlr;
 
   // hex programs must stay the same
   //CPPUNIT_ASSERT(cmp.str() == os.str());
