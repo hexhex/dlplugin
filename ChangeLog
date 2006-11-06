@@ -1,3 +1,24 @@
+2006-11-06  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/Makefile.am: Add new dl-atom rewriter.
+	* src/Makefile.am: Likewise.
+	
+	* include/HexDLDriver.h: Split the dlrewriter into a pure
+	syntactic rewriter and an optimizer.
+	* include/HexDLFlexLexer.h: Likewise.
+	* include/HexDLRewriter.h: Likewise.
+	* include/HexDLRewriterDriver.h: Likewise.
+	* include/RacerInterface.h: Likewise.
+	* src/HexDLDriver.cpp: Likewise.
+	* src/HexDLParser.ypp: Likewise.
+	* src/HexDLRewriter.cpp: Likewise.
+	* src/HexDLRewriterDriver.cpp: Likewise.
+	* src/HexDLRewriterParser.ypp: Likewise.
+	* src/HexDLRewriterScanner.lpp: Likewise.
+	* src/HexDLScanner.lpp: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+	* testsuite/TestDLRewriter.cpp: Likewise.
+
 2006-11-05  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/HexDLFlexLexer.h: Add non-functional dl-atom rewriter
