@@ -7,6 +7,8 @@ noinst_HEADERS = \
                  Cache.h \
                  DLError.h \
                  DLQuery.h \
+                 HexDLDriver.h \
+                 HexDLFlexLexer.h \
                  HexDLRewriter.h \
                  HexDLRewriterDriver.h \
                  HexDLRewriterFlexLexer.h \
