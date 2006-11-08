@@ -57,6 +57,7 @@
 
 // this is YYSTYPE, the semantics
 %union {
+  char cval;
   std::string* sval;
   int ival;
   Term* termval;
@@ -66,6 +67,7 @@
   dlvhex::dl::DLAtomRewriterBase* dlrewriterval;
 }
 
+%token <cval> SENTINEL
 %token <sval> STRING DLEXTATOM
 %token <ival> NUMBER
 %token PLUSOP MINUSOP DLATOM CQATOM
@@ -105,11 +107,11 @@ YY_DECL;
 
 // either no dlatoms or a bunch of dlatoms
 dlatoms: /* empty */
-       | dlatoms dlatom
+       | dlatoms dlatom SENTINEL
          {
 	   Literal* l = $2->getLiteral();
 	   // replace the parsed dl-atom
-	   driver.getOutput() << *l;
+	   driver.getOutput() << *l << $3;
 	   delete l;
 	   delete $2;
 	 }

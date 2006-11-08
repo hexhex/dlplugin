@@ -138,7 +138,8 @@ typedef yy::HexDLParser::token token;
   [\,\.] {
     // _after_ a dl-atom we can only get a , or a .
     BEGIN(INITIAL);
-    ECHO;
+    yylval.cval = *yytext;
+    return token::SENTINEL;
   }
 
 }
