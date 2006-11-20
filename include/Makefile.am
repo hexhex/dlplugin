@@ -11,7 +11,6 @@ noinst_HEADERS = \
                  HexDLFlexLexer.h \
                  HexDLRewriter.h \
                  HexDLRewriterDriver.h \
-                 HexDLRewriterFlexLexer.h \
                  KBManager.h \
                  LogBuf.h \
                  OWLParser.h \

@@ -4,8 +4,6 @@ AUTOMAKE_OPTIONS = foreign
 MAINTAINERCLEANFILES = \
 HexDLParser.hpp \
 HexDLParser.output \
-HexDLRewriterParser.hpp \
-HexDLRewriterParser.output \
 RacerAnswerParser.hpp \
 RacerAnswerParser.output \
 location.hh \
@@ -17,9 +15,6 @@ EXTRA_DIST = \
 HexDLScanner.cpp \
 HexDLParser.cpp \
 HexDLParser.hpp \
-HexDLRewriterScanner.cpp \
-HexDLRewriterParser.cpp \
-HexDLRewriterParser.hpp \
 RacerAnswerScanner.cpp \
 RacerAnswerParser.cpp \
 RacerAnswerParser.hpp \
@@ -43,8 +38,6 @@ HexDLParser.ypp \
 HexDLScanner.lpp \
 HexDLDriver.cpp \
 HexDLRewriter.cpp \
-HexDLRewriterParser.ypp \
-HexDLRewriterScanner.lpp \
 HexDLRewriterDriver.cpp \
 LogBuf.cpp \
 OWLParser.cpp \
