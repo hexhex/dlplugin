@@ -112,7 +112,7 @@ namespace racer {
       }
     else
       {
-	throw PluginError("Wrong query type");
+	throw PluginError("DLQuery has wrong query type, expected retrieval or boolean query");
       }
 
     return this->cacheQuery(comp);
@@ -164,7 +164,7 @@ namespace racer {
       }
     else
       {
-	throw PluginError("Wrong query type");
+	throw PluginError("DLQuery has wrong query type, expected retrieval, boolean or mixed query");
       }
 
     return this->cacheQuery(comp);
@@ -231,7 +231,7 @@ namespace racer {
       }
     else
       {
-	throw PluginError("Wrong query type");
+	throw PluginError("DLQuery has wrong query type, expected retrieval or mixed query");
       }
     
     return this->cacheQuery(comp);
