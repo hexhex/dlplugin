@@ -455,7 +455,7 @@ TestRacerInterface::runRacerConjQueryTest()
   
   output(*ans1.getTuples());
 }
-
+#if 0
 void
 TestRacerInterface::runGetUniverseTest()
 {
@@ -495,3 +495,4 @@ TestRacerInterface::runGetUniverseTest()
   CPPUNIT_ASSERT( lterm.size() == 20 );
 
 }
+#endif

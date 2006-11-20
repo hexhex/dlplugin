@@ -41,10 +41,29 @@ RacerInterface::RacerInterface()
   : stream(new dlvhex::util::TCPIOStream("localhost", 8088)),
     stats(new CacheStats),
     cache(new Cache(*stats)),
-    dlrewriter(new HexDLDriver(std::cin, std::cout)),
-    rewriter(new HexDLRewriterDriver(dlrewriter, std::cin, std::cout)),
+    dlconverter(new HexDLDriver),
+    dloptimizer(new HexDLRewriterDriver),
     kbManager(new RacerKBManager(*stream))
 { }
+
+
+RacerInterface::RacerInterface(const RacerInterface&)
+  : PluginInterface(),
+    stream(0),
+    stats(0),
+    cache(0),
+    dlconverter(0),
+    dloptimizer(0),
+    kbManager(0)
+{ /* ignore */ }
+
+
+RacerInterface&
+RacerInterface::operator= (const RacerInterface&)
+{
+  return *this; // ignore
+}
+
 
 RacerInterface::~RacerInterface()
 {
@@ -72,8 +91,8 @@ RacerInterface::~RacerInterface()
     }
 
   delete kbManager;
-  delete rewriter;
-  delete dlrewriter;
+  delete dloptimizer;
+  delete dlconverter;
   delete cache;
   delete stats;
   delete stream;
@@ -88,30 +107,17 @@ RacerInterface::instance()
 }
 
 
-PluginRewriter*
-RacerInterface::createRewriter(std::istream& i, std::ostream& o)
+PluginConverter*
+RacerInterface::createConverter()
 {
-  dlrewriter->setStreams(&i, &o);
-  rewriter->setStreams(&i, &o);
-  return rewriter;
+  return dlconverter;
 }
 
-void
-RacerInterface::getUniverse(std::string& uri, std::list<Term>& uni)
-{
-  try
-    {
-      Ontology::shared_pointer onto = Ontology::createOntology(uri);
 
-      ABox::ObjectsPtr indvs = onto->getABox().getIndividuals();
-      
-      std::insert_iterator<std::list<Term> > ins = std::inserter(uni, uni.begin());
-      std::copy(indvs->begin(), indvs->end(), ins);
-    }
-  catch (DLError& e)
-    {
-      throw PluginError(e.what());
-    }
+PluginOptimizer*
+RacerInterface::createOptimizer()
+{
+  return dloptimizer;
 }
 
 
@@ -189,7 +195,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       if (o != std::string::npos)
 	{
 	  std::string uri = it->substr(o + 11); // length of parameter = 11
-	  dlrewriter->setURI(uri);
+	  dlconverter->setURI(uri);
 	  found.push_back(it);
 	}
 
@@ -207,7 +213,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 
       if (o != std::string::npos) // no rewriting at all
 	{
-	  rewriter->setRewriting(false);
+	  dloptimizer->setRewriting(false);
 	  found.push_back(it);
 	}
 

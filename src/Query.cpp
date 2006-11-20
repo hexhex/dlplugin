@@ -65,13 +65,13 @@ Query::setInterpretation(const AtomSet& ints,
        it != ints.end(); ++it)
     {
       const Term& p = it->getPredicate();
-      unsigned arity = it->getArity() - 1;
+      unsigned arity = it->getArity() - 1; // ignore the concept/role name parameter
 
       // we ignore atoms with wrong arity
-      bool isPC = (p == pc) && (arity == 2);
-      bool isMC = (p == mc) && (arity == 2);
-      bool isPR = (p == pr) && (arity == 3);
-      bool isMR = (p == mr) && (arity == 3);
+      bool isPC = (p == pc) && (arity == 1);
+      bool isMC = (p == mc) && (arity == 1);
+      bool isPR = (p == pr) && (arity == 2);
+      bool isMR = (p == mr) && (arity == 2);
 
       // negate minusC and minusR atoms
       AtomPtr ap(isPC || isMC || isPR || isMR ?

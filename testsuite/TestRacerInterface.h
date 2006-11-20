@@ -42,7 +42,6 @@ namespace test {
     CPPUNIT_TEST(runRacerRoleFillersTest);
     CPPUNIT_TEST(runRacerDatatypeRoleFillersTest);
     CPPUNIT_TEST(runRacerConjQueryTest);
-    CPPUNIT_TEST(runGetUniverseTest);
     CPPUNIT_TEST_SUITE_END();
 
   public: 
@@ -63,8 +62,6 @@ namespace test {
     void runRacerDatatypeRoleFillersTest();
 
     void runRacerConjQueryTest();
-
-    void runGetUniverseTest();    
   };
 
 } // namespace test

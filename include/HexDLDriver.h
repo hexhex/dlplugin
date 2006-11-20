@@ -37,7 +37,7 @@ namespace dl {
    * A PluginRewriter which parses the HEX input program and rewrites
    * dl-atoms to external atoms.
    */
-  class HexDLDriver : public PluginRewriter
+  class HexDLDriver : public PluginConverter
   {
   private:
     /// lexer object which scans the stream
@@ -46,9 +46,12 @@ namespace dl {
     /// current Ontology
     Ontology::shared_pointer ontology;
 
+    /// current output stream
+    std::ostream* output;
+
   public:
     /// ctor
-    HexDLDriver(std::istream& i, std::ostream& o);
+    HexDLDriver();
 
     /// copy ctor
     HexDLDriver(const HexDLDriver&);
@@ -68,16 +71,13 @@ namespace dl {
     getOutput() const;
 
     void
-    setStreams(std::istream* i, std::ostream* o);
-
-    void
     setURI(const std::string& u);
 
     Ontology::shared_pointer
     getOntology() const;
 
     void
-    rewrite();
+    convert(std::istream& i, std::ostream& o);
 
     void
     error(const yy::location& l, const std::string& m) const throw (DLParsingError);

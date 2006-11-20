@@ -11,8 +11,7 @@
  */
 
 #include "HexDLRewriterDriver.h"
-#include "HexDLRewriterFlexLexer.h"
-#include "HexDLDriver.h"
+#include "HexDLRewriter.h"
 #include "Registry.h"
 #include "DLError.h"
 
@@ -23,57 +22,31 @@
 #include <dlvhex/BoostComponentFinder.h>
 #include <dlvhex/PrintVisitor.h>
 
-#include <iosfwd>
-
 using namespace dlvhex::dl;
 
 
-HexDLRewriterDriver::HexDLRewriterDriver(HexDLDriver* d, std::istream& i, std::ostream& o)
-  : PluginRewriter(i, o),
-    lexer(new HexDLRewriterFlexLexer(this)),
-    rewriter(d),
+HexDLRewriterDriver::HexDLRewriterDriver()
+  : PluginOptimizer(),
     doRewriting(true)
-{
-  lexer->switch_streams(&i, &o);
-}
+{ }
 
 
 HexDLRewriterDriver::HexDLRewriterDriver(const HexDLRewriterDriver& d)
-  : PluginRewriter(*d.input, *d.output),
-    lexer(new HexDLRewriterFlexLexer(this)),
-    rewriter(d.rewriter),
+  : PluginOptimizer(),
     doRewriting(d.doRewriting)
-{
-  lexer->switch_streams(d.input, d.output);
-}
+{ }
 
 
 HexDLRewriterDriver&
-HexDLRewriterDriver::operator= (const HexDLRewriterDriver& d)
+HexDLRewriterDriver::operator= (const HexDLRewriterDriver&)
 {
-  if (this != &d)
-    {
-      delete lexer;
-      lexer = new HexDLRewriterFlexLexer(this);
-      rewriter = d.rewriter;
-      setStreams(d.input, d.output);
-    }
-
+  // noop
   return *this;
 }
 
 
 HexDLRewriterDriver::~HexDLRewriterDriver()
-{
-  delete lexer;
-}
-
-
-HexDLRewriterFlexLexer*
-HexDLRewriterDriver::getLexer() const
-{
-  return lexer;
-}
+{ }
 
 
 void
@@ -90,16 +63,10 @@ HexDLRewriterDriver::getRewriting()
 }
 
 
-void
-HexDLRewriterDriver::setStreams(std::istream* i, std::ostream* o)
-{
-  input = i;
-  output = o;
-  getLexer()->switch_streams(i, o);
-}
-
-
-
+/**
+ * 
+ * 
+ */
 class RewritingVisitor : public BaseVisitor
 {
 private:
@@ -150,19 +117,19 @@ private:
 	      }
 	    else
 	      {
-		body1->push_back(l); // non-dl extatom
+		body1->insert(l); // non-dl extatom
 	      }
 	  }
 	else
 	  {
-	    body1->push_back(l); // non-extatom or naf atom
+	    body1->insert(l); // non-extatom or naf atom
 	  }
       }
 	  
 	  
     const RuleBody_t* dl_body = br.getBody();
 	  
-    body1->insert(body1->end(), dl_body->begin(), dl_body->end());
+    body1->insert(dl_body->begin(), dl_body->end());
 	  
     delete dl_body;
 
@@ -239,50 +206,15 @@ public:
 
 
 void
-HexDLRewriterDriver::rewrite()
+HexDLRewriterDriver::optimize(NodeGraph& dg, AtomSet& edb)
 {
-  //
-  // parse and rewrite that thing
-  //
-
-  try
-    {
-      rewriter->rewrite();
-
-      //
-      // swap the buffers
-      //
-
-      ///@todo here is an intentionally memory leak we can only get
-      ///rid of it when we can split the rewriters into two calls
-      std::streambuf* obuf = output->rdbuf();
-      std::streambuf* ibuf = input->rdbuf();
-      input->rdbuf(obuf);
-      output->rdbuf(new std::stringbuf);
-    }
-  catch (DLParsingError& e)
-    {
-      throw PluginError(e.what());
-    }
-
+  return;
+#if 0
   //
   // and now optimize it
   //
 
   Program prog;
-  AtomSet edb;
-
-  try
-    {
-      yy::HexDLRewriterParser parser(*this, prog, edb);
-      lexer->set_debug(Registry::getVerbose() > 2);
-      parser.set_debug_level(Registry::getVerbose() > 2);
-      parser.parse();
-    }
-  catch (DLParsingError& e)
-    {
-      throw PluginError(e.what());
-    }
 
   //
   // build dependency graph
@@ -315,14 +247,6 @@ HexDLRewriterDriver::rewrite()
 // 	}
 //     }
 
-
-
-  //
-  // now add parsed rules and facts to the output
-  //
-
-  std::copy(edb.begin(), edb.end(), std::ostream_iterator<Atom>(*output, ".\n"));
-
   //
   // rewrite the rules
   //
@@ -349,43 +273,5 @@ HexDLRewriterDriver::rewrite()
 	  delete r;
 	}
     }
-
-  //
-  // and now output the rewritten program
-  //
-
-  RawPrintVisitor rpv(*output);
-
-  for (Program::const_iterator rit = rewritten.begin(); rit != rewritten.end(); ++rit)
-    {
-      const Rule* r = *rit;
-      r->accept(rpv);
-      *output << std::endl;
-
-      ///@todo this burns the readers eyes, but for now it prevents
-      ///memory leaks
-
-      // delete unmanaged objects in the program
-
-      // delete each literal in the body
-      const RuleBody_t& body = r->getBody();
-      for (RuleBody_t::const_iterator bit = body.begin(); bit != body.end(); ++bit)
-	{
-	  delete *bit;
-	}
-
-      delete r;
-    }
-}
-
-
-void
-HexDLRewriterDriver::error(const yy::location& l,
-			   const std::string& m) const
-  throw (DLParsingError)
-{
-  std::ostringstream s;
-  s << "Parsing error at " << l << ": " << m;
-
-  throw DLParsingError(s.str());
+#endif // 0
 }

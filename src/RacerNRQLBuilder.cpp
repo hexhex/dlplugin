@@ -93,7 +93,7 @@ namespace dlvhex {
 	  
 	  std::string nspace = query.getDLQuery()->getOntology()->getNamespace();
 
-	  if (a.getArity() == 2) // concept assertion
+	  if (a.getArity() == 1) // concept assertion
 	    {
 	      ABoxQueryConcept::const_pointer c =
 		new ABoxQueryConcept(a.getArgument(0), nspace);
@@ -116,7 +116,7 @@ namespace dlvhex {
 						  );
 		}
 	    }
-	  else if (a.getArity() == 3 && a.isStronglyNegated()) // negated role assertion
+	  else if (a.getArity() == 2 && a.isStronglyNegated()) // negated role assertion
 	    {
 	      ABoxQueryRole::const_pointer r = 
 		new ABoxQueryRole(a.getArgument(0), nspace);
@@ -151,7 +151,7 @@ namespace dlvhex {
 						  );
 		}
 	    }
-	  else if (a.getArity() == 3 && !a.isStronglyNegated())
+	  else if (a.getArity() == 2 && !a.isStronglyNegated())
 	    {
 	      ABoxQueryRole::const_pointer r = 
 		new ABoxQueryRole(a.getArgument(0), nspace);
@@ -270,7 +270,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
     {
       switch (it->getArity())
 	{
-	case 3: // role query
+	case 2: // role query
 	  {
 	    const Term& t1 = it->getArgument(1);
 	    const Term& t2 = it->getArgument(2);
@@ -303,7 +303,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 	  }
 	  break;
 
-	case 2: // concept query
+	case 1: // concept query
 	  {
 	    const Term& t1 = it->getArgument(1);
 	    ABoxQueryObject* o1 = 0;

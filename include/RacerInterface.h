@@ -14,7 +14,6 @@
 #define _RACERINTERFACE_H
 
 #include <dlvhex/PluginInterface.h>
-#include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
 
 
@@ -66,10 +65,10 @@ namespace racer {
     CacheStats* stats;
     /// the cache for RACER queries
     BaseCache* cache;
-    /// DL Rewriter facility
-    HexDLDriver* dlrewriter;
-    /// DL Rewriter facility
-    HexDLRewriterDriver* rewriter;
+    /// DL converter facility
+    HexDLDriver* dlconverter;
+    /// DL optimizer facility
+    HexDLRewriterDriver* dloptimizer;
     /// the kb-manager for RACER
     RacerKBManager* kbManager;
 
@@ -78,19 +77,15 @@ namespace racer {
     //
 
     /// private copy ctor
-    RacerInterface(const RacerInterface&)
-      : PluginInterface(), stream(0), stats(0), cache(0), dlrewriter(0), rewriter(0), kbManager(0)
-    { /* ignore */ }
+    RacerInterface(const RacerInterface&);
 
     /// private assignment op
     RacerInterface&
-    operator= (const RacerInterface&)
-    {
-      return *this; // ignore
-    }
+    operator= (const RacerInterface&);
 
     /// private default ctor
     RacerInterface();
+
 
   public:
     virtual
@@ -107,19 +102,16 @@ namespace racer {
     }
 
     /**
-     * @return the rewriter for this plugin.
+     * @return the DL converter.
      */
-    virtual PluginRewriter* 
-    createRewriter(std::istream&, std::ostream&);
+    virtual PluginConverter* 
+    createConverter();
 
     /**
-     * loads all individuals from a given owl kb.
-     *
-     * @param uri
-     * @param uni
+     * @return the DL optimizer.
      */
-    virtual void
-    getUniverse(std::string& uri, std::list<Term>& uni);
+    virtual PluginOptimizer* 
+    createOptimizer();
 
     /**
      * Add new RACER external atoms with the according names to m.

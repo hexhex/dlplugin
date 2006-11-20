@@ -14,23 +14,7 @@
 #define _HEXDLREWRITERDRIVER_H
 
 
-#include "HexDLRewriterParser.hpp"
-#include "Ontology.h"
-#include "DLError.h"
-
 #include <dlvhex/PluginInterface.h>
-
-#include <iosfwd>
-
-//
-// forward declarations
-//
-class HexDLRewriterFlexLexer;
-namespace dlvhex {
-namespace dl {
-  class HexDLDriver;
-}
-}
 
 
 namespace dlvhex {
@@ -41,21 +25,15 @@ namespace dl {
    * dl-atoms to external atoms and tries to optimize queries by
    * rewriting cq-atoms.
    */
-  class HexDLRewriterDriver : public PluginRewriter
+  class HexDLRewriterDriver : public PluginOptimizer
   {
   private:
-    /// lexer object which scans the stream
-    HexDLRewriterFlexLexer* lexer;
-
-    ///@todo this is a temporary solution
-    HexDLDriver* rewriter;
-
     /// set to true if you want to turn on the rewriting facility
     bool doRewriting;
 
   public:
     /// ctor
-    HexDLRewriterDriver(HexDLDriver* d, std::istream& i, std::ostream& o);
+    HexDLRewriterDriver();
 
     /// copy ctor
     HexDLRewriterDriver(const HexDLRewriterDriver&);
@@ -68,12 +46,6 @@ namespace dl {
     virtual
     ~HexDLRewriterDriver();
 
-    HexDLRewriterFlexLexer*
-    getLexer() const;
-
-    void
-    setStreams(std::istream* i, std::ostream* o);
-
     void
     setRewriting(bool = true);
 
@@ -81,10 +53,7 @@ namespace dl {
     getRewriting();
 
     void
-    rewrite();
-
-    void
-    error(const yy::location& l, const std::string& m) const throw (DLParsingError);
+    optimize(NodeGraph& dg, AtomSet& edb);
   };
 
 } // namespace dl

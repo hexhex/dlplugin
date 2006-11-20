@@ -102,7 +102,7 @@ BodyRewriter::getBody() const
   for (boost::ptr_deque<DLAtomRewriterBase>::const_iterator it = dlbody.begin();
        it != dlbody.end(); ++it)
     {
-      b->push_back(it->getLiteral());
+      b->insert(it->getLiteral());
     }
 
   return b;
@@ -695,14 +695,16 @@ DLAtomInput::getDLInputRules() const
 	      t.push_back(y);
 	    }
 
+	  RuleBody_t body;
 	  AtomPtr b(new Atom((*a)->getArgument(2).getString(), t));
-	  RuleBody_t body(1, new Literal(b));
+	  body.insert(new Literal(b));
 
 	  // add concept or role to the front of t
 	  t.insert(t.begin(), (*a)->getArgument(1));
 
+	  RuleHead_t head;
 	  AtomPtr h(new Atom(aux, t));
-	  RuleHead_t head(1, h);
+	  head.insert(h);
 	  
 	  rules.push_back(new Rule(head, body));
  	}

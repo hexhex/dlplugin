@@ -21,22 +21,20 @@
 using namespace dlvhex::dl;
 
 
-HexDLDriver::HexDLDriver(std::istream& i, std::ostream& o)
-  : PluginRewriter(i, o),
+HexDLDriver::HexDLDriver()
+  : PluginConverter(),
     lexer(new HexDLFlexLexer(this)),
-    ontology()
-{
-  lexer->switch_streams(&i, &o);
-}
+    ontology(),
+    output(&std::cerr)
+{ }
 
 
 HexDLDriver::HexDLDriver(const HexDLDriver& d)
-  : PluginRewriter(*d.input, *d.output),
+  : PluginConverter(),
     lexer(new HexDLFlexLexer(this)),
-    ontology(d.ontology)
-{
-  lexer->switch_streams(d.input, d.output);
-}
+    ontology(d.ontology),
+    output(d.output)
+{ }
 
 
 HexDLDriver&
@@ -47,7 +45,7 @@ HexDLDriver::operator= (const HexDLDriver& d)
       delete lexer;
       lexer = new HexDLFlexLexer(this);
       ontology = d.ontology;
-      setStreams(d.input, d.output);
+      output = d.output;
     }
 
   return *this;
@@ -56,21 +54,21 @@ HexDLDriver::operator= (const HexDLDriver& d)
 
 HexDLDriver::~HexDLDriver()
 {
-  delete lexer;
+  delete this->lexer;
 }
 
 
 HexDLFlexLexer*
 HexDLDriver::getLexer() const
 {
-  return lexer;
+  return this->lexer;
 }
 
 
 std::ostream&
 HexDLDriver::getOutput() const
 {
-  return *output;
+  return *this->output;
 }
 
 
@@ -96,19 +94,17 @@ HexDLDriver::getOntology() const
 
 
 void
-HexDLDriver::setStreams(std::istream* i, std::ostream* o)
-{
-  input = i;
-  output = o;
-  getLexer()->switch_streams(i, o);
-}
-
-
-void
-HexDLDriver::rewrite()
+HexDLDriver::convert(std::istream& input, std::ostream& output)
 {
   //
-  // parse and rewrite that thing
+  // setup streams
+  //
+
+  getLexer()->switch_streams(&input, &output);
+  this->output = &output;
+
+  //
+  // parse and rewrite that thing to HEX syntax
   //
 
   DLAtomInput dlinput;
@@ -117,7 +113,7 @@ HexDLDriver::rewrite()
   try
     {
       yy::HexDLParser parser(*this, dlinput);
-      lexer->set_debug(Registry::getVerbose() > 2);
+      getLexer()->set_debug(Registry::getVerbose() > 2);
       parser.set_debug_level(Registry::getVerbose() > 2);
       parser.parse();
 
