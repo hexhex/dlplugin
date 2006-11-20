@@ -1,3 +1,26 @@
+2006-11-20  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/HexDLRewriterFlexLexer.h: Remove HexDLRewriter scanner and parser files.
+	* include/Makefile.am: Likewise.
+	* src/HexDLRewriterScanner.lpp: Likewise.
+	* src/HexDLRewriterParser.ypp: Likewise.
+	* src/Makefile.am: Likewise.
+
+	* include/HexDLDriver.h: Adapt to new plugin interface.
+	* include/HexDLRewriterDriver.h: Likewise.
+	* include/RacerInterface.h: Likewise.
+	* src/HexDLDriver.cpp: Likewise.
+	* src/HexDLRewriter.cpp: Likewise.
+	* src/HexDLRewriterDriver.cpp: Likewise.
+	* src/Query.cpp: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* testsuite/TestDLRewriter.cpp: Likewise.
+	* testsuite/TestRacerInterface.cpp: Likewise.
+	* testsuite/TestRacerInterface.h: Likewise.
+
+	* include/RacerExtAtom.tcc: Give more specific exception messages.
+
 2006-11-08  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/HexDLParser.ypp: Fix boolean cq-atoms without ().
