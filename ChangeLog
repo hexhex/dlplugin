@@ -1,3 +1,15 @@
+2006-11-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/DLOptimizer.h: Rename HexDLRewriterDriver to DLOptimizer.
+	* include/HexDLRewriterDriver.h: Likewise.
+	* include/Makefile.am: Likewise.
+	* include/RacerInterface.h: Likewise.
+	* src/DLOptimizer.cpp: Likewise.
+	* src/HexDLRewriterDriver.cpp: Likewise.
+	* src/Makefile.am: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+	* testsuite/TestDLRewriter.cpp: Likewise.
+
 2006-11-20  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/HexDLRewriterFlexLexer.h: Remove HexDLRewriter scanner and parser files.
