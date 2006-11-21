@@ -33,12 +33,12 @@ libdlvhexracer_la_SOURCES = \
 Answer.cpp \
 AtomSeparator.cpp \
 Cache.cpp \
+DLOptimizer.cpp \
 DLQuery.cpp \
 HexDLParser.ypp \
 HexDLScanner.lpp \
 HexDLDriver.cpp \
 HexDLRewriter.cpp \
-HexDLRewriterDriver.cpp \
 LogBuf.cpp \
 OWLParser.cpp \
 Ontology.cpp \

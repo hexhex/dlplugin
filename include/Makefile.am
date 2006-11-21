@@ -6,11 +6,11 @@ noinst_HEADERS = \
                  AtomSeparator.h \
                  Cache.h \
                  DLError.h \
+                 DLOptimizer.h \
                  DLQuery.h \
                  HexDLDriver.h \
                  HexDLFlexLexer.h \
                  HexDLRewriter.h \
-                 HexDLRewriterDriver.h \
                  KBManager.h \
                  LogBuf.h \
                  OWLParser.h \

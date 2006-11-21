@@ -14,7 +14,7 @@
 
 #include "RacerExtAtom.h"
 #include "Ontology.h"
-#include "HexDLRewriterDriver.h"
+#include "DLOptimizer.h"
 #include "HexDLDriver.h"
 #include "LogBuf.h"
 #include "Registry.h"
@@ -42,7 +42,7 @@ RacerInterface::RacerInterface()
     stats(new CacheStats),
     cache(new Cache(*stats)),
     dlconverter(new HexDLDriver),
-    dloptimizer(new HexDLRewriterDriver),
+    dloptimizer(new DLOptimizer),
     kbManager(new RacerKBManager(*stream))
 { }
 

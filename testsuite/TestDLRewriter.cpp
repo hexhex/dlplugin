@@ -8,7 +8,6 @@
  * 
  */
 
-#include "HexDLRewriterDriver.h"
 #include "HexDLDriver.h"
 
 #include "TestDLRewriter.h"

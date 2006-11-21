@@ -1,16 +1,16 @@
 /* -*- C++ -*- */
 
 /**
- * @file   HexDLRewriterDriver.cpp
+ * @file   DLOptimizer.cpp
  * @author Thomas Krennwallner
  * @date   Tue Jul 25 09:23:09 2006
  * 
- * @brief  Driver class for the Hex DL Rewriters bison/flex parser.
+ * @brief  Optimizes the DL part of HEX programs.
  * 
  * 
  */
 
-#include "HexDLRewriterDriver.h"
+#include "DLOptimizer.h"
 #include "HexDLRewriter.h"
 #include "Registry.h"
 #include "DLError.h"
@@ -25,39 +25,39 @@
 using namespace dlvhex::dl;
 
 
-HexDLRewriterDriver::HexDLRewriterDriver()
+DLOptimizer::DLOptimizer()
   : PluginOptimizer(),
     doRewriting(true)
 { }
 
 
-HexDLRewriterDriver::HexDLRewriterDriver(const HexDLRewriterDriver& d)
+DLOptimizer::DLOptimizer(const DLOptimizer& d)
   : PluginOptimizer(),
     doRewriting(d.doRewriting)
 { }
 
 
-HexDLRewriterDriver&
-HexDLRewriterDriver::operator= (const HexDLRewriterDriver&)
+DLOptimizer&
+DLOptimizer::operator= (const DLOptimizer&)
 {
   // noop
   return *this;
 }
 
 
-HexDLRewriterDriver::~HexDLRewriterDriver()
+DLOptimizer::~DLOptimizer()
 { }
 
 
 void
-HexDLRewriterDriver::setRewriting(bool yesno)
+DLOptimizer::setRewriting(bool yesno)
 {
   doRewriting = yesno;
 }
 
 
 bool
-HexDLRewriterDriver::getRewriting()
+DLOptimizer::getRewriting()
 {
   return doRewriting;
 }
@@ -206,7 +206,7 @@ public:
 
 
 void
-HexDLRewriterDriver::optimize(NodeGraph& dg, AtomSet& edb)
+DLOptimizer::optimize(NodeGraph& dg, AtomSet& edb)
 {
   return;
 #if 0

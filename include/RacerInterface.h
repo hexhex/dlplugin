@@ -33,8 +33,8 @@ namespace dl {
   //
   class BaseCache;
   class CacheStats;
+  class DLOptimizer;
   class HexDLDriver;
-  class HexDLRewriterDriver;
 
 namespace racer {
 
@@ -68,7 +68,7 @@ namespace racer {
     /// DL converter facility
     HexDLDriver* dlconverter;
     /// DL optimizer facility
-    HexDLRewriterDriver* dloptimizer;
+    DLOptimizer* dloptimizer;
     /// the kb-manager for RACER
     RacerKBManager* kbManager;
 
