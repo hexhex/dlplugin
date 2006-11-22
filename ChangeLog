@@ -1,3 +1,13 @@
+2006-11-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* testsuite/Makefile.am: Add TestDLOptimizer.
+	* testsuite/TestDLOptimizer.cpp: Likewise.
+	* testsuite/TestDLOptimizer.h: Likewise.
+	
+	* testsuite/TestDLRewriter.cpp: Fix testcases.
+
+	* src/DLOptimizer.cpp: Small fixes.
+
 2006-11-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/DLOptimizer.h: Rename HexDLRewriterDriver to DLOptimizer.
