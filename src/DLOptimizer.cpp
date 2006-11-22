@@ -70,14 +70,11 @@ DLOptimizer::getRewriting()
 class RewritingVisitor : public BaseVisitor
 {
 private:
-  Program& rewritten;
 
-  const RuleBody_t*
-  rewriteBody(const RuleBody_t& body) const
+  void
+  rewriteBody(const RuleBody_t& body, RuleBody_t& body1) const
   {
     BodyRewriter br;
-
-    RuleBody_t* body1 = new RuleBody_t;
 
     for (RuleBody_t::const_iterator it = body.begin(); it != body.end(); ++it)
       {
@@ -99,10 +96,6 @@ private:
 		const Tuple* out = new Tuple(ea->getArguments());
 		
 		br.add(new SimpleDLAtomRewriter(n, in, out));
-		
-		///@todo this burns the readers eyes, but for now it
-		///prevents memory leaks
-		delete l;
 	      }
 	    else if (fn.find("dlCQ") == 0)
 	      {
@@ -110,39 +103,28 @@ private:
 		const Tuple* out = new Tuple(ea->getArguments());
 		
 		br.add(new CQAtomRewriter(in, out));
-		
-		///@todo this burns the readers eyes, but for now it
-		///prevents memory leaks
-		delete l;
 	      }
 	    else
 	      {
-		body1->insert(l); // non-dl extatom
+		body1.insert(l); // non-dl extatom
 	      }
 	  }
 	else
 	  {
-	    body1->insert(l); // non-extatom or naf atom
+	    body1.insert(l); // non-extatom or naf atom
 	  }
       }
 	  
 	  
     const RuleBody_t* dl_body = br.getBody();
 	  
-    body1->insert(dl_body->begin(), dl_body->end());
+    body1.insert(dl_body->begin(), dl_body->end());
 	  
     delete dl_body;
-
-    return body1;
   }
 
 
 public:
-  RewritingVisitor(Program& r)
-    : rewritten(r)
-  { }
-  
-
   // these methods are no-ops (as for now)
 
   virtual void
@@ -172,17 +154,22 @@ public:
   visitRule(const Rule* r)
   {
     //
-    // rewrite the body the rule
+    // rewrite the body of rule r
     //
 
-    const RuleHead_t& head = r->getHead();
-    const RuleBody_t& body = r->getBody();
+    RawPrintVisitor rpv(std::cerr);
+    std::cerr << "optimizing: ";
+    r->accept(rpv);
 
-    const RuleBody_t* body1 = rewriteBody(body);
+    RuleBody_t body1;
 
-    rewritten.addRule(new Rule(head, *body1));
+    rewriteBody(r->getBody(), body1);
 
-    delete body1;
+    const_cast<Rule*>(r)->setBody(body1);
+
+    std::cerr << " to ";
+    r->accept(rpv);
+    std::cerr << std::endl;
   }
 
 
@@ -190,16 +177,14 @@ public:
   visitWeakConstraint(const WeakConstraint* wc)
   {
     //
-    // rewrite the body the weak constraint
+    // rewrite the body weak constraint wc
     //
 
-    const RuleBody_t& body = wc->getBody();
+    RuleBody_t body1;
 
-    const RuleBody_t* body1 = rewriteBody(body);
+    rewriteBody(wc->getBody(), body1);
 
-    rewritten.addRule(new WeakConstraint(*body1, wc->getWeight(), wc->getLevel()));
-
-    delete body1;
+    const_cast<WeakConstraint*>(wc)->setBody(body1);
   }
 
 };
@@ -208,70 +193,25 @@ public:
 void
 DLOptimizer::optimize(NodeGraph& dg, AtomSet& edb)
 {
-  return;
-#if 0
   //
   // and now optimize it
   //
 
-  Program prog;
+  return; ///@todo DLOptimizer::optimize is turned off
 
-  //
-  // build dependency graph
-  //
+  RewritingVisitor rv;
+  
+  const std::vector<AtomNodePtr>& nodes = dg.getNodes();
 
-//   GraphBuilder gb;
-//   BoostComponentFinder cf;
-
-//   DependencyGraph dg(prog, &gb, &cf);
-
-//   Subgraph* sg = 0;
-
-//   while ((sg = dg.getNextSubgraph()))
-//     {
-//       sg->dump(std::cerr);
-
-//       std::vector<Component*> leaves;
-      
-//       sg->getUnsolvedLeaves(leaves);
-      
-//       for (std::vector<Component*>::const_iterator it = leaves.begin(); it != leaves.end(); ++it)
-// 	{
-// 	  Program p = (*it)->getBottom();
-// 	  std::cerr << "Component found: " << std::endl;
-// 	  for (Program::const_iterator pit = p.begin(); pit != p.end(); ++pit)
-// 	    {
-// 	      std::cerr << *pit << std::endl;
-// 	    }
-// 	  std::cerr << std::endl;
-// 	}
-//     }
-
-  //
-  // rewrite the rules
-  //
-
-  Program rewritten;
-  RewritingVisitor rv(rewritten);
-
-  for (Program::const_iterator it = prog.begin(); it != prog.end(); ++it)
+  for (std::vector<AtomNodePtr>::const_iterator it = nodes.begin();
+       it != nodes.end(); ++it)
     {
-      ///@todo does not take unused predicates in \lambda in account
+      const std::vector<Rule*>& rules = (*it)->getRules();
 
-      const Rule* r = *it;
-
-      if (!getRewriting()) // don't rewrite the rule
+      for (std::vector<Rule*>::const_iterator it2 = rules.begin();
+	   it2 != rules.end(); ++it2)
 	{
-	  rewritten.addRule(r);
-	}
-      else // rewrite the rule
-	{
-	  r->accept(rv);
-
-	  ///@todo this burns the readers eyes, but for now it
-	  ///prevents memory leaks
-	  delete r;
+	  (*it2)->accept(rv);
 	}
     }
-#endif // 0
 }
