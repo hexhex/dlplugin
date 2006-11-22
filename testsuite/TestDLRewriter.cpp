@@ -50,7 +50,6 @@ TestDLRewriter::runDLRewrite()
    std::cout << "## " << std::endl << os.str() << std::endl;
  }
 
-#if 0
  {
    std::istringstream is("p(X,Y) :- &dlCQ[\"my.owl\",a,b,c,d,\"Q1(X),Q2(Y)\"](X, Y), &dlCQ[\"my.owl\",a,b,c,d,\"Q3(Y),Q4(Z)\"](Y,Z).");
    std::ostringstream os;
@@ -62,9 +61,8 @@ TestDLRewriter::runDLRewrite()
    
    std::cout << "## " << std::endl << s << std::endl;
 
-   CPPUNIT_ASSERT("p(X,Y) :- &dlCQ3[\"my.owl\",a,b,c,d,\"Q1(X),Q2(Y),Q3(Y),Q4(Z)\"](X,Y,Z).\n" == s);
+   CPPUNIT_ASSERT("p(X,Y) :- &dlCQ2[\"my.owl\",a,b,c,d,\"Q1(X),Q2(Y)\"](X,Y), &dlCQ2[\"my.owl\",a,b,c,d,\"Q3(Y),Q4(Z)\"](Y,Z)." == s);
  }
-#endif // 0
 }
 
 void
