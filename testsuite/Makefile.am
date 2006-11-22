@@ -2,6 +2,7 @@ AUTOMAKE_OPTIONS = foreign
 
 noinst_HEADERS = \
                  TestCache.h \
+                 TestDLOptimizer.h \
                  TestDLRewriter.h \
                  TestOWLParser.h \
                  TestRacerBuilder.h \
@@ -24,6 +25,7 @@ check_PROGRAMS = TestSuite
 
 TestSuite_SOURCES = \
                     TestCache.cpp \
+                    TestDLOptimizer.cpp \
                     TestDLRewriter.cpp \
                     TestOWLParser.cpp \
                     TestRacerBuilder.cpp \
