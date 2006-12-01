@@ -1,11 +1,11 @@
 AC_PREREQ([2.59])
-AC_INIT([dlvhex-racerplugin],[0.5.0],[tkren@kr.tuwien.ac.at])
+AC_INIT([dlvhex-racerplugin],[0.5.0beta1],[tkren@kr.tuwien.ac.at])
 AC_CONFIG_SRCDIR([src/RacerInterface.cpp])
 AC_CONFIG_HEADER([src/config.h])
 
-MAJOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\),\1,"`
-MINOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\),\2,"`
-MICRO=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\),\3,"`
+MAJOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\)\.\([[0-9]]*\)\.\([[0-9]]*\).*,\1,"`
+MINOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\)\.\([[0-9]]*\)\.\([[0-9]]*\).*,\2,"`
+MICRO=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\)\.\([[0-9]]*\)\.\([[0-9]]*\).*,\3,"`
 
 AC_DEFINE_UNQUOTED([DLPLUGIN_MAJOR], [$MAJOR], [Major version number of the dl-plugin])
 AC_DEFINE_UNQUOTED([DLPLUGIN_MINOR], [$MINOR], [Minor version number of the dl-plugin])
