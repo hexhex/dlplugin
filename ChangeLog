@@ -1,6 +1,7 @@
 2006-12-01  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* configure.ac: Bump version to 0.5.0beta1.
+	Check for DLVHEX >= 1.4.
 
 2006-11-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
