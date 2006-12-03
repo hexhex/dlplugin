@@ -279,6 +279,47 @@ namespace racer {
   }
 
 
+  template <class GetCache>
+  RacerUCQAtom<GetCache>::RacerUCQAtom(std::iostream& s, RacerKBManager& k, unsigned n)
+    : RacerCachingAtom<GetCache>(s,k)
+  {
+    //
+    // &dlUCQn[kb,plusC,minusC,plusR,minusR,query](X_1,...,X_n)
+    //
+    
+    this->setOutputArity(n);
+    
+    this->addInputConstant();  // kb URI
+    this->addInputPredicate(); // plusC
+    this->addInputPredicate(); // minusC
+    this->addInputPredicate(); // plusR
+    this->addInputPredicate(); // minusR
+    this->addInputConstant();  // query
+  }
+  
+
+  template <class GetCache>
+  QueryBaseDirector::shared_pointer
+  RacerUCQAtom<GetCache>::getDirectors(const dlvhex::dl::Query& query) const
+  {
+    QueryCompositeDirector::shared_pointer comp(new QueryCompositeDirector(this->stream));
+    
+    this->setupRacer(comp);
+    this->openOntology(query, comp);
+    
+    // we don't have to increase the ABox here, we use retrieve-under-premise
+    
+    // pose a union of conjunctive queries
+    comp->add
+      (new QueryDirector<RacerAdapterBuilder<NRQLRetrieveUnderPremise<NRQLDisjunctionBuilder> >,
+       RacerAnswerDriver>(this->stream)
+      );
+  
+    ///@todo right now we don't cache conjunctive queries
+    return comp;
+  }
+
+
 } // namespace racer
 } // namespace dl
 } // namespace dlvhex

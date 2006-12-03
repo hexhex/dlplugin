@@ -257,6 +257,32 @@ namespace racer {
     RacerCQAtom(std::iostream&, RacerKBManager&, unsigned n);
   };
 
+
+  /**
+   * @brief Implements the union of conjunctive queries atom
+   * &dlUCQn[kb,plusC,minusC,plusR,minusR,query](X_1,-,X_n), where n
+   * is given at instantiation time.
+   */
+  template <class GetCache>
+  class RacerUCQAtom : public RacerCachingAtom<GetCache>
+  {
+  protected:
+    /**
+     * Create a union of conjunctive queries director chain.
+     *
+     * @param query
+     *
+     * @return
+     */
+    virtual QueryBaseDirector::shared_pointer
+    getDirectors(const dlvhex::dl::Query& query) const;
+
+  public:
+    RacerUCQAtom(std::iostream&, RacerKBManager&, unsigned n);
+  };
+
+
+
 } // namespace racer
 } // namespace dl
 } // namespace dlvhex
