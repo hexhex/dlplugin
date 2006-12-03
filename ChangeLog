@@ -1,3 +1,56 @@
+2006-12-03  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/region-fast.sh: Add statistics data.
+	* examples/region-fast00.dlp: Likewise.
+	* examples/region-fast01.dlp: Likewise.
+	* examples/region-fast02.dlp: Likewise.
+	* examples/region-fast03.dlp: Likewise.
+	* examples/region-fast04.dlp: Likewise.
+	* examples/region-fast05.dlp: Likewise.
+	* examples/region-fast06.dlp: Likewise.
+	* examples/region-fast07.dlp: Likewise.
+	* examples/region-fast08.dlp: Likewise.
+	* examples/region-fast09.dlp: Likewise.
+	* examples/region-fast10.dlp: Likewise.
+	* examples/region.sh: Likewise.
+	* examples/region00.dlp: Likewise.
+	* examples/region01.dlp: Likewise.
+	* examples/region02.dlp: Likewise.
+	* examples/region03.dlp: Likewise.
+	* examples/region04.dlp: Likewise.
+	* examples/region05.dlp: Likewise.
+	* examples/region06.dlp: Likewise.
+	* examples/region07.dlp: Likewise.
+	* examples/region08.dlp: Likewise.
+	* examples/region09.dlp: Likewise.
+	* examples/region10.dlp: Likewise.
+	* examples/wine_0_nodollar.owl: Likewise.
+	* examples/wine_10_nodollar.owl: Likewise.
+	* examples/wine_1_nodollar.owl: Likewise.
+	* examples/wine_2_nodollar.owl: Likewise.
+	* examples/wine_3_nodollar.owl: Likewise.
+	* examples/wine_4_nodollar.owl: Likewise.
+	* examples/wine_5_nodollar.owl: Likewise.
+	* examples/wine_6_nodollar.owl: Likewise.
+	* examples/wine_7_nodollar.owl: Likewise.
+	* examples/wine_8_nodollar.owl: Likewise.
+	* examples/wine_9_nodollar.owl: Likewise.
+
+	* include/RacerNRQLBuilder.h: Add preliminary
+	NRQLDisjunctionBuilder.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+
+	* src/HexDLRewriter.cpp: Improve exception message in case of an
+	invalid dl-query.
+
+	* src/RacerInterface.cpp: Start extensive logging as of debug
+	level 3.
+
+	* src/RacerExtAtom.cpp: Output query runtime as of debug level 2.
+
+	* include/RacerExtAtom.h: Add preliminary RacerUCQAtom.
+	* include/RacerExtAtom.tcc: Likewise.
+
 2006-12-01  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* configure.ac: Bump version to 0.5.0beta1.
