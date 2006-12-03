@@ -129,6 +129,31 @@ namespace racer {
   };
 
 
+
+  /**
+   * @brief Builds union of conjunctive queries nRQL queries.
+   */
+  class NRQLDisjunctionBuilder : public NRQLBaseBuilder
+  {
+  public:
+    NRQLDisjunctionBuilder () : NRQLBaseBuilder()
+    { }
+
+    /** 
+     * Uses @a query to build a union of conjunctive queries expression.
+     * 
+     * @param stream output the union of conjunctive queries to this stream
+     * @param query use this query
+     * 
+     * @return true if method created an output, false otherwise.
+     */
+    virtual bool
+    createBody(std::ostream& stream, const Query& query) const
+      throw(DLBuildingError);
+  };
+
+
+
   /**
    * @brief Builds datatype role queries.
    */

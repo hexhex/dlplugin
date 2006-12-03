@@ -349,6 +349,101 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 }
 
 
+
+
+bool
+NRQLDisjunctionBuilder::createBody(std::ostream& stream, const Query& query) const
+  throw(DLBuildingError)
+{
+  const DLQuery::shared_pointer& dlq = query.getDLQuery();
+  const AtomSet& as = dlq->getConjQuery(); ///@todo we want an UCQ here
+  const std::string& nspace = dlq->getOntology()->getNamespace();
+
+  NRQLUnion body;
+
+  for (AtomSet::const_iterator it = as.begin(); it != as.end(); ++it)
+    {
+      switch (it->getArity())
+	{
+	case 2: // role query
+	  {
+	    const Term& t1 = it->getArgument(1);
+	    const Term& t2 = it->getArgument(2);
+	    ABoxQueryObject* o1 = 0;
+	    ABoxQueryObject* o2 = 0;
+
+	    if (t1.isVariable())
+	      {
+		o1 = new ABoxQueryVariable(t1, ABoxQueryVariable::VariableType::noninjective);
+	      }
+	    else
+	      {
+		o1 = new ABoxQueryIndividual(t1, nspace);
+	      }
+	    
+	    if (t2.isVariable())
+	      {
+		o2 = new ABoxQueryVariable(t2, ABoxQueryVariable::VariableType::noninjective);
+	      }
+	    else
+	      {
+		o2 = new ABoxQueryIndividual(t2, nspace);
+	      }
+	    
+	    body.addAtom(new NRQLQueryAtom
+			 (new RoleQuery
+			  (new ABoxQueryRole(it->getPredicate(), nspace), o1, o2)
+			  )
+			 );
+	  }
+	  break;
+
+	case 1: // concept query
+	  {
+	    const Term& t1 = it->getArgument(1);
+	    ABoxQueryObject* o1 = 0;
+
+	    if (t1.isVariable())
+	      {
+		o1 = new ABoxQueryVariable(t1, ABoxQueryVariable::VariableType::noninjective);
+	      }
+	    else
+	      {
+		o1 = new ABoxQueryIndividual(t1, nspace);
+	      }
+
+	    if (it->isStronglyNegated())
+	      {
+		body.addAtom(new NRQLQueryAtom
+			     (new ConceptQuery
+			      (new ABoxNegatedConcept
+			       (new ABoxQueryConcept(it->getPredicate(), nspace)), o1)
+			      )
+			     );
+	      }
+	    else
+	      {
+		body.addAtom(new NRQLQueryAtom
+			     (new ConceptQuery
+			      (new ABoxQueryConcept(it->getPredicate(), nspace), o1)
+			      )
+			     );
+	      }
+	  }
+	  break;
+
+	default: // bail out
+	  throw DLBuildingError("wrong arity in union of conjunctive queries");
+	  break;
+	}
+    }
+
+  stream << body;
+
+  return true;
+}
+
+
 bool
 NRQLDatatypeBuilder::createHead(std::ostream& stream, const Query& query) const
   throw(DLBuildingError)
