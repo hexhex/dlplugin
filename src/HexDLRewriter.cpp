@@ -626,7 +626,10 @@ DLAtomRewriter::getName() const
     }
   else
     {
-      throw PluginError("Incompatible dl-atom query supplied.");
+      std::ostringstream oss;
+      oss << "Incompatible dl-atom query supplied: " << *query;
+      std::cerr << q << std::endl;
+      throw PluginError(oss.str());
     }
 
 }
