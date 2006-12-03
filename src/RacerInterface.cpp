@@ -69,7 +69,7 @@ RacerInterface::~RacerInterface()
 {
   try
     {
-      if (Registry::getVerbose() > 1)
+      if (Registry::getVerbose() > 2)
 	{
 	  std::cerr << *stats;
 	}
@@ -228,7 +228,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 
 	  Registry::setVerbose(level);
 
-	  if (level > 1)
+	  if (Registry::getVerbose() > 2)
 	    {
 	      // get rid of null logger
 	      delete dlvhex::util::log.rdbuf();
