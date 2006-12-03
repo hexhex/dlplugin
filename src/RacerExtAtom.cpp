@@ -29,6 +29,7 @@
 #include <dlvhex/PluginInterface.h>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <iosfwd>
 
@@ -61,7 +62,17 @@ RacerExtAtom::retrieve(const PluginAtom::Query& query,
 
       QueryBaseDirector::shared_pointer dirs = getDirectors(qctx->getQuery());
 
+      boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
+
       qctx = dirs->query(qctx);
+
+      boost::posix_time::ptime end = boost::posix_time::microsec_clock::local_time();
+
+      if (Registry::getVerbose() > 1)
+	{
+	  boost::posix_time::time_duration diff = end - start;
+	  std::cerr << "Runtime: " << diff << ' ' << qctx->getQuery() << std::endl;
+	}
 
       if (Registry::getVerbose() > 0 && !qctx->getAnswer().getWarningMessage().empty())
 	{
