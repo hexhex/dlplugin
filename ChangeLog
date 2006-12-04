@@ -15,6 +15,18 @@
 	* examples/bigwinery-fast08.dlp: Likewise.
 	* examples/bigwinery-fast09.dlp: Likewise.
 	* examples/bigwinery-fast10.dlp: Likewise.
+	* examples/bigwinery-faster.sh: Likewise.
+	* examples/bigwinery-faster00.dlp: Likewise.
+	* examples/bigwinery-faster01.dlp: Likewise.
+	* examples/bigwinery-faster02.dlp: Likewise.
+	* examples/bigwinery-faster03.dlp: Likewise.
+	* examples/bigwinery-faster04.dlp: Likewise.
+	* examples/bigwinery-faster05.dlp: Likewise.
+	* examples/bigwinery-faster06.dlp: Likewise.
+	* examples/bigwinery-faster07.dlp: Likewise.
+	* examples/bigwinery-faster08.dlp: Likewise.
+	* examples/bigwinery-faster09.dlp: Likewise.
+	* examples/bigwinery-faster10.dlp: Likewise.
 	* examples/bigwinery-nocache.sh: Likewise.
 	* examples/bigwinery.dlp: Likewise.
 	* examples/bigwinery.sh: Likewise.
