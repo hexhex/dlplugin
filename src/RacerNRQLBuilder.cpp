@@ -270,7 +270,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
     {
       switch (it->getArity())
 	{
-	case 2: // role query
+	case 2: // role query or (in)equality
 	  {
 	    const Term& t1 = it->getArgument(1);
 	    const Term& t2 = it->getArgument(2);
@@ -294,12 +294,25 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 	      {
 		o2 = new ABoxQueryIndividual(t2, nspace);
 	      }
+
+	    const Term& pred = it->getPredicate();
 	    
-	    body.addAtom(new NRQLQueryAtom
-			 (new RoleQuery
-			  (new ABoxQueryRole(it->getPredicate(), nspace), o1, o2)
-			  )
-			 );
+	    if (pred == Term("==")) // equality
+	      {
+		body.addAtom(new NRQLQueryAtom(new SameAsQuery(o1, o2)));
+	      }
+	    else if (pred == Term("!=")) // inequality
+	      {
+		body.addAtom(new NRQLQueryAtom(new NAFQuery(new SameAsQuery(o1, o2))));
+	      }
+	    else // role query
+	      {
+		body.addAtom(new NRQLQueryAtom
+			     (new RoleQuery
+			      (new ABoxQueryRole(pred, nspace), o1, o2)
+			      )
+			     );
+	      }
 	  }
 	  break;
 
