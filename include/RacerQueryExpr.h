@@ -500,6 +500,26 @@ namespace racer {
 
 
   /**
+   * A default negated query expression.
+   */
+  class NAFQuery : public ABoxQueryAtom
+  {
+  private:
+    const ABoxQueryAtom::shared_pointer atom;
+
+  protected:
+    std::ostream&
+    output(std::ostream& s) const;
+
+  public:
+    explicit
+    NAFQuery(ABoxQueryAtom::const_pointer a)
+      : atom(a)
+    { }
+  };
+
+
+  /**
    * A concept query atom.
    */
   class ConceptQuery : public ABoxQueryAtom

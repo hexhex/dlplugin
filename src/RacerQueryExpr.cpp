@@ -182,6 +182,13 @@ InvertedQuery::output(std::ostream& s) const
 
 
 std::ostream&
+NAFQuery::output(std::ostream& s) const
+{
+  return s << "(neg " << *atom << ')';
+}
+
+
+std::ostream&
 ConceptQuery::output(std::ostream& s) const
 {
   return s << '(' << *oExpr << ' ' << *cExpr << ')';
