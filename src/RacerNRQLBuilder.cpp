@@ -7,6 +7,10 @@
  * 
  * @brief  Various builders for nRQL requests.
  * 
+ * @todo injective variables are not properly calculated (in
+ * {W1!=W2,W2!=W3} we create 3 injective variables ?W1,?W2,?W3
+ * s.t. W1!=W2!=W3, but this is wrong since it is allowed that
+ * W1==W3).
  * 
  */
 
@@ -37,6 +41,36 @@ NRQLBaseBuilder::createHead(std::ostream& stream, const Query& query) const
   const Tuple& pat = dlq->getPatternTuple();
   bool isEmpty = true;
 
+  ///@todo injective variable calculation is incorrect, see file header
+
+  std::set<Term> injectiveVars;
+
+  if (dlq->isConjQuery())
+    {
+      // get all inequalities
+      const AtomSet& as = dlq->getConjQuery();
+      AtomSet injCandidates;
+
+      as.matchPredicate("!=", injCandidates);
+
+      for (AtomSet::const_iterator it = injCandidates.begin(); it != injCandidates.end(); ++it)
+	{
+	  if (it->getArity() == 2) // ignore malformed (in)equalities
+	    {
+	      const Tuple& t = it->getArguments();
+	      const Term& t0 = t[0];
+	      const Term& t1 = t[1];
+	      
+	      if (t0.isVariable())
+		injectiveVars.insert(t0);
+	      
+	      if (t1.isVariable())
+		injectiveVars.insert(t1);
+	    }
+	}
+    }
+
+
   // Iterate through the output list and build a nRQL head. Anonymous
   // variables are ignored, they are going to be taken care of when we
   // call Answer::addTuple().
@@ -51,7 +85,14 @@ NRQLBaseBuilder::createHead(std::ostream& stream, const Query& query) const
 	{
 	  isEmpty = false;
 
-	  stream << ABoxQueryVariable(*it, ABoxQueryVariable::VariableType::noninjective);
+	  if (injectiveVars.find(*it) == injectiveVars.end())
+	    {
+	      stream << ABoxQueryVariable(*it, ABoxQueryVariable::VariableType::noninjective);
+	    }
+	  else // injective
+	    {
+	      stream << ABoxQueryVariable(*it);
+	    }
 	}
       else if (!it->isAnon()) // individual
 	{
@@ -266,6 +307,30 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 
   NRQLConjunction body;
 
+  ///@todo injective variable calculation is incorrect, see file header
+
+  // get all inequalities
+  AtomSet injCandidates;
+  as.matchPredicate("!=", injCandidates);
+
+  std::set<Term> injectiveVars;
+
+  for (AtomSet::const_iterator it = injCandidates.begin(); it != injCandidates.end(); ++it)
+    {
+      if (it->getArity() == 2) // ignore malformed (in)equalities
+	{
+	  const Tuple& t = it->getArguments();
+	  const Term& t0 = t[0];
+	  const Term& t1 = t[1];
+
+	  if (t0.isVariable())
+	    injectiveVars.insert(t0);
+	  
+	  if (t1.isVariable())
+	    injectiveVars.insert(t1);
+	}
+    }
+
   for (AtomSet::const_iterator it = as.begin(); it != as.end(); ++it)
     {
       switch (it->getArity())
@@ -279,7 +344,14 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 
 	    if (t1.isVariable())
 	      {
-		o1 = new ABoxQueryVariable(t1, ABoxQueryVariable::VariableType::noninjective);
+		if (injectiveVars.find(t1) == injectiveVars.end())
+		  {
+		    o1 = new ABoxQueryVariable(t1, ABoxQueryVariable::VariableType::noninjective);
+		  }
+		else // injective
+		  {
+		    o1 = new ABoxQueryVariable(t1);
+		  }
 	      }
 	    else
 	      {
@@ -288,7 +360,14 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 	    
 	    if (t2.isVariable())
 	      {
-		o2 = new ABoxQueryVariable(t2, ABoxQueryVariable::VariableType::noninjective);
+		if (injectiveVars.find(t2) == injectiveVars.end())
+		  {
+		    o2 = new ABoxQueryVariable(t2, ABoxQueryVariable::VariableType::noninjective);
+		  }
+		else // injective
+		  {
+		    o2 = new ABoxQueryVariable(t2);
+		  }
 	      }
 	    else
 	      {
@@ -301,11 +380,13 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 	      {
 		body.addAtom(new NRQLQueryAtom(new SameAsQuery(o1, o2)));
 	      }
-	    else if (pred == Term("!=")) // inequality
+	    else if (pred == Term("!=")) // ignore inequalities -> use injective variables
 	      {
-		body.addAtom(new NRQLQueryAtom(new NAFQuery(new SameAsQuery(o1, o2))));
+		// body.addAtom(new NRQLQueryAtom(new NAFQuery(new SameAsQuery(o1, o2))));
+		delete o1;
+		delete o2;
 	      }
-	    else // role query
+ 	    else // role query
 	      {
 		body.addAtom(new NRQLQueryAtom
 			     (new RoleQuery
@@ -323,7 +404,14 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 
 	    if (t1.isVariable())
 	      {
-		o1 = new ABoxQueryVariable(t1, ABoxQueryVariable::VariableType::noninjective);
+		if (injectiveVars.find(t1) == injectiveVars.end())
+		  {
+		    o1 = new ABoxQueryVariable(t1, ABoxQueryVariable::VariableType::noninjective);
+		  }
+		else // injective
+		  {
+		    o1 = new ABoxQueryVariable(t1);
+		  }
 	      }
 	    else
 	      {
