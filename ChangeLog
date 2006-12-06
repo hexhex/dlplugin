@@ -1,3 +1,19 @@
+2006-12-06  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/semintec-fast.sh: Add semintec ontology and tests.
+	* examples/semintec-fast0.dlp: Likewise.
+	* examples/semintec-fast1.dlp: Likewise.
+	* examples/semintec-fast2.dlp: Likewise.
+	* examples/semintec-fast3.dlp: Likewise.
+	* examples/semintec-fast4.dlp: Likewise.
+	* examples/semintec.dlp: Likewise.
+	* examples/semintec.sh: Likewise.
+	* examples/semintec_0_nodollar.owl: Likewise.
+	* examples/semintec_1_nodollar.owl: Likewise.
+	* examples/semintec_2_nodollar.owl: Likewise.
+	* examples/semintec_3_nodollar.owl: Likewise.
+	* examples/semintec_4_nodollar.owl: Likewise.
+
 2006-12-05  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerNRQLBuilder.cpp: Use injective variables instead of
