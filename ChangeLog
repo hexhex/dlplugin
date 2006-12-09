@@ -1,3 +1,36 @@
+2006-12-09  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/lubm-fast.sh: Only test lubm1 and lubm2.
+
+	* examples/corm-fast.dlp: Add ucq queries.
+	* examples/corm-fast.log: Likewise.
+	* examples/corm-fast.sh: Likewise.
+	* examples/corm-fast00.dlp: Likewise.
+	* examples/corm-fast01.dlp: Likewise.
+	* examples/corm-fast02.dlp: Likewise.
+	* examples/corm-fast03.dlp: Likewise.
+	* examples/corm-fast04.dlp: Likewise.
+	* examples/corm-fast05.dlp: Likewise.
+	* examples/corm-fast06.dlp: Likewise.
+	* examples/corm-fast07.dlp: Likewise.
+	* examples/corm-fast08.dlp: Likewise.
+	* examples/corm-fast09.dlp: Likewise.
+	* examples/corm-fast10.dlp: Likewise.
+	* examples/corm.dlp: Likewise.
+	* examples/corm.sh: Likewise.
+	* examples/ucq.dlp: Likewise.
+
+	* include/AtomSeparator.h: Add support for UCQs.
+	* include/DLQuery.h: Likewise.
+	* include/RacerNRQL.h: Likewise.
+	* src/Answer.cpp: Likewise.
+	* src/AtomSeparator.cpp: Likewise.
+	* src/DLQuery.cpp: Likewise.
+	* src/QueryCtx.cpp: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+	* src/RacerNRQL.cpp: Likewise.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+
 2006-12-07  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* examples/lubm-fast.sh: Add lubm tests.
