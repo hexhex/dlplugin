@@ -1,0 +1,8 @@
+#namespace("shop","http://www.kr.tuwien.ac.at/staff/roman/shop#")
+
+s("supplier","s1","foo1@s1").
+s("supplier","s1","foo2@s1").
+
+ucq1(X) :- &dlUCQ1["shop.owl",a,a,s,a,"Shop(X),Discount(X) v supplier(Y,X),Part(X)"](X).
+
+ucq2(X) :- &dlUCQ1["wine.rdf",a,a,a,a,"CabernetSauvignon(X) v Merlot(X)"](X).
