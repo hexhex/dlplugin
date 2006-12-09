@@ -173,9 +173,10 @@ Answer::addTuple(const Tuple& out)
     {
       PluginAtom::Answer::addTuple(out);
     }
-  else if (query->getDLQuery()->isConjQuery()) // in conj. queries we
-					       // only check for
-					       // anon. variables
+  else if (query->getDLQuery()->isConjQuery() ||
+	   query->getDLQuery()->isUnionConjQuery()) // in CQs and UCQs
+						    // we only check
+						    // for anon. vars
     {
       const DLQuery::shared_pointer& dlq = query->getDLQuery();
       const Tuple& pat = dlq->getPatternTuple();

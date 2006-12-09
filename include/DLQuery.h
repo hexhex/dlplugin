@@ -41,7 +41,10 @@ namespace dl {
     Term query;
 
     /// conjunctive query
-    AtomSet conj;
+    AtomSet cq;
+
+    /// union of conjunctive query
+    std::vector<AtomSet> ucq;
 
     /// tuple pattern
     Tuple pattern;
@@ -59,18 +62,27 @@ namespace dl {
      * 
      * @param o ontology
      * @param q plain query
-     * @param p 
+     * @param p output 
      */
     DLQuery(Ontology::shared_pointer o, const Term& q, const Tuple& p);
 
     /** 
-     * Ctor for a conjunctive dl-query.
+     * Ctor for a cq-query.
      * 
      * @param o ontology
      * @param cq conjunctive query
-     * @param p 
+     * @param p output
      */
     DLQuery(Ontology::shared_pointer o, const AtomSet& cq, const Tuple& p);
+
+    /** 
+     * Ctor for a ucq-query.
+     * 
+     * @param o ontology
+     * @param ucq union of conjunctive queries
+     * @param p output
+     */
+    DLQuery(Ontology::shared_pointer o, const std::vector<AtomSet>& ucq, const Tuple& p);
 
     /// dtor.
     virtual
@@ -92,6 +104,9 @@ namespace dl {
     virtual const AtomSet&
     getConjQuery() const;
 
+    virtual const std::vector<AtomSet>&
+    getUnionConjQuery() const;
+
     virtual bool
     isBoolean() const;
 
@@ -103,6 +118,9 @@ namespace dl {
 
     virtual bool
     isConjQuery() const;
+
+    virtual bool
+    isUnionConjQuery() const;
 
     friend std::ostream&
     operator<< (std::ostream& os, const DLQuery& q);
@@ -131,7 +149,7 @@ namespace dl {
   inline std::ostream&
   operator<< (std::ostream& os, const DLQuery& q)
   {
-    if (q.isConjQuery())
+    if (q.isConjQuery()) // cq-query
       {
 	os << *q.getOntology()
 	   << " {"
@@ -147,7 +165,38 @@ namespace dl {
 
 	return os.put('}');
       }
-    else
+    else if (q.isUnionConjQuery()) // ucq-query
+      {
+	os << *q.getOntology()
+	   << " {"
+	   << q.getPatternTuple()
+	   << " | ";
+
+	const std::vector<AtomSet>& ucq = q.getUnionConjQuery();
+
+	for (std::vector<AtomSet>::const_iterator it = ucq.begin();
+	     it != --ucq.end(); ++it)
+	  {
+	    if (!it->empty())
+	      {
+		os << '(';
+		std::copy(it->begin(), --it->end(), std::ostream_iterator<Atom>(os, ", "));
+		os << *(--it->end()) << ") v ";
+	      }
+	  }
+
+	const AtomSet& last = ucq.back();
+
+	if (!last.empty())
+	  {
+	    os << '(';
+	    std::copy(last.begin(), --last.end(), std::ostream_iterator<Atom>(os, ", "));
+	    os << *(--last.end()) << ')';
+	  }
+
+	return os.put('}');
+      }
+    else // plain dl-query
       {
 	return os << *q.getOntology()
 		  << ' '
@@ -181,15 +230,17 @@ namespace dl {
   operator== (const DLQuery& q1, const DLQuery& q2)
   {
     ///@todo right now, we only support plain queries
-    assert(!q1.isConjQuery());
+    assert(!q1.isConjQuery() && !q1.isUnionConjQuery());
 
     if (q1.isConjQuery() == q2.isConjQuery() &&
+	q1.isUnionConjQuery() == q2.isUnionConjQuery() &&
 	*q1.getOntology() == *q2.getOntology()
 	)
       {
 	return q1.isConjQuery() ?
 	  q1.getConjQuery() == q2.getConjQuery() :
-	  q1.getQuery() == q2.getQuery();
+	  (q2.isUnionConjQuery() ? q1.getUnionConjQuery() == q2.getUnionConjQuery() :
+	   q1.getQuery() == q2.getQuery());
       }
 
     return false;

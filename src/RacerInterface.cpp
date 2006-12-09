@@ -167,6 +167,16 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
       m[oss.str()]  = new RacerCQAtom<GetCacheFun>(*stream, *kbManager, n);
       oss.str("");
     }
+
+  // register for each arity in range 0 to 32 a dedicated RacerUCQAtom
+  // external atom with specified arity
+
+  for (unsigned n = 0; n <= 32; ++n)
+    {
+      oss << "dlUCQ" << n;
+      m[oss.str()]  = new RacerUCQAtom<GetCacheFun>(*stream, *kbManager, n);
+      oss.str("");
+    }
 }
 
 void

@@ -65,28 +65,31 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
       throw e;
     }
 
+  DLQuery::shared_pointer dlq;
+
   // setup the query if input tuple contains a query atom or a
   // conjunctive query
   if (inputtuple.size() > 5)
     {
       const std::string& qstr = inputtuple[5].getUnquotedString();
 
-      if (qstr.find('(') != std::string::npos) // parse conjunctive query
+      if (qstr.find(" v ") != std::string::npos) // parse union of conjunctive queries
+	{
+	  std::vector<AtomSet> as;
+
+	  // separate union of atomlists
+	  UnionAtomSeparator(qstr, as).parse();
+
+	  dlq = DLQuery::shared_pointer(new DLQuery(onto, as, query.getPatternTuple()));	
+	}
+      else if (qstr.find('(') != std::string::npos) // parse conjunctive query
 	{
 	  AtomSet as;
 
 	  // separate atomlist
 	  AtomSeparator(qstr, as).parse();
 
-	  DLQuery::shared_pointer dlq(new DLQuery(onto, as, query.getPatternTuple()));
-
-	  q = new Query(kb, dlq,
-			inputtuple[1],
-			inputtuple[2],
-			inputtuple[3],
-			inputtuple[4],
-			query.getInterpretation()
-			);
+	  dlq = DLQuery::shared_pointer(new DLQuery(onto, as, query.getPatternTuple()));
 	}
       else // this is a plain query
 	{
@@ -107,31 +110,23 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
 
 	  Term qu(querystr);
 
-	  DLQuery::shared_pointer dlq(new DLQuery(onto, qu, query.getPatternTuple()));
-
-	  q = new Query(kb, dlq,
-			inputtuple[1],
-			inputtuple[2],
-			inputtuple[3],
-			inputtuple[4],
-			query.getInterpretation()
-			);
+	  dlq = DLQuery::shared_pointer(new DLQuery(onto, qu, query.getPatternTuple()));
 	}
     }
   else // no query term, what now?
     {
-      DLQuery::shared_pointer dlq(new DLQuery(onto, Term(), query.getPatternTuple()));
-
-      q = new Query(kb, dlq,
-		    inputtuple[1],
-		    inputtuple[2],
-		    inputtuple[3],
-		    inputtuple[4],
-		    query.getInterpretation()
-		    );
+      dlq = DLQuery::shared_pointer(new DLQuery(onto, Term(), query.getPatternTuple()));
     }
 
-  a = new Answer(q);
+  this->q = new Query(kb, dlq,
+		      inputtuple[1],
+		      inputtuple[2],
+		      inputtuple[3],
+		      inputtuple[4],
+		      query.getInterpretation()
+		      );
+
+  this->a = new Answer(this->q);
 }
 
 

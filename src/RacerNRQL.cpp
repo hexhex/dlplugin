@@ -55,7 +55,7 @@ NRQLUnion::output(std::ostream& s) const
 }
 
 void
-NRQLUnion::addAtom(NRQLBody::const_pointer e)
+NRQLUnion::addBody(NRQLBody::const_pointer e)
 {
   list.push_back(const_cast<NRQLBody*>(e));
 }

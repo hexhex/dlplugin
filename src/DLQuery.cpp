@@ -27,7 +27,7 @@ namespace dl {
   operator< (const DLQuery& q1, const DLQuery& q2)
   {
     ///@todo right now, we only support plain queries
-    assert(!q1.isConjQuery());
+    assert(!q1.isConjQuery() && !q1.isUnionConjQuery());
 
     // first check if ontology of q1 is less or greater than the ontology of q2
 
@@ -111,7 +111,8 @@ namespace dl {
 DLQuery::DLQuery(Ontology::shared_pointer o, const Term& q, const Tuple& p)
   : ontology(o),
     query(q),
-    conj(),
+    cq(),
+    ucq(),
     pattern(),
     typeFlags(0)
 {
@@ -119,10 +120,23 @@ DLQuery::DLQuery(Ontology::shared_pointer o, const Term& q, const Tuple& p)
 }
 
 
-DLQuery::DLQuery(Ontology::shared_pointer o, const AtomSet& cq, const Tuple& p)
+DLQuery::DLQuery(Ontology::shared_pointer o, const AtomSet& c, const Tuple& p)
   : ontology(o),
     query(),
-    conj(cq),
+    cq(c),
+    ucq(),
+    pattern(),
+    typeFlags(0)
+{
+  setPatternTuple(p);
+}
+
+
+DLQuery::DLQuery(Ontology::shared_pointer o, const std::vector<AtomSet>& u, const Tuple& p)
+  : ontology(o),
+    query(),
+    cq(),
+    ucq(u.begin(), u.end()),
     pattern(),
     typeFlags(0)
 {
@@ -135,6 +149,7 @@ DLQuery::getOntology() const
 {
   return this->ontology;
 }
+
 
 unsigned long
 DLQuery::getTypeFlags() const
@@ -150,8 +165,9 @@ DLQuery::isBoolean() const
   // bits
   unsigned long mask = (1 << pattern.size()) - 1;
 
-  // if any flag in the negation of flags is true, i.e. we have a
-  // variable term in pattern, we don't have a purely boolean query
+  // if any flag in the negation of the typeFlags is true, i.e. we
+  // have a variable term in the output, we don't have a purely
+  // boolean query
   return (~typeFlags & mask) == 0;
 }
 
@@ -177,7 +193,14 @@ DLQuery::isMixed() const
 bool
 DLQuery::isConjQuery() const
 {
-  return !conj.empty();
+  return !cq.empty();
+}
+
+
+bool
+DLQuery::isUnionConjQuery() const
+{
+  return !ucq.empty();
 }
 
 
@@ -191,9 +214,15 @@ DLQuery::getQuery() const
 const AtomSet&
 DLQuery::getConjQuery() const
 {
-  return this->conj;
+  return this->cq;
 }
 
+
+const std::vector<AtomSet>&
+DLQuery::getUnionConjQuery() const
+{
+  return this->ucq;
+}
 
 
 void

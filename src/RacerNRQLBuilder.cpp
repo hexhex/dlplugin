@@ -69,7 +69,10 @@ NRQLBaseBuilder::createHead(std::ostream& stream, const Query& query) const
 	    }
 	}
     }
-
+  else if (dlq->isUnionConjQuery())
+    {
+      ///@todo UCQ ignores inequalities here
+    }
 
   // Iterate through the output list and build a nRQL head. Anonymous
   // variables are ignored, they are going to be taken care of when we
@@ -457,89 +460,135 @@ NRQLDisjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
   throw(DLBuildingError)
 {
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
-  const AtomSet& as = dlq->getConjQuery(); ///@todo we want an UCQ here
+  const std::vector<AtomSet>& as = dlq->getUnionConjQuery();
   const std::string& nspace = dlq->getOntology()->getNamespace();
 
-  NRQLUnion body;
+  ///@todo we don't handle (in)equalities here
+  std::set<Term> injectiveVars;
 
-  for (AtomSet::const_iterator it = as.begin(); it != as.end(); ++it)
+  NRQLUnion unbody;
+
+  for (std::vector<AtomSet>::const_iterator it = as.begin(); it != as.end(); ++it)
     {
-      switch (it->getArity())
+      NRQLConjunction* body = new NRQLConjunction;
+
+      for (AtomSet::const_iterator it2 = it->begin(); it2 != it->end(); ++it2)
 	{
-	case 2: // role query
-	  {
-	    const Term& t1 = it->getArgument(1);
-	    const Term& t2 = it->getArgument(2);
-	    ABoxQueryObject* o1 = 0;
-	    ABoxQueryObject* o2 = 0;
-
-	    if (t1.isVariable())
+	  switch (it2->getArity())
+	    {
+	    case 2: // role query or (in)equality
 	      {
-		o1 = new ABoxQueryVariable(t1, ABoxQueryVariable::VariableType::noninjective);
+		const Term& t1 = it2->getArgument(1);
+		const Term& t2 = it2->getArgument(2);
+		ABoxQueryObject* o1 = 0;
+		ABoxQueryObject* o2 = 0;
+		
+		if (t1.isVariable())
+		  {
+		    if (injectiveVars.find(t1) == injectiveVars.end())
+		      {
+			o1 = new ABoxQueryVariable(t1, ABoxQueryVariable::VariableType::noninjective);
+		      }
+		    else // injective
+		      {
+			o1 = new ABoxQueryVariable(t1);
+		      }
+		  }
+		else
+		  {
+		    o1 = new ABoxQueryIndividual(t1, nspace);
+		  }
+		
+		if (t2.isVariable())
+		  {
+		    if (injectiveVars.find(t2) == injectiveVars.end())
+		      {
+			o2 = new ABoxQueryVariable(t2, ABoxQueryVariable::VariableType::noninjective);
+		      }
+		    else // injective
+		      {
+			o2 = new ABoxQueryVariable(t2);
+		      }
+		  }
+		else
+		  {
+		    o2 = new ABoxQueryIndividual(t2, nspace);
+		  }
+		
+		const Term& pred = it2->getPredicate();
+		
+		if (pred == Term("==")) // equality
+		  {
+		    body->addAtom(new NRQLQueryAtom(new SameAsQuery(o1, o2)));
+		  }
+		else if (pred == Term("!=")) // ignore inequalities -> use injective variables
+		  {
+		    // body.addAtom(new NRQLQueryAtom(new NAFQuery(new SameAsQuery(o1, o2))));
+		    delete o1;
+		    delete o2;
+		  }
+		else // role query
+		  {
+		    body->addAtom(new NRQLQueryAtom
+				  (new RoleQuery
+				   (new ABoxQueryRole(pred, nspace), o1, o2)
+				   )
+				  );
+		  }
 	      }
-	    else
+	      break;
+	      
+	    case 1: // concept query
 	      {
-		o1 = new ABoxQueryIndividual(t1, nspace);
+		const Term& t1 = it2->getArgument(1);
+		ABoxQueryObject* o1 = 0;
+		
+		if (t1.isVariable())
+		  {
+		    if (injectiveVars.find(t1) == injectiveVars.end())
+		      {
+			o1 = new ABoxQueryVariable(t1, ABoxQueryVariable::VariableType::noninjective);
+		      }
+		    else // injective
+		      {
+			o1 = new ABoxQueryVariable(t1);
+		      }
+		  }
+		else
+		  {
+		    o1 = new ABoxQueryIndividual(t1, nspace);
+		  }
+		
+		if (it2->isStronglyNegated())
+		  {
+		    body->addAtom(new NRQLQueryAtom
+				  (new ConceptQuery
+				   (new ABoxNegatedConcept
+				    (new ABoxQueryConcept(it2->getPredicate(), nspace)), o1)
+				   )
+				  );
+		  }
+		else
+		  {
+		    body->addAtom(new NRQLQueryAtom
+				  (new ConceptQuery
+				   (new ABoxQueryConcept(it2->getPredicate(), nspace), o1)
+				   )
+				  );
+		  }
 	      }
-	    
-	    if (t2.isVariable())
-	      {
-		o2 = new ABoxQueryVariable(t2, ABoxQueryVariable::VariableType::noninjective);
-	      }
-	    else
-	      {
-		o2 = new ABoxQueryIndividual(t2, nspace);
-	      }
-	    
-	    body.addAtom(new NRQLQueryAtom
-			 (new RoleQuery
-			  (new ABoxQueryRole(it->getPredicate(), nspace), o1, o2)
-			  )
-			 );
-	  }
-	  break;
-
-	case 1: // concept query
-	  {
-	    const Term& t1 = it->getArgument(1);
-	    ABoxQueryObject* o1 = 0;
-
-	    if (t1.isVariable())
-	      {
-		o1 = new ABoxQueryVariable(t1, ABoxQueryVariable::VariableType::noninjective);
-	      }
-	    else
-	      {
-		o1 = new ABoxQueryIndividual(t1, nspace);
-	      }
-
-	    if (it->isStronglyNegated())
-	      {
-		body.addAtom(new NRQLQueryAtom
-			     (new ConceptQuery
-			      (new ABoxNegatedConcept
-			       (new ABoxQueryConcept(it->getPredicate(), nspace)), o1)
-			      )
-			     );
-	      }
-	    else
-	      {
-		body.addAtom(new NRQLQueryAtom
-			     (new ConceptQuery
-			      (new ABoxQueryConcept(it->getPredicate(), nspace), o1)
-			      )
-			     );
-	      }
-	  }
-	  break;
-
-	default: // bail out
-	  throw DLBuildingError("wrong arity in union of conjunctive queries");
-	  break;
+	      break;
+	      
+	    default: // bail out
+	      throw DLBuildingError("wrong arity in conjunctive query");
+	      break;
+	    }
 	}
+      
+      unbody.addBody(body);
     }
 
-  stream << body;
+  stream << unbody;
 
   return true;
 }

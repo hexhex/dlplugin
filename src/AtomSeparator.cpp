@@ -205,3 +205,41 @@ AtomSeparator::parse() throw (DLParsingError)
       atoms.insert(ap);
     }
 }
+
+
+UnionAtomSeparator::UnionAtomSeparator(const std::string& al, std::vector<AtomSet>& as)
+  : unionatomlist(al), atoms(as)
+{ }
+
+
+void
+UnionAtomSeparator::parse() throw (DLParsingError)
+{
+  const char* vel = " v ";
+  std::string::size_type i = 0;
+  std::string::size_type off = 0;
+
+  while ((off = unionatomlist.find(vel, i)) != std::string::npos)
+    {
+      AtomSet as;
+
+      const std::string& q = unionatomlist.substr(i, off);
+
+      AtomSeparator asep(q, as);
+      asep.parse();
+
+      atoms.push_back(as);
+
+      i = off + 3; // skip " v "
+    }
+
+  AtomSet as;
+
+  const std::string& q = unionatomlist.substr(i);
+  
+  AtomSeparator asep(q, as);
+  asep.parse();
+      
+  atoms.push_back(as);
+}
+

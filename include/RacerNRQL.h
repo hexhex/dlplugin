@@ -172,7 +172,7 @@ namespace racer {
      * @param e 
      */
     void
-    addAtom(NRQLBody::const_pointer e);
+    addBody(NRQLBody::const_pointer e);
 
     typedef NRQLUnion value_type;
     typedef const value_type* const_pointer;

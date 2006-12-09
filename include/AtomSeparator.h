@@ -17,6 +17,7 @@
 #include "DLError.h"
 
 #include <string>
+#include <vector>
 
 //
 // forward declaration
@@ -43,6 +44,22 @@ namespace dl {
     parse() throw (DLParsingError);
   };
   
+
+  /**
+   * Parse a list of lists of atoms in a string to an std::vector<AtomSet>.
+   */
+  class UnionAtomSeparator
+  {
+  private:
+    const std::string& unionatomlist;
+    std::vector<AtomSet>& atoms;
+
+  public:
+    UnionAtomSeparator(const std::string& al, std::vector<AtomSet>& as);
+
+    void
+    parse() throw (DLParsingError);
+  };
 
 } // namespace dl
 } // namespace dlvhex
