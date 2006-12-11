@@ -1,3 +1,23 @@
+2006-12-11  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/bigwinery-fast.sh: Update tests.
+	* examples/bigwinery-fast00.dlp: Likewise.
+	* examples/bigwinery-fast01.dlp: Likewise.
+	* examples/bigwinery-fast02.dlp: Likewise.
+	* examples/bigwinery-fast03.dlp: Likewise.
+	* examples/bigwinery-fast04.dlp: Likewise.
+	* examples/bigwinery-fast05.dlp: Likewise.
+	* examples/bigwinery-fast06.dlp: Likewise.
+	* examples/bigwinery-fast07.dlp: Likewise.
+	* examples/bigwinery-fast08.dlp: Likewise.
+	* examples/bigwinery-fast09.dlp: Likewise.
+	* examples/bigwinery-fast10.dlp: Likewise.
+	* examples/bigwinery.sh: Likewise.
+	* examples/region.sh: Likewise.
+
+	* src/AtomSeparator.cpp (UnionAtomSeparator::parse): Fix offset
+	calculation in UCQ.
+
 2006-12-09  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* examples/lubm-fast.sh: Only test lubm1 and lubm2.
