@@ -221,25 +221,24 @@ UnionAtomSeparator::parse() throw (DLParsingError)
 
   while ((off = unionatomlist.find(vel, i)) != std::string::npos)
     {
+      const std::string& q = unionatomlist.substr(i, off - i);
+
+      // parse cq
       AtomSet as;
-
-      const std::string& q = unionatomlist.substr(i, off);
-
       AtomSeparator asep(q, as);
       asep.parse();
-
       atoms.push_back(as);
 
-      i = off + 3; // skip " v "
+      i = off + 3; // skip " v " in the next round
     }
 
-  AtomSet as;
+  // last " v " passed, get rest of string
 
   const std::string& q = unionatomlist.substr(i);
-  
+
+  AtomSet as;
   AtomSeparator asep(q, as);
   asep.parse();
-      
   atoms.push_back(as);
 }
 
