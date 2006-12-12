@@ -63,18 +63,20 @@
   Term* termval;
   Tuple* tupleval;
   AtomPtr* atomval;
-  AtomSet* opsval;
+  AtomSet* atomsetval;
+  boost::ptr_vector<AtomSet>* atomsetsval;
   dlvhex::dl::DLAtomRewriterBase* dlrewriterval;
 }
 
-%token <cval> SENTINEL
+%token <cval> SENTINEL PMOP
 %token <sval> STRING DLEXTATOM
 %token <ival> NUMBER
-%token PLUSOP MINUSOP DLATOM CQATOM
+%token DLATOM CQATOM UCQATOM
 %type <sval> dlquery
 %type <dlrewriterval> dlatom
-%type <atomval> op
-%type <opsval> ops
+%type <atomval> op atom
+%type <atomsetval> ops cq
+%type <atomsetsval> ucq
 %type <termval> term
 %type <tupleval> terms output
 
@@ -119,8 +121,9 @@ dlatoms: /* empty */
 
 
 // This rule keeps track of the various forms of the dl-atom
-// rewriters. We rewrite dl-atoms to &dlC/&dlR/&dlDR external atoms,
-// &dl{C,R} and &dlCQ external atoms are handled here as well.
+// rewriters. We rewrite dl-atoms to &dlC/&dlR/&dlDR/&dlCQ/&dlUCQ
+// external atoms, &dl{C,R}, &dlCQ and &dlUCQ external atoms are
+// handled here as well.
 dlatom: DLATOM '[' dlquery ']' output
         {
 	  //
@@ -137,12 +140,53 @@ dlatom: DLATOM '[' dlquery ']' output
 	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, *$3, $5, $7);
 	  delete $3;
 	}
+      | DLATOM '[' cq ']' output
+        {
+	  //
+	  // create a rewriter with cq-atom ops
+	  //
+
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, AtomSet(), $3, $5);
+	}
+      | DLATOM '[' ops ';' cq ']' output
+        {
+	  //
+	  // create a rewriter with cq-atom ops
+	  //
+
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, *$3, $5, $7);
+	  delete $3;
+	}
+      | DLATOM '[' ucq ']' output
+        {
+	  //
+	  // create a rewriter with ucq-atom ops
+	  //
+
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, AtomSet(), $3, $5);
+	}
+      | DLATOM '[' ops ';' ucq ']' output
+        {
+	  //
+	  // create a rewriter with ucq-atom ops
+	  //
+
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, *$3, $5, $7);
+	  delete $3;
+	}
       | CQATOM '[' terms ']' output
         { 
 	  // a cq-atom is the external atom
 	  // &dlCQ[uri,a,b,c,d,q](X_1,...X_n), we rewrite it to
 	  // &dlCQn[uri,a,b,c,d,q](X_1,...,X_n)
 	  $$ = new dlvhex::dl::CQAtomRewriter($3, $5);
+	}
+      | UCQATOM '[' terms ']' output
+        { 
+	  // a ucq-atom is the external atom
+	  // &dlUCQ[uri,a,b,c,d,q](X_1,...X_n), we rewrite it to
+	  // &dlUCQn[uri,a,b,c,d,q](X_1,...,X_n)
+	  $$ = new dlvhex::dl::UCQAtomRewriter($3, $5);
 	}
       | DLEXTATOM '[' terms ']' output
         {
@@ -163,6 +207,62 @@ dlquery: STRING
 	   $$->insert(0, 1, '-');
 	 }
        ;
+
+
+// a query atom
+atom: dlquery '(' term ')'
+      {
+	Tuple t;
+	t.push_back(*$3);
+
+	bool neg = (*$1)[0] == '-';
+	$$ = new AtomPtr(new Atom(neg ? $1->substr(1) : *$1, t, neg));
+
+	delete $1;
+	delete $3;
+      }
+    | dlquery '(' term ',' term ')'
+      {
+	Tuple t;
+	t.push_back(*$3);
+	t.push_back(*$5);
+
+	bool neg = (*$1)[0] == '-';
+	$$ = new AtomPtr(new Atom(neg ? $1->substr(1) : *$1, t, neg));
+
+	delete $1;
+	delete $3;
+	delete $5;
+      }
+
+
+// a conjunctive query
+cq: atom
+    {
+      $$ = new AtomSet;
+      $$->insert(*$1);
+      delete $1;
+    }
+  | cq ',' atom
+    {
+      $$ = $1;
+      $$->insert(*$3);
+      delete $3;
+    }
+
+
+// a union conjunctive query
+ucq: cq 'v' cq
+     {
+       $$ = new boost::ptr_vector<AtomSet>;
+       $$->push_back($1);
+       $$->push_back($3);
+     }
+   | ucq 'v' cq
+     {
+       $$ = $1;
+       $$->push_back($3);
+     }
 
 
 // the output list
@@ -234,13 +334,13 @@ ops: op
 // resp. lhs-=rhs we create a pc(lhs,rhs) or pr(lhs,rhs)
 // resp. mc(lhs,rhs) or mr(lhs,rhs) atom. Then, the DLAtomRewriter
 // takes care of adding rules and input terms to the ext-atoms.
-op: STRING PLUSOP STRING
+op: STRING PMOP STRING
     {
       dlvhex::dl::Ontology::shared_pointer ontology = driver.getOntology();
 
       if (!ontology)
 	{
-	  throw PluginError("Couldn't rewrite dl-atom, ontology is empty.");
+	  throw PluginError("Cannot rewrite dl-atoms, option --ontology is empty.");
 	}
 
       std::string tmp;
@@ -272,73 +372,43 @@ op: STRING PLUSOP STRING
       dlvhex::dl::TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
       dlvhex::dl::TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
 
-      if (concepts->find(q) != concepts->end())
+      if ($2 == '+') // PMOP is +=
 	{
-	  $$ = new AtomPtr(new Atom("pc", t));
+	  if (concepts->find(q) != concepts->end())
+	    {
+	      $$ = new AtomPtr(new Atom("pc", t));
+	    }
+	  else if (roles->find(q) != roles->end() ||
+		   datatypeRoles->find(q) != datatypeRoles->end()
+		   )
+	    {
+	      $$ = new AtomPtr(new Atom("pr", t));
+	    }
+	  else
+	    {
+	      throw PluginError("Incompatible dl-atom-op " + *$1 + "+=" + *$3 + " supplied.");
+	    }
 	}
-      else if (roles->find(q) != roles->end() ||
-	       datatypeRoles->find(q) != datatypeRoles->end())
+      else if ($2 == '-') // PMOP is -=
 	{
-	  $$ = new AtomPtr(new Atom("pr", t));
+	  if (concepts->find(q) != concepts->end())
+	    {
+	      $$ = new AtomPtr(new Atom("mc", t));
+	    }
+	  else if (roles->find(q) != roles->end() ||
+		   datatypeRoles->find(q) != datatypeRoles->end()
+		   )
+	    {
+	      $$ = new AtomPtr(new Atom("mr", t));
+	    }
+	  else
+	    {
+	      throw PluginError("Incompatible dl-atom-op " + *$1 + "-=" + *$3 + " supplied.");
+	    }
 	}
-      else
+      else // hm, PMOP is neither '+' nor '-', this is a programming error
 	{
-	  throw PluginError("Incompatible dl-atom-op " + *$1 + "+=" + *$3 + " supplied.");
-	}
-
-      delete $1;
-      delete $3;
-    }
-  | STRING MINUSOP STRING
-    {
-      dlvhex::dl::Ontology::shared_pointer ontology = driver.getOntology();
-
-      if (!ontology)
-	{
-	  throw PluginError("Couldn't rewrite dl-atom, ontology is empty.");
-	}
-
-      std::string tmp;
-
-      if ($1->find("\"-") == 0)
-	{
-	  tmp = ontology->getNamespace() + $1->substr(2, $1->length() - 3);
-	}
-      else if ($1->find("\"") == 0)
-	{
-	  tmp = ontology->getNamespace() + $1->substr(1, $1->length() - 2);
-	}
-      else if ($1->find("-") == 0)
-	{
-	  tmp = ontology->getNamespace() + $1->substr(1, $1->length() - 1);
-	}
-      else
-	{
-	  tmp = ontology->getNamespace() + *$1;
-	}
-
-      Tuple t;
-      t.push_back(Term(tmp, true));
-      t.push_back(Term(*$3));
-
-      Term q(tmp);
-
-      dlvhex::dl::TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
-      dlvhex::dl::TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
-      dlvhex::dl::TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
-
-      if (concepts->find(q) != concepts->end())
-	{
-	  $$ = new AtomPtr(new Atom("mc", t));
-	}
-      else if (roles->find(q) != roles->end() ||
-	       datatypeRoles->find(q) != datatypeRoles->end())
-	{
-	  $$ = new AtomPtr(new Atom("mr", t));
-	}
-      else
-	{
-	  throw PluginError("Incompatible dl-atom-op " + *$1 + "-=" + *$3 + " supplied.");
+	  assert(false);
 	}
 
       delete $1;

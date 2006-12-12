@@ -54,6 +54,7 @@ BodyRewriter::add(DLAtomRewriterBase* atom)
 RuleBody_t*
 BodyRewriter::getBody() const
 {
+#if 0
   //
   // dl-body pushing
   //
@@ -106,6 +107,7 @@ BodyRewriter::getBody() const
     }
 
   return b;
+#endif // 0
 }
 
 
@@ -150,6 +152,7 @@ DLAtomRewriterBase::getOutputTuple() const
 }
 
 
+#if 0
 void
 DLAtomRewriterBase::getCQ(const std::string& query, const Tuple& output, AtomSet& cq) const
 {
@@ -427,6 +430,7 @@ DLAtomRewriterBase::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
   // b is incompatible to this cq-atom
   return std::auto_ptr<DLAtomRewriterBase>();
 }
+#endif // 0
 
 
 CQAtomRewriter&
@@ -454,6 +458,35 @@ CQAtomRewriter::getName() const
 {
   std::ostringstream oss;
   oss << "dlCQ" << getOutputTuple()->size();
+  return oss.str();
+}
+
+
+UCQAtomRewriter&
+UCQAtomRewriter::operator= (const UCQAtomRewriter&)
+{
+  return *this; // ignore
+}
+
+
+UCQAtomRewriter::UCQAtomRewriter(const Tuple* i, const Tuple* o)
+  : DLAtomRewriterBase(i, o)
+{
+  assert(i != 0);
+  assert(o != 0);
+}
+
+
+UCQAtomRewriter::UCQAtomRewriter(const UCQAtomRewriter& c)
+  : DLAtomRewriterBase(c)
+{ }
+
+
+std::string
+UCQAtomRewriter::getName() const
+{
+  std::ostringstream oss;
+  oss << "dlUCQ" << getOutputTuple()->size();
   return oss.str();
 }
 
@@ -489,9 +522,9 @@ DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
 			       const AtomSet& ops,
 			       const std::string* q,
 			       const Tuple* o)
-  : DLAtomRewriterBase(0, o), ontology(onto), query(q), dlinput(d)
+  : DLAtomRewriterBase(0, o), ontology(onto), query(q), cq(0), ucq(0), dlinput(d)
 {
-  assert(query != 0);
+  assert(q != 0);
   assert(o != 0);
 
   if (!ontology)
@@ -511,10 +544,56 @@ DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
 }
 
 
+DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
+			       DLAtomInput& d,
+			       const AtomSet& ops,
+			       const AtomSet* c,
+			       const Tuple* o)
+  : DLAtomRewriterBase(0, o), ontology(onto), query(0), cq(c), ucq(0), dlinput(d)
+{
+  assert(c != 0);
+  assert(o != 0);
+
+  if (!ontology)
+    {
+      throw PluginError("Couldn't rewrite dl-atom, ontology is empty.");
+    }
+
+  ops.matchPredicate("pc", pc);
+  ops.matchPredicate("pr", pr);
+  ops.matchPredicate("mc", mc);
+  ops.matchPredicate("mr", mr);
+}
+
+
+DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
+			       DLAtomInput& d,
+			       const AtomSet& ops,
+			       const boost::ptr_vector<AtomSet>* u,
+			       const Tuple* o)
+  : DLAtomRewriterBase(0, o), ontology(onto), query(0), cq(0), ucq(u), dlinput(d)
+{
+  assert(u != 0);
+  assert(o != 0);
+
+  if (!ontology)
+    {
+      throw PluginError("Couldn't rewrite dl-atom, ontology is empty.");
+    }
+
+  ops.matchPredicate("pc", pc);
+  ops.matchPredicate("pr", pr);
+  ops.matchPredicate("mc", mc);
+  ops.matchPredicate("mr", mr);
+}
+
+
 DLAtomRewriter::DLAtomRewriter(const DLAtomRewriter& d)
   : DLAtomRewriterBase(d),
     ontology(d.ontology),
     query(d.query),
+    cq(d.cq),
+    ucq(d.ucq),
     dlinput(d.dlinput)
 { }
 
@@ -529,6 +608,8 @@ DLAtomRewriter::operator= (const DLAtomRewriter&)
 DLAtomRewriter::~DLAtomRewriter()
 {
   delete query;
+  delete cq;
+  delete ucq;
 }
 
 
@@ -559,15 +640,61 @@ DLAtomRewriter::getInputTuple() const
       t->push_back(Term(oss.str()));
       oss.str("");
 
-      std::string tmpquery = addNamespace(*query);
-
-      // check if query is strongly negated
-      if (query->find("\"-") == 0 || query->find("-") == 0)
+      if (query != 0 && cq == 0 && ucq == 0) // dl-atom
 	{
-	  tmpquery = "-" + tmpquery;
-	}
+	  std::string tmpquery = addNamespace(*query);
 
-      t->push_back(Term(tmpquery, true));
+	  // check if query is strongly negated
+	  if (query->find("\"-") == 0 || query->find("-") == 0)
+	    {
+	      tmpquery = "-" + tmpquery;
+	    }
+
+	  t->push_back(Term(tmpquery, true));
+	}
+      else if (query == 0 && cq != 0 && ucq == 0) // cq-atom
+	{
+	  std::ostringstream oss;
+
+	  if (cq->size() > 1)
+	    {
+	      std::copy(cq->begin(), --cq->end(), std::ostream_iterator<Atom>(oss, ","));
+	    }
+
+	  oss << *(--cq->end());
+
+	  t->push_back(Term(oss.str(), true));
+	}
+      else if (query == 0 && cq == 0 && ucq != 0) // ucq-atom
+	{
+	  std::ostringstream oss;
+
+	  for (boost::ptr_vector<AtomSet>::const_iterator it = ucq->begin();
+	       it != --ucq->end(); ++it)
+	    {
+	      if (it->size() > 1)
+		{
+		  std::copy(it->begin(), --it->end(), std::ostream_iterator<Atom>(oss, ","));
+		}
+
+	      oss << *(--it->end()) << " v ";
+	    }
+
+	  const AtomSet& last = *(--ucq->end());
+
+	  if (last.size() > 1)
+	    {
+	      std::copy(last.begin(), --last.end(), std::ostream_iterator<Atom>(oss, ","));
+	    }
+	  
+	  oss << *(--last.end());
+
+	  t->push_back(Term(oss.str(), true));
+	}
+      else // programming error
+	{
+	  assert(false);
+	}
 
       const_cast<DLAtomRewriter*>(this)->setInputTuple(t);
     }
@@ -605,33 +732,48 @@ DLAtomRewriter::addNamespace(const std::string& s) const
 std::string
 DLAtomRewriter::getName() const
 {
-  TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
-  TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
-  TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
+  if (query != 0) // dl-atom
+    {
+      TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
+      TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
+      TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
 
-  std::string tmpquery = addNamespace(*query);
-  Term q(tmpquery);
+      std::string tmpquery = addNamespace(*query);
+      Term q(tmpquery);
 
-  if (concepts->find(q) != concepts->end())
-    {
-      return "dlC";
+      if (concepts->find(q) != concepts->end())
+	{
+	  return "dlC";
+	}
+      else if (getOutputTuple()->size() == 2 && roles->find(q) != roles->end())
+	{
+	  return "dlR";
+	}
+      else if (getOutputTuple()->size() == 2 && datatypeRoles->find(q) != datatypeRoles->end())
+	{
+	  return "dlDR";
+	}
+      else
+	{
+	  std::ostringstream oss;
+	  oss << "Incompatible dl-atom query supplied: " << *query;
+	  throw PluginError(oss.str());
+	}
     }
-  else if (getOutputTuple()->size() == 2 && roles->find(q) != roles->end())
-    {
-      return "dlR";
-    }
-  else if (getOutputTuple()->size() == 2 && datatypeRoles->find(q) != datatypeRoles->end())
-    {
-      return "dlDR";
-    }
-  else
+  else if (cq != 0) // cq-atom
     {
       std::ostringstream oss;
-      oss << "Incompatible dl-atom query supplied: " << *query;
-      std::cerr << q << std::endl;
-      throw PluginError(oss.str());
+      oss << "dlCQ" << getOutputTuple()->size();
+      return oss.str();
+    }
+  else if (ucq != 0) // ucq-atom
+    {
+      std::ostringstream oss;
+      oss << "dlUCQ" << getOutputTuple()->size();
+      return oss.str();
     }
 
+  assert(false);
 }
 
 

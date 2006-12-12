@@ -80,20 +80,12 @@ namespace dl {
 
     DLAtomRewriterBase(const DLAtomRewriterBase& b);
 
-    void
-    getCQ(const std::string& query,
-	  const Tuple& output,
-	  AtomSet& cq) const;
-
   public:
     virtual
     ~DLAtomRewriterBase();
 
     virtual Literal*
     getLiteral() const;
-
-    std::auto_ptr<DLAtomRewriterBase>
-    push(const std::auto_ptr<DLAtomRewriterBase>& b) const;
 
     virtual std::string
     getName() const = 0;
@@ -160,6 +152,27 @@ namespace dl {
   };
 
 
+  /**
+   * Rewrites &dlUCQ ext-atoms to &dlUCQn ext-atoms.
+   */
+  class UCQAtomRewriter : public DLAtomRewriterBase
+  {
+  private:
+    /// private assignment op
+    UCQAtomRewriter&
+    operator= (const UCQAtomRewriter&);
+
+  public:
+    /// ctor
+    UCQAtomRewriter(const Tuple* i, const Tuple* o);
+
+    /// copy ctor
+    UCQAtomRewriter(const UCQAtomRewriter& c);
+
+    std::string
+    getName() const;
+  };
+
 
   /**
    * Keeps track of dl-input operations.
@@ -192,6 +205,8 @@ namespace dl {
     const Ontology::shared_pointer ontology;
     
     const std::string* const query;
+    const AtomSet* const cq;
+    const boost::ptr_vector<AtomSet>* const ucq;
 
     DLAtomInput& dlinput;
 
@@ -211,11 +226,25 @@ namespace dl {
     addNamespace(const std::string& s) const;
 
   public:
-    /// ctor
+    /// dl-atom ctor
     DLAtomRewriter(const Ontology::shared_pointer& onto,
 		   DLAtomInput& dlinput,
 		   const AtomSet& o,
 		   const std::string* q,
+		   const Tuple* out);
+
+    /// cq-atom ctor
+    DLAtomRewriter(const Ontology::shared_pointer& onto,
+		   DLAtomInput& dlinput,
+		   const AtomSet& o,
+		   const AtomSet* cq,
+		   const Tuple* out);
+
+    /// ucq-atom ctor
+    DLAtomRewriter(const Ontology::shared_pointer& onto,
+		   DLAtomInput& dlinput,
+		   const AtomSet& o,
+		   const boost::ptr_vector<AtomSet>* ucq,
 		   const Tuple* out);
 
     ~DLAtomRewriter();
