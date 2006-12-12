@@ -1,4 +1,101 @@
+2006-12-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/bigwinery-fast.dlp: Remove Hex programs and add cq programs.
+	* examples/bigwinery-fast.sh: Likewise.
+	* examples/bigwinery-fast00.dlp: Likewise.
+	* examples/bigwinery-fast01.dlp: Likewise.
+	* examples/bigwinery-fast02.dlp: Likewise.
+	* examples/bigwinery-fast03.dlp: Likewise.
+	* examples/bigwinery-fast04.dlp: Likewise.
+	* examples/bigwinery-fast05.dlp: Likewise.
+	* examples/bigwinery-fast06.dlp: Likewise.
+	* examples/bigwinery-fast07.dlp: Likewise.
+	* examples/bigwinery-fast08.dlp: Likewise.
+	* examples/bigwinery-fast09.dlp: Likewise.
+	* examples/bigwinery-fast10.dlp: Likewise.
+	* examples/bigwinery-faster.dlp: Likewise.
+	* examples/bigwinery-faster.sh: Likewise.
+	* examples/bigwinery-faster00.dlp: Likewise.
+	* examples/bigwinery-faster01.dlp: Likewise.
+	* examples/bigwinery-faster02.dlp: Likewise.
+	* examples/bigwinery-faster03.dlp: Likewise.
+	* examples/bigwinery-faster04.dlp: Likewise.
+	* examples/bigwinery-faster05.dlp: Likewise.
+	* examples/bigwinery-faster06.dlp: Likewise.
+	* examples/bigwinery-faster07.dlp: Likewise.
+	* examples/bigwinery-faster08.dlp: Likewise.
+	* examples/bigwinery-faster09.dlp: Likewise.
+	* examples/bigwinery-faster10.dlp: Likewise.
+	* examples/bigwinery-nocache.sh: Likewise.
+	* examples/corm-fast.dlp: Likewise.
+	* examples/corm-fast.sh: Likewise.
+	* examples/corm-fast00.dlp: Likewise.
+	* examples/corm-fast01.dlp: Likewise.
+	* examples/corm-fast02.dlp: Likewise.
+	* examples/corm-fast03.dlp: Likewise.
+	* examples/corm-fast04.dlp: Likewise.
+	* examples/corm-fast05.dlp: Likewise.
+	* examples/corm-fast06.dlp: Likewise.
+	* examples/corm-fast07.dlp: Likewise.
+	* examples/corm-fast08.dlp: Likewise.
+	* examples/corm-fast09.dlp: Likewise.
+	* examples/corm-fast10.dlp: Likewise.
+	* examples/lubm-fast.dlp: Likewise.
+	* examples/lubm-fast.sh: Likewise.
+	* examples/lubm-fast1.dlp: Likewise.
+	* examples/lubm-fast2.dlp: Likewise.
+	* examples/lubm-fast3.dlp: Likewise.
+	* examples/lubm-fast4.dlp: Likewise.
+	* examples/region-fast.dlp: Likewise.
+	* examples/region-fast.sh: Likewise.
+	* examples/region-fast00.dlp: Likewise.
+	* examples/region-fast01.dlp: Likewise.
+	* examples/region-fast02.dlp: Likewise.
+	* examples/region-fast03.dlp: Likewise.
+	* examples/region-fast04.dlp: Likewise.
+	* examples/region-fast05.dlp: Likewise.
+	* examples/region-fast06.dlp: Likewise.
+	* examples/region-fast07.dlp: Likewise.
+	* examples/region-fast08.dlp: Likewise.
+	* examples/region-fast09.dlp: Likewise.
+	* examples/region-fast10.dlp: Likewise.
+	* examples/region.dlp: Likewise.
+	* examples/semintec-fast.dlp: Likewise.
+	* examples/semintec-fast.sh: Likewise.
+	* examples/semintec-fast0.dlp: Likewise.
+	* examples/semintec-fast1.dlp: Likewise.
+	* examples/semintec-fast2.dlp: Likewise.
+	* examples/semintec-fast3.dlp: Likewise.
+	* examples/semintec-fast4.dlp: Likewise.
+	* examples/vicodi-fast.dlp: Likewise.
+	* examples/vicodi-fast.sh: Likewise.
+	* examples/vicodi-fast00.dlp: Likewise.
+	* examples/vicodi-fast01.dlp: Likewise.
+	* examples/vicodi-fast02.dlp: Likewise.
+	* examples/vicodi-fast03.dlp: Likewise.
+	* examples/vicodi-fast04.dlp: Likewise.
+
+	* include/HexDLRewriter.h: Convert DL[cq](...) and DL[ucq](...) to
+	dlCQ and dlUCQ extatoms.
+	* src/HexDLParser.ypp: Likewise.
+	* src/HexDLRewriter.cpp: Likewise.
+	* src/HexDLScanner.lpp: Likewise.
+
 2006-12-11  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/vicodi-fast.sh: Add vicodi fact pushing example.
+	* examples/vicodi-fast00.dlp: Likewise.
+	* examples/vicodi-fast01.dlp: Likewise.
+	* examples/vicodi-fast02.dlp: Likewise.
+	* examples/vicodi-fast03.dlp: Likewise.
+	* examples/vicodi-fast04.dlp: Likewise.
+	* examples/vicodi.dlp: Likewise.
+	* examples/vicodi.sh: Likewise.
+	* examples/vicodi_0_nonum.owl: Likewise.
+	* examples/vicodi_1_nonum.owl: Likewise.
+	* examples/vicodi_2_nonum.owl: Likewise.
+	* examples/vicodi_3_nonum.owl: Likewise.
+	* examples/vicodi_4_nonum.owl: Likewise.
 
 	* examples/bigwinery-fast.sh: Update tests.
 	* examples/bigwinery-fast00.dlp: Likewise.
