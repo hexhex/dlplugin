@@ -1,3 +1,10 @@
+2007-01-05  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* configure.ac: Bump version to 0.5.0beta2.
+
+	* src/QueryCtx.cpp (QueryCtx::QueryCtx): Always create a
+	string-term to cover uppercase dl-queries w/o known namespace.
+
 2006-12-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* examples/bigwinery-fast.dlp: Remove Hex programs and add cq programs.
