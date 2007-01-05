@@ -108,7 +108,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
 		}
 	    }
 
-	  Term qu(querystr);
+	  Term qu(querystr, true);
 
 	  dlq = DLQuery::shared_pointer(new DLQuery(onto, qu, query.getPatternTuple()));
 	}
