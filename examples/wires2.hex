@@ -1,18 +1,47 @@
 % -*- prolog -*-
 
-#namespace(w, "http://wires#")
+#namespace(w, "http://wires.com/wire#")
 
-over(X) :- &dlC["wires.owl",a,b,c,d,"w:HighTrafficNode"](X).
 
-known(X) :- &dlC["wires.owl",a,b,c,d,"w:Node"](X).
+over(X) :- &dlC["file://wires.owl",a,b,c,d,"HighTrafficNode"](X).
 
-tr("w:wired",X,Y) :- &dlCQ["wires.owl",a,b,c,d, "w:wired(X,Z),w:wired(Z,Y)"](X,Y).
-tr("w:wired",X,Y) :- &dlCQ["wires.owl",a,b,tr,d,"w:wired(X,Z),w:wired(Z,Y)"](X,Y), known(X), known(Y).
+known(X) :- DL["Node"](X).
+known(X) :- &dlC["wires.owl",a,b,c,d,"Node"](X).
+
+node1 :- &dlC["wires.owl",a,b,c,d,"w:Node"]("w:n1").
+node11 :- &dlC["wires.owl",a,b,c,d,"w:Node"]("w:n1").
+node2 :- DL["Node"]("w:n1").
+node3 :- &dlCQ["wires.owl",a,b,c,d,"Node(X)"](X).
+node4 :- &dlCQ["wires.owl",a,b,c,d,"w:Node(X)"]("w:n1").
+
+tr("w:wired",X,Y) :- &dlCQ["wires.owl",a,b,c,d, "wired(X,Z),wired(Z,Y)"](X,Y).
+tr("w:wired",X,Y) :- &dlCQ["wires.owl",a,b,tr,d,"wired(X,Z),wired(Z,Y)"](X,Y), % transitive closure
+                     known(X),
+		     known(Y).
 tran(X,Y) :- tr(_,X,Y).
 
-foo(Y) :- &dlCQ["wires.owl",a,b,tr,d,"  w:wired(X,Z), w:wired(Z,Y), w:HighTrafficNode(Z)   "](_,Y).
-foo2(Y) :- &dlCQ["wires.owl",a,b,tr,d,"w:wired(X,Z),w:wired(Z,Y)"](_,Y).
-foo3(X,Y) :- &dlCQ["wires.owl",a,b,c,d,"w:wired(X,Z1),w:wired(Z1,Z2),w:wired(Z2,Z3),w:wired(Z3,Y)"](X,Y).
+tr2("w:wired",X,Y) :- &dlR["wires.owl",a,b,c,d,wired](X,Y).
+tr2("w:wired",X,Y) :- &dlR["wires.owl",a,b,tr2,d,wired](X,Z),
+                      &dlR["wires.owl",a,b,tr2,d,wired](Z,Y),
+                      known(X),
+		      known(Y),
+		      known(Z).
 
-moo :- &dlCQ["wires.owl",a,b,tr,d,"w:wired(X,Y),w:HighTrafficNode(X),w:HighTrafficNode(Y)"].
 
+foo(Y) :- &dlCQ["wires.owl",a,b,tr,d,"  wired(X,Z), wired(Z,Y), HighTrafficNode(Z)   "](_,Y).
+foo2(Y) :- &dlCQ["wires.owl",a,b,tr,d,"wired(X,Z),wired(Z,Y)"](_,Y).
+foo3(X,Y) :- &dlCQ["wires.owl",a,b,c,d,"wired(X,Z1),wired(Z1,Z2),wired(Z2,Z3),wired(Z3,Y),HighTrafficNode(n3)"](X,Y).
+
+moo :- &dlCQ["wires.owl",a,b,tr,d,"  wired( X , Y  )  , HighTrafficNode(X),  HighTrafficNode(Y) "].
+moo2(X,Y) :- &dlCQ["wires.owl",a,n,w,d,"w:wired(X,Y), -HighTrafficNode(X), -w:HighTrafficNode(Y)"](X,Y).
+moo3(X,Y) :- &dlCQ["wires.owl",a,n,w,d,"w:wired(X,Y)"](X),
+             &dlCQ["wires.owl",a,n,w,d,"-HighTrafficNode(X)"](X),
+	     &dlCQ["wires.owl",a,n,w,d,"-w:HighTrafficNode(Y)"](Y).
+moo4(X,Y) :- &dlCQ["wires.owl",a,n,w,d,"w:wired(X,Y)"](X),
+             &dlCQ["wires.owl",a,n,w,d,"w:wired(Z,X)"](Z),
+	     &dlCQ["wires.owl",a,n,w,d,"-w:HighTrafficNode(Y),w:wired(Z,Y),w:HighTrafficNode(Z)"](Y).
+
+
+
+w("w:wired","w:n5","w:n5").
+n("w:HighTrafficNode","w:n5").
