@@ -24,7 +24,7 @@
 #include <dlvhex/Term.h>
 #include <dlvhex/Atom.h>
 
-#include <iosfwd>
+#include <sstream>
 #include <string>
 #include <iterator>
 
@@ -65,7 +65,7 @@
   AtomPtr* atomval;
   AtomSet* atomsetval;
   boost::ptr_vector<AtomSet>* atomsetsval;
-  dlvhex::dl::DLAtomRewriterBase* dlrewriterval;
+  dlvhex::dl::HexDLRewriterBase* dlrewriterval;
 }
 
 %token <cval> SENTINEL PMOP
@@ -179,19 +179,40 @@ dlatom: DLATOM '[' dlquery ']' output
 	  // a cq-atom is the external atom
 	  // &dlCQ[uri,a,b,c,d,q](X_1,...X_n), we rewrite it to
 	  // &dlCQn[uri,a,b,c,d,q](X_1,...,X_n)
-	  $$ = new dlvhex::dl::CQAtomRewriter($3, $5);
+
+	  std::ostringstream oss;
+	  oss << "dlCQ" << $5->size();
+
+	  AtomPtr eap(new ExternalAtom(oss.str(), *$5, *$3, 0));
+	  $$ = new dlvhex::dl::DLAtomRewriterBase(eap);
+
+	  delete $3;
+	  delete $5;
 	}
       | UCQATOM '[' terms ']' output
         { 
 	  // a ucq-atom is the external atom
 	  // &dlUCQ[uri,a,b,c,d,q](X_1,...X_n), we rewrite it to
 	  // &dlUCQn[uri,a,b,c,d,q](X_1,...,X_n)
-	  $$ = new dlvhex::dl::UCQAtomRewriter($3, $5);
+
+	  std::ostringstream oss;
+	  oss << "dlCQ" << $5->size();
+
+	  AtomPtr eap(new ExternalAtom(oss.str(), *$5, *$3, 0));
+	  $$ = new dlvhex::dl::DLAtomRewriterBase(eap);
+
+	  delete $3;
+	  delete $5;
 	}
       | DLEXTATOM '[' terms ']' output
         {
 	  // create simple dlatom rewriter
-	  $$ = new dlvhex::dl::SimpleDLAtomRewriter($1, $3, $5);
+	  AtomPtr eap(new ExternalAtom(*$1, *$5, *$3, 0));
+	  $$ = new dlvhex::dl::DLAtomRewriterBase(eap);
+
+	  delete $1;
+	  delete $3;
+	  delete $5;
 	}
       ;
 

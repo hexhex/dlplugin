@@ -61,116 +61,65 @@ namespace dl {
     
     virtual Literal*
     getLiteral() const
-    { return 0; }
+    {
+      return 0;
+    }
   };
 
 
   /**
    * Base class for dl- and cq-atom rewriters.
+   *
+   * Rewriter for &dlC, &dlR, &dlDR, &dlCQ, and &dlUCQ ext-atoms.
    */
   class DLAtomRewriterBase : public HexDLRewriterBase
   {
-  private:
-    const Tuple* input;
-    const Tuple* output;
-
   protected:
-    explicit
-    DLAtomRewriterBase(const Tuple* input = 0, const Tuple* output = 0);
+    AtomPtr extAtom;
 
     DLAtomRewriterBase(const DLAtomRewriterBase& b);
 
+    ExternalAtom*
+    getExtAtom() const;
+
   public:
+    explicit
+    DLAtomRewriterBase(const AtomPtr& ea);
+
     virtual
     ~DLAtomRewriterBase();
 
     virtual Literal*
     getLiteral() const;
 
-    virtual std::string
-    getName() const = 0;
+    std::auto_ptr<DLAtomRewriterBase>
+    push(const std::auto_ptr<DLAtomRewriterBase>& b) const;
 
-    virtual const Tuple*
+    void
+    getCQ(const std::string& query, const Tuple& output, AtomSet& cq) const;
+
+    virtual const Tuple&
     getInputTuple() const;
 
-    virtual const Tuple*
-    getOutputTuple() const;
-
-    inline void
-    setInputTuple(const Tuple* in)
+    virtual inline Tuple
+    getOutputTuple() const
     {
-      delete input;
-      input = in;
+      return extAtom->getArguments();
     }
 
-    inline void
-    setOutputTuple(const Tuple* out)
-    {
-      delete output;
-      output = out;
-    }
-  };
+//     inline void
+//     setInputTuple(const Tuple* in)
+//     {
+//       delete input;
+//       input = in;
+//     }
 
-
-  /**
-   * Rewriter for &dlC and &dlR ext-atoms.
-   */
-  class SimpleDLAtomRewriter : public DLAtomRewriterBase
-  {
-  private:
-    const std::string* name;
-
-  public:
-    SimpleDLAtomRewriter(const std::string* n, const Tuple* i, const Tuple* o);
-
-    ~SimpleDLAtomRewriter();
-
-    std::string
-    getName() const;
-  };
-
-
-  /**
-   * Rewrites &dlCQ ext-atoms to &dlCQn ext-atoms.
-   */
-  class CQAtomRewriter : public DLAtomRewriterBase
-  {
-  private:
-    /// private assignment op
-    CQAtomRewriter&
-    operator= (const CQAtomRewriter&);
-
-  public:
-    /// ctor
-    CQAtomRewriter(const Tuple* i, const Tuple* o);
-
-    /// copy ctor
-    CQAtomRewriter(const CQAtomRewriter& c);
-
-    std::string
-    getName() const;
-  };
-
-
-  /**
-   * Rewrites &dlUCQ ext-atoms to &dlUCQn ext-atoms.
-   */
-  class UCQAtomRewriter : public DLAtomRewriterBase
-  {
-  private:
-    /// private assignment op
-    UCQAtomRewriter&
-    operator= (const UCQAtomRewriter&);
-
-  public:
-    /// ctor
-    UCQAtomRewriter(const Tuple* i, const Tuple* o);
-
-    /// copy ctor
-    UCQAtomRewriter(const UCQAtomRewriter& c);
-
-    std::string
-    getName() const;
+//     inline void
+//     setOutputTuple(const Tuple* out)
+//     {
+//       delete output;
+//       output = out;
+//     }
   };
 
 
@@ -199,7 +148,7 @@ namespace dl {
   /**
    * Rewrites dl-atoms to &dlC/&dlR/&dlDR external atoms.
    */
-  class DLAtomRewriter : public DLAtomRewriterBase
+  class DLAtomRewriter : public HexDLRewriterBase
   {
   private:
     const Ontology::shared_pointer ontology;
@@ -209,6 +158,8 @@ namespace dl {
     const boost::ptr_vector<AtomSet>* const ucq;
 
     DLAtomInput& dlinput;
+    const Tuple* output;
+    mutable Tuple* input;
 
     AtomSet pc;
     AtomSet mc;
@@ -249,7 +200,10 @@ namespace dl {
 
     ~DLAtomRewriter();
 
-    const Tuple*
+    virtual Literal*
+    getLiteral() const;
+
+    const Tuple&
     getInputTuple() const;
 
     std::string

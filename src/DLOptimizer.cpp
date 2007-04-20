@@ -88,21 +88,10 @@ private:
 	    ExternalAtom* ea = dynamic_cast<ExternalAtom*>(l->getAtom().get());
 	    
 	    const std::string& fn = ea->getFunctionName();
-	    
-	    if (fn == "dlC" || fn == "dlR" || fn == "dlDR")
+
+	    if (fn == "dlC" || fn == "dlR" || fn == "dlDR" || fn.find("dlCQ") == 0)
 	      {
-		const std::string* n = new std::string(fn);
-		const Tuple* in = new Tuple(ea->getInputTerms());
-		const Tuple* out = new Tuple(ea->getArguments());
-		
-		br.add(new SimpleDLAtomRewriter(n, in, out));
-	      }
-	    else if (fn.find("dlCQ") == 0)
-	      {
-		const Tuple* in = new Tuple(ea->getInputTerms());
-		const Tuple* out = new Tuple(ea->getArguments());
-		
-		br.add(new CQAtomRewriter(in, out));
+		br.add(new DLAtomRewriterBase(l->getAtom()));
 	      }
 	    else
 	      {
@@ -193,11 +182,11 @@ public:
 void
 DLOptimizer::optimize(NodeGraph& dg, AtomSet& edb)
 {
+  return; ///@todo we have to update the dependencies in NodeGraph by ourselves!
+
   //
   // and now optimize it
   //
-
-  return; ///@todo DLOptimizer::optimize is turned off
 
   RewritingVisitor rv;
   
