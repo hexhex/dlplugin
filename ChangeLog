@@ -1,3 +1,17 @@
+2007-04-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/HexDLParser.ypp: Use ExtAtomRewriter.
+
+	* testsuite/TestDLOptimizer.cpp: Reenable test.
+
+	* src/HexDLRewriter.cpp: Rename DLAtomRewriterBase to ExtAtomRewriter.
+	(ExtAtomRewriter::getLiteral): Set function name to &dlCQn/&dlUCQn
+	of extatom when pushing ext atoms.
+	* include/HexDLRewriter.h: Likewise.
+ 
+	* src/DLOptimizer.cpp (DLOptimizer::optimize): Rebuild NodeGraph
+	after optimization process.
+
 2007-04-20  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* examples/bigwinery-faster.dlp: Update examples.
