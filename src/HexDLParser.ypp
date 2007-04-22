@@ -184,7 +184,7 @@ dlatom: DLATOM '[' dlquery ']' output
 	  oss << "dlCQ" << $5->size();
 
 	  AtomPtr eap(new ExternalAtom(oss.str(), *$5, *$3, 0));
-	  $$ = new dlvhex::dl::DLAtomRewriterBase(eap);
+	  $$ = new dlvhex::dl::ExtAtomRewriter(eap);
 
 	  delete $3;
 	  delete $5;
@@ -199,7 +199,7 @@ dlatom: DLATOM '[' dlquery ']' output
 	  oss << "dlCQ" << $5->size();
 
 	  AtomPtr eap(new ExternalAtom(oss.str(), *$5, *$3, 0));
-	  $$ = new dlvhex::dl::DLAtomRewriterBase(eap);
+	  $$ = new dlvhex::dl::ExtAtomRewriter(eap);
 
 	  delete $3;
 	  delete $5;
@@ -208,7 +208,7 @@ dlatom: DLATOM '[' dlquery ']' output
         {
 	  // create simple dlatom rewriter
 	  AtomPtr eap(new ExternalAtom(*$1, *$5, *$3, 0));
-	  $$ = new dlvhex::dl::DLAtomRewriterBase(eap);
+	  $$ = new dlvhex::dl::ExtAtomRewriter(eap);
 
 	  delete $1;
 	  delete $3;
