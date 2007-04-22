@@ -45,32 +45,40 @@ BodyRewriter::~BodyRewriter()
 
 
 void
-BodyRewriter::add(DLAtomRewriterBase* atom)
+BodyRewriter::add(ExtAtomRewriter* atom)
 {
   dlbody.push_front(atom);
 }
 
 
-RuleBody_t*
-BodyRewriter::getBody() const
+void
+BodyRewriter::bodyOptimizer(RuleBody_t& body) const
 {
+  typedef boost::ptr_deque<ExtAtomRewriter> ExtAtomDeque;
+
   //
   // dl-body pushing
   //
 
   if (dlbody.size() > 1)
     {
-      boost::ptr_deque<DLAtomRewriterBase> done; // all pushed atoms end up here
-      boost::ptr_deque<DLAtomRewriterBase> park; // park some dl-/cq-atoms until we can push them
+      ExtAtomDeque done; // all pushed atoms end up here
+      ExtAtomDeque park; // park some dl-/cq-atoms until we can push them
 
       do
 	{
 	  while (dlbody.size() > 1)
 	    {
-	      std::auto_ptr<DLAtomRewriterBase> b1(dlbody.pop_front().release());
-	      std::auto_ptr<DLAtomRewriterBase> b2(dlbody.pop_front().release());
+	      // get 2 atoms from the deque
+
+	      std::auto_ptr<ExtAtomRewriter> b1(dlbody.pop_front().release());
+	      std::auto_ptr<ExtAtomRewriter> b2(dlbody.pop_front().release());
 	      
-	      std::auto_ptr<DLAtomRewriterBase> b3 = b1->push(b2);
+	      //
+	      // and now perform the pushing
+	      //
+
+	      std::auto_ptr<ExtAtomRewriter> b3 = b1->push(b2);
 	      
 	      if (b3.get() == 0)
 		{
@@ -85,7 +93,7 @@ BodyRewriter::getBody() const
 		}
 	    }
 	  
-	  // get the last element of dlbody, i.e. a fully pushed atom
+	  // get the last element of dlbody, i.e., a fully pushed atom
 	  done.push_front(dlbody.pop_front().release());
 	  
 	  dlbody = park.release(); // now restart with the rest
@@ -96,59 +104,72 @@ BodyRewriter::getBody() const
       dlbody = done.release();
     }
       
-  RuleBody_t* b = new RuleBody_t;
-
   // now get the literals of the pushed dl-atoms
-  for (boost::ptr_deque<DLAtomRewriterBase>::const_iterator it = dlbody.begin();
-       it != dlbody.end(); ++it)
+  for (ExtAtomDeque::const_iterator it = dlbody.begin(); it != dlbody.end(); ++it)
     {
-      b->insert(it->getLiteral());
+      body.insert(it->getLiteral());
     }
-
-  return b;
 }
 
 
-DLAtomRewriterBase::DLAtomRewriterBase(const AtomPtr& ea)
+ExtAtomRewriter::ExtAtomRewriter(const AtomPtr& ea)
   : extAtom(ea)
 {
   assert(typeid(ea.get()) != typeid(ExternalAtom));
 }
 
 
-DLAtomRewriterBase::DLAtomRewriterBase(const DLAtomRewriterBase& b)
+ExtAtomRewriter::ExtAtomRewriter(const ExtAtomRewriter& b)
   : HexDLRewriterBase(),
     extAtom(b.extAtom)
 { }
 
 
-DLAtomRewriterBase::~DLAtomRewriterBase()
+ExtAtomRewriter::~ExtAtomRewriter()
 { }
 
 
 ExternalAtom*
-DLAtomRewriterBase::getExtAtom() const
+ExtAtomRewriter::getExtAtom() const
 {
   return dynamic_cast<ExternalAtom*>(extAtom.get());
 }
 
 
 Literal*
-DLAtomRewriterBase::getLiteral() const
+ExtAtomRewriter::getLiteral() const
 {
+  const std::string& query = getInputTuple().back().getUnquotedString();
+
+  if (query.find("(") != std::string::npos) // (u)cq-atom
+    {
+      std::ostringstream oss;
+
+      if (query.find(" v ") != std::string::npos) // ucq-atom
+	{
+	  oss << "dlUCQ" << getOutputTuple().size();
+	}
+      else // cq-atom
+	{
+	  oss << "dlCQ" << getOutputTuple().size();
+	}
+
+      getExtAtom()->setFunctionName(oss.str());
+    }
+
   return new Literal(extAtom, isNAF());
 }
 
 
 const Tuple&
-DLAtomRewriterBase::getInputTuple() const
+ExtAtomRewriter::getInputTuple() const
 {
   return getExtAtom()->getInputTerms();
 }
 
 
 void
-DLAtomRewriterBase::getCQ(const std::string& query, const Tuple& output, AtomSet& cq) const
+ExtAtomRewriter::getCQ(const std::string& query, const Tuple& output, AtomSet& cq) const
 {
   //
   // check if query is a dl-query resp. cq-query and parse it into an
@@ -192,8 +213,8 @@ DLAtomRewriterBase::getCQ(const std::string& query, const Tuple& output, AtomSet
 }
 
 
-std::auto_ptr<DLAtomRewriterBase>
-DLAtomRewriterBase::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
+std::auto_ptr<ExtAtomRewriter>
+ExtAtomRewriter::push(const std::auto_ptr<ExtAtomRewriter>& b) const
 {
   const Tuple& input1 = getInputTuple();
   const Tuple& input2 = b->getInputTuple();
@@ -417,17 +438,19 @@ DLAtomRewriterBase::push(const std::auto_ptr<DLAtomRewriterBase>& b) const
 
       input3.push_back(Term(cq3str.str(), true));
 
+      //
       // setup our external atom for the next push
-      ///@todo set funcName for CQs/UCQs?
+      //
+
       getExtAtom()->setArguments(output3);
       getExtAtom()->setInputTerms(input3);
 
       // and return a new cq-atom rewriter waiting for more to push
-      return std::auto_ptr<DLAtomRewriterBase>(new DLAtomRewriterBase(*this));
+      return std::auto_ptr<ExtAtomRewriter>(new ExtAtomRewriter(*this));
     }
 
   // b is incompatible to this cq-atom
-  return std::auto_ptr<DLAtomRewriterBase>();
+  return std::auto_ptr<ExtAtomRewriter>();
 }
 
 

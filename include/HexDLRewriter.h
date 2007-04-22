@@ -45,7 +45,7 @@ namespace dl {
 
     /// dtor
     virtual
-    ~HexDLRewriterBase();
+    ~HexDLRewriterBase() = 0;
 
     inline void
     setNAF(bool n)
@@ -68,32 +68,17 @@ namespace dl {
 
 
   /**
-   * Base class for dl- and cq-atom rewriters.
-   *
    * Rewriter for &dlC, &dlR, &dlDR, &dlCQ, and &dlUCQ ext-atoms.
    */
-  class DLAtomRewriterBase : public HexDLRewriterBase
+  class ExtAtomRewriter : public HexDLRewriterBase
   {
   protected:
     AtomPtr extAtom;
 
-    DLAtomRewriterBase(const DLAtomRewriterBase& b);
+    ExtAtomRewriter(const ExtAtomRewriter& b);
 
     ExternalAtom*
     getExtAtom() const;
-
-  public:
-    explicit
-    DLAtomRewriterBase(const AtomPtr& ea);
-
-    virtual
-    ~DLAtomRewriterBase();
-
-    virtual Literal*
-    getLiteral() const;
-
-    std::auto_ptr<DLAtomRewriterBase>
-    push(const std::auto_ptr<DLAtomRewriterBase>& b) const;
 
     void
     getCQ(const std::string& query, const Tuple& output, AtomSet& cq) const;
@@ -107,19 +92,43 @@ namespace dl {
       return extAtom->getArguments();
     }
 
-//     inline void
-//     setInputTuple(const Tuple* in)
-//     {
-//       delete input;
-//       input = in;
-//     }
+  public:
+    explicit
+    ExtAtomRewriter(const AtomPtr& ea);
 
-//     inline void
-//     setOutputTuple(const Tuple* out)
-//     {
-//       delete output;
-//       output = out;
-//     }
+    virtual
+    ~ExtAtomRewriter();
+
+    /// perform Query Pushing
+    std::auto_ptr<ExtAtomRewriter>
+    push(const std::auto_ptr<ExtAtomRewriter>& b) const;
+
+    virtual Literal*
+    getLiteral() const;
+  };
+
+
+  /**
+   * Composite for ExtAtomRewriter objects.
+   */
+  class BodyRewriter : public HexDLRewriterBase
+  {
+  protected:
+    // the dl- and cq-atoms are stored here
+    mutable boost::ptr_deque<ExtAtomRewriter> dlbody;
+
+  public:
+    /// default ctor
+    BodyRewriter();
+
+    virtual
+    ~BodyRewriter();
+
+    virtual void
+    add(ExtAtomRewriter* atom);
+
+    void
+    bodyOptimizer(RuleBody_t&) const;
   };
 
 
@@ -143,6 +152,7 @@ namespace dl {
     std::vector<Rule*>
     getDLInputRules() const;
   };
+
 
 
   /**
@@ -208,30 +218,6 @@ namespace dl {
 
     std::string
     getName() const;
-  };
-
-
-  /**
-   * Composite for HexDLRewriterBase objects.
-   */
-  class BodyRewriter : public HexDLRewriterBase
-  {
-  protected:
-    // the dl- and cq-atoms are stored here
-    mutable boost::ptr_deque<DLAtomRewriterBase> dlbody;
-
-  public:
-    /// default ctor
-    BodyRewriter();
-
-    virtual
-    ~BodyRewriter();
-
-    virtual void
-    add(DLAtomRewriterBase* atom);
-
-    RuleBody_t*
-    getBody() const;
   };
 
 
