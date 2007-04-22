@@ -26,7 +26,8 @@ CPPUNIT_TEST_SUITE_REGISTRATION(TestDLOptimizer);
 void
 TestDLOptimizer::runDLOptimize()
 {
-  return; ///@todo TextDLOptimizer::runDLOptimize is turned off
+  ///@todo initialize the PluginContainer
+  //  PluginContainer::instance()->importPlugin("dlvhex-racerplugin.so");
 
   AtomPtr h1(new Atom("p(X,Y)"));
   RuleHead_t h;
@@ -74,11 +75,8 @@ TestDLOptimizer::runDLOptimize()
   in3.push_back(Term("Q1(X),Q2(Y),Q3(Y),Q4(Z)", true));
 
   ExternalAtom* ea1 = new ExternalAtom("dlCQ2", out1, in1, 0);
-  ea1->findPluginAtom();
   ExternalAtom* ea2 = new ExternalAtom("dlCQ2", out2, in2, 0);
-  ea2->findPluginAtom();
   ExternalAtom* ea3 = new ExternalAtom("dlCQ3", out3, in3, 0);
-  ea3->findPluginAtom();
 
   AtomPtr b1(ea1);
   AtomPtr b2(ea2);
