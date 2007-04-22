@@ -63,144 +63,70 @@ DLOptimizer::getRewriting()
 }
 
 
-/**
- * 
- * 
- */
-class RewritingVisitor : public BaseVisitor
-{
-private:
-
-  void
-  rewriteBody(const RuleBody_t& body, RuleBody_t& body1) const
-  {
-    BodyRewriter br;
-
-    for (RuleBody_t::const_iterator it = body.begin(); it != body.end(); ++it)
-      {
-	Literal* l = *it;
-
-	///@todo maybe we should use the visiting method to dispatch
-	///the type
-	
-	if (typeid(*l->getAtom()) == typeid(ExternalAtom) && !l->isNAF())
-	  {
-	    ExternalAtom* ea = dynamic_cast<ExternalAtom*>(l->getAtom().get());
-	    
-	    const std::string& fn = ea->getFunctionName();
-
-	    if (fn == "dlC" || fn == "dlR" || fn == "dlDR" || fn.find("dlCQ") == 0)
-	      {
-		br.add(new DLAtomRewriterBase(l->getAtom()));
-	      }
-	    else
-	      {
-		body1.insert(l); // non-dl extatom
-	      }
-	  }
-	else
-	  {
-	    body1.insert(l); // non-extatom or naf atom
-	  }
-      }
-	  
-	  
-    const RuleBody_t* dl_body = br.getBody();
-	  
-    body1.insert(dl_body->begin(), dl_body->end());
-	  
-    delete dl_body;
-  }
-
-
-public:
-  // these methods are no-ops (as for now)
-
-  virtual void
-  visitAtomSet(const AtomSet*)
-  { }
-  virtual void
-  visitLiteral(const Literal*)
-  { }
-  virtual void
-  visitAtom(const Atom*)
-  { }
-  virtual void
-  visitExternalAtom(const ExternalAtom*)
-  { }
-  virtual void
-  visitBuiltinPredicate(const BuiltinPredicate*)
-  { }
-  virtual void
-  visitAggregateAtom(const AggregateAtom*)
-  { }
-  virtual void
-  visitLiteral(const Atom*)
-  { }
-
-
-  virtual void
-  visitRule(const Rule* r)
-  {
-    //
-    // rewrite the body of rule r
-    //
-
-    RawPrintVisitor rpv(std::cerr);
-    std::cerr << "optimizing: ";
-    r->accept(rpv);
-
-    RuleBody_t body1;
-
-    rewriteBody(r->getBody(), body1);
-
-    const_cast<Rule*>(r)->setBody(body1);
-
-    std::cerr << " to ";
-    r->accept(rpv);
-    std::cerr << std::endl;
-  }
-
-
-  virtual void
-  visitWeakConstraint(const WeakConstraint* wc)
-  {
-    //
-    // rewrite the body weak constraint wc
-    //
-
-    RuleBody_t body1;
-
-    rewriteBody(wc->getBody(), body1);
-
-    const_cast<WeakConstraint*>(wc)->setBody(body1);
-  }
-
-};
-
-
 void
 DLOptimizer::optimize(NodeGraph& dg, AtomSet& edb)
 {
-  return; ///@todo we have to update the dependencies in NodeGraph by ourselves!
+  if (!getRewriting())
+    {
+      return;
+    }
 
   //
   // and now optimize it
   //
 
-  RewritingVisitor rv;
-  
-  const std::vector<AtomNodePtr>& nodes = dg.getNodes();
+  const std::vector<Rule*>& rules = dg.getProgram();
 
-  for (std::vector<AtomNodePtr>::const_iterator it = nodes.begin();
-       it != nodes.end(); ++it)
+  Program p;
+
+  for (std::vector<Rule*>::const_iterator it = rules.begin();
+       it != rules.end(); ++it)
     {
-      const std::vector<Rule*>& rules = (*it)->getRules();
+      const RuleBody_t& body = (*it)->getBody();
+      RuleBody_t newbody;
+      BodyRewriter rewriter;
 
-      for (std::vector<Rule*>::const_iterator it2 = rules.begin();
-	   it2 != rules.end(); ++it2)
-	{
-	  (*it2)->accept(rv);
-	}
+      //
+      // dispatch the body and get the dl-part for the optimization
+      //
+
+      for (RuleBody_t::const_iterator bit = body.begin(); bit != body.end(); ++bit)
+      {
+	Literal* l = *bit;
+
+	if (typeid(*l->getAtom()) == typeid(ExternalAtom) && !l->isNAF())
+	  {
+	    ExternalAtom* ea = dynamic_cast<ExternalAtom*>(l->getAtom().get());
+	    
+	    const std::string& fn = ea->getFunctionName();
+	    
+	    if (fn == "dlC" || fn == "dlR" || fn == "dlDR" || fn.find("dlCQ") == 0)
+	      {
+		rewriter.add(new ExtAtomRewriter(l->getAtom()));
+	      }
+	    else
+	      {
+		newbody.insert(l); // non-dl extatom
+	      }
+	  }
+	else
+	  {
+	    newbody.insert(l); // non-extatom or naf atom
+	  }
+      }
+      
+      // and now rewrite the dl-body of rewriter and add the rewritten
+      // body to newbody
+      rewriter.bodyOptimizer(newbody);
+
+      // set new body and add the rule to the program
+      (*it)->setBody(newbody);
+      p.addRule(*it);
     }
+
+  //
+  // rebuild the graph with the program
+  //
+  GraphBuilder gb;
+  gb.run(p, dg);
 }
