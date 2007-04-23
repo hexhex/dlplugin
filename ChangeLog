@@ -1,3 +1,9 @@
+2007-04-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* testsuite/Makefile.am: Add -DDLPLUGIN.
+
+	* testsuite/TestDLOptimizer.cpp: Import DLPLUGIN in PluginContainer.
+
 2007-04-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/HexDLParser.ypp: Use ExtAtomRewriter.
