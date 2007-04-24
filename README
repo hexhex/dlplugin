@@ -1,4 +1,4 @@
--*- org -*-
+-*- outline -*-
 
 This is dlvhex-racerplugin, a plugin for `dlvhex'.
 
@@ -93,3 +93,242 @@ testsuite.
 ** Installation
 Run `make install' to install dlvhex-racerplugin into a system-wide
 plugin directory provided by dlvhex.
+
+
+** Usage
+The Description Logic Plugin interfaces HEX-programs with OWL
+ontologies by using a description logic reasoner. Currently, the DL
+reasoner Racer is supported. It provides five external atoms, roughly
+divided in
+
+ (i) querying atoms, i.e., external atoms which requests answers from
+     the DL-reasoner to a given query, and
+(ii) the DL-KB consistency checking external atom, a boolean atom
+     which decides whether augmenting a DL-KB with the given input
+     parameters results in a consistent DL-KB.
+
+The atoms of the first category support query answering to concept (C)
+and role (R and DR) queries, conjunctive queries (CQ), and union of
+conjunctive queries (UCQ).
+
+The querying external atoms have the form
+
+ (1) &dlT[KB,a,b,c,d,Q](X1,...,Xn),
+
+where T in dlT denotes the type of the query and may be one of C, R,
+DR, CQ, and UCQ. Q is then a query of type given by T, whereas
+X1,...,Xn is an output tuple with arity matching the query answer.
+
+The &dlConsistent external atom has the form
+
+ (2) &dlConsistent[KB,a,b,c,d],
+
+All external atoms share common input parameters. Their intended
+meaning is specified in the following Table.
+
++----+----------------------------------------------------------------+
+| KB | URI or file path of the OWL Ontology                           |
++----+----------------------------------------------------------------+
+| a  | name of a binary predicate whose extension denotes addition to |
+|    | a concept                                                      |
++----+----------------------------------------------------------------+
+| b  | name of a binary predicate whose extension denotes addition to |
+|    | the complement of a concept                                    |
++----+----------------------------------------------------------------+
+| c  | name of a ternary predicate whose extension denotes addition   |
+|    | to a role                                                      |
++----+----------------------------------------------------------------+
+| d  | name of a ternary predicate whose extension denotes addition   |
+|    | to the complement of a role                                    |
++----+----------------------------------------------------------------+
+
+A more detailed description of all external atoms, the proper syntax
+for Q, and the output list X1,...,Xn is now subject of the
+following subsections.
+
+*** Concept queries
+
+Queries to concepts can be stated using the external atom
+
+ (3) &dlC[KB,a,b,c,d,Q](X),
+
+where Q is a concept name and X is a term. If the external atom has a
+non-ground output, i.e., X is a variable, then (3) retrieves all known
+members of concept Q. Otherwise, if X is an individual, then (3) holds
+iff X is an instance of concept Q.
+
+
+Example 1: The following rule expresses a simple concept query.
+
+    wine(X) :- &dlC["wine.rdf",a,b,c,d,"Wine"](X).
+
+  Provided that a, b, c, and d do not occur elsewhere in the
+  HEX-program, this rule would do nothing else but putting all members
+  of concept Wine of the wine ontology "wine.rdf" (see
+  http://www.w3.org/TR/owl-guide/wine.rdf) into the extension of
+  predicate wine.
+
+The term "Wine" is expressed in OWL and has thus an XML namespace
+attached to it. Since the concept Wine uses the default namespace name
+http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#, we can simply
+refer to the concept of all wines as is. This would not be possible,
+if Wine is in the scope of a different namespace than the default
+namespace. Consider an ontology, where the concept of all wines is
+defined as follows:
+
+  <owl:Class rdf:ID="vin:Wine"/>
+
+Here, the term "Wine" is bound to the XML namespace "vin".  To refer
+to the concept vin:Wine, which is short for the RDF/XML URI
+http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine, we can use
+two different methods for doing so. First, we can use the fully
+expanded concept name
+http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine in the query
+part of the external atoms, or second, we introduce a namespace in the
+HEX-program itself. This can be accomplished by adding a namespace
+declaration to the program. Take, for instance, the program in
+Ex. 1. Adding the XML namespace vin to it results in the program
+
+  #namespace(vin,"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#")
+  wine(X) :- &dlC["wine.rdf",a,b,c,d,"vin:Wine"](X).
+
+Note that we can define an arbitrary namespace prefix for the
+namespace URI http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#.
+
+Example 2: Now imagine we want to extend the wine concept by a new
+  individual currently not known to be a wine. We use the concept
+  augmentation mechanisms of the &dlC atom.
+
+    wine(X) :- &dlC["wine.rdf",w,b,c,d,"Wine"](X).
+    w("Wine","Uhudler").
+
+  In the program above, we add the individual "Uhudler" to the concept
+  "Wine". The &dlC atom expects a predicate name as second parameter;
+  in this case w. This predicate must be binary and its first argument
+  denotes the concept to be extended and the second the actual
+  individual to be added to the concept.
+
+  This can be extended to even more flexible queries. In the next
+  program, we supplement "Uhudler" to "Wine" and all italian redwines
+  to the concept "RedWine".
+ 
+    wine(X) :- &dlC["wine.rdf",w,b,c,d,"Wine"](X).
+    w("Wine","Uhudler").
+    w("RedWine",X) :- redwine(X), grows(X, italy).
+
+
+Example 3: Similarly, we can increase the ABox of an ontology by role
+  axioms. The third input parameter of a &dlC atom specifies the
+  ternary predicate name.
+
+    wine(X) :- &dlC["wine.rdf",a,b,l,d,"Wine"](X).
+    l(locatedIn,X,Y) :- grows(X,Y).
+
+  In this program, before we query the concept "Wine", we extend
+  concept locatedIn by predicate grows with the aid of l.
+
+
+
+*** Role queries
+
+Role querying can be accomplished using the external atom
+
+ (4) &dlR[KB,a,b,c,d,Q](X,Y),
+
+where Q is a role name and X and Y are terms. If the external atom has
+a non-ground output, i.e. both X and Y are variables, then (4)
+retrieves all known pairs of role Q. If both X and Y are individuals,
+then (4) holds iff (X,Y) is an instance of role Q. If only one of X
+and Y is ground, then we retrieve all fillers for the respective
+individual in the role.
+
+OWL Datatype Properties queries are subject to a different atom:
+
+ (5) &dlDR[KB,a,b,c,d,Q](X,Y)
+
+is basically the same as the &dlR atom, but Q is a Datatype Property
+here.
+
+The input mechanism of the &dlC external atom and the role querying
+  atoms is the same.
+
+Example 4: 
+      nzwine(X) :- &dlR["wine.rdf",a,l,c,d,locatedIn](X,"NewZealandRegion").
+      l(locatedIn,X,Y) :- grows(X,Y).
+
+
+
+*** Conjunctive and Union of Conjunctive Queries
+
+The next two atoms provide support for conjunctive and union of
+conjunctive queries:
+
+ (6) &dlCQ[KB,a,b,c,d,CQ](X1,...,Xn) and
+ (7) &dlUCQ[KB,a,b,c,d,UCQ](X1,...,Xn),
+
+where CQ and UCQ is a conjunctive query and a union of conjunctive
+queries, respectively. Both output lists consists of an n-ary tuple
+(X1,...,Xn), where each Xi is a variable. Note that in general,
+HEX-programs allow ground terms as arguments in external atoms, but
+ground terms in the output of &dlCQ and &dlUCQ atoms are useless.
+Therefore, we omit the case where some X_i may be ground.
+
+A conjunctive query CQ is a query of form
+
+ (8) Q1(Y1),Q2(Y2),...,Qm(Ym),
+
+where for 1 <= i <= m each Qi is a concept or role name and Yi a
+single term or a pair of terms.
+
+Similarly, a union of conjunctive queries UCQ is a query of form
+
+ (9) CQ1 v CQ2 v ... v CQn,
+
+where for 1 <= i <= n each CQi is a conjunctive query.
+
+
+Example 5: Consider the following rule issuing a conjunctive query
+  over the wine ontology. As result, we retrieve all dry wines from
+  the Burgundy region in predicate bdw.
+
+    #namespace(vin,"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#")
+    bdw(X) :- &dlCQ["wine.rdf",a,b,c,d,"Burgundy(X),hasSugar(X,vin:Dry)"](X).
+
+
+Example 6: UCQs can be expressed in the following manner.
+
+    #namespace(food,"http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#")
+    wp(X) :- &dlUCQ["wine.rdf",a,b,c,d,"WhiteWine(X) v food:Pasta(X)"](X).
+
+  The above rule retrieves all white wines and pasta dishes.
+
+
+Again, the input mechanism of the &dlC external atom and &dlCQ/&dlUCQ
+is the same. Instead of a,b,c,d, we can use similar input predicates
+as in the Ex. 2-4.
+
+
+*** DL-KB consistency
+
+The last external atom is &dlConsistent, which tests the given DL-KB
+for consistency under the specified extensions.
+
+ (10) &dlConsistent[KB,a,b,c,d]
+
+If KB is consistent after possibly augmenting the ABox according to
+the input list, the atom (10) evaluates to true, otherwise false.
+
+Example 7: The program
+
+      p("Wine","Uhudler").
+      n("Wine","Uhudler").
+      :- not &dlConsistent["wine.rdf",p,n,c,d].
+
+  has no answer set, since we augment the ABox of wine.rdf by
+  Wine(Uhudler) and -Wine(Uhudler).
+
+
+
+*** cq-programs
+
+FIXME
