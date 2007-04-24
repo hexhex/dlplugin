@@ -1,5 +1,5 @@
 AC_PREREQ([2.59])
-AC_INIT([dlvhex-racerplugin],[0.5.0beta2],[tkren@kr.tuwien.ac.at])
+AC_INIT([dlvhex-racerplugin],[0.5.0],[tkren@kr.tuwien.ac.at])
 AC_CONFIG_SRCDIR([src/RacerInterface.cpp])
 AC_CONFIG_HEADER([src/config.h])
 
@@ -143,7 +143,7 @@ AC_PATH_BOOST
 PKG_CHECK_MODULES([RAPTOR], [raptor >= 1.4.8])
 
 # we want dlvhex
-PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 1.4])
+PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 1.5])
 
 
 AC_ARG_ENABLE(userinstall, 
