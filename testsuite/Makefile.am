@@ -19,7 +19,7 @@ EXTRA_DIST = run-dlvhex-tests.sh RacerRunner.sh
 
 TESTS = RacerRunner.sh TestSuite run-dlvhex-tests.sh RacerRunner.sh
 
-TESTS_ENVIRONMENT = EXAMPLES=$(top_srcdir)/examples
+TESTS_ENVIRONMENT = EXAMPLES=$(top_srcdir)/examples TESTDIR=$(top_srcdir)/examples DLVHEX=dlvhex PARAMETERS="-s -a --keepnsprefix --plugindir=."
 
 check_PROGRAMS = TestSuite
 
