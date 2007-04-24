@@ -1,3 +1,15 @@
+2007-04-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* README: Add Plugin Usage description.
+
+	* configure.ac: Bump version to 0.5.0.
+	Check for dlvhex >= 1.5.
+
+	* testsuite/run-dlvhex-tests.sh: Mac OS X has a non-standard
+	mktemp, use "mktemp -t tmp.XXXXXXXXXX" instead.
+
+	* testsuite/Makefile.am: Set dlvhex parameters.
+
 2007-04-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* testsuite/Makefile.am: Add -DDLPLUGIN.
