@@ -585,6 +585,38 @@ DLAtomRewriter::getLiteral() const
 }
 
 
+namespace dlvhex {
+namespace dl {
+
+  inline std::string
+  toURIReference(const Ontology::shared_pointer& ontology, const std::string& s)
+  {
+    std::string tmp;
+    
+    if (s.find("\"-") == 0)
+      {
+	tmp = s.substr(2, s.length() - 3);
+      }
+    else if (s.find("\"") == 0)
+      {
+	tmp = s.substr(1, s.length() - 2);
+      }
+    else if (s.find("-") == 0)
+      {
+	tmp = s.substr(1, s.length() - 1);
+      }
+    else
+      {
+	tmp = s;
+      }
+
+    return URI::isValid(tmp) ? tmp : ontology->getNamespace() + tmp;
+  }
+
+} // namespace dl
+} // namespace dlvhex
+
+
 const Tuple&
 DLAtomRewriter::getInputTuple() const
 {
@@ -617,7 +649,7 @@ DLAtomRewriter::getInputTuple() const
 
   if (query != 0 && cq == 0 && ucq == 0) // dl-atom
     {
-      std::string tmpquery = addNamespace(*query);
+      std::string tmpquery = dlvhex::dl::toURIReference(ontology, *query);
       
       // check if query is strongly negated
       if (query->find("\"-") == 0 || query->find("-") == 0)
@@ -676,32 +708,6 @@ DLAtomRewriter::getInputTuple() const
 
 
 std::string
-DLAtomRewriter::addNamespace(const std::string& s) const
-{
-  std::string tmp;
-
-  if (s.find("\"-") == 0)
-    {
-      tmp = ontology->getNamespace() + s.substr(2, s.length() - 3);
-    }
-  else if (s.find("\"") == 0)
-    {
-      tmp = ontology->getNamespace() + s.substr(1, s.length() - 2);
-    }
-  else if (s.find("-") == 0)
-    {
-      tmp = ontology->getNamespace() + s.substr(1, s.length() - 1);
-    }
-  else
-    {
-      tmp = ontology->getNamespace() + s;
-    }
-
-  return tmp;
-}
-
-
-std::string
 DLAtomRewriter::getName() const
 {
   if (query != 0) // dl-atom
@@ -710,7 +716,7 @@ DLAtomRewriter::getName() const
       TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
       TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
 
-      std::string tmpquery = addNamespace(*query);
+      std::string tmpquery = dlvhex::dl::toURIReference(ontology, *query);
       Term q(tmpquery);
 
       if (concepts->find(q) != concepts->end())
