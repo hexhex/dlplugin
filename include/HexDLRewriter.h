@@ -183,9 +183,6 @@ namespace dl {
     DLAtomRewriter&
     operator= (const DLAtomRewriter&);
 
-    std::string
-    addNamespace(const std::string& s) const;
-
   public:
     /// dl-atom ctor
     DLAtomRewriter(const Ontology::shared_pointer& onto,
