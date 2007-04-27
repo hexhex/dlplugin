@@ -1,3 +1,12 @@
+2007-04-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* README: Update Plugin Usage.
+
+	* src/RacerInterface.cpp (RacerInterface::setOptions): Use new
+	command line options: --dldebug instead of --debug, while --nopush
+	and --nocache is replaced by --dlopt=MOD[,MOD]*, where MOD may be
+	-push or -cache.
+
 2007-04-25  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/OWLParser.cpp (dlvhex::dl::tboxHandler): Only add URI
