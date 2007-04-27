@@ -30,6 +30,8 @@
 #include <algorithm>
 #include <iterator>
 
+#include <boost/tokenizer.hpp>
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
@@ -186,13 +188,18 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
     {
       out << "DL-plugin: " << std::endl << std::endl;
       out << " --ontology=URI       Use URI as ontology for dl-atoms." << std::endl;
-      out << " --nocache            Turn off dl-caching." << std::endl;
-      out << " --nopush             Turn off dl-pushing." << std::endl;
-      out << " --debug=LEVEL        Set debug log level to LEVEL." << std::endl;
+      out << " --dlopt=MOD[,MOD]*   Set optimization modifiers, where MOD may be" << std::endl;
+      out << "                      -push    ... turn off pushing" << std::endl;
+      out << "                      -dlcache ... turn off dl-cache" << std::endl;
+      out << " --dldebug=LEVEL      Set debug level to LEVEL." << std::endl;
       return;
     }
 
   std::vector<std::vector<std::string>::iterator> found;
+
+  const char *ontology     = "--ontology=";
+  const char *optimization = "--dlopt=";
+  const char *dldebug      = "--dldebug=";
 
   for (std::vector<std::string>::iterator it = argv.begin();
        it != argv.end();
@@ -200,39 +207,47 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
     {
       std::string::size_type o;
 
-      o = it->find("--ontology=");
+      o = it->find(ontology);
 
       if (o != std::string::npos)
 	{
-	  std::string uri = it->substr(o + 11); // length of parameter = 11
+	  std::string uri = it->substr(o + strlen(ontology)); // get URL
 	  dlconverter->setURI(uri);
 	  found.push_back(it);
 	}
 
-      o = it->find("--nocache");
+      o = it->find(optimization);
 
-      if (o != std::string::npos) // no caching at all
+      if (o != std::string::npos) // dispatch optimization modifiers
 	{
-	  delete cache;
-	  cache = new NullCache(*stats);
+	  std::string mods = it->substr(o + strlen(optimization)); // get list of MOD
+
+	  typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+	  boost::char_separator<char> sep(",");
+	  tokenizer tokens(mods, sep);
+	  for (tokenizer::iterator tok_iter = tokens.begin();
+	       tok_iter != tokens.end(); ++tok_iter)
+	    {
+	      if (*tok_iter == "-push") // no rewriting at all
+		{
+		  dloptimizer->setRewriting(false);
+		}
+	      else if (*tok_iter == "-dlcache") // no caching at all
+		{
+		  delete cache;
+		  cache = new NullCache(*stats);
+		}
+	    }
 
 	  found.push_back(it);
 	}
 
-      o = it->find("--nopush");
-
-      if (o != std::string::npos) // no rewriting at all
-	{
-	  dloptimizer->setRewriting(false);
-	  found.push_back(it);
-	}
-
-      o = it->find("--debug=");
+      o = it->find(dldebug);
 
       if (o != std::string::npos)
 	{
 	  unsigned level;
-	  std::string s = it->substr(o + 8); // length of --debug= is 8
+	  std::string s = it->substr(o + strlen(dldebug)); // get LEVEL
 	  std::istringstream iss(s);
 	  iss >> level;
 
