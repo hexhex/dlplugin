@@ -1,3 +1,21 @@
+2007-05-18  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/lubm0_0-14.owl: New test ontology.
+	* examples/lubm0_0-13.owl: Likewise.
+	* examples/lubm0_0-12.owl: Likewise.
+	* examples/lubm0_0-11.owl: Likewise.
+	* examples/lubm0_0-10.owl: Likewise.
+	* examples/lubm0_0-9.owl: Likewise.
+	* examples/lubm0_0-8.owl: Likewise.
+	* examples/lubm0_0-7.owl: Likewise.
+	* examples/lubm0_0-6.owl: Likewise.
+	* examples/lubm0_0-5.owl: Likewise.
+	* examples/lubm0_0-4.owl: Likewise.
+	* examples/lubm0_0-3.owl: Likewise.
+	* examples/lubm0_0-2.owl: Likewise.
+	* examples/lubm0_0-1.owl: Likewise.
+	* examples/lubm0_0-0.owl: Likewise.
+
 2007-04-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* README: Update Plugin Usage.
