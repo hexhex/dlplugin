@@ -1,3 +1,12 @@
+2007-05-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/HexDLScanner.lpp: Output list of an dl-atom is optional.
+
+	* include/OWLParser.h: Add support for parsing
+	owl:TransitiveProperty, owl:SymmetricProperty,
+	owl:FunctionalProperty, owl:InverseFunctionalProperty.
+	* src/OWLParser.cpp: Likewise.
+
 2007-05-18  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* examples/lubm0_0-14.owl: New test ontology.
@@ -15,6 +24,19 @@
 	* examples/lubm0_0-2.owl: Likewise.
 	* examples/lubm0_0-1.owl: Likewise.
 	* examples/lubm0_0-0.owl: Likewise.
+
+2007-05-16  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/lubm3.sh: New tests.
+	* examples/lubm3.dlp: Likewise.
+	* examples/lubm3-fast.sh: Likewise.
+	* examples/lubm3-fast.dlp: Likewise.
+	* examples/lubm2.sh: Likewise.
+	* examples/lubm2.dlp: Likewise.
+	* examples/lubm2-fast.sh: Likewise.
+	* examples/lubm2-fast.dlp: Likewise.
+	* examples/lubm.sh: Likewise.
+	* examples/lubm-fast.sh: Likewise.
 
 2007-04-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
