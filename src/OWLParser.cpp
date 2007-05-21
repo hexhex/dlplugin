@@ -33,7 +33,10 @@ const std::string OWLParser::owlNspace = "http://www.w3.org/2002/07/owl";
 const std::string OWLParser::owlClass = "http://www.w3.org/2002/07/owl#Class";
 const std::string OWLParser::owlObjectProperty = "http://www.w3.org/2002/07/owl#ObjectProperty";
 const std::string OWLParser::owlDatatypeProperty = "http://www.w3.org/2002/07/owl#DatatypeProperty";
-
+const std::string OWLParser::owlTransitiveProperty = "http://www.w3.org/2002/07/owl#TransitiveProperty";
+const std::string OWLParser::owlSymmetricProperty = "http://www.w3.org/2002/07/owl#SymmetricProperty";
+const std::string OWLParser::owlFunctionalProperty = "http://www.w3.org/2002/07/owl#FunctionalProperty";
+const std::string OWLParser::owlInverseFunctionalProperty = "http://www.w3.org/2002/07/owl#InverseFunctionalProperty";
 
 OWLParser::OWLParser(const URI& u)
   : uri(u)
@@ -91,13 +94,26 @@ namespace dlvhex {
       // we can dispatch O being one of owl:Class, owl:ObjectProperty,
       // ...
       //
-      ///@todo owl:TransitiveProperty, owl:SymmtericProperty,
-      ///owl:InverseFunctionalProperty and owl:FunctionalProperty are
-      ///missing
       if (OWLParser::rdfType.compare(pred) == 0 &&
 	  statement->subject_type == RAPTOR_IDENTIFIER_TYPE_RESOURCE) 
 	{
 	  if (OWLParser::owlObjectProperty.compare(obj) == 0)
+	    {
+	      tbox->addRole(Term((const char*) statement->subject));
+	    }
+	  else if (OWLParser::owlTransitiveProperty.compare(obj) == 0)
+	    {
+	      tbox->addRole(Term((const char*) statement->subject));
+	    }
+	  else if (OWLParser::owlSymmetricProperty.compare(obj) == 0)
+	    {
+	      tbox->addRole(Term((const char*) statement->subject));
+	    }
+	  else if (OWLParser::owlFunctionalProperty.compare(obj) == 0)
+	    {
+	      tbox->addRole(Term((const char*) statement->subject));
+	    }
+	  else if (OWLParser::owlInverseFunctionalProperty.compare(obj) == 0)
 	    {
 	      tbox->addRole(Term((const char*) statement->subject));
 	    }

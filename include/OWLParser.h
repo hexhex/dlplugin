@@ -62,6 +62,10 @@ namespace dl {
     static const std::string owlClass;
     static const std::string owlObjectProperty;
     static const std::string owlDatatypeProperty;
+    static const std::string owlTransitiveProperty;
+    static const std::string owlSymmetricProperty;
+    static const std::string owlFunctionalProperty;
+    static const std::string owlInverseFunctionalProperty;
 
     /// Ctor
     explicit
