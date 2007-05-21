@@ -1,5 +1,25 @@
 2007-05-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
+	* configure.ac: Bump version to 0.6.0.
+
+	* examples/lubm5.sh: New experiments.
+	* examples/lubm5.dlp: Likewise.
+	* examples/lubm5-fast.sh: Likewise.
+	* examples/lubm5-fast.dlp: Likewise.
+	* examples/lubm4.sh: Likewise.
+	* examples/lubm5-fast.dlp: Likewise.
+	* examples/lubm4.sh: Likewise.
+	* examples/lubm4.dlp: Likewise.
+	* examples/lubm4-fast.sh: Likewise.
+	* examples/lubm4-fast.dlp: Likewise.
+	* examples/lubm3.sh: Likewise.
+	* examples/lubm3-fast.sh: Likewise.
+	* examples/lubm.sh: Likewise.
+	* examples/lubm.dlp: Likewise.
+	* examples/lubm-fast.sh: Likewise.
+
+	Release version 0.5.0.
+
 	* src/HexDLScanner.lpp: Output list of an dl-atom is optional.
 
 	* include/OWLParser.h: Add support for parsing
