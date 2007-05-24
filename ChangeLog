@@ -1,3 +1,22 @@
+2007-05-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerInterface.cpp: Add --kb-reload parameter.
+	Add GetKBManagerFun functor for the External Atoms.
+	* include/RacerInterface.h: Likewise.
+
+	* src/RacerKBManager.cpp: Remove some leftover namespace
+	declarations.
+
+	* src/Makefile.am (libdlvhexracer_la_SOURCES): Remove
+	RacerExtAtom.cpp.
+	* src/RacerExtAtom.cpp: Likewise.
+
+	* include/RacerExtAtom.tcc: Add GetKBManager template parameter to
+	all classes.
+	* include/RacerExtAtom.h: Likewise
+
+	* include/KBManager.h (NullKBManager): New class.
+
 2007-05-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* configure.ac: Bump version to 0.6.0.
