@@ -35,13 +35,9 @@ namespace dl {
   class CacheStats;
   class DLOptimizer;
   class HexDLDriver;
+  class KBManager;
 
 namespace racer {
-
-  //
-  // forward declarations
-  //
-  class RacerKBManager;
 
 
   /**
@@ -70,7 +66,7 @@ namespace racer {
     /// DL optimizer facility
     DLOptimizer* dloptimizer;
     /// the kb-manager for RACER
-    RacerKBManager* kbManager;
+    KBManager* kbManager;
 
     //
     // keep those ctors private, we don't want multiple instantiations
@@ -99,6 +95,13 @@ namespace racer {
     getCache() const
     {
       return cache;
+    }
+
+    ///@return the current KBManager
+    KBManager*
+    getKBManager() const
+    {
+      return kbManager;
     }
 
     /**

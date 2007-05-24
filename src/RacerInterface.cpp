@@ -141,6 +141,21 @@ namespace dlvhex {
 	  return *(RacerInterface::instance()->getCache());
 	}
       };
+
+      /** 
+       * We cannot rely on dlvhex calling RacerInterface::setOptions
+       * before RacerInterface::getAtoms so we provide this class as
+       * template parameter for the external atoms in order to get the
+       * current KBManager.
+       */
+      struct GetKBManagerFun
+      {
+	dlvhex::dl::KBManager&
+	operator() () const
+	{
+	  return *(RacerInterface::instance()->getKBManager());
+	}
+      };
  
     } // namespace racer
   } // namespace dl
@@ -153,10 +168,10 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
   // maybe we should provide the stream and the kbmanager as template
   // parameters similar to GetCache
 
-  m["dlC"]          = new RacerConceptAtom<GetCacheFun>(*stream, *kbManager);
-  m["dlR"]          = new RacerRoleAtom<GetCacheFun>(*stream, *kbManager);
-  m["dlConsistent"] = new RacerConsistentAtom(*stream, *kbManager);
-  m["dlDR"]         = new RacerDatatypeRoleAtom<GetCacheFun>(*stream, *kbManager);
+  m["dlC"]          = new RacerConceptAtom<GetKBManagerFun,GetCacheFun>(*stream);
+  m["dlR"]          = new RacerRoleAtom<GetKBManagerFun,GetCacheFun>(*stream);
+  m["dlConsistent"] = new RacerConsistentAtom<GetKBManagerFun>(*stream);
+  m["dlDR"]         = new RacerDatatypeRoleAtom<GetKBManagerFun,GetCacheFun>(*stream);
 
   // register for each arity in range 0 to 32 a dedicated RacerCQAtom
   // external atom with specified arity
@@ -166,7 +181,7 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
   for (unsigned n = 0; n <= 32; ++n)
     {
       oss << "dlCQ" << n;
-      m[oss.str()]  = new RacerCQAtom<GetCacheFun>(*stream, *kbManager, n);
+      m[oss.str()]  = new RacerCQAtom<GetKBManagerFun,GetCacheFun>(*stream, n);
       oss.str("");
     }
 
@@ -176,7 +191,7 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
   for (unsigned n = 0; n <= 32; ++n)
     {
       oss << "dlUCQ" << n;
-      m[oss.str()]  = new RacerUCQAtom<GetCacheFun>(*stream, *kbManager, n);
+      m[oss.str()]  = new RacerUCQAtom<GetKBManagerFun,GetCacheFun>(*stream, n);
       oss.str("");
     }
 }
@@ -188,6 +203,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
     {
       out << "DL-plugin: " << std::endl << std::endl;
       out << " --ontology=URI       Use URI as ontology for dl-atoms." << std::endl;
+      out << " --kb-reload          Force reloading of previously loaded ontologies." << std::endl;
       out << " --dlopt=MOD[,MOD]*   Set optimization modifiers, where MOD may be" << std::endl;
       out << "                      -push    ... turn off pushing" << std::endl;
       out << "                      -dlcache ... turn off dl-cache" << std::endl;
@@ -198,6 +214,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
   std::vector<std::vector<std::string>::iterator> found;
 
   const char *ontology     = "--ontology=";
+  const char *reload       = "--kb-reload";
   const char *optimization = "--dlopt=";
   const char *dldebug      = "--dldebug=";
 
@@ -213,6 +230,17 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	{
 	  std::string uri = it->substr(o + strlen(ontology)); // get URL
 	  dlconverter->setURI(uri);
+	  found.push_back(it);
+	}
+
+      o = it->find(reload);
+
+      if (o != std::string::npos)
+	{
+	  ///@todo we ignore the fact that we could have multiple
+	  ///occurrences of --kb-reload on the command line
+	  KBManager *tmp = new NullKBManager(kbManager);
+	  kbManager = tmp;
 	  found.push_back(it);
 	}
 
