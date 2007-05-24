@@ -29,13 +29,6 @@
 using namespace dlvhex::dl::racer;
 
 
-namespace dlvhex {
-  namespace dl {
-    namespace racer {
-
-    }
-  }
-}
 
 RacerKBManager::RacerKBManager(std::iostream& s, const std::string& name)
   : KBManager(name), stream(s)
