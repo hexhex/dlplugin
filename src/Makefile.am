@@ -49,7 +49,6 @@ RacerAnswerParser.ypp \
 RacerAnswerScanner.lpp \
 RacerAnswerDriver.cpp \
 RacerBuilder.cpp \
-RacerExtAtom.cpp \
 RacerInterface.cpp \
 RacerKBManager.cpp \
 RacerNRQL.cpp \
