@@ -27,26 +27,22 @@ namespace dl {
 
 namespace racer {
 
-  //
-  // forward declarations
-  //
-  class RacerKBManager;
-
-
   /**
    * @brief Base class for RACER external atoms.
    */
+  template <class GetKBManager>
   class RacerExtAtom : public PluginAtom
   {
   protected:
     /// keep a reference to the iostream in order to create the
     /// director instances
     std::iostream& stream;
-    /// the kb-manager
-    RacerKBManager& kbManager;
+
+    /// get a reference to the KBManager
+    GetKBManager getKBManager;
 
     /// protected ctor
-    RacerExtAtom(std::iostream&, RacerKBManager&);
+    RacerExtAtom(std::iostream&);
 
     /// dtor
     virtual
@@ -92,7 +88,8 @@ namespace racer {
      * appropriate command to send to the RACER process
      */
     virtual QueryBaseDirector::shared_pointer
-    getDirectors(const dlvhex::dl::Query& query) const = 0;
+    getDirectors(const dlvhex::dl::Query&  query) const = 0;
+
 
   public:
     /**
@@ -112,8 +109,8 @@ namespace racer {
   /**
    * @brief Base class for cached external atoms.
    */
-  template <class GetCache>
-  class RacerCachingAtom : public RacerExtAtom
+  template <class GetKBManager, class GetCache>
+  class RacerCachingAtom : public RacerExtAtom<GetKBManager>
   {
   protected:
     /// get a reference to the cache of QueryCtx objects
@@ -124,7 +121,7 @@ namespace racer {
     cacheQuery(QueryCompositeDirector::shared_pointer comp) const;
 
   public:
-    RacerCachingAtom(std::iostream&, RacerKBManager&);
+    RacerCachingAtom(std::iostream&);
   };
 
 
@@ -132,8 +129,8 @@ namespace racer {
    * @brief Implements the concept retrieving atom
    * &dlC[kb,plusC,minusC,plusR,minusR,query](X).
    */
-  template <class GetCache>
-  class RacerConceptAtom : public RacerCachingAtom<GetCache>
+  template <class GetKBManager, class GetCache>
+  class RacerConceptAtom : public RacerCachingAtom<GetKBManager,GetCache>
   {
   protected:
     /**
@@ -148,7 +145,7 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerConceptAtom(std::iostream&, RacerKBManager&);
+    RacerConceptAtom(std::iostream&);
   };
 
 
@@ -156,8 +153,8 @@ namespace racer {
    * @brief Implements the role retrieving atom
    * &dlR[kb,plusC,minusC,plusR,minusR,query](X,Y).
    */
-  template <class GetCache>
-  class RacerRoleAtom : public RacerCachingAtom<GetCache>
+  template <class GetKBManager, class GetCache>
+  class RacerRoleAtom : public RacerCachingAtom<GetKBManager,GetCache>
   {
   protected:
     /**
@@ -173,7 +170,7 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerRoleAtom(std::iostream&, RacerKBManager&);
+    RacerRoleAtom(std::iostream&);
   };
 
 
@@ -182,7 +179,8 @@ namespace racer {
    * @brief Implements the consistency checking atom
    * &dlConsistent[kb,plusC,minusC,plusR,minusR]().
    */
-  class RacerConsistentAtom : public RacerExtAtom
+  template <class GetKBManager>
+  class RacerConsistentAtom : public RacerExtAtom<GetKBManager>
   {
   protected:
     /**
@@ -197,7 +195,7 @@ namespace racer {
 
   public:
     explicit
-    RacerConsistentAtom(std::iostream&, RacerKBManager&);
+    RacerConsistentAtom(std::iostream&);
   };
 
 
@@ -205,8 +203,8 @@ namespace racer {
    * @brief Implements the datatype role retrieving atom
    * &dlDR[kb,plusC,minusC,plusR,minusR,query](X,Y).
    */
-  template <class GetCache>
-  class RacerDatatypeRoleAtom : public RacerCachingAtom<GetCache>
+  template <class GetKBManager, class GetCache>
+  class RacerDatatypeRoleAtom : public RacerCachingAtom<GetKBManager,GetCache>
   {
   protected:
     /** 
@@ -230,7 +228,7 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerDatatypeRoleAtom(std::iostream&, RacerKBManager&);
+    RacerDatatypeRoleAtom(std::iostream&);
   };
 
 
@@ -239,8 +237,8 @@ namespace racer {
    * &dlCQn[kb,plusC,minusC,plusR,minusR,query](X_1,-,X_n), where n
    * is given at instantiation time.
    */
-  template <class GetCache>
-  class RacerCQAtom : public RacerCachingAtom<GetCache>
+  template <class GetKBManager, class GetCache>
+  class RacerCQAtom : public RacerCachingAtom<GetKBManager,GetCache>
   {
   protected:
     /**
@@ -254,7 +252,7 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerCQAtom(std::iostream&, RacerKBManager&, unsigned n);
+    RacerCQAtom(std::iostream&, unsigned n);
   };
 
 
@@ -263,8 +261,8 @@ namespace racer {
    * &dlUCQn[kb,plusC,minusC,plusR,minusR,query](X_1,-,X_n), where n
    * is given at instantiation time.
    */
-  template <class GetCache>
-  class RacerUCQAtom : public RacerCachingAtom<GetCache>
+  template <class GetKBManager, class GetCache>
+  class RacerUCQAtom : public RacerCachingAtom<GetKBManager,GetCache>
   {
   protected:
     /**
@@ -278,7 +276,7 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerUCQAtom(std::iostream&, RacerKBManager&, unsigned n);
+    RacerUCQAtom(std::iostream&, unsigned n);
   };
 
 

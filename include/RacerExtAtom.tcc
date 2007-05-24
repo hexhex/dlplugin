@@ -23,7 +23,6 @@
 #include "Cache.h"
 #include "RacerNRQL.h"
 #include "RacerNRQLBuilder.h"
-#include "RacerKBManager.h"
 
 #include <dlvhex/Atom.h>
 #include <dlvhex/Term.h>
@@ -32,6 +31,7 @@
 #include <dlvhex/PluginInterface.h>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <iosfwd>
 
@@ -56,24 +56,174 @@ namespace racer {
   typedef QueryDirector<RacerIndividualFillersBuilder, RacerAnswerDriver> RacerIndvFillersQuery;
 
 
-  template <class GetCache>
-  RacerCachingAtom<GetCache>::RacerCachingAtom(std::iostream& s, RacerKBManager& k)
-    : RacerExtAtom(s,k), getCache()
+  /// request to open an OWL document
+  typedef QueryDirector<RacerOpenOWLBuilder, RacerAnswerDriver> RacerOpenOWL;
+
+  /// extend ABox by a given set of individuals/pairs
+  typedef QueryDirector<RacerStateBuilder, RacerAnswerDriver> RacerConceptRolePM;
+
+  
+  template<class GetKBManager>
+  RacerExtAtom<GetKBManager>::RacerExtAtom(std::iostream& s)
+    : stream(s), getKBManager()
   { }
 
 
-  template <class GetCache>
+  template<class GetKBManager>
+  void
+  RacerExtAtom<GetKBManager>::retrieve(const PluginAtom::Query& query,
+				       PluginAtom::Answer& answer) throw(PluginError)
+  {
+    try
+      {
+	QueryCtx::shared_pointer qctx(new QueryCtx(query, getKBManager()));
+
+	QueryBaseDirector::shared_pointer dirs = getDirectors(qctx->getQuery());
+
+	boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
+
+	qctx = dirs->query(qctx);
+
+	boost::posix_time::ptime end = boost::posix_time::microsec_clock::local_time();
+      
+	if (Registry::getVerbose() > 1)
+	  {
+	    boost::posix_time::time_duration diff = end - start;
+	    std::cerr << "Runtime: " << diff << ' ' << qctx->getQuery() << std::endl;
+	  }
+
+	if (Registry::getVerbose() > 0 && !qctx->getAnswer().getWarningMessage().empty())
+	  {
+	    std::cerr << "Warning: " << qctx->getAnswer().getWarningMessage() << std::endl;
+	  }
+
+	answer = qctx->getAnswer();
+      }
+    catch (std::exception& e)
+      {
+	throw PluginError(e.what());
+      }
+  }
+  
+
+
+  template<class GetKBManager>
+  void
+  RacerExtAtom<GetKBManager>::setupRacer(QueryCompositeDirector::shared_pointer& comp) const
+  {
+    if (!Registry::getUNA()) // only set UNA once
+      {
+	// turn on unique name assumption
+	comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerUNACmd>,
+		  RacerIgnoreAnswer>(this->stream)
+		  );
+	
+	Registry::setUNA(true);
+      }
+  }
+  
+
+  template<class GetKBManager>
+  void
+  RacerExtAtom<GetKBManager>::openOntology(const dlvhex::dl::Query& query,
+					   QueryCompositeDirector::shared_pointer& comp) const
+  {
+    // check if Racer has an open KB with the name of the real URI of
+    // the query's ontology, we can reuse it
+    
+    const std::string& kbname = query.getDLQuery()->getOntology()->getRealURI().getString();
+
+    if (!getKBManager().isOpenKB(kbname))
+      {
+	// update opened KBs
+	getKBManager().updateOpenKB();
+  
+	if (!getKBManager().isOpenKB(kbname)) // only open OWL after we updated the open KBs
+	  {
+	    comp->add(new RacerOpenOWL(this->stream));
+	    
+	    // import all referenced ontologies
+	    comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerImportOntologiesCmd>,
+		      RacerIgnoreAnswer>(this->stream)
+		      );
+	  }
+      }
+  }
+
+
+  template<class GetKBManager>
+  void
+  RacerExtAtom<GetKBManager>::increaseABox(const dlvhex::dl::Query& /* query */,
+					   QueryCompositeDirector::shared_pointer& comp) const
+  {
+    // create a temporary ABox for the (state) command
+    comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerCloneABoxCmd>,
+	      RacerIgnoreAnswer>(this->stream)
+	      );
+    
+    // add concept and role assertions via (state) command
+    comp->add(new RacerConceptRolePM(this->stream));
+  }
+
+
+  template <class GetKBManager, class GetCache>
+  RacerCachingAtom<GetKBManager,GetCache>::RacerCachingAtom(std::iostream& s)
+    : RacerExtAtom<GetKBManager>(s), getCache()
+  { }
+
+
+  template <class GetKBManager, class GetCache>
   QueryBaseDirector::shared_pointer
-  RacerCachingAtom<GetCache>::cacheQuery(QueryCompositeDirector::shared_pointer comp) const
+  RacerCachingAtom<GetKBManager,GetCache>::cacheQuery(QueryCompositeDirector::shared_pointer comp) const
   {
     // use the QueryCachingDirector as proxy for the QueryCompositeDirector
     return QueryBaseDirector::shared_pointer(new QueryCachingDirector(getCache(), comp));
   }
 
 
-  template <class GetCache>
-  RacerConceptAtom<GetCache>::RacerConceptAtom(std::iostream& s, RacerKBManager& k)
-    : RacerCachingAtom<GetCache>(s, k)
+
+
+  template <class GetKBManager>
+  RacerConsistentAtom<GetKBManager>::RacerConsistentAtom(std::iostream& s)
+    : RacerExtAtom<GetKBManager>(s)
+  {
+    //
+    // &dlConsistent[kb,plusC,minusC,plusR,minusR]()
+    //
+    
+    this->setOutputArity(0);
+    
+    this->addInputConstant();  // kb URI
+    this->addInputPredicate(); // plusC
+    this->addInputPredicate(); // minusC
+    this->addInputPredicate(); // plusR
+    this->addInputPredicate(); // minusR
+  }
+
+
+  
+  template <class GetKBManager>
+  QueryBaseDirector::shared_pointer
+  RacerConsistentAtom<GetKBManager>::getDirectors(const dlvhex::dl::Query& q) const
+  {
+    QueryCompositeDirector::shared_pointer comp(new QueryCompositeDirector(this->stream));
+    
+    this->setupRacer(comp);
+    this->openOntology(q, comp);
+    this->increaseABox(q, comp);
+
+    // ask whether ABox is consistent
+    comp->add
+      (new QueryDirector<RacerFunAdapterBuilder<RacerABoxConsistentCmd>,RacerAnswerDriver>(this->stream)
+       );
+
+    return comp;
+  }
+
+
+  template <class GetKBManager, class GetCache>
+  RacerConceptAtom<GetKBManager,GetCache>::RacerConceptAtom(std::iostream& s)
+    : RacerCachingAtom<GetKBManager,GetCache>(s)
   {
     //
     // &dlC[kb,plusC,minusC,plusR,minusR,query](X)
@@ -90,9 +240,9 @@ namespace racer {
   }
   
 
-  template <class GetCache>
+  template <class GetKBManager, class GetCache>
   QueryBaseDirector::shared_pointer
-  RacerConceptAtom<GetCache>::getDirectors(const dlvhex::dl::Query& query) const
+  RacerConceptAtom<GetKBManager,GetCache>::getDirectors(const dlvhex::dl::Query& query) const
   {
     const DLQuery::shared_pointer& dlq = query.getDLQuery();
 
@@ -119,9 +269,9 @@ namespace racer {
   }
 
 
-  template <class GetCache>
-  RacerRoleAtom<GetCache>::RacerRoleAtom(std::iostream& s, RacerKBManager& k)
-    : RacerCachingAtom<GetCache>(s,k)
+  template <class GetKBManager, class GetCache>
+  RacerRoleAtom<GetKBManager,GetCache>::RacerRoleAtom(std::iostream& s)
+    : RacerCachingAtom<GetKBManager,GetCache>(s)
   {
     //
     // &dlR[kb,plusC,minusC,plusR,minusR,query](X,Y)
@@ -138,9 +288,9 @@ namespace racer {
   }
 
 
-  template <class GetCache>
+  template <class GetKBManager, class GetCache>
   QueryBaseDirector::shared_pointer
-  RacerRoleAtom<GetCache>::getDirectors(const dlvhex::dl::Query& query) const
+  RacerRoleAtom<GetKBManager,GetCache>::getDirectors(const dlvhex::dl::Query& query) const
   {
     const DLQuery::shared_pointer& dlq = query.getDLQuery();
 
@@ -171,9 +321,9 @@ namespace racer {
   }
 
 
-  template <class GetCache>
-  RacerDatatypeRoleAtom<GetCache>::RacerDatatypeRoleAtom(std::iostream& s, RacerKBManager& k)
-    : RacerCachingAtom<GetCache>(s, k)
+  template <class GetKBManager, class GetCache>
+  RacerDatatypeRoleAtom<GetKBManager,GetCache>::RacerDatatypeRoleAtom(std::iostream& s)
+    : RacerCachingAtom<GetKBManager,GetCache>(s)
   {
     //
     // &dlDR[kb,plusC,minusC,plusR,minusR,query](X,Y)
@@ -190,11 +340,11 @@ namespace racer {
   }
 
 
-  template <class GetCache>
+  template <class GetKBManager, class GetCache>
   void
-  RacerDatatypeRoleAtom<GetCache>::setupRacer(QueryCompositeDirector::shared_pointer& comp) const
+  RacerDatatypeRoleAtom<GetKBManager,GetCache>::setupRacer(QueryCompositeDirector::shared_pointer& comp) const
   {
-    RacerExtAtom::setupRacer(comp);
+    RacerExtAtom<GetKBManager>::setupRacer(comp);
     
     if (!Registry::getDataSubstrateMirroring())
       {
@@ -208,9 +358,9 @@ namespace racer {
   }
 
 
-  template <class GetCache>
+  template <class GetKBManager, class GetCache>
   QueryBaseDirector::shared_pointer
-  RacerDatatypeRoleAtom<GetCache>::getDirectors(const dlvhex::dl::Query& query) const
+  RacerDatatypeRoleAtom<GetKBManager,GetCache>::getDirectors(const dlvhex::dl::Query& query) const
   {
     const DLQuery::shared_pointer& dlq = query.getDLQuery();
     
@@ -238,9 +388,9 @@ namespace racer {
   }
 
 
-  template <class GetCache>
-  RacerCQAtom<GetCache>::RacerCQAtom(std::iostream& s, RacerKBManager& k, unsigned n)
-    : RacerCachingAtom<GetCache>(s,k)
+  template <class GetKBManager, class GetCache>
+  RacerCQAtom<GetKBManager,GetCache>::RacerCQAtom(std::iostream& s, unsigned n)
+    : RacerCachingAtom<GetKBManager,GetCache>(s)
   {
     //
     // &dlCQn[kb,plusC,minusC,plusR,minusR,query](X_1,...,X_n)
@@ -257,9 +407,9 @@ namespace racer {
   }
   
 
-  template <class GetCache>
+  template <class GetKBManager, class GetCache>
   QueryBaseDirector::shared_pointer
-  RacerCQAtom<GetCache>::getDirectors(const dlvhex::dl::Query& query) const
+  RacerCQAtom<GetKBManager,GetCache>::getDirectors(const dlvhex::dl::Query& query) const
   {
     QueryCompositeDirector::shared_pointer comp(new QueryCompositeDirector(this->stream));
     
@@ -279,9 +429,9 @@ namespace racer {
   }
 
 
-  template <class GetCache>
-  RacerUCQAtom<GetCache>::RacerUCQAtom(std::iostream& s, RacerKBManager& k, unsigned n)
-    : RacerCachingAtom<GetCache>(s,k)
+  template <class GetKBManager, class GetCache>
+  RacerUCQAtom<GetKBManager,GetCache>::RacerUCQAtom(std::iostream& s, unsigned n)
+    : RacerCachingAtom<GetKBManager,GetCache>(s)
   {
     //
     // &dlUCQn[kb,plusC,minusC,plusR,minusR,query](X_1,...,X_n)
@@ -298,9 +448,9 @@ namespace racer {
   }
   
 
-  template <class GetCache>
+  template <class GetKBManager, class GetCache>
   QueryBaseDirector::shared_pointer
-  RacerUCQAtom<GetCache>::getDirectors(const dlvhex::dl::Query& query) const
+  RacerUCQAtom<GetKBManager,GetCache>::getDirectors(const dlvhex::dl::Query& query) const
   {
     QueryCompositeDirector::shared_pointer comp(new QueryCompositeDirector(this->stream));
     
