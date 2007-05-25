@@ -1,4 +1,11 @@
 #!/bin/sh
+#
+# obsolete, replaced by "autoreconf -i -s -W all"
+#
+
+autoreconf -i -s -W all
+
+exit
 
 echo "libtoolize..."
 libtoolize || glibtoolize \
