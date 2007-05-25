@@ -1,0 +1,8 @@
+dlvhex-dlplugin NEWS -- history of user-visible changes.
+
+
+Version 0.6.0
+
+* New plugin parameter: --kb-reload.
+
+* dlvhex-dlplugin is GPLed now.
