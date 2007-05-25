@@ -24,18 +24,18 @@ http://www.gnu.org/software/automake/
 http://www.gnu.org/software/libtool/
 
 
-* Building, installing and testing dlvhex-racerplugin
+* Building, installing and testing dlvhex-dlplugin
 
 ** Prerequisites
 
 See README for all the basic tools and libraries needed in order to
-build dlvhex-racerplugin.
+build dlvhex-dlplugin.
 
 The development tools include:
 
 *** flex + bison
 This plugin uses relatively new features of flex and bison, so install
-the newest versions of these tools. dlvhex-racerplugin was tested with
+the newest versions of these tools. dlvhex-dlplugin was tested with
 flex 2.5.33 and bison 2.3. For installation instruction see the
 corresponding INSTALL files of the source packages.
 
@@ -62,7 +62,7 @@ or other compiler-flags, set CXX and CXXFLAGS in the `make' run.
 
 **** CXX
 Set this variable to the C++ compiler you want to use to build
-dlvhex-racerplugin. You can also use this variable to set some
+dlvhex-dlplugin. You can also use this variable to set some
 compiler frontends such as `ccache' or `distcc'.
 
 **** CXXFLAGS
@@ -117,13 +117,13 @@ This target removes almost everything in the build directory.
 
 * Distributing the plugin
 
-There are two targets for creating a dlvhex-racerplugin package:
+There are two targets for creating a dlvhex-dlplugin package:
 
 ** make distcheck
-Creates a tarball called dlvhex-racerplugin-VERSION.tar.gz,
+Creates a tarball called dlvhex-dlplugin-VERSION.tar.gz,
 configures, builds and invokes the testsuite. Afterwards it runs some
 checks on the fresh package. This is the prefered way for creating a
 package.
 
 ** make dist
-Creates the package dlvhex-racerplugin-VERSION.tar.gz.
+Creates the package dlvhex-dlplugin-VERSION.tar.gz.

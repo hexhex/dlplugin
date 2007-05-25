@@ -1,13 +1,13 @@
 -*- outline -*-
 
-This is dlvhex-racerplugin, a plugin for `dlvhex'.
+This is dlvhex-dlplugin, a plugin for `dlvhex'.
 
 This file includes some information regarding installation and needed
 tools and libraries in order to build the source package of
-dlvhex-racerplugin.
+dlvhex-dlplugin.
 
 * Dependencies
-dlvhex-racerplugin depends on following libraries and programs:
+dlvhex-dlplugin depends on following libraries and programs:
 
 ** dlvhex
 http://www.kr.tuwien.ac.at/staff/roman/dlvhex/
@@ -25,7 +25,7 @@ http://www.librdf.org/raptor/
 http://cppunit.sourceforge.net/
 
 
-* Building and installing dlvhex-racerplugin
+* Building and installing dlvhex-dlplugin
 
 ** Prerequisites
 
@@ -36,7 +36,7 @@ See dlvhex installation instructions.
 *** Racer
 Download the Racer/RacerPro binary and install it into your favourite
 location accourding to the installation instructions of Racer. Add the
-installation path to the PATH environment variable. dlvhex-racerplugin
+installation path to the PATH environment variable. dlvhex-dlplugin
 has been tested with RacerPro 1.8 and 1.9.
 
 
@@ -55,13 +55,13 @@ $ stow boost-VERSION
 
 *** libraptor
 Follow the instructions of the INSTALL file found in the distributions
-tarball. dlvhex-racerplugin needs at least libraptor 1.4.8 due to XML
+tarball. dlvhex-dlplugin needs at least libraptor 1.4.8 due to XML
 namespace parsing support.
 
 
 *** cppunit
 Follow the instructions of the INSTALL file found in the distributions
-tarball. dlvhex-racerplugin has been tested with cppunit 1.10.2 and
+tarball. dlvhex-dlplugin has been tested with cppunit 1.10.2 and
 1.12.0.
 
 
@@ -91,7 +91,7 @@ testsuite.
 
 
 ** Installation
-Run `make install' to install dlvhex-racerplugin into a system-wide
+Run `make install' to install dlvhex-dlplugin into a system-wide
 plugin directory provided by dlvhex.
 
 
