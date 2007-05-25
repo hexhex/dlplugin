@@ -1,3 +1,20 @@
+2007-05-25  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	All files are now GPLed.
+	
+	* README: Use dlplugin instead of racerplugin.
+	* MAINTAINER-README: Likewise.
+
+	* testsuite/Makefile.am (AUTOMAKE_OPTIONS): Set to gnu.
+	* src/Makefile.am: Likewise.
+	* include/Makefile.am: Likewise.
+	* Makefile.am: Likewise.
+
+	* bootstrap.sh: Use autoreconf.
+
+	* NEWS: New file.
+	* AUTHORS: Likewise.
+
 2007-05-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerInterface.cpp: Add --kb-reload parameter.
