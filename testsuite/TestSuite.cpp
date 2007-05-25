@@ -1,3 +1,25 @@
+/* dlvhex-dlplugin -- Integration of Answer-Set Programming and Description Logics.
+ *
+ * Copyright (C) 2005, 2006, 2007  Thomas Krennwallner
+ * 
+ * This file is part of dlvhex-dlplugin.
+ *
+ * dlvhex-dlplugin is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * dlvhex-dlplugin is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with dlvhex-dlplugin; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+
 /**
  * @file   TestSuite.cpp
  * @author Thomas Krennwallner
@@ -82,3 +104,8 @@ int main(int /* argc */, char*[] /* argv */)
   // Return error code 1 if the one of test failed.
   return wasSucessful ? 0 : 1;
 }
+
+
+// Local Variables:
+// mode: C++
+// End:
