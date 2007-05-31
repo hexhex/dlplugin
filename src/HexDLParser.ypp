@@ -427,7 +427,10 @@ op: STRING PMOP STRING
 	    }
 	  else
 	    {
-	      throw PluginError("Incompatible dl-atom-op " + *$1 + "+=" + *$3 + " supplied.");
+	      std::ostringstream oss;
+	      oss << "Incompatible dl-atom-op `" << *$1 << "+=" << *$3 << "' supplied: ";
+	      oss << "Cannot find " << q << " in " << ontology->getRealURI();
+	      throw PluginError(oss.str());
 	    }
 	}
       else if ($2 == '-') // PMOP is -=
@@ -444,7 +447,10 @@ op: STRING PMOP STRING
 	    }
 	  else
 	    {
-	      throw PluginError("Incompatible dl-atom-op " + *$1 + "-=" + *$3 + " supplied.");
+	      std::ostringstream oss;
+	      oss << "Incompatible dl-atom-op `" << *$1 << "-=" << *$3 << "' supplied: ";
+	      oss << "Cannot find " << q << " in " << ontology->getRealURI();
+	      throw PluginError(oss.str());
 	    }
 	}
       else // hm, PMOP is neither '+' nor '-', this is a programming error
