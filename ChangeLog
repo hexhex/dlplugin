@@ -1,3 +1,11 @@
+2007-05-31  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/HexDLParser.ypp: Fix error messages for incompatible dl-atom
+	operations.
+
+	* src/HexDLRewriter.cpp: Fix error messages for incompatible
+	dl-queries.
+
 2007-05-25  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	All files are now GPLed.
