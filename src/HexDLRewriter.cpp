@@ -754,7 +754,8 @@ DLAtomRewriter::getName() const
       else
 	{
 	  std::ostringstream oss;
-	  oss << "Incompatible dl-atom query supplied: " << *query;
+	  oss << "Incompatible dl-atom query `" << *query << "' supplied: ";
+	  oss << "Cannot find " << q << " in " << ontology->getRealURI();
 	  throw PluginError(oss.str());
 	}
     }
