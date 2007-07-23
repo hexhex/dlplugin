@@ -231,16 +231,14 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       return;
     }
 
-  std::vector<std::vector<std::string>::iterator> found;
-
   const char *ontology     = "--ontology=";
   const char *reload       = "--kb-reload";
   const char *optimization = "--dlopt=";
   const char *dldebug      = "--dldebug=";
 
-  for (std::vector<std::string>::iterator it = argv.begin();
-       it != argv.end();
-       ++it)
+  std::vector<std::string>::iterator it = argv.begin();
+
+  while (it != argv.end())
     {
       std::string::size_type o;
 
@@ -250,7 +248,9 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	{
 	  std::string uri = it->substr(o + strlen(ontology)); // get URL
 	  dlconverter->setURI(uri);
-	  found.push_back(it);
+
+	  it = argv.erase(it);
+	  continue;
 	}
 
       o = it->find(reload);
@@ -261,7 +261,9 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	  ///occurrences of --kb-reload on the command line
 	  KBManager *tmp = new NullKBManager(kbManager);
 	  kbManager = tmp;
-	  found.push_back(it);
+
+	  it = argv.erase(it);
+	  continue;
 	}
 
       o = it->find(optimization);
@@ -287,7 +289,8 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 		}
 	    }
 
-	  found.push_back(it);
+	  it = argv.erase(it);
+	  continue;
 	}
 
       o = it->find(dldebug);
@@ -313,16 +316,11 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	      cache = new DebugCache(*stats);
 	    }
 
-	  found.push_back(it);
+	  it = argv.erase(it);
+	  continue;
 	}
-    }
 
-  // we handled it so we've got to remove it. do this right after the
-  // for-loop due to invalidation of the iterator in vector<>::erase()
-  for (std::vector<std::vector<std::string>::iterator>::const_iterator it = found.begin();
-       it != found.end(); ++it)
-    {
-      argv.erase(*it);
+      ++it; // nothing found, check next position
     }
 }
 
