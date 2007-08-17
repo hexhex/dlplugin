@@ -64,17 +64,22 @@ ABoxQueryExpr::output(std::ostream& s) const
   // negated term.
   //
 
-  if (!URI::isValid(symbol) && nsid.empty()) // no uri + no namespace = plain symbol
+  bool isuri = URI::isValid(sym);
+
+  if (isuri) // symbol is a URI, no need to add namespace
     {
-      return s << sym;
+      return s << '|' << URI::getPlainURI(sym) << '|';
     }
-  else if (!URI::isValid(symbol) && !nsid.empty()) // symbol + namespace = URI
+  else // symbol is not a URI, check if we need to add the namespace
     {
-      return s << '|' << nsid << (sym[0] == '-' ? sym.substr(1) : sym) << '|';
-    }
-  else // symbol is an URI, no need to add namespace
-    {
-      return s << '|' << (sym[0] == '-' ? sym.substr(1) : sym) << '|';
+      if (nsid.empty()) // no uri + no namespace = plain symbol
+	{
+	  return s << sym;
+	}
+      else // symbol + namespace = URI
+	{
+	  return s << '|' << nsid << (sym[0] == '-' ? sym.substr(1) : sym) << '|';
+	}
     }
 }
 
