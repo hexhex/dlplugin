@@ -66,8 +66,8 @@ TestRacerParse::runRacerAnswerListTest()
 
   CPPUNIT_ASSERT_NO_THROW( al.parse(a) );
   
-  CPPUNIT_ASSERT((*a.getTuples())[0][0].getUnquotedString() == std::string("file://foobar#myfoo1"));
-  CPPUNIT_ASSERT((*a.getTuples())[1][0].getUnquotedString() == std::string("file://foobar#myfoo2"));
+  CPPUNIT_ASSERT((*a.getTuples())[0][0].getUnquotedString() == std::string("<file://foobar#myfoo1>"));
+  CPPUNIT_ASSERT((*a.getTuples())[1][0].getUnquotedString() == std::string("<file://foobar#myfoo2>"));
 }
 
 

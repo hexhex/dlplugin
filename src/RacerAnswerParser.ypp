@@ -262,6 +262,9 @@ tuple: '(' variable individual ')'
 // an individual is a symbol (maybe with namespace) or a number
 individual: '|' URI '|'
             {
+	      // escape individual in turtle syntax
+	      $2->insert(0, 1, '<');
+	      $2->push_back('>');
 	      $$ = new Term(*$2, true);
 	      delete $2;
 	    }
