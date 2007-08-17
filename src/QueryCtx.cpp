@@ -87,11 +87,28 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
 
   DLQuery::shared_pointer dlq;
 
+  ///@todo exchange this whole crap by a proper boost spirit parser
+  ///for UCQs, CQs, and plain queries.
+
   // setup the query if input tuple contains a query atom or a
   // conjunctive query
   if (inputtuple.size() > 5)
     {
-      const std::string& qstr = inputtuple[5].getUnquotedString();
+      std::string qstr = inputtuple[5].getUnquotedString();
+
+      if (qstr.length() >= 2) // check for turtle syntax
+	{
+	  int end   = qstr.length() - 1;
+
+	  char b = qstr[0];
+	  char e = qstr[end];
+
+	  if (b == '<' && e == '>') // remove turtle brackets
+	    {
+	      qstr.erase(end, 1);
+	      qstr.erase(0, 1);
+	    }
+	}
 
       if (qstr.find(" v ") != std::string::npos) // parse union of conjunctive queries
 	{
