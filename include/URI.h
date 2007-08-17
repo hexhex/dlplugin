@@ -117,6 +117,13 @@ namespace dl {
     isValid(const Term& t);
 
 
+    /**
+     * @return the plain URI as string without fancy turtle syntax and without negation
+     */
+    static std::string
+    getPlainURI(const std::string& s);
+
+
     friend std::ostream&
     operator<< (std::ostream& os, const URI& u);
 

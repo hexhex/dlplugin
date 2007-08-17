@@ -148,6 +148,8 @@ namespace dlvhex {
   } // namespace dl
 } // namespace dlvhex
 
+
+
 bool
 URI::isValid(const std::string& s)
 {
@@ -156,6 +158,29 @@ URI::isValid(const std::string& s)
       return false;
     }
 
+  int start = 0;
+  int end = s.length() - 1;
+
+  // first, we check if we have a negated uri
+
+  if (s[start] == '-')
+    {
+      start++;
+    }
+
+  // then, check if s is in turtle syntax
+
+  char b = s[start];
+  char e = s[end];
+
+  if (b == '<' && e == '>') // is in turtle syntax, hence substract the enclosing characters
+    {
+      start++;
+      end--;
+    }
+
+  // and now check if we have a valid URI
+
   // URI scheme part: [A-Za-z][A-Za-z0-9+-.]*
 
   std::string::const_iterator it;
@@ -163,16 +188,11 @@ URI::isValid(const std::string& s)
   // find first non-alphanumeric occurence in s, i.e. skip the URI
   // scheme part which consists only of alphanumeric and +/-/. chars
 
-  char c0 = std::toupper(s[0]);
-  char c1 = std::toupper(s[1]);
+  char c0 = std::toupper(s[start]);
 
-  if (c0 == '-' && c1 >= 'A' && c1 <= 'Z') // maybe a negated URI?
+  if (c0 >= 'A' && c0 <= 'Z') // first char in range ['A','Z']
     {
-      it = std::find_if(s.begin() + 2, s.end(), IsNotAlNumPMD());
-    }
-  else if (c0 >= 'A' && c0 <= 'Z') // first char in range ['A','Z']
-    {
-      it = std::find_if(s.begin() + 1, s.end(), IsNotAlNumPMD());
+      it = std::find_if(s.begin() + start + 1, s.begin() + end + 1, IsNotAlNumPMD());
     }
   else
     {
@@ -180,8 +200,9 @@ URI::isValid(const std::string& s)
     }
 
   // URI is valid if found non-alphanumeric occurence is a ':' character
-  return it != s.end() && *it == ':';
+  return it != (s.begin() + end + 1) && *it == ':';
 }
+
 
 bool
 URI::isValid(const Term& t)
@@ -195,6 +216,40 @@ URI::isValid(const Term& t)
       return URI::isValid(t.getUnquotedString());
     }
 }
+
+
+std::string
+URI::getPlainURI(const std::string& s)
+{
+  if (s.length() < 2)
+    {
+      return s;
+    }
+
+  int start = 0;
+  int end = s.length() - 1;
+
+  // first, we check if we have a negated uri
+
+  if (s[start] == '-')
+    {
+      start++;
+    }
+
+  // then, check if s is in turtle syntax
+
+  char b = s[start];
+  char e = s[end];
+
+  if (b == '<' && e == '>') // is in turtle syntax, hence substract the enclosing characters
+    {
+      start++;
+      end--;
+    }
+
+  return s.substr(start, end - start + 1);
+}
+
 
 
 // Local Variables:
