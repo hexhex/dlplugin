@@ -16,4 +16,4 @@ testnames(X,Y) :- &dlDR["test.owl",a,b,c,d,"hasName"](X,Y).
 
 test1(Y) :- &dlDR["test.owl",a,b,c,d,"hasTestValue"]("test1",Y).
 
-notest(X) :- &dlCQ["test.owl",a,b,c,d,"tst:Test(X),test:Test(X)"](X).
+notest(X) :- &dlCQ["test.owl",a,b,c,d,"tst:Test(X), test:Test(X)"](X).

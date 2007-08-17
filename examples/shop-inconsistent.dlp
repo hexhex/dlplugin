@@ -4,4 +4,13 @@
 
 minusShop("shop:Shop",S) :- &dlC["shop.owl",a,b,c,d,"shop:Shop"](S).
 
-consistent :- &dlConsistent["shop.owl",plusShop,minusShop,plusProvides,foo].
+consistent :- &dlConsistent["shop.owl",a,minusShop,c,d].
+
+shop(S) :- &dlC["shop.owl",a,minusShop,c,d,"shop:Shop"](S).
+
+provides1(S,P) :- &dlR["shop.owl",a,minusShop,c,d,"shop:provides"](S,P).
+provides2(P) :- &dlR["shop.owl",a,minusShop,c,d,"shop:provides"]("shop:s1",P).
+provides3(S) :- &dlR["shop.owl",a,minusShop,c,d,"shop:provides"](S,"shop:cpu").
+
+sp1(S,P1,P2) :- &dlCQ["shop.owl",a,minusShop,c,d,"shop:Shop(S), shop:provides(S,P1), shop:Part(P2)"](S,P1,P2).
+sp2(S,P1,P2) :- &dlCQ["shop.owl",a,minusShop,c,d,"shop:Shop(S), shop:provides(S,P1), shop:Part(P2)"](S,"shop:s1",P2,P1,"shop:s2").
