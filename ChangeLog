@@ -1,6 +1,13 @@
+2007-08-20  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* TODO: New file.
+
+	* examples/tests/shop+test.out: Always return URI individuals in
+	turtle syntax.
+
 2007-08-17  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
-	* examples/shop-inconsistent.dlp: Beatify CQs.
+	* examples/shop-inconsistent.dlp: Beautify CQs.
 	* examples/test.dlp: Likewise.
 
 	* src/QueryCtx.cpp: Add support for turtle syntax.
