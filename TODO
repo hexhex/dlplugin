@@ -1,0 +1,36 @@
+-*- org -*-
+
+* TODO enhance doxygen documentation
+
+* TODO Remove Abox handling, use (retrieve-under-premise)?
+
+* TODO if someone queries a non-occuring individual RacerPro sends an error
+  good, bad?
+
+* TODO fuse PluginAtom::Query + dlvhex::dl::racer::Query somehow?
+
+* TODO Answer class is suboptimal (bool vs. tuples)
+  maybe boost::invariant can help in this respect.
+
+* TODO Introduce DLQuery traits
+  the current handling of dl- and (u)cq-queries is suboptimal
+  (checking the pointers in DLQuery is errorprone).
+
+* TODO check boolean/retrieval caching
+
+* TODO make Answer/Query classes more generic
+
+* TODO switch for UNA on/off
+
+* TODO add all LP constants to the TBox(?)
+  via {c1,...,cn} \sqsubseteq \top, alternatively add them by means of
+  ABox assertions c1,c2,...,cn \in \top.
+
+* TODO --kb-reload _always_ reloads the DL-KB.
+
+* TODO implement \neg R(a,b) in \uminus as { A(a), B(b), \exists R.A \sqsubseteq \neg B }
+
+* TODO use boost::spirit
+** to parse (U)CQs in the external atoms
+   fuse the dispatchin code in AtomSeparator.cpp and QueryCtx.cpp 
+** to parse the answers from Racer?
