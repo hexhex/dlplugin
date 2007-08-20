@@ -20,7 +20,8 @@
 
 * TODO make Answer/Query classes more generic
 
-* TODO switch for UNA on/off
+* TODO on startup, read UNA status of the DL-reasoner
+  if una is turned on, disable it when --dlsetup=-una.
 
 * TODO add all LP constants to the TBox(?)
   via {c1,...,cn} \sqsubseteq \top, alternatively add them by means of
