@@ -32,15 +32,31 @@
 
 #include "Registry.h"
 
-#include <string>
-
 using namespace dlvhex::dl;
 
-
+//
+// default values for the registry
+//
+unsigned Registry::flags(Registry::UNA);
 unsigned Registry::verbose(1);
 bool Registry::una(false);
 bool Registry::datasubstrate(false);
 
+
+
+void
+Registry::setFlags(unsigned flags)
+{
+  Registry::flags = flags;
+}
+
+unsigned
+Registry::getFlags()
+{
+  return Registry::flags;
+}
+
+ 
 
 unsigned
 Registry::getVerbose()

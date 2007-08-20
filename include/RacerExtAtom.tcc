@@ -131,7 +131,7 @@ namespace racer {
   void
   RacerExtAtom<GetKBManager>::setupRacer(QueryCompositeDirector::shared_pointer& comp) const
   {
-    if (!Registry::getUNA()) // only set UNA once
+    if (!Registry::getUNA() && (Registry::getFlags() & Registry::UNA)) // only set UNA once
       {
 	// turn on unique name assumption
 	comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerUNACmd>,

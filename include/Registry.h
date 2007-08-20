@@ -45,6 +45,8 @@ namespace dl {
   class Registry
   {
   private:
+    /// setup DL-reasoner according to these flags
+    static unsigned flags;
     /// verbosity level
     static unsigned verbose;
     /// did we set UNA?
@@ -57,6 +59,18 @@ namespace dl {
     ~Registry() = 0;
 
   public:
+    /// flags for the Registry
+    enum
+      {
+	UNA = 0x1
+      };
+
+    static void
+    setFlags(unsigned);
+
+    static unsigned
+    getFlags();
+
     static unsigned
     getVerbose();
 

@@ -222,17 +222,20 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
   if (doHelp)
     {
       out << "DL-plugin: " << std::endl << std::endl;
-      out << " --ontology=URI       Use URI as ontology for dl-atoms." << std::endl;
-      out << " --kb-reload          Force reloading of previously loaded ontologies." << std::endl;
-      out << " --dlopt=MOD[,MOD]*   Set optimization modifiers, where MOD may be" << std::endl;
-      out << "                      -push    ... turn off pushing" << std::endl;
-      out << "                      -dlcache ... turn off dl-cache" << std::endl;
-      out << " --dldebug=LEVEL      Set debug level to LEVEL." << std::endl;
+      out << " --ontology=URI        Use URI as ontology for dl-atoms." << std::endl;
+      out << " --kb-reload           Force reloading of previously loaded ontologies." << std::endl;
+      out << " --dlsetup=ARG[,ARG]*  Set DL-reasoner options, where ARG may be" << std::endl;
+      out << "                       -una ... turn off unique name assumption (default: on)" << std::endl;
+      out << " --dlopt=MOD[,MOD]*    Set optimization modifiers, where MOD may be" << std::endl;
+      out << "                       -push    ... turn off pushing" << std::endl;
+      out << "                       -dlcache ... turn off dl-cache" << std::endl;
+      out << " --dldebug=LEVEL       Set debug level to LEVEL." << std::endl;
       return;
     }
 
   const char *ontology     = "--ontology=";
   const char *reload       = "--kb-reload";
+  const char *setup        = "--dlsetup=";
   const char *optimization = "--dlopt=";
   const char *dldebug      = "--dldebug=";
 
@@ -261,6 +264,29 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	  ///occurrences of --kb-reload on the command line
 	  KBManager *tmp = new NullKBManager(kbManager);
 	  kbManager = tmp;
+
+	  it = argv.erase(it);
+	  continue;
+	}
+
+      o = it->find(setup);
+
+      if (o != std::string::npos) // dispatch setup arguments
+	{
+	  std::string args = it->substr(o + strlen(setup)); // get list of ARG
+
+	  typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+	  boost::char_separator<char> sep(",");
+	  tokenizer tokens(args, sep);
+	  for (tokenizer::iterator tok_iter = tokens.begin();
+	       tok_iter != tokens.end(); ++tok_iter)
+	    {
+	      if (*tok_iter == "-una") // turn UNA off
+		{
+		  unsigned flags = Registry::getFlags();
+		  Registry::setFlags(flags & ~Registry::UNA); // remove UNA flag
+		}
+	    }
 
 	  it = argv.erase(it);
 	  continue;
