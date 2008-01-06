@@ -1,3 +1,18 @@
+2008-01-06  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/AtomSeparator.h: Adapt to new dlvhex plugin API.
+	* include/Ontology.h: Likewise.
+	* include/RacerInterface.h: Likewise.
+	* include/URI.h: Likewise.
+	* src/DLQuery.cpp: Likewise.
+	* src/HexDLParser.ypp: Likewise.
+	* src/HexDLRewriter.cpp: Likewise.
+	* src/Query.cpp: Likewise.
+	* src/RacerAnswerParser.ypp: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* src/URI.cpp: Likewise.
+
 2007-08-20  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/RacerExtAtom.tcc: Add support for disabling UNA.
