@@ -36,8 +36,6 @@
 #include <dlvhex/AtomSet.h>
 #include <dlvhex/Term.h>
 
-using namespace dlvhex::dl;
-
 
 namespace dlvhex {
 namespace dl {
@@ -121,10 +119,6 @@ namespace dl {
     
     return lessthan;
   }
-
-} // namespace dl
-} // namespace dlvhex
-
 
 
 DLQuery::DLQuery(Ontology::shared_pointer o, const Term& q, const Tuple& p)
@@ -271,6 +265,9 @@ DLQuery::getPatternTuple() const
 {
   return this->pattern;
 }
+
+} // namespace dl
+} // namespace dlvhex
 
 
 // Local Variables:

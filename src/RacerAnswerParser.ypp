@@ -79,8 +79,8 @@
 %union {
   int ival;
   std::string* sval;
-  Term* termval;
-  Tuple* tupleval;
+  DLVHEX_NAMESPACE Term* termval;
+  DLVHEX_NAMESPACE Tuple* tupleval;
 }
 
 
@@ -161,7 +161,7 @@ message: boolean | list | status
 boolean: TRUE
          {
 	   answer.setAnswer(true);
- 	   answer.addTuple(Tuple());
+ 	   answer.addTuple(DLVHEX_NAMESPACE Tuple());
 	 }
        | NIL
          {
@@ -195,12 +195,12 @@ status: ':' STRING
 // just add the sequence of individuals to the answer
 individuals: individual
              {
-	       answer.addTuple(Tuple(1, *$1));
+	       answer.addTuple(DLVHEX_NAMESPACE Tuple(1, *$1));
 	       delete $1;
 	     }
            | individuals individual
              { 
-	       answer.addTuple(Tuple(1, *$2));
+	       answer.addTuple(DLVHEX_NAMESPACE Tuple(1, *$2));
 	       delete $2;
 	     }
 ;
@@ -222,7 +222,7 @@ pairs: '(' pair ')'
 // new Tuple
 pair: individual individual
       {
-	$$ = new Tuple;
+	$$ = new DLVHEX_NAMESPACE Tuple;
         $$->push_back(*$1);
         $$->push_back(*$2);
 	delete $1;
@@ -247,7 +247,7 @@ tuples: '(' tuple ')'
 // individual
 tuple: '(' variable individual ')'
        {
-	 $$ = new Tuple(1, *$3);
+	 $$ = new DLVHEX_NAMESPACE Tuple(1, *$3);
 	 delete $3;
        }
      | tuple '(' variable individual ')'
@@ -265,17 +265,17 @@ individual: '|' URI '|'
 	      // escape individual in turtle syntax
 	      $2->insert(0, 1, '<');
 	      $2->push_back('>');
-	      $$ = new Term(*$2, true);
+	      $$ = new DLVHEX_NAMESPACE Term(*$2, true);
 	      delete $2;
 	    }
           | STRING
             {
-	      $$ = new Term(*$1, true);
+	      $$ = new DLVHEX_NAMESPACE Term(*$1, true);
 	      delete $1;
 	    }
           | NUMBER
             {
-	      $$ = new Term($1);
+	      $$ = new DLVHEX_NAMESPACE Term($1);
 	    }
 ;
 

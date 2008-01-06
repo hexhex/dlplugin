@@ -36,12 +36,14 @@
 
 #include <string>
 
+
+namespace dlvhex {
+
 //
 // forward declarations
 //
 class Term;
 
-namespace dlvhex {
 namespace dl {
 
   /**

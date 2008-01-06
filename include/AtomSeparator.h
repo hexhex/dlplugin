@@ -39,13 +39,15 @@
 #include <string>
 #include <vector>
 
+
+namespace dlvhex {
+
 //
 // forward declaration
 //
 class AtomSet;
 
 
-namespace dlvhex {
 namespace dl {
  
   /**

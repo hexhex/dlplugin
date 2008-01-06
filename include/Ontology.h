@@ -38,7 +38,7 @@
 
 #include <dlvhex/Term.h>
 
-#include <iosfwd>
+#include <iostream>
 #include <string>
 #include <set>
 

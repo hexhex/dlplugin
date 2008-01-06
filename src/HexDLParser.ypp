@@ -80,11 +80,11 @@
   char cval;
   std::string* sval;
   int ival;
-  Term* termval;
-  Tuple* tupleval;
-  AtomPtr* atomval;
-  AtomSet* atomsetval;
-  boost::ptr_vector<AtomSet>* atomsetsval;
+  DLVHEX_NAMESPACE Term* termval;
+  DLVHEX_NAMESPACE Tuple* tupleval;
+  DLVHEX_NAMESPACE AtomPtr* atomval;
+  DLVHEX_NAMESPACE AtomSet* atomsetval;
+  boost::ptr_vector<DLVHEX_NAMESPACE AtomSet>* atomsetsval;
   dlvhex::dl::HexDLRewriterBase* dlrewriterval;
 }
 
@@ -131,7 +131,7 @@ YY_DECL;
 dlatoms: /* empty */
        | dlatoms dlatom SENTINEL
          {
-	   Literal* l = $2->getLiteral();
+	   DLVHEX_NAMESPACE Literal* l = $2->getLiteral();
 	   // replace the parsed dl-atom
 	   driver.getOutput() << *l << $3;
 	   delete l;
@@ -149,7 +149,7 @@ dlatom: DLATOM '[' dlquery ']' output
 	  //
 	  // create a rewriter without dl-atom ops
 	  //
-	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, AtomSet(), $3, $5);
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, DLVHEX_NAMESPACE AtomSet(), $3, $5);
 	}
       | DLATOM '[' ops ';' dlquery ']' output
         {
@@ -166,7 +166,7 @@ dlatom: DLATOM '[' dlquery ']' output
 	  // create a rewriter with cq-atom ops
 	  //
 
-	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, AtomSet(), $3, $5);
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, DLVHEX_NAMESPACE AtomSet(), $3, $5);
 	}
       | DLATOM '[' ops ';' cq ']' output
         {
@@ -183,7 +183,7 @@ dlatom: DLATOM '[' dlquery ']' output
 	  // create a rewriter with ucq-atom ops
 	  //
 
-	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, AtomSet(), $3, $5);
+	  $$ = new dlvhex::dl::DLAtomRewriter(driver.getOntology(), dlinput, DLVHEX_NAMESPACE AtomSet(), $3, $5);
 	}
       | DLATOM '[' ops ';' ucq ']' output
         {
@@ -203,7 +203,7 @@ dlatom: DLATOM '[' dlquery ']' output
 	  std::ostringstream oss;
 	  oss << "dlCQ" << $5->size();
 
-	  AtomPtr eap(new ExternalAtom(oss.str(), *$5, *$3, 0));
+	  DLVHEX_NAMESPACE AtomPtr eap(new DLVHEX_NAMESPACE ExternalAtom(oss.str(), *$5, *$3, 0));
 	  $$ = new dlvhex::dl::ExtAtomRewriter(eap);
 
 	  delete $3;
@@ -218,7 +218,7 @@ dlatom: DLATOM '[' dlquery ']' output
 	  std::ostringstream oss;
 	  oss << "dlCQ" << $5->size();
 
-	  AtomPtr eap(new ExternalAtom(oss.str(), *$5, *$3, 0));
+	  DLVHEX_NAMESPACE AtomPtr eap(new DLVHEX_NAMESPACE ExternalAtom(oss.str(), *$5, *$3, 0));
 	  $$ = new dlvhex::dl::ExtAtomRewriter(eap);
 
 	  delete $3;
@@ -227,7 +227,7 @@ dlatom: DLATOM '[' dlquery ']' output
       | DLEXTATOM '[' terms ']' output
         {
 	  // create simple dlatom rewriter
-	  AtomPtr eap(new ExternalAtom(*$1, *$5, *$3, 0));
+	  DLVHEX_NAMESPACE AtomPtr eap(new DLVHEX_NAMESPACE ExternalAtom(*$1, *$5, *$3, 0));
 	  $$ = new dlvhex::dl::ExtAtomRewriter(eap);
 
 	  delete $1;
@@ -253,23 +253,23 @@ dlquery: STRING
 // a query atom
 atom: dlquery '(' term ')'
       {
-	Tuple t;
+	DLVHEX_NAMESPACE Tuple t;
 	t.push_back(*$3);
 
 	bool neg = (*$1)[0] == '-';
-	$$ = new AtomPtr(new Atom(neg ? $1->substr(1) : *$1, t, neg));
+	$$ = new DLVHEX_NAMESPACE AtomPtr(new DLVHEX_NAMESPACE Atom(neg ? $1->substr(1) : *$1, t, neg));
 
 	delete $1;
 	delete $3;
       }
     | dlquery '(' term ',' term ')'
       {
-	Tuple t;
+	DLVHEX_NAMESPACE Tuple t;
 	t.push_back(*$3);
 	t.push_back(*$5);
 
 	bool neg = (*$1)[0] == '-';
-	$$ = new AtomPtr(new Atom(neg ? $1->substr(1) : *$1, t, neg));
+	$$ = new DLVHEX_NAMESPACE AtomPtr(new DLVHEX_NAMESPACE Atom(neg ? $1->substr(1) : *$1, t, neg));
 
 	delete $1;
 	delete $3;
@@ -280,7 +280,7 @@ atom: dlquery '(' term ')'
 // a conjunctive query
 cq: atom
     {
-      $$ = new AtomSet;
+      $$ = new DLVHEX_NAMESPACE AtomSet;
       $$->insert(*$1);
       delete $1;
     }
@@ -295,7 +295,7 @@ cq: atom
 // a union conjunctive query
 ucq: cq 'v' cq
      {
-       $$ = new boost::ptr_vector<AtomSet>;
+       $$ = new boost::ptr_vector<DLVHEX_NAMESPACE AtomSet>;
        $$->push_back($1);
        $$->push_back($3);
      }
@@ -309,11 +309,11 @@ ucq: cq 'v' cq
 // the output list
 output: /* empty */
         {
-	  $$ = new Tuple;
+	  $$ = new DLVHEX_NAMESPACE Tuple;
 	}
       | '(' ')'
         {
-	  $$ = new Tuple;
+	  $$ = new DLVHEX_NAMESPACE Tuple;
 	}
       | '(' terms ')'
         {
@@ -325,7 +325,7 @@ output: /* empty */
 // list of terms
 terms: term
        {
-	 $$ = new Tuple(1, *$1);
+	 $$ = new DLVHEX_NAMESPACE Tuple(1, *$1);
 	 delete $1;
        }
      | terms ',' term
@@ -340,16 +340,16 @@ terms: term
 // a term is either a string, a number or an anonymous variable
 term: STRING
       {
-	$$ = new Term(*$1);
+	$$ = new DLVHEX_NAMESPACE Term(*$1);
 	delete $1;
       }
     | NUMBER
       {
-	$$ = new Term($1);
+	$$ = new DLVHEX_NAMESPACE Term($1);
       }
     | '_'
       {
-	$$ = new Term;
+	$$ = new DLVHEX_NAMESPACE Term;
       }
     ;
 
@@ -358,7 +358,7 @@ term: STRING
 // list of operations
 ops: op
      {
-       $$ = new AtomSet;
+       $$ = new DLVHEX_NAMESPACE AtomSet;
        $$->insert(*$1);
        delete $1;
      }
@@ -381,7 +381,7 @@ op: STRING PMOP STRING
 
       if (!ontology)
 	{
-	  throw PluginError("Cannot rewrite dl-atoms, option --ontology is empty.");
+	  throw DLVHEX_NAMESPACE PluginError("Cannot rewrite dl-atoms, option --ontology is empty.");
 	}
 
       std::string tmp;
@@ -403,11 +403,11 @@ op: STRING PMOP STRING
 	  tmp = ontology->getNamespace() + *$1;
 	}
 
-      Tuple t;
-      t.push_back(Term(tmp, true));
-      t.push_back(Term(*$3));
+      DLVHEX_NAMESPACE Tuple t;
+      t.push_back(DLVHEX_NAMESPACE Term(tmp, true));
+      t.push_back(DLVHEX_NAMESPACE Term(*$3));
 
-      Term q(tmp);
+      DLVHEX_NAMESPACE Term q(tmp);
 
       dlvhex::dl::TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
       dlvhex::dl::TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
@@ -417,40 +417,40 @@ op: STRING PMOP STRING
 	{
 	  if (concepts->find(q) != concepts->end())
 	    {
-	      $$ = new AtomPtr(new Atom("pc", t));
+	      $$ = new DLVHEX_NAMESPACE AtomPtr(new DLVHEX_NAMESPACE Atom("pc", t));
 	    }
 	  else if (roles->find(q) != roles->end() ||
 		   datatypeRoles->find(q) != datatypeRoles->end()
 		   )
 	    {
-	      $$ = new AtomPtr(new Atom("pr", t));
+	      $$ = new DLVHEX_NAMESPACE AtomPtr(new DLVHEX_NAMESPACE Atom("pr", t));
 	    }
 	  else
 	    {
 	      std::ostringstream oss;
 	      oss << "Incompatible dl-atom-op `" << *$1 << "+=" << *$3 << "' supplied: ";
 	      oss << "Cannot find " << q << " in " << ontology->getRealURI();
-	      throw PluginError(oss.str());
+	      throw DLVHEX_NAMESPACE PluginError(oss.str());
 	    }
 	}
       else if ($2 == '-') // PMOP is -=
 	{
 	  if (concepts->find(q) != concepts->end())
 	    {
-	      $$ = new AtomPtr(new Atom("mc", t));
+	      $$ = new DLVHEX_NAMESPACE AtomPtr(new DLVHEX_NAMESPACE Atom("mc", t));
 	    }
 	  else if (roles->find(q) != roles->end() ||
 		   datatypeRoles->find(q) != datatypeRoles->end()
 		   )
 	    {
-	      $$ = new AtomPtr(new Atom("mr", t));
+	      $$ = new DLVHEX_NAMESPACE AtomPtr(new DLVHEX_NAMESPACE Atom("mr", t));
 	    }
 	  else
 	    {
 	      std::ostringstream oss;
 	      oss << "Incompatible dl-atom-op `" << *$1 << "-=" << *$3 << "' supplied: ";
 	      oss << "Cannot find " << q << " in " << ontology->getRealURI();
-	      throw PluginError(oss.str());
+	      throw DLVHEX_NAMESPACE PluginError(oss.str());
 	    }
 	}
       else // hm, PMOP is neither '+' nor '-', this is a programming error

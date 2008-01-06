@@ -56,7 +56,9 @@
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-using namespace dlvhex::dl::racer;
+namespace dlvhex {
+  namespace dl {
+    namespace racer {
 
 
 RacerInterface::RacerInterface()
@@ -143,43 +145,35 @@ RacerInterface::createOptimizer()
 }
 
 
-namespace dlvhex {
-  namespace dl {
-    namespace racer {
+/** 
+ * We cannot rely on dlvhex calling RacerInterface::setOptions
+ * before RacerInterface::getAtoms so we provide this class as
+ * template parameter for the caching external atoms in order to
+ * get the current cache.
+ */
+struct GetCacheFun
+{
+  dlvhex::dl::BaseCache&
+  operator() () const
+  {
+    return *(RacerInterface::instance()->getCache());
+  }
+};
 
-      /** 
-       * We cannot rely on dlvhex calling RacerInterface::setOptions
-       * before RacerInterface::getAtoms so we provide this class as
-       * template parameter for the caching external atoms in order to
-       * get the current cache.
-       */
-      struct GetCacheFun
-      {
-	dlvhex::dl::BaseCache&
-	operator() () const
-	{
-	  return *(RacerInterface::instance()->getCache());
-	}
-      };
-
-      /** 
-       * We cannot rely on dlvhex calling RacerInterface::setOptions
-       * before RacerInterface::getAtoms so we provide this class as
-       * template parameter for the external atoms in order to get the
-       * current KBManager.
-       */
-      struct GetKBManagerFun
-      {
-	dlvhex::dl::KBManager&
-	operator() () const
-	{
-	  return *(RacerInterface::instance()->getKBManager());
-	}
-      };
- 
-    } // namespace racer
-  } // namespace dl
-} // namespace dlvhex
+/** 
+ * We cannot rely on dlvhex calling RacerInterface::setOptions
+ * before RacerInterface::getAtoms so we provide this class as
+ * template parameter for the external atoms in order to get the
+ * current KBManager.
+ */
+struct GetKBManagerFun
+{
+  dlvhex::dl::KBManager&
+  operator() () const
+  {
+    return *(RacerInterface::instance()->getKBManager());
+  }
+};
 
 
 void
@@ -188,10 +182,15 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
   // maybe we should provide the stream and the kbmanager as template
   // parameters similar to GetCache
 
-  m["dlC"]          = new RacerConceptAtom<GetKBManagerFun,GetCacheFun>(*stream);
-  m["dlR"]          = new RacerRoleAtom<GetKBManagerFun,GetCacheFun>(*stream);
-  m["dlConsistent"] = new RacerConsistentAtom<GetKBManagerFun>(*stream);
-  m["dlDR"]         = new RacerDatatypeRoleAtom<GetKBManagerFun,GetCacheFun>(*stream);
+  boost::shared_ptr<PluginAtom> dlC(new RacerConceptAtom<GetKBManagerFun,GetCacheFun>(*stream));
+  boost::shared_ptr<PluginAtom> dlR(new RacerRoleAtom<GetKBManagerFun,GetCacheFun>(*stream));
+  boost::shared_ptr<PluginAtom> dlConsistent(new RacerConsistentAtom<GetKBManagerFun>(*stream));
+  boost::shared_ptr<PluginAtom> dlDR(new RacerDatatypeRoleAtom<GetKBManagerFun,GetCacheFun>(*stream));
+
+  m["dlC"]          = dlC;
+  m["dlR"]          = dlR;
+  m["dlConsistent"] = dlConsistent;
+  m["dlDR"]         = dlDR;
 
   // register for each arity in range 0 to 32 a dedicated RacerCQAtom
   // external atom with specified arity
@@ -200,8 +199,9 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
 
   for (unsigned n = 0; n <= 32; ++n)
     {
+      boost::shared_ptr<PluginAtom> dlCQ(new RacerCQAtom<GetKBManagerFun,GetCacheFun>(*stream, n));
       oss << "dlCQ" << n;
-      m[oss.str()]  = new RacerCQAtom<GetKBManagerFun,GetCacheFun>(*stream, n);
+      m[oss.str()] = dlCQ;
       oss.str("");
     }
 
@@ -210,8 +210,9 @@ RacerInterface::getAtoms(AtomFunctionMap& m)
 
   for (unsigned n = 0; n <= 32; ++n)
     {
+      boost::shared_ptr<PluginAtom> dlUCQ(new RacerUCQAtom<GetKBManagerFun,GetCacheFun>(*stream, n));
       oss << "dlUCQ" << n;
-      m[oss.str()]  = new RacerUCQAtom<GetKBManagerFun,GetCacheFun>(*stream, n);
+      m[oss.str()] = dlUCQ;
       oss.str("");
     }
 }
@@ -351,13 +352,18 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 }
 
 
-extern "C" PluginInterface*
+    } // namespace racer
+  } // namespace dl
+} // namespace dlvhex
+
+
+extern "C" DLVHEX_NAMESPACE PluginInterface*
 PLUGINIMPORTFUNCTION()
 {
-  RacerInterface::instance()->setVersion(DLPLUGIN_MAJOR,
-					 DLPLUGIN_MINOR,
-					 DLPLUGIN_MICRO);
-  return RacerInterface::instance();
+  dlvhex::dl::racer::RacerInterface::instance()->setVersion(DLPLUGIN_MAJOR,
+							    DLPLUGIN_MINOR,
+							    DLPLUGIN_MICRO);
+  return dlvhex::dl::racer::RacerInterface::instance();
 }
 
 

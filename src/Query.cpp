@@ -38,7 +38,8 @@
 #include <dlvhex/AtomSet.h>
 #include <dlvhex/Term.h>
 
-using namespace dlvhex::dl;
+namespace dlvhex {
+  namespace dl {
 
 
 Query::Query(KBManager& kb,
@@ -101,6 +102,9 @@ Query::setInterpretation(const AtomSet& ints,
       if (ap) proj.insert(ap);
     }
 }
+
+} // namespace dl
+} // namespace dlvhex
 
 
 // Local Variables:

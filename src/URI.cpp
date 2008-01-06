@@ -44,7 +44,8 @@
 #include <unistd.h> // getcwd()
 
 
-using namespace dlvhex::dl;
+namespace dlvhex {
+  namespace dl {
 
 
 URI::URI(const std::string& u, bool absolute)
@@ -125,29 +126,22 @@ URI::setupURI(const std::string& u, bool absolute)
 }
 
 
-namespace dlvhex {
-  namespace dl {
-
-    ///@brief predicate returns true iff argument is not an
-    ///alpha-numeric and not a {+,-,.} character
-    struct IsNotAlNumPMD : public std::unary_function<char, bool>
-    {
-      bool
-      operator() (char c)
-      {
-	c = std::toupper(c);
-	return
-	  (c < 'A' || c > 'Z') &&
-	  (c < '0' || c > '9') &&
-	  c != '+' &&
-	  c != '-' &&
-	  c != '.';
-      }
-    };
-
-  } // namespace dl
-} // namespace dlvhex
-
+///@brief predicate returns true iff argument is not an
+///alpha-numeric and not a {+,-,.} character
+struct IsNotAlNumPMD : public std::unary_function<char, bool>
+{
+  bool
+  operator() (char c)
+  {
+    c = std::toupper(c);
+    return
+      (c < 'A' || c > 'Z') &&
+      (c < '0' || c > '9') &&
+      c != '+' &&
+      c != '-' &&
+      c != '.';
+  }
+};
 
 
 bool
@@ -250,6 +244,10 @@ URI::getPlainURI(const std::string& s)
   return s.substr(start, end - start + 1);
 }
 
+
+
+  } // namespace dl
+} // namespace dlvhex
 
 
 // Local Variables:

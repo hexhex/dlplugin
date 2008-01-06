@@ -39,7 +39,7 @@
 #include "Query.h"
 #include "DLError.h"
 
-#include <iosfwd>
+#include <iostream>
 #include <sstream>
 
 using namespace dlvhex::dl::racer;
@@ -276,8 +276,8 @@ NRQLBaseBuilder::createPremise(std::ostream& stream, const Query& query) const
 
       stream << 
 	ABoxInstanceAssertion
-	(new ABoxQueryConcept("foo"),
-	 new ABoxQueryIndividual("bar")
+	(new ABoxQueryConcept(Term("foo")),
+	 new ABoxQueryIndividual(Term("bar"))
 	 );
     }
 #endif
@@ -309,8 +309,8 @@ NRQLStateBuilder::createPremise(std::ostream& stream, const Query& query) const
 
       stream << 
 	ABoxAddConceptAssertion
-	(new ABoxQueryConcept("foo"),
-	 new ABoxQueryIndividual("bar"),
+	(new ABoxQueryConcept(Term("foo")),
+	 new ABoxQueryIndividual(Term("bar")),
 	 query.getKBManager().getKBName()
 	 );
     }
@@ -632,16 +632,17 @@ NRQLDatatypeBuilder::createHead(std::ostream& stream, const Query& query) const
     {
       // only retrieve the datatype, let Answer add the
       // corresponding individual
-      stream << ABoxQueryVariable("Y",
+      stream << ABoxQueryVariable(Term("Y"),
 				  ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate
 				  );
     }
   else if (type == 0x0) // (variable,variable) pattern
     {
-      stream << ABoxQueryVariable("X",
+      stream << ABoxQueryVariable(Term("X"),
 				  ABoxQueryVariable::VariableType::substrate)
 	     << ' '
-	     << ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate
+	     << ABoxQueryVariable(Term("Y"),
+				  ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate
 				  );
     }
 
@@ -672,14 +673,14 @@ NRQLDatatypeBuilder::createBody(std::ostream& stream, const Query& query) const
       body.addAtom(new NRQLQueryAtom
 		   (new RoleQuery
 		    (new ABoxQueryRole(q, nspace, true),
-		     new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate),
-		     new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
+		     new ABoxQueryVariable(Term("X"), ABoxQueryVariable::VariableType::substrate),
+		     new ABoxQueryVariable(Term("Y"), ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
 		     )
 		    )
 		   );
       body.addAtom(new NRQLQueryAtom
 		   (new SameAsQuery
-		    (new ABoxQueryVariable("X"),
+		    (new ABoxQueryVariable(Term("X")),
 		     new ABoxQueryIndividual
 		     (pat[0], nspace)
 		     )
@@ -694,8 +695,8 @@ NRQLDatatypeBuilder::createBody(std::ostream& stream, const Query& query) const
 	NRQLQueryAtom
 	(new RoleQuery
 	 (new ABoxQueryRole(q, nspace, true),
-	  new ABoxQueryVariable("X", ABoxQueryVariable::VariableType::substrate),
-	  new ABoxQueryVariable("Y", ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
+	  new ABoxQueryVariable(Term("X"), ABoxQueryVariable::VariableType::substrate),
+	  new ABoxQueryVariable(Term("Y"), ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
 	  )
 	 );
     }

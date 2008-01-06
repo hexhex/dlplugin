@@ -43,7 +43,8 @@
 #include <cassert>
 #include <cstdlib>
 
-using namespace dlvhex::dl;
+namespace dlvhex {
+  namespace dl {
 
 
 HexDLRewriterBase::HexDLRewriterBase()
@@ -857,6 +858,9 @@ DLAtomInput::getDLInputRules() const
   return rules;
 }
 
+
+  } // namespace dl
+} // namespace dlvhex
 
 // Local Variables:
 // mode: C++
