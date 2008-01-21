@@ -42,7 +42,6 @@ AM_CPPFLAGS = \
 	-DDLPLUGIN='"$(top_builddir)/src/.libs/libdlvhexracer.so"' \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src \
-	$(ACE_CPPFLAGS) \
 	$(RAPTOR_CFLAGS) \
 	$(DLVHEX_CFLAGS)
 
