@@ -42,6 +42,7 @@
 #include <boost/ptr_container/ptr_deque.hpp>
 
 #include <dlvhex/Atom.h>
+#include <dlvhex/AtomSet.h>
 #include <dlvhex/Literal.h>
 #include <dlvhex/Term.h>
 #include <dlvhex/Rule.h>
