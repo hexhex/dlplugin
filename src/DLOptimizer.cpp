@@ -41,6 +41,7 @@
 #include <dlvhex/ComponentFinder.h>
 #include <dlvhex/BoostComponentFinder.h>
 #include <dlvhex/PrintVisitor.h>
+#include <dlvhex/PluginContainer.h>
 
 using namespace dlvhex::dl;
 
@@ -147,8 +148,9 @@ DLOptimizer::optimize(NodeGraph& dg, AtomSet& edb)
   //
   // rebuild the graph with the program
   //
+  PluginContainer container("");
   GraphBuilder gb;
-  gb.run(p, dg);
+  gb.run(p, dg, container);
 }
 
 
