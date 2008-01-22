@@ -360,6 +360,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 extern "C" DLVHEX_NAMESPACE PluginInterface*
 PLUGINIMPORTFUNCTION()
 {
+  dlvhex::dl::racer::RacerInterface::instance()->setPluginName("dlvhex-dlplugin");
   dlvhex::dl::racer::RacerInterface::instance()->setVersion(DLPLUGIN_MAJOR,
 							    DLPLUGIN_MINOR,
 							    DLPLUGIN_MICRO);
