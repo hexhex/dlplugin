@@ -148,9 +148,9 @@ DLOptimizer::optimize(NodeGraph& dg, AtomSet& edb)
   //
   // rebuild the graph with the program
   //
-  PluginContainer container("");
+  PluginContainer* container = PluginContainer::instance("");
   GraphBuilder gb;
-  gb.run(p, dg, container);
+  gb.run(p, dg, *container);
 }
 
 

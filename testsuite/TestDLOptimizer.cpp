@@ -50,7 +50,7 @@ void
 TestDLOptimizer::runDLOptimize()
 {
   // initialize the PluginContainer with our own plugin
-  //PluginContainer::Instance()->importPlugin(DLPLUGIN);
+  PluginContainer* container = PluginContainer::instance("");
 
   AtomPtr h1(new Atom("p(X,Y)"));
   RuleHead_t h;
@@ -132,7 +132,7 @@ TestDLOptimizer::runDLOptimize()
 
   try
     {
-      gb.run(p1, nodegraph);
+      gb.run(p1, nodegraph, *container);
     }
   catch (GeneralError& e)
     {
