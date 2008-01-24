@@ -279,13 +279,19 @@ individual: '|' URI '|'
 	    }
 ;
 
-/// @todo the 5th variable type is just a workaround for a Racer bug
-/// in nRQL queries like (retrieve (|http://foo#moo|)
-/// (|http://foo#moo| *TOP*)), where we get answer pairs like
-/// (|$?http://foo#moo| |http://foo#moo|) instead of
-/// ($?|http://foo#moo| |http://foo#moo|)
-
-// Racer has 4 types of variables
+/// @todo the 5th and 6th variable type is just a workaround for a Racer bug
+/// in nRQL queries like
+///   (retrieve (|http://foo#moo|) (|http://foo#moo| *TOP*)),
+/// where we get answer pairs like
+///   (|$?http://foo#moo| |http://foo#moo|)
+/// in RacerPro 1.9, or, alternatively,
+///   (|?http://foo#moo| |http://foo#moo|)
+/// in RacerPro 1.9.2beta,
+/// instead of the correct answer
+///   ($?|http://foo#moo| |http://foo#moo|)
+/// resp.
+///   (?|http://foo#moo| |http://foo#moo|)
+// Racer has apparently 6 types of variables
 variable: '?' STRING
           {
 	    delete $2;
@@ -301,6 +307,10 @@ variable: '?' STRING
         | '$' '?' '*' STRING
           {
 	    delete $4;
+	  }
+        | '|' '?' URI '|'
+          {
+	    delete $3;
 	  }
         | '|' '$' '?' URI '|'
           {
