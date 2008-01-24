@@ -1,3 +1,10 @@
+2008-01-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerAnswerParser.ypp: Add workaround for a bug in Racer 1.9.2beta.
+
+	* testsuite/TestDLOptimizer.cpp: Use PluginContainer singleton.
+	* src/DLOptimizer.cpp: Likewise.
+
 2008-01-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerInterface.cpp: Set Plugin name.
