@@ -30,6 +30,11 @@
  * 
  */
 
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 #include "RacerInterface.h"
 
 #include "RacerExtAtom.h"
@@ -51,10 +56,6 @@
 #include <iterator>
 
 #include <boost/tokenizer.hpp>
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif /* HAVE_CONFIG_H */
 
 namespace dlvhex {
   namespace dl {
@@ -360,7 +361,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 extern "C" DLVHEX_NAMESPACE PluginInterface*
 PLUGINIMPORTFUNCTION()
 {
-  dlvhex::dl::racer::RacerInterface::instance()->setPluginName("dlvhex-dlplugin");
+  dlvhex::dl::racer::RacerInterface::instance()->setPluginName(PACKAGE_TARNAME);
   dlvhex::dl::racer::RacerInterface::instance()->setVersion(DLPLUGIN_MAJOR,
 							    DLPLUGIN_MINOR,
 							    DLPLUGIN_MICRO);
