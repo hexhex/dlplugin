@@ -1,3 +1,7 @@
+2008-01-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerInterface.cpp: Set plugin name to PACKAGE_TARNAME.
+
 2008-01-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerAnswerParser.ypp: Add workaround for a bug in Racer 1.9.2beta.
