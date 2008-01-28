@@ -33,4 +33,17 @@ noinst_HEADERS = \
                  RacerNRQL.h \
                  RacerNRQL.tcc \
                  RacerNRQLBuilder.h \
-                 URI.h
+                 URI.h \
+                 Default.h \
+                 DefaultParser.h \
+                 Defaults.h \
+                 DFRewriter.h \
+                 DLAtom.h \
+                 DLRule.h \
+                 DLRules.h \
+                 Predicate.h \
+                 MTerm.h \
+                 Terms.h \
+                 Update.h \
+                 Updates.h
+
