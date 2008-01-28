@@ -1,3 +1,35 @@
+2008-01-28  DAO Tran Minh  <daotranminh@gmail.com>
+	* src/Makefile.am: add new cpp file names
+	* include/Makefile.am: add new header file names
+
+	New files:
+	* src/Default.cpp: A Default of the form [A:B]/[C].
+	* src/DefaultParser.cpp: A Parser for a Default of the form [A:B]/[C]. Right now A can be a conjunction, B can be a list of literals, and C can be a literal.
+	* src/Defaults.cpp: A set of Defaults.
+	* src/DFRewriter.cpp: A Rewriter from Defaults to DLRules.
+	* src/DLAtom.cpp: A DLAtom of the form DL[\lambda;\query](Terms).
+	* src/DLRule.cpp: A DL Rule. The rule's head must be a Predicate, while the body can contain positive/negative Predicate and DLAtom.
+	* src/DLRules.cpp: A set of DL Rules.
+	* src/Predicate.cpp: A Predicate.
+	* src/MTerm.cpp: A term. Need to use MTerm in order not to have clash with dlvhex's Term.
+	* src/Terms.cpp: A set of MTerm.
+	* src/Update.cpp: An update of the form: Concept/Role +=/-= Predicate.
+	* src/Updates.cpp: A set of Update, which is \lambda or \lambda' in a DLAtom
+
+	And the corresponding header files:
+	* include/Default.h
+	* include/DefaultParser.h
+	* include/Defaults.h
+	* include/DFRewriter.h
+	* include/DLAtom.h
+	* include/DLRule.h
+	* include/DLRules.h
+	* include/Predicate.h
+	* include/MTerm.h
+	* include/Terms.h
+	* include/Update.h
+	* include/Updates.h
+
 2008-01-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerInterface.cpp: Set plugin name to PACKAGE_TARNAME.
