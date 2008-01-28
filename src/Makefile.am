@@ -56,7 +56,19 @@ RacerNRQLBuilder.cpp \
 RacerQueryExpr.cpp \
 Registry.cpp \
 TCPStream.cpp \
-URI.cpp
+URI.cpp \
+Default.cpp \
+DefaultParser.cpp \
+Defaults.cpp \
+DFRewriter.cpp \
+DLAtom.cpp \
+DLRule.cpp \
+DLRules.cpp \
+Predicate.cpp \
+MTerm.cpp \
+Terms.cpp \
+Update.cpp \
+Updates.cpp
 
 #
 # in maintainer-mode we check for a sufficient version of the bison/flex combo
