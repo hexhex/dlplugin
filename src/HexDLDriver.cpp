@@ -36,6 +36,8 @@
 #include "Registry.h"
 #include "DLError.h"
 
+#include "DFRewriter.h"
+
 #include <sstream>
 
 using namespace dlvhex::dl;
@@ -116,11 +118,16 @@ HexDLDriver::getOntology() const
 void
 HexDLDriver::convert(std::istream& input, std::ostream& output)
 {
+  std::stringstream default_out;
+	dlvhex::df::DFRewriter dfr;
+	dfr.transform(input, default_out, ontology);
+
   //
   // setup streams
   //
 
-  getLexer()->switch_streams(&input, &output);
+	//getLexer()->switch_streams(&input, &output);
+  getLexer()->switch_streams(&default_out, &output);
   this->output = &output;
 
   //
