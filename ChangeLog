@@ -1,3 +1,17 @@
+2008-01-29  DAO Tran Minh  <daotranminh@gmail.com>
+	* src/DFRewriter.cpp: A Rewriter from Defaults to DLRules.
+			Update input reading ability of DFRewriter: a default now can be written in multiple lines, for example:
+
+				[SparklingWine(X):WhiteWine(X)]
+
+				/[WhiteWine(X)]
+				.
+	* include/DFRewriter.h:
+			Add 2 private methods:
+
+			bool incomplete_input(std::string&) ~~> Check if a line is ended by a dot or not.
+			std::string triml(std::string&) ~~> Trim all the blanks from the left hand side of a string (blank = ' ','\t')
+
 2008-01-28  DAO Tran Minh  <daotranminh@gmail.com>
 	* src/Makefile.am: add new cpp file names
 	* include/Makefile.am: add new header file names
@@ -14,7 +28,7 @@
 	* src/MTerm.cpp: A term. Need to use MTerm in order not to have clash with dlvhex's Term.
 	* src/Terms.cpp: A set of MTerm.
 	* src/Update.cpp: An update of the form: Concept/Role +=/-= Predicate.
-	* src/Updates.cpp: A set of Update, which is \lambda or \lambda' in a DLAtom
+	* src/Updates.cpp: A set of Update, which is \lambda or \lambda' in a DLAtom.
 
 	And the corresponding header files:
 	* include/Default.h
