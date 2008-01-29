@@ -25,6 +25,8 @@ private:
 	void readIndividuals();
 	void readIndividuals(dlvhex::dl::Ontology::shared_pointer o);
 	void convert();
+	std::string& triml(std::string&);
+	bool incomplete_input(std::string&);
 public:
 	DFRewriter(std::string&, std::string&);
 	DFRewriter();
