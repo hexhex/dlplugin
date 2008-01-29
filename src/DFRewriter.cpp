@@ -70,16 +70,26 @@ void DFRewriter::convert() {
 	}
 	std::string str_df;
 	getline(in, str_df); 
+	str_df = triml(str_df);
 	while (in) {
-		Default df = dp.getParsedDefault(str_df);
-		if (df.isNULL()) {
-			std::cout << "Not a default!" << std::endl;
-			program = program + str_df + "\n";
-		} else {
-				std::cout << "Default PARSED." << std::endl;
-				dfs.addDefault(df);
+		if (incomplete_input(str_df)) {
+			std::string next;
+			getline(in, next);
+			std::cout << "Not completed yet!:" << str_df << std::endl;
+			str_df += triml(next);
+			std::cout << "Appended result   :" << str_df << std::endl;			
+		} else {		
+			Default df = dp.getParsedDefault(str_df);
+			if (df.isNULL()) {
+				std::cout << "Not a default!" << std::endl;
+				program = program + str_df + "\n";
+			} else {
+					std::cout << "Default PARSED." << std::endl;
+					dfs.addDefault(df);
+			}
+			getline(in, str_df); 
+			str_df = triml(str_df);
 		}
-		getline(in, str_df); 
 	}
 	//std::cout << "Start to get DL rules" << std::endl;
 	DLRules rules = dfs.getDLRules();	
@@ -95,6 +105,29 @@ void DFRewriter::convert() {
 	program = program + rules.toString();
 }
 
+bool DFRewriter::incomplete_input(std::string& line) {
+	// remove all blank at the end of the line
+	int pos(line.size());
+	pos = line.size();	
+	for (; pos && (line[pos-1] == ' ' || line[pos-1] == '\t'); --pos);
+	line.erase(pos, line.size()-pos);
+
+	// check whether the last character is a dot or not
+	if (line[line.length()-1] == '.') {
+		return false;
+	}
+	return true;
+}
+
+std::string& DFRewriter::triml(std::string& s) {
+	int pos(0);
+	for (; s[pos]==' ' || s[pos]=='\t'; ++pos);
+	if (pos > 0) {
+		s.erase(0, pos);
+	}
+	return s;
+}
+
 void DFRewriter::transform(std::istream& iss, std::ostream& oss) {
 	std::string line;
 	std::string program = "";
@@ -105,16 +138,27 @@ void DFRewriter::transform(std::istream& iss, std::ostream& oss) {
 	ontology_uri = "wine_small.owl";
 	readIndividuals();
 	getline(iss, line);
+	line = triml(line);
 	while (!iss.eof()) {
-		Default df = dp.getParsedDefault(line);
-		if (df.isNULL()) {
-			std::cout << "Not a default!" << std::endl;
-			program = program + line + "\n";
-		} else {
-				std::cout << "Default PARSED." << std::endl;
-				dfs.addDefault(df);
+		if (incomplete_input(line)) {
+			std::string next;
+			getline(iss, next);
+			std::cout << "Not completed yet!:" << line << std::endl;
+			line += triml(next);
+			std::cout << "Appended result   :" << line << std::endl;
 		}
-		getline(iss, line);
+		else {
+			Default df = dp.getParsedDefault(line);
+			if (df.isNULL()) {
+				std::cout << "Not a default!" << std::endl;
+				program = program + line + "\n";
+			} else {
+					std::cout << "Default PARSED." << std::endl;
+					dfs.addDefault(df);
+			}
+			getline(iss, line);
+			line = triml(line);
+		}		
 	}
 	//std::cout << "Start to get DL rules" << std::endl;
 	DLRules rules = dfs.getDLRules();	
@@ -139,16 +183,27 @@ void DFRewriter::transform(std::istream& iss, std::ostream& oss, dlvhex::dl::Ont
 
 	readIndividuals(o);
 	getline(iss, line);
+	line = triml(line);
 	while (!iss.eof()) {
-		Default df = dp.getParsedDefault(line);
-		if (df.isNULL()) {
-			std::cout << "Not a default!" << std::endl;
-			program = program + line + "\n";
-		} else {
-				std::cout << "Default PARSED." << std::endl;
-				dfs.addDefault(df);
+		if (incomplete_input(line)) {
+			std::string next;
+			getline(iss, next);
+			std::cout << "Not completed yet!:" << line << std::endl;
+			line += triml(next);
+			std::cout << "Appended result   :" << line << std::endl;
 		}
-		getline(iss, line);
+		else {
+			Default df = dp.getParsedDefault(line);
+			if (df.isNULL()) {
+				std::cout << "Not a default!" << std::endl;
+				program = program + line + "\n";
+			} else {
+					std::cout << "Default PARSED." << std::endl;
+					dfs.addDefault(df);
+			}
+			getline(iss, line);
+			line = triml(line);
+		}		
 	}
 	//std::cout << "Start to get DL rules" << std::endl;
 	DLRules rules = dfs.getDLRules();	
