@@ -1,48 +1,61 @@
 2008-01-29  DAO Tran Minh  <daotranminh@gmail.com>
-	* src/DFRewriter.cpp: A Rewriter from Defaults to DLRules.
-			Update input reading ability of DFRewriter: a default now can be written in multiple lines, for example:
 
-				[SparklingWine(X):WhiteWine(X)]
-
-				/[WhiteWine(X)]
-				.
-	* include/DFRewriter.h:
-			Add 2 private methods:
-
-			bool incomplete_input(std::string&) ~~> Check if a line is ended by a dot or not.
-			std::string triml(std::string&) ~~> Trim all the blanks from the left hand side of a string (blank = ' ','\t')
+	* src/DFRewriter.cpp: Update input reading ability of DFRewriter;
+	a default now can be written in multiple lines.
+	
+	* include/DFRewriter.h (DFRewriter::incomplete_input): Check if a
+	line is ended by a dot or not.
+	(DFRewriter::triml): Trim all the blanks from the left hand side
+	of a string (blank = ' ','\t').
 
 2008-01-28  DAO Tran Minh  <daotranminh@gmail.com>
-	* src/Makefile.am: add new cpp file names
-	* include/Makefile.am: add new header file names
+	
+	* src/Makefile.am: Add new cpp file names.
 
-	New files:
+	* include/Makefile.am: Add new header file names.
+
 	* src/Default.cpp: A Default of the form [A:B]/[C].
-	* src/DefaultParser.cpp: A Parser for a Default of the form [A:B]/[C]. Right now A can be a conjunction, B can be a list of literals, and C can be a literal.
-	* src/Defaults.cpp: A set of Defaults.
-	* src/DFRewriter.cpp: A Rewriter from Defaults to DLRules.
-	* src/DLAtom.cpp: A DLAtom of the form DL[\lambda;\query](Terms).
-	* src/DLRule.cpp: A DL Rule. The rule's head must be a Predicate, while the body can contain positive/negative Predicate and DLAtom.
-	* src/DLRules.cpp: A set of DL Rules.
-	* src/Predicate.cpp: A Predicate.
-	* src/MTerm.cpp: A term. Need to use MTerm in order not to have clash with dlvhex's Term.
-	* src/Terms.cpp: A set of MTerm.
-	* src/Update.cpp: An update of the form: Concept/Role +=/-= Predicate.
-	* src/Updates.cpp: A set of Update, which is \lambda or \lambda' in a DLAtom.
+	
+	* src/DefaultParser.cpp: A Parser for a Default of the
+	form [A:B]/[C]. Right now A can be a conjunction, B can be a list
+	of literals, and C can be a literal.
 
-	And the corresponding header files:
-	* include/Default.h
-	* include/DefaultParser.h
-	* include/Defaults.h
-	* include/DFRewriter.h
-	* include/DLAtom.h
-	* include/DLRule.h
-	* include/DLRules.h
-	* include/Predicate.h
-	* include/MTerm.h
-	* include/Terms.h
-	* include/Update.h
-	* include/Updates.h
+	* src/Defaults.cpp: A set of Defaults.
+
+	* src/DFRewriter.cpp: A Rewriter from Defaults to DLRules.
+
+	* src/DLAtom.cpp: A DLAtom of the form DL[\lambda;\query](Terms).
+
+	* src/DLRule.cpp: A DL Rule. The rule's head must be a Predicate,
+	while the body can contain positive/negative Predicate and DLAtom.
+
+	* src/DLRules.cpp: A set of DL Rules.
+
+	* src/Predicate.cpp: A Predicate.
+
+	* src/MTerm.cpp: A term. Need to use MTerm in order not to have
+	clash with dlvhex's Term.
+
+	* src/Terms.cpp: A set of MTerm.
+
+	* src/Update.cpp: An update of the form: Concept/Role +=/-=
+	Predicate.
+
+	* src/Updates.cpp: A set of Update, which is \lambda or \lambda'
+	in a DLAtom.
+
+	* include/Default.h: New file.
+	* include/DefaultParser.h: Likewise.
+	* include/Defaults.h: Likewise.
+	* include/DFRewriter.h: Likewise.
+	* include/DLAtom.h: Likewise.
+	* include/DLRule.h: Likewise.
+	* include/DLRules.h: Likewise.
+	* include/Predicate.h: Likewise.
+	* include/MTerm.h: Likewise.
+	* include/Terms.h: Likewise.
+	* include/Update.h: Likewise.
+	* include/Updates.h: Likewise.
 
 2008-01-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
