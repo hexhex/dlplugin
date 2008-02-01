@@ -39,6 +39,7 @@
 #include "URI.h"
 #include "AtomSeparator.h"
 
+#include <sstream>
 
 using namespace dlvhex::dl;
 
@@ -86,24 +87,26 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
     }
 
   DLQuery::shared_pointer dlq;
+  const Tuple& outputlist = query.getPatternTuple();
+  std::string qstr;
 
   ///@todo exchange this whole crap by a proper boost spirit parser
   ///for UCQs, CQs, and plain queries.
 
   // setup the query if input tuple contains a query atom or a
-  // conjunctive query
+  // (union of) conjunctive query
   if (inputtuple.size() > 5)
     {
-      std::string qstr = inputtuple[5].getUnquotedString();
+      qstr = inputtuple[5].getUnquotedString();
 
-      if (qstr.length() >= 2) // check for turtle syntax
+      if (qstr.length() >= 2) // kludge: check for turtle syntax
 	{
-	  int end   = qstr.length() - 1;
+	  int end = qstr.length() - 1;
 
 	  char b = qstr[0];
 	  char e = qstr[end];
 
-	  if (b == '<' && e == '>') // remove turtle brackets
+	  if (b == '<' && e == '>') // kludge: remove turtle brackets
 	    {
 	      qstr.erase(end, 1);
 	      qstr.erase(0, 1);
@@ -117,7 +120,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
 	  // separate union of atomlists
 	  UnionAtomSeparator(qstr, as).parse();
 
-	  dlq = DLQuery::shared_pointer(new DLQuery(onto, as, query.getPatternTuple()));	
+	  dlq = DLQuery::shared_pointer(new DLQuery(onto, as, outputlist));
 	}
       else if (qstr.find('(') != std::string::npos) // parse conjunctive query
 	{
@@ -126,28 +129,51 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
 	  // separate atomlist
 	  AtomSeparator(qstr, as).parse();
 
-	  dlq = DLQuery::shared_pointer(new DLQuery(onto, as, query.getPatternTuple()));
+	  dlq = DLQuery::shared_pointer(new DLQuery(onto, as, outputlist));
 	}
       else // this is a plain query
 	{
-	  std::string querystr = inputtuple[5].getUnquotedString();
+	  qstr = inputtuple[5].getUnquotedString();
 
 	  // no namespace in query
-	  if (!URI::isValid(querystr))
+	  if (!URI::isValid(qstr))
 	    {
-	      if (querystr[0] == '-') // negated query
+	      if (qstr[0] == '-') // negated query
 		{
-		  querystr.insert(1, onto->getNamespace());
+		  qstr.insert(1, onto->getNamespace());
 		}
 	      else
 		{
-		  querystr.insert(0, onto->getNamespace());
+		  qstr.insert(0, onto->getNamespace());
 		}
 	    }
 
-	  Term qu(querystr, true);
+	  // kludge: here, we make a case distinction between plain
+	  // concept and plain role queries in order to create a CQ
+	  // for the latter. Rationale: Racer is unable to process
+	  // negated role queries using the oldschool query language,
+	  // i.e., (retrieve-related-individuals (not R)) is
+	  // broken. But, nRQL queries are able to process (not R).
 
-	  dlq = DLQuery::shared_pointer(new DLQuery(onto, qu, query.getPatternTuple()));
+	  if (outputlist.size() == 2) // (negated) role query, create a CQ here
+	    {
+	      // create single atom conjunctive query for R
+	      std::ostringstream oss;
+	      oss << qstr << '(' << outputlist[0] << ',' << outputlist[1] << ')';
+		  
+	      AtomSet as;
+		  
+	      // separate atomlist
+	      AtomSeparator(oss.str(), as).parse();
+		  
+	      dlq = DLQuery::shared_pointer(new DLQuery(onto, as, outputlist));
+	    }
+	  else // (negated) concept query
+	    {
+	      // create a plain query (oldschool)
+	      Term qu(qstr, true);
+	      dlq = DLQuery::shared_pointer(new DLQuery(onto, qu, query.getPatternTuple()));
+	    }
 	}
     }
   else // no query term, what now?
