@@ -1,3 +1,13 @@
+2008-02-01  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerNRQLBuilder.cpp: Add support for negated role query
+	atoms.
+
+	* include/RacerExtAtom.tcc: Pose nRQL queries in &dlR since Racer
+	can handle (not R) in nRQLs.
+
+	* src/QueryCtx.cpp: Translate plain role queries to single atom CQs.
+
 2008-01-29  DAO Tran Minh  <daotranminh@gmail.com>
 
 	* src/DFRewriter.cpp: Update input reading ability of DFRewriter;
