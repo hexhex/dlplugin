@@ -318,25 +318,16 @@ namespace racer {
     
     this->setupRacer(comp);
     this->openOntology(query, comp);
-    this->increaseABox(query, comp);
-    
-    if (dlq->isRetrieval()) // retrieval mode
-      {
-	comp->add(new RacerRoleQuery(this->stream));
-      }
-    else if (dlq->isBoolean()) // boolean query mode
-      {
-	comp->add(new RacerIsRoleQuery(this->stream));
-      }
-    else if (dlq->isMixed()) // pattern retrieval mode
-      {
-	comp->add(new RacerIndvFillersQuery(this->stream));
-      }
-    else
-      {
-	throw PluginError("DLQuery has wrong query type, expected retrieval, boolean or mixed query");
-      }
 
+    // we don't have to increase the ABox here, we use retrieve-under-premise
+    
+    // pose a conjunctive query with only a single role query atom
+    comp->add
+      (new QueryDirector<RacerAdapterBuilder<NRQLRetrieveUnderPremise<NRQLConjunctionBuilder> >,
+       RacerAnswerDriver>(this->stream)
+      );
+  
+    // good news, in this setting, we can reuse our cache
     return this->cacheQuery(comp);
   }
 
