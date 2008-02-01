@@ -356,6 +356,8 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 
   for (AtomSet::const_iterator it = as.begin(); it != as.end(); ++it)
     {
+      // each member of this query has either arity 1 (concept) or
+      // arity 2 (role/(in)equality
       switch (it->getArity())
 	{
 	case 2: // role query or (in)equality
@@ -376,7 +378,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 		    o1 = new ABoxQueryVariable(t1);
 		  }
 	      }
-	    else
+	    else // ground
 	      {
 		o1 = new ABoxQueryIndividual(t1, nspace);
 	      }
@@ -392,7 +394,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 		    o2 = new ABoxQueryVariable(t2);
 		  }
 	      }
-	    else
+	    else // ground
 	      {
 		o2 = new ABoxQueryIndividual(t2, nspace);
 	      }
@@ -411,11 +413,24 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 	      }
  	    else // role query
 	      {
-		body.addAtom(new NRQLQueryAtom
-			     (new RoleQuery
-			      (new ABoxQueryRole(pred, nspace), o1, o2)
-			      )
-			     );
+		if (it->isStronglyNegated()) // negated role
+		  {
+		    body.addAtom(new NRQLQueryAtom
+				 (new NegationQuery
+				  (new RoleQuery
+				   (new ABoxQueryRole(pred, nspace), o1, o2)
+				   )
+				  )
+				 );
+		  }
+		else
+		  {
+		    body.addAtom(new NRQLQueryAtom
+				 (new RoleQuery
+				  (new ABoxQueryRole(pred, nspace), o1, o2)
+			    	  )
+				 );
+		  }
 	      }
 	  }
 	  break;
@@ -549,11 +564,24 @@ NRQLDisjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 		  }
 		else // role query
 		  {
-		    body->addAtom(new NRQLQueryAtom
-				  (new RoleQuery
-				   (new ABoxQueryRole(pred, nspace), o1, o2)
-				   )
-				  );
+		    if (it2->isStronglyNegated()) // negated role
+		      {
+			body->addAtom(new NRQLQueryAtom
+				      (new NegationQuery
+				       (new RoleQuery
+					(new ABoxQueryRole(pred, nspace), o1, o2)
+					)
+				       )
+				      );
+		      }
+		    else
+		      {
+			body->addAtom(new NRQLQueryAtom
+				      (new RoleQuery
+				       (new ABoxQueryRole(pred, nspace), o1, o2)
+				       )
+				      );
+		      }
 		  }
 	      }
 	      break;
