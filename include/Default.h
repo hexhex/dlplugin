@@ -68,7 +68,7 @@ public:
 	Pred1Dim getConclusion();
 	Updates getUpdates4Lambda();
 	Updates getUpdates4LambdaPrime();
-	Terms getAllDistinctTerms(Pred1Dim&);
+	Terms getAllDistinctTerms(Pred1Dim);
 	DLRules getDLRules();
 	std::string toString();
 };

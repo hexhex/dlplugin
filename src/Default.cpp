@@ -98,7 +98,7 @@ Updates Default::getUpdates4LambdaPrime() {
 // Get all variables of a conjunction
 // which is necessary in generating rules 
 // for a conjunction.
-Terms Default::getAllDistinctTerms(Pred1Dim& c) {
+Terms Default::getAllDistinctTerms(Pred1Dim c) {
 	Terms ts;
 	Pred1Dim::iterator c_pos;
 	for (c_pos = c.begin(); c_pos != c.end(); c_pos++) {

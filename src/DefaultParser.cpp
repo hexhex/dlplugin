@@ -134,8 +134,8 @@ Predicate DefaultParser::get_predicate(v_t_nvd::iterator pos) {
 	return p;
 }
 
-std::vector<Predicate> DefaultParser::analyze_predicates(v_t_nvd& children_) {
-	std::vector<Predicate> p_list;
+Pred1Dim DefaultParser::analyze_conjunction(v_t_nvd& children_) {
+	Pred1Dim p_list;
 	v_t_nvd::iterator pos;
 
 	pos = children_.begin();
@@ -159,57 +159,91 @@ std::vector<Predicate> DefaultParser::analyze_predicates(v_t_nvd& children_) {
 	return p_list;
 }
 
-Default DefaultParser::extract_ast(const iter_t& i) {
-	std::vector<Predicate> premise;
-	std::vector<Predicate> justification;
-	std::vector<Predicate> conclusion;	
+Pred2Dim DefaultParser::analyze_justification(v_t_nvd& children_) {
+	Pred2Dim c_list;
+	v_t_nvd::iterator pos;
+
+	pos = children_.begin();
+	while (pos->children.size() > 0) {
+		pos++;
+	}	
 	
+	if (*pos->value.begin() == ',') {
+		//std::cerr << "list of conjuction" << std::endl;
+		pos = children_.begin();
+		do {
+			Pred1Dim c = analyze_conjunction(pos->children);				
+			c_list.push_back(c);
+			pos++;
+			if (pos == children_.end()) break;
+			pos++;
+		} while (true);
+	} else {
+		//std::cerr << "only one conjunction" << std::endl;
+		Pred1Dim c = analyze_conjunction(children_);
+		c_list.push_back(c);
+	}	
+
+	return c_list;
+}
+
+Default DefaultParser::extract_ast(const iter_t& i) {
+	Pred1Dim premise;
+	Pred2Dim justification;
+	Pred1Dim conclusion;	
+
 	switch (i->children.size()) {
-		case 7:
+		case 7:	
 			// [A1 & ... & An : B1,...,Bk ]/[C].
-			premise = analyze_predicates(i->children[1].children);
-			justification = analyze_predicates(i->children[3].children);
-			conclusion = analyze_predicates(i->children[5].children);
+			premise = analyze_conjunction(i->children[1].children);
+			justification = analyze_justification(i->children[3].children);
+			conclusion = analyze_conjunction(i->children[5].children);
 			break;
 		case 5:
 			// [: B1,...,Bk ]/[C].
 			if (std::string(i->children[0].value.begin(), i->children[0].value.end()) == "[:") {
-				justification = analyze_predicates(i->children[1].children);
-				conclusion = analyze_predicates(i->children[3].children);
+				justification = analyze_justification(i->children[1].children);
+				conclusion = analyze_conjunction(i->children[3].children);
 			} else {
 			// or
-			// [A1 & ... & An:]/[C].
-				premise = analyze_predicates(i->children[1].children);
-				conclusion = analyze_predicates(i->children[3].children);
+			// [A1 & ... & An:]/[C].			
+				premise = analyze_conjunction(i->children[1].children);
+				conclusion = analyze_conjunction(i->children[3].children);
 			}			
 			break;
 		case 3:
 			// [:]/[C].
-			conclusion = analyze_predicates(i->children[1].children);			
+			conclusion = analyze_conjunction(i->children[1].children);			
 			break;		
 	}
-	//Predicate c = conclusion[0];
-	Default df(premise, justification, conclusion[0]);
+	Default df(premise, justification, conclusion);
+	//std::cerr << df.toString();
 	return df;
 }
 
 Default DefaultParser::getParsedDefault(const std::string& str_df) {
 	default_p df_p;
-	std::cout << "-------------------------\n";
-	std::cout << "parsing: " << str_df << std::endl;
+	if (dlvhex::dl::Registry::getVerbose() > 1) {
+		std::cerr << "-------------------------\n";
+		std::cerr << "Parsing: " << str_df << std::endl;
+	}
 	boost::spirit::tree_parse_info<> info = boost::spirit::ast_parse(str_df.c_str(), df_p, boost::spirit::space_p);
 
 	if (info.full) {
-		std::cout << "-------------------------\n";
-		std::cout << "Parsing succeeded\n";
-		std::cout << "-------------------------\n";
+		if (dlvhex::dl::Registry::getVerbose() > 1) {
+			std::cerr << "-------------------------\n";
+			std::cerr << "Parsing succeeded\n";
+			std::cerr << "-------------------------\n";
+		}
 		Default df = extract_ast(info.trees.begin());
 		return df;
 	} else {
-		std::cout << "-------------------------\n";
-		std::cout << "Parsing failed\n";
-		std::cout << "stopped at: \": " << info.stop << "\"\n";
-		std::cout << "-------------------------\n";
+		if (dlvhex::dl::Registry::getVerbose() > 1) {
+			std::cerr << "-------------------------\n";
+			std::cerr << "Parsing failed\n";
+			std::cerr << "stopped at: \": " << info.stop << "\"\n";
+			std::cerr << "-------------------------\n";
+		}
 	}
 	return Default::null_default;
 }
