@@ -22,6 +22,7 @@ class Default;
 
 class Defaults {
 private:
+	unsigned int count;
 	std::vector<Default> dfs;
 public:
 	Defaults();

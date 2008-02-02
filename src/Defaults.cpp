@@ -35,10 +35,12 @@ namespace dlvhex {
 namespace df {
 
 Defaults::Defaults() {
+	count = 0;
 }
 
 void Defaults::addDefault(Default& df) {
 	df.setParent(this);
+	df.setID(++count);
 	dfs.push_back(df);	
 }
 
@@ -47,7 +49,7 @@ Updates Defaults::getLambda() {
 	if (dfs.size() > 0) {
 		std::vector<Default>::iterator pos;	
 		for (pos = dfs.begin(); pos != dfs.end(); pos++) {
-			us.addUpdate(pos->getUpdate4Lambda());
+			us.insertUpdates(pos->getUpdates4Lambda());
 		}
 	}
 	return us;
@@ -58,7 +60,7 @@ Updates Defaults::getLambdaPrime() {
 	if (dfs.size() > 0) {
 		std::vector<Default>::iterator pos;	
 		for (pos = dfs.begin(); pos != dfs.end(); pos++) {
-			us.addUpdate(pos->getUpdate4LambdaPrime());
+			us.insertUpdates(pos->getUpdates4LambdaPrime());
 		}
 	}
 	return us;

@@ -37,6 +37,10 @@ namespace df {
 Terms::Terms() {
 }
 
+std::vector<MTerm> Terms::getMTerms() {
+	return terms;
+}
+
 void Terms::addTerm(MTerm term_) {
 	terms.push_back(term_);
 }
@@ -49,6 +53,42 @@ void Terms::removeLastTerm() {
 
 bool Terms::isEmpty() {
 	return (terms.size() == 0);
+}
+
+// insert all the terms which are in t1 and not in (*this*) to (*this*)
+void Terms::insertNewTerms(Terms& t1) {
+	std::vector<MTerm>::iterator pos;
+	for (pos = t1.terms.begin(); pos != t1.terms.end(); pos++) {
+		if (!gotThisTerm(*pos)) {
+			addTerm(*pos);
+		}
+	}
+}
+
+// Project this set of terms (*this*) to another set of term (t1)
+// All terms which are not in t1 will be set to "_"
+Terms Terms::projectTo(Terms& t1) {
+	Terms ts;
+	MTerm anonymous("_");
+	std::vector<MTerm>::iterator pos;
+	for (pos = terms.begin(); pos != terms.end(); pos++) {
+		if (!t1.gotThisTerm(*pos)) {
+			ts.addTerm(anonymous);
+		} else {
+			ts.addTerm(*pos);
+		}
+	}
+	return ts;
+}
+
+bool Terms::gotThisTerm(MTerm& t) {
+	std::vector<MTerm>::iterator pos;
+	for (pos = terms.begin(); pos != terms.end(); pos++) {
+		if (*pos == t) {
+			return true;
+		}
+	}
+	return false;
 }
 
 std::string Terms::toString() {
@@ -64,10 +104,6 @@ std::string Terms::toString() {
 		}
 	}
 	return tmp;
-}
-
-std::vector<MTerm> Terms::getMTerms() {
-	return terms;
 }
 
 }	// namespace df

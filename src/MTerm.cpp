@@ -50,5 +50,9 @@ std::string MTerm::toString() {
 	return term_representation;
 }
 
+bool MTerm::operator==(const MTerm& t2) const {
+		return term_representation.compare(t2.term_representation) == 0;
+}
+
 }	// namespace df
 }	// namespace dlvhex

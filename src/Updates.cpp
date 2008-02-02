@@ -41,6 +41,14 @@ void Updates::addUpdate(const Update& update_) {
 	updates.push_back(update_);
 }
 
+void Updates::insertUpdates(const Updates& updates_) {
+	if (updates.size() > 0) {
+		updates.insert(updates.begin(), updates_.updates.begin(), updates_.updates.end());
+	} else {
+		updates = updates_.updates;
+	}
+}
+
 std::string Updates::toString() {
 	std::string tmp = "";
 	if (updates.size() > 0) {

@@ -34,10 +34,22 @@
 namespace dlvhex {
 namespace df {
 
-DLAtom::DLAtom(Updates updates_, const std::string& query_, Terms terms_) : updates(updates_), query(query_), terms(terms_) {
+DLAtom::DLAtom(Updates& updates_, Pred2Dim& ucq_, Terms& terms_) : updates(updates_), ucq(ucq_), terms(terms_) {
 }
 
 std::string DLAtom::toString() {
+	std::string query = "";
+	Pred2Dim::iterator u_pos;
+	Pred1Dim::iterator cq_pos;
+
+	for (u_pos = ucq.begin(); u_pos != ucq.end(); u_pos++) {
+		for (cq_pos = u_pos->begin(); cq_pos != u_pos->end(); cq_pos++) {
+			query = query + cq_pos->toString() + ",";
+		}
+		query = query.erase(query.length()-1) + " v ";
+	}
+	query = query.erase(query.length()-3);
+
 	return ("DL[" + updates.toString() + query + "](" + terms.toString() + ")");
 }
 
