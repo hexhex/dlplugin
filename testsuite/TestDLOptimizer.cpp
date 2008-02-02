@@ -35,6 +35,7 @@
 #include "DLOptimizer.h"
 
 #include <dlvhex/GraphBuilder.h>
+#include <dlvhex/NodeGraph.h>
 #include <dlvhex/Error.h>
 #include <dlvhex/PluginContainer.h>
 
