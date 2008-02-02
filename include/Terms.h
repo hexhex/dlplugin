@@ -49,7 +49,7 @@ public:
 	void removeLastTerm();
 	bool isEmpty();
 	void insertNewTerms(Terms&);
-	Terms projectTo(Terms&);
+	Terms projectTo(Terms);
 	bool gotThisTerm(MTerm&);
 	std::string toString();	
 };

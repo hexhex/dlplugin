@@ -67,7 +67,7 @@ void Terms::insertNewTerms(Terms& t1) {
 
 // Project this set of terms (*this*) to another set of term (t1)
 // All terms which are not in t1 will be set to "_"
-Terms Terms::projectTo(Terms& t1) {
+Terms Terms::projectTo(Terms t1) {
 	Terms ts;
 	MTerm anonymous("_");
 	std::vector<MTerm>::iterator pos;
