@@ -39,7 +39,7 @@ Default Default::null_default(true);
 Default::Default(bool is_null_) : is_null(is_null_) {
 }
 
-Default::Default(Pred1Dim& premise_, Pred2Dim& justification_, Pred1Dim& conclusion_) : premise(premise_), justification(justification_), conclusion(conclusion_) {
+Default::Default(Pred1Dim premise_, Pred2Dim justification_, Pred1Dim conclusion_) : premise(premise_), justification(justification_), conclusion(conclusion_) {
 	is_null = false;
 	parent = NULL;
 }

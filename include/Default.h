@@ -59,7 +59,7 @@ private:
 
 public:
 	Default(bool);
-	Default(Pred1Dim&, Pred2Dim&, Pred1Dim&);
+	Default(Pred1Dim, Pred2Dim, Pred1Dim);
 
 	static Default null_default;
 	bool isNULL();
