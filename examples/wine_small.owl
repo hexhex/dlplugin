@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE rdf:RDF []>
+<rdf:RDF
+  xmlns:owl="http://www.w3.org/2002/07/owl#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+  xmlns="file://wine_small/foobar#"
+  xml:base="file://wine_small/foobar">
+
+  <owl:Ontology rdf:ID="wine_small"/>
+
+  <owl:Class rdf:ID="Wine" />
+
+  <owl:Class rdf:ID="SparklingWine">
+    <rdfs:subClassOf rdf:resource="#Wine" />
+  </owl:Class>
+
+  <owl:Class rdf:ID="WhiteWine">
+    <rdfs:subClassOf rdf:resource="#Wine" />
+  </owl:Class>
+
+  <owl:Class rdf:ID="NonWhiteWine">
+    <owl:complementOf rdf:resource="#WhiteWine" />
+
+  </owl:Class>
+
+  <owl:Class rdf:ID="Lambrusco">
+    <rdfs:subClassOf rdf:resource="#NonWhiteWine" />
+    <rdfs:subClassOf rdf:resource="#SparklingWine" />
+  </owl:Class>
+	<!-- <Lambrusco rdf:ID="Lambrusco_di_Modena"/> -->
+	<SparklingWine rdf:ID="SW"/>
+</rdf:RDF>
