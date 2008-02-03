@@ -1,3 +1,17 @@
+2008-02-03  DAO Tran Minh  <daotranminh@gmail.com>
+	* src/DFRewriter.cpp: Fix bug for non-defaultrule program
+
+2008-02-02  DAO Tran Minh  <daotranminh@gmail.com>
+
+	* src/DefaultParser.cpp: More complex defaults whose each justfication can be a conjunction
+	* src/DFRewriter.cpp: Adapt to new, more complex defaults
+  * src/DLAtom.cpp: Likewise
+  * src/Default.cpp: Likewise
+  * src/Defaults.cpp: Likewise
+  * src/MTerm.cpp: Likewise
+  * src/Terms.cpp: Likewise
+  * src/Updates.cpp: Likewise
+
 2008-02-02  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* testsuite/TestDLOptimizer.cpp: Include NodeGraph.h.
