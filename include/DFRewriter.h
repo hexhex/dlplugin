@@ -44,6 +44,7 @@ private:
 
 	void readIndividuals(dlvhex::dl::Ontology::shared_pointer);
 	std::string& triml(std::string&);
+	std::string& delete_comment(std::string&);
 	bool incomplete_input(std::string&);
 public:
 	DFRewriter();

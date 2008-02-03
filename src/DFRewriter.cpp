@@ -44,7 +44,12 @@ bool DFRewriter::incomplete_input(std::string& line) {
 	line.erase(pos, line.size()-pos);
 
 	// check whether the last character is a dot or not
-	if (line[line.length()-1] == '.') {
+	/*if (line[line.length()-1] == '.') {
+		return false;
+	}
+	return true;*/
+	int dot = line.find(".", 0);
+	if (dot > -1) {
 		return false;
 	}
 	return true;
@@ -59,6 +64,14 @@ std::string& DFRewriter::triml(std::string& s) {
 	return s;
 }
 
+std::string& DFRewriter::delete_comment(std::string& s) {
+	int pos = s.find("%", 0);
+	if (pos > -1) {
+		s.erase(pos, s.length());
+	}
+	return s;
+}
+
 void DFRewriter::transform(std::istream& iss, std::ostream& oss, dlvhex::dl::Ontology::shared_pointer o) {
 	try {
 		std::string line;
@@ -69,41 +82,65 @@ void DFRewriter::transform(std::istream& iss, std::ostream& oss, dlvhex::dl::Ont
 
 		getline(iss, line);
 		line = triml(line);
+		if (dlvhex::dl::Registry::getVerbose() > 1) {
+			std::cerr << "Get new line" << line << std::endl;
+		}
 		while (!iss.eof()) {
-			if (incomplete_input(line)) {
-				std::string next;
-				getline(iss, next);
-				if (dlvhex::dl::Registry::getVerbose() > 1) {
-					std::cerr << "Not completed yet!:" << line << std::endl;
-				}
-				line += triml(next);
-				if (dlvhex::dl::Registry::getVerbose() > 1) {
-					std::cerr << "Appended result   :" << line << std::endl;
-				}
-			}
-			else {
-				Default df = dp.getParsedDefault(line);
-				if (df.isNULL()) {
+			if (line.length() > 0) {
+				if (line[0] == '#') {					program = program + line + "\n";
+					getline(iss, line); 
+					line = triml(line);
 					if (dlvhex::dl::Registry::getVerbose() > 1) {
-						std::cerr << "Not a default!" << std::endl;
+						std::cerr << "Get new line" << line << std::endl;
 					}
-					program = program + line + "\n";
 				} else {
-					if (dlvhex::dl::Registry::getVerbose() > 1) {
-						std::cerr << "Default PARSED." << std::endl;
+					line = delete_comment(line);
+					if (incomplete_input(line)) {
+						std::string next;
+						getline(iss, next);
+						if (dlvhex::dl::Registry::getVerbose() > 1) {
+							std::cerr << "Not completed yet!:" << line << std::endl;
+						}
+						line += triml(next);
+						if (dlvhex::dl::Registry::getVerbose() > 1) {
+							std::cerr << "Appended result   :" << line << std::endl;
+						}
 					}
-					dfs.addDefault(df);
-					has_defaults = true;
+					else {
+						Default df = dp.getParsedDefault(line);
+						if (df.isNULL()) {
+							if (dlvhex::dl::Registry::getVerbose() > 1) {
+								std::cerr << "Not a default!" << std::endl;
+							}
+							program = program + line + "\n";
+						} else {
+							if (dlvhex::dl::Registry::getVerbose() > 1) {
+								std::cerr << "Default PARSED." << std::endl;
+							}
+							dfs.addDefault(df);
+							has_defaults = true;
+						}
+						getline(iss, line);
+						line = triml(line);
+						if (dlvhex::dl::Registry::getVerbose() > 1) {
+							std::cerr << "Get new line" << line << std::endl;
+						}
+					}
 				}
+			} else {
 				getline(iss, line);
 				line = triml(line);
-			}		
+				if (dlvhex::dl::Registry::getVerbose() > 1) {
+					std::cerr << "Get new line" << line << std::endl;
+				}
+			}					
 		}
-		DLRules rules = dfs.getDLRules();	
+
 		if (has_defaults) {
 			if (!o) {
 				throw "No ontology specified!";
 			}
+			DLRules rules = dfs.getDLRules();
 			readIndividuals(o);
 			std::vector<std::string>::iterator pos_i;
 			for (pos_i = individuals.begin(); pos_i != individuals.end(); pos_i++) {
