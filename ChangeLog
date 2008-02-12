@@ -1,3 +1,15 @@
+2008-02-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* doxygen.cfg: Update doxygen configuration via doxygen -u.
+	Use style of dlvhex doxygen setup.
+	
+	* configure.ac: Integrate new boost searching macros.
+	Create doxygen documentation in the doc directory.
+	* src/Makefile.am: Likewise.
+	* testsuite/Makefile.am: Likewise.
+	
+	* m4/boost.m4: Use boost.m4 from http://repo.or.cz/w/boost.m4.git.
+
 2008-02-03  DAO Tran Minh  <daotranminh@gmail.com>
 
 	* src/DFRewriter.cpp: Fix bug for non-defaultrule program.
