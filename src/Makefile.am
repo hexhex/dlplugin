@@ -117,6 +117,7 @@ FLEX_MICRO=33
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src \
+	$(BOOST_CPPFLAGS) \
 	$(RAPTOR_CFLAGS) \
 	$(DLVHEX_CFLAGS)
 

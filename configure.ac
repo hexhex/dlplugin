@@ -122,14 +122,28 @@ DX_RTF_FEATURE([OFF])
 DX_XML_FEATURE([OFF])
 DX_PDF_FEATURE([OFF])
 DX_PS_FEATURE([ON])
-DX_INIT_DOXYGEN([dlvhex-racerplugin], [doxygen.cfg], [documentation])
+DX_INIT_DOXYGEN([dlvhex-racerplugin], [doxygen.cfg], [doc])
 
 #
 # Checks for external libraries
 #
 
-AM_PATH_CPPUNIT([1.10.2])
-AC_PATH_BOOST
+
+# we want dlvhex
+PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 1.7])
+
+# cppunit is optional -> give warning in ACTION-IF-NOT-FOUND
+PKG_CHECK_MODULES([CPPUNIT], [cppunit >= 1.12.0], [have_cppunit=true], [have_cppunit=false])
+if test x$have_cppunit = xfalse; then
+   AC_MSG_WARN([could not find cppunit >= 1.12.0, `make check' will fail. Please download it from http://cppunit.sourceforge.net/ and setup PKG_CONFIG_PATH appropriately.])
+fi
+
+# checking for boost libs
+BOOST_REQUIRE([1.33.0])
+BOOST_SMART_PTR
+BOOST_STRING_ALGO
+BOOST_TOKENIZER
+
 
 # in case we couldn't find ACE.pc, fall back to the old scheme
 #PKG_CHECK_MODULES([ACE], [ACE >= 5.5.1], [:],
@@ -141,9 +155,6 @@ AC_PATH_BOOST
 
 # we need 1.4.8 for namespace parsing support
 PKG_CHECK_MODULES([RAPTOR], [raptor >= 1.4.8])
-
-# we want dlvhex
-PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 1.5])
 
 
 AC_ARG_ENABLE(userinstall, 
