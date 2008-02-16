@@ -32,6 +32,7 @@
 #ifndef _DLVHEX_DF_UNIFIER_H
 #define _DLVHEX_DF_UNIFIER_H
 
+#include <string>
 #include <map>
 #include <set>
 #include <vector>
