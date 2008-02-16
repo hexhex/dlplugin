@@ -24,7 +24,7 @@
  * @author DAO Tran Minh
  * @date   Tue Dec 18 17:20:24 2007
  * 
- * @brief  A set of Updates.
+ * @brief  A set of Update(s).
  * 
  * 
  */
@@ -38,16 +38,31 @@
 namespace dlvhex {
 namespace df {
 
-class Updates {
-private:
-	std::vector<Update> updates;
-public:
-	Updates();
+	/**
+	 * @brief  A set of Update(s)
+	 */
+	class Updates 
+	{
+	private:
+		std::vector<Update> updates;
 
-	void addUpdate(const Update&);
-	void insertUpdates(const Updates&);
-	std::string toString();
-};
+	public:
+		Updates();
+
+		void 
+		addUpdate(const Update&);
+
+		/**
+		 * Append an Updates (a set of Update(s)) into this Updates
+		 *
+		 * @param us2 the Updates to be appended
+		 */
+		void 
+		insertUpdates(const Updates& us2);
+	
+		std::string 
+		toString();
+	};
 
 }	// namespace df
 }	// namespace dlvhex

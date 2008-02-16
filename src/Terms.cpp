@@ -34,75 +34,238 @@
 namespace dlvhex {
 namespace df {
 
-Terms::Terms() {
-}
+Terms::Terms() 
+{ }
 
-std::vector<MTerm> Terms::getMTerms() {
-	return terms;
-}
-
-void Terms::addTerm(MTerm term_) {
-	terms.push_back(term_);
-}
-
-void Terms::removeLastTerm() {
-	if (terms.size() > 0) {
-		terms.pop_back();
-	}
-}
-
-bool Terms::isEmpty() {
+bool 
+Terms::isEmpty() 
+{
 	return (terms.size() == 0);
 }
 
-// insert all the terms which are in t1 and not in (*this*) to (*this*)
-void Terms::insertNewTerms(Terms& t1) {
+bool 
+Terms::gotThisTerm(MTerm& t) 
+{
 	std::vector<MTerm>::iterator pos;
-	for (pos = t1.terms.begin(); pos != t1.terms.end(); pos++) {
-		if (!gotThisTerm(*pos)) {
-			addTerm(*pos);
+	for (pos = terms.begin(); pos != terms.end(); pos++) 
+		{
+			if (*pos == t)
+			{
+				return true;
+			}
+		}
+	return false;
+}
+
+ComparisonResult
+Terms::compareTo(Terms& ts2)
+{
+	if (terms.size() != ts2.terms.size())
+	{
+		return NOT_COMPARABLE;
+	}
+	int count1 = 0;
+	int count2 = 0;
+	std::vector<MTerm>::iterator t_pos;
+	std::vector<MTerm>::iterator t_pos2 = ts2.terms.begin();
+	for (t_pos = terms.begin(); t_pos != terms.end(); t_pos++)
+	{
+		switch (t_pos->isUnifiable(*t_pos2))
+		{
+			case VAR1CONST2:				
+				if (count2 > 0)
+				{
+					return NOT_COMPARABLE;
+				}
+				count1++;
+				break;
+			case VAR2CONST1:
+				if (count1 > 0)
+				{
+					return NOT_COMPARABLE;
+				}
+				count2++;
+				break;
+			case NOT_UNIFIABLE:
+				return NOT_COMPARABLE;				
+		}
+		t_pos2++;
+	}
+	if (count1 > 0)
+	{
+		return MORE_GENERAL;
+	}
+	return LESS_GENERAL;
+}
+
+std::vector<MTerm> 
+Terms::getMTerms() 
+{
+	return terms;
+}
+
+Terms&
+Terms::operator=(const Terms& ts2)
+{
+	if (this != &ts2)
+	{
+		std::vector<MTerm> ts2terms = ts2.terms;
+		std::vector<MTerm>::iterator pos;
+		terms.clear();
+		for (pos = ts2terms.begin(); pos != ts2terms.end(); pos++)
+		{
+			terms.push_back(*pos);
 		}
 	}
+	return *this;
+}
+
+void Terms::addTerm(MTerm term_) 
+{
+	terms.push_back(term_);
+}
+
+// insert all the terms which are in t1 and not in (*this*) to (*this*)
+void 
+Terms::insertNewTerms(Terms& t1) 
+{
+	std::vector<MTerm>::iterator pos;
+	for (pos = t1.terms.begin(); pos != t1.terms.end(); pos++)
+		{
+			if (!gotThisTerm(*pos)) 
+			{
+				addTerm(*pos);
+			}
+		}
 }
 
 // Project this set of terms (*this*) to another set of term (t1)
 // All terms which are not in t1 will be set to "_"
-Terms Terms::projectTo(Terms t1) {
+Terms 
+Terms::projectTo(Terms& t1) 
+{
 	Terms ts;
 	MTerm anonymous("_");
 	std::vector<MTerm>::iterator pos;
-	for (pos = terms.begin(); pos != terms.end(); pos++) {
-		if (!t1.gotThisTerm(*pos)) {
+	for (pos = terms.begin(); pos != terms.end(); pos++) 
+	{
+		if (!t1.gotThisTerm(*pos)) 
+		{
 			ts.addTerm(anonymous);
-		} else {
+		} 
+		else 
+		{
 			ts.addTerm(*pos);
 		}
 	}
 	return ts;
 }
 
-bool Terms::gotThisTerm(MTerm& t) {
-	std::vector<MTerm>::iterator pos;
-	for (pos = terms.begin(); pos != terms.end(); pos++) {
-		if (*pos == t) {
-			return true;
+Unifier
+Terms::isUnifiable(Terms& ts2)
+{
+	Unifier uni_ts;
+	if (terms.size() != ts2.terms.size())
+	{		
+		return uni_ts;
+	}
+	std::vector<MTerm> ts2terms = ts2.terms;
+	std::vector<MTerm>::iterator t_pos;
+	std::vector<MTerm>::iterator t_pos2 = ts2terms.begin();
+	for (t_pos = terms.begin(); t_pos != terms.end(); t_pos++)
+	{
+		UnificationResult ur = t_pos->isUnifiable(*t_pos2);
+		if (ur != NOT_UNIFIABLE)
+		{
+			std::string t1 = t_pos->toString();
+			std::string t2 = t_pos2->toString();
+			if (!uni_ts.gotThisPair(t1, t2))
+			{
+				// Check for consistency first
+				// The unification is inconsistent iff there exist 2 pairs <X,a> and <X,b>
+				switch (ur)
+				{
+					case BOTH_VARS:
+						uni_ts.getUnifier().insert(std::make_pair(t1, t2));
+						break;
+					case VAR1CONST2:
+						if (uni_ts.isConsistent(t1, t2)) 
+						{
+							uni_ts.getUnifier().insert(std::make_pair(t1, t2));
+						}
+						break;
+					case VAR2CONST1:
+						if (uni_ts.isConsistent(t2, t1)) 
+						{
+							uni_ts.getUnifier().insert(std::make_pair(t2, t1));		
+						}
+						break;
+					case BOTH_CONSTS:
+						uni_ts.getUnifier().insert(std::make_pair(t1, t2));
+						break;
+				}				
+			}
+			t_pos2++;
+		}
+		else
+		{
+			uni_ts.getUnifier().clear();
+			return uni_ts;
 		}
 	}
-	return false;
+	return uni_ts;
 }
 
-std::string Terms::toString() {
-	std::string tmp = "";
-
-	if (terms.size() > 0) {
-		std::vector<MTerm>::iterator pos = terms.begin();
-		tmp = terms.begin()->toString();
-		pos = terms.begin();
-		++pos;
-		for (; pos != terms.end(); pos++) {
-			tmp += ", " + pos->toString();
+Terms
+Terms::unify(Unifier& unifier, bool keep_old_name)
+{
+	Terms ts;
+	std::vector<MTerm>::iterator t_pos;
+	for (t_pos = terms.begin(); t_pos != terms.end(); t_pos++)
+	{
+		if (t_pos->isVar())
+		{
+			std::string str_new = unifier.unifiedValue(t_pos->toString(), keep_old_name);
+			MTerm t_new(str_new);
+			ts.addTerm(t_new);
+		}
+		else
+		{
+			ts.addTerm(*t_pos);
 		}
 	}
+	return ts;
+}
+
+void
+Terms::rename_terms(std::string& str_id)
+{
+	std::vector<MTerm>::iterator t_pos;
+	for (t_pos = terms.begin(); t_pos != terms.end(); t_pos++)
+	{
+		if (t_pos->isVar())
+		{
+			t_pos->setName(t_pos->toString() + str_id);
+		}
+	}
+}
+
+std::string 
+Terms::toString() 
+{
+	std::string tmp = "";
+
+	if (terms.size() > 0) 
+		{
+			std::vector<MTerm>::iterator pos = terms.begin();
+			tmp = terms.begin()->toString();
+			pos = terms.begin();
+			++pos;
+			for (; pos != terms.end(); pos++) 
+				{
+					tmp += ", " + pos->toString();
+				}
+		}
 	return tmp;
 }
 

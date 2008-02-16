@@ -43,13 +43,10 @@ private:
 	std::vector<std::string> individuals;
 
 	void readIndividuals(dlvhex::dl::Ontology::shared_pointer);
-	std::string& triml(std::string&);
 	std::string& delete_comment(std::string&);
-	bool incomplete_input(std::string&);
 public:
 	DFRewriter();
-	void transform(std::istream&, std::ostream&, dlvhex::dl::Ontology::shared_pointer);
-	std::string getTransformedProgram();
+	void transform(std::string, std::ostream&, dlvhex::dl::Ontology::shared_pointer);
 };
 
 }} // dlvhex::df

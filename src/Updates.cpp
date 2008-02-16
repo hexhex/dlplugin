@@ -34,30 +34,41 @@
 namespace dlvhex {
 namespace df {
 
-Updates::Updates() {
-}
+Updates::Updates() 
+{ }
 
-void Updates::addUpdate(const Update& update_) {
+void
+Updates::addUpdate(const Update& update_) 
+{
 	updates.push_back(update_);
 }
 
-void Updates::insertUpdates(const Updates& updates_) {
-	if (updates.size() > 0) {
+void 
+Updates::insertUpdates(const Updates& updates_) 
+{
+	if (updates.size() > 0) 
+	{
 		updates.insert(updates.begin(), updates_.updates.begin(), updates_.updates.end());
-	} else {
+	} 
+	else 
+	{
 		updates = updates_.updates;
 	}
 }
 
-std::string Updates::toString() {
+std::string 
+Updates::toString() 
+{
 	std::string tmp = "";
-	if (updates.size() > 0) {
-		std::vector<Update>::iterator pos;
-		for (pos = updates.begin(); pos != updates.end(); pos++) {
-			tmp = tmp + pos->toString() + ", ";
+	if (updates.size() > 0) 
+		{
+			std::vector<Update>::iterator pos;
+			for (pos = updates.begin(); pos != updates.end(); pos++) 
+			{
+				tmp = tmp + pos->toString() + ", ";
+			}
+			tmp = tmp.erase(tmp.length()-2) + ";";
 		}
-		tmp = tmp.erase(tmp.length()-2) + ";";
-	}
 	return tmp;
 }
 

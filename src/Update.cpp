@@ -34,19 +34,21 @@
 namespace dlvhex {
 namespace df {
 
-Update::Update(const std::string& cr_name_, Operator op_, const std::string& predicate_name_) : cr_name(cr_name_), op(op_), predicate_name(predicate_name_) {
-}
+Update::Update(const std::string& cr_name_, Operator op_, const std::string& predicate_name_)
+	: cr_name(cr_name_), op(op_), predicate_name(predicate_name_) 
+{ }
 
-std::string Update::toString() {
+std::string 
+Update::toString() 
+{
 	std::string tmp;
-	switch (op) {
-		case UPLUS:
-			tmp = "+=";
-			break;
-		case UMINUS:
-			tmp = "-=";
-			break;
-	}	
+	switch (op) 
+		{
+			case UPLUS:	tmp = "+=";
+				break;
+			case UMINUS: tmp = "-=";
+				break;
+		}	
 	return cr_name + tmp + predicate_name;
 }
 

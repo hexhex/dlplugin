@@ -232,6 +232,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       out << "                       -push    ... turn off pushing" << std::endl;
       out << "                       -dlcache ... turn off dl-cache" << std::endl;
       out << " --dldebug=LEVEL       Set debug level to LEVEL." << std::endl;
+			out << " --default=FILENAME    Set \"default logic\" file name." << std::endl;
       return;
     }
 
@@ -240,6 +241,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
   const char *setup        = "--dlsetup=";
   const char *optimization = "--dlopt=";
   const char *dldebug      = "--dldebug=";
+  const char *dfparser     = "--default=";
 
   std::vector<std::string>::iterator it = argv.begin();
 
@@ -347,6 +349,17 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	  it = argv.erase(it);
 	  continue;
 	}
+		
+			o = it->find(dfparser);
+
+			if (o != std::string::npos)
+			{
+				std::string df_file = it->substr(o + strlen(dfparser)); // get df file name
+				std::cout << df_file << std::endl;
+				dlconverter->setDefaultFile(df_file);
+			  it = argv.erase(it);
+				continue;    
+			}			
 
       ++it; // nothing found, check next position
     }

@@ -34,79 +34,220 @@
 namespace dlvhex {
 namespace df {
 
-Predicate::Predicate() {
-}
+Predicate::Predicate()
+{ }
 
-Predicate::Predicate(const std::string& predicate_name_) : isStrongNegated(false), predicate_name(predicate_name_) {
-}
+Predicate::Predicate(const std::string& predicate_name_)
+	: isStrongNegated(false), predicate_name(predicate_name_) 
+{ }
 
-Predicate::Predicate(const std::string& predicate_name_, const Terms& terms_) : isStrongNegated(false), predicate_name(predicate_name_), terms(terms_) {
-}
+Predicate::Predicate(const std::string& predicate_name_, const Terms& terms_)
+	: isStrongNegated(false), predicate_name(predicate_name_), terms(terms_) 
+{ }
 
-Predicate::Predicate(const std::string& predicate_name_, const MTerm& term_) : isStrongNegated(false), predicate_name(predicate_name_) {
+Predicate::Predicate(const std::string& predicate_name_, const MTerm& term_)
+	: isStrongNegated(false), predicate_name(predicate_name_) 
+{
 	terms.addTerm(term_);
 }
 
+Predicate::Predicate(bool isStrongNegated_, const std::string& predicate_name_)
+	: isStrongNegated(isStrongNegated_), predicate_name(predicate_name_) 
+{ }
 
-Predicate::Predicate(bool isStrongNegated_, const std::string& predicate_name_) : isStrongNegated(isStrongNegated_), predicate_name(predicate_name_) {
-}
+Predicate::Predicate(bool isStrongNegated_, const std::string& predicate_name_, const Terms& terms_)
+: isStrongNegated(isStrongNegated_), predicate_name(predicate_name_), terms(terms_) 
+{ }
 
-Predicate::Predicate(bool isStrongNegated_, const std::string& predicate_name_, const Terms& terms_) : isStrongNegated(isStrongNegated_), predicate_name(predicate_name_), terms(terms_) {
-}
-
-bool Predicate::isStronglyNegated() {
+bool 
+Predicate::isStronglyNegated() 
+{
 	return isStrongNegated;
 }
 
-std::string Predicate::getPredicateName() {
+std::string 
+Predicate::getPredicateName() 
+{
 	return predicate_name;
 }
 
-std::string Predicate::getLiteralName() {
+std::string 
+Predicate::getSignedPredicateName() 
+{
 	std::string tmp = "";
-	if (isStrongNegated) {
+	if (isStrongNegated) 
+	{
+		tmp = "not_";
+	}
+	return (tmp + predicate_name);
+}
+
+std::string 
+Predicate::getLiteralName() 
+{
+	std::string tmp = "";
+	if (isStrongNegated) 
+	{
 		tmp = "-";
 	}
 	return (tmp + predicate_name);
 }
 
-std::string Predicate::getNegatedLiteralName() {
+std::string
+Predicate::getNegatedLiteralName() 
+{
 	std::string tmp = "";
-	if (!isStrongNegated) {
+	if (!isStrongNegated) 
+	{
 		tmp = "-";
 	}
 	return (tmp + predicate_name);
 }
 
-Terms Predicate::getTerms() {
+Terms& 
+Predicate::getTerms() 
+{
 	return terms;
 }
 
-void Predicate::applyNegation() {
+ComparisonResult
+Predicate::compareTo(Predicate& p2)
+{
+	if ((isStrongNegated != p2.isStrongNegated) || (predicate_name.compare(p2.predicate_name) != 0))
+	{
+		return NOT_COMPARABLE;
+	}
+	return (terms.compareTo(p2.terms));
+}
+
+ComparisonResult
+Predicate::compareTo(std::vector<Predicate>& preds)
+{
+	if (preds.size() == 0)
+	{
+		return MORE_GENERAL;
+	}
+	ComparisonResult finalCR = NOT_COMPARABLE; 
+	std::vector<Predicate>::iterator p_pos;
+	for (p_pos = preds.begin(); p_pos != preds.end(); p_pos++)
+	{		
+		ComparisonResult cr = compareTo(*p_pos);
+		if (cr == LESS_GENERAL)
+		{
+			return LESS_GENERAL;
+		}
+
+		if (cr == MORE_GENERAL)
+		{
+			finalCR = MORE_GENERAL;
+			if (p_pos == preds.begin())
+			{
+				if (preds.size() == 1)
+				{
+					preds.clear();
+					return MORE_GENERAL;
+				}
+				else
+				{
+					preds.erase(preds.begin());
+					p_pos = preds.begin();
+				}
+			}
+			else
+			{
+				std::vector<Predicate>::iterator tmp_pos = p_pos;
+				tmp_pos--;
+				preds.erase(p_pos);
+				p_pos = tmp_pos;
+			}
+		}
+	}
+	return finalCR;
+}
+
+void
+Predicate::rename_terms(std::string& str_id)
+{
+	terms.rename_terms(str_id);	
+}
+
+Predicate&
+Predicate::operator=(const Predicate& p2)
+{
+	if (this != &p2)
+	{
+		this->predicate_name = p2.predicate_name;
+		this->terms = p2.terms;
+		this->isStrongNegated = p2.isStrongNegated;
+	}
+	return *this;
+}
+
+Unifier
+Predicate::isUnifiable(const Predicate& p2)
+{
+	Unifier uni_pp;
+	if ((isStrongNegated == p2.isStrongNegated) && (predicate_name.compare(p2.predicate_name) == 0))
+	{
+		Terms ts2 = p2.terms;
+		return terms.isUnifiable(ts2);
+	}
+	return uni_pp;
+}
+
+Unifier
+Predicate::isNegatedUnifiable(const Predicate& p2)
+{
+	Unifier uni_pp;
+	if ((isStrongNegated != p2.isStrongNegated) && (predicate_name.compare(p2.predicate_name) == 0))
+	{
+		Terms ts2 = p2.terms;
+		return terms.isUnifiable(ts2);
+	}
+	return uni_pp;
+}
+
+void 
+Predicate::applyNegation() 
+{
 	isStrongNegated = !isStrongNegated;
 }
 
-std::string Predicate::toString() {
+std::string 
+Predicate::toString() 
+{
 	std::string tmp = "";
-	if (isStrongNegated) {
+	if (isStrongNegated) 
+	{
 		tmp = "-";
 	}
-	if (!terms.isEmpty()) {
+
+	if (!terms.isEmpty()) 
+	{
 		tmp = tmp + predicate_name + "(" + terms.toString() + ")";
-	} else {
+	} 
+	else 
+	{
 		tmp += predicate_name;
 	}
 	return tmp;
 }
 
-std::string Predicate::toNegatedString() {
+std::string 
+Predicate::toNegatedString() 
+{
 	std::string tmp = "";
-	if (!isStrongNegated) {
+	if (!isStrongNegated) 
+	{
 		tmp = "-";
 	}
-	if (!terms.isEmpty()) {
+
+	if (!terms.isEmpty()) 
+	{
 		tmp = tmp + predicate_name + "(" + terms.toString() + ")";
-	} else {
+	} 
+	else 
+	{
 		tmp += predicate_name;
 	}
 	return tmp;

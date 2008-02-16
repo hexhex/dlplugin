@@ -39,21 +39,33 @@
 #include "Updates.h"
 
 typedef std::vector<dlvhex::df::Predicate>	Pred1Dim;
-typedef std::vector<Pred1Dim>							Pred2Dim;
+typedef std::vector<Pred1Dim>								Pred2Dim;
 
 namespace dlvhex {
 namespace df {
 
-class DLAtom {
-private:
-	Updates updates;	
-	Pred2Dim	ucq;
-	Terms terms;
-public:
-	DLAtom(Updates&, Pred2Dim&, Terms&);
+	/**
+	 * @brief A DLAtom of the form DL[\lambda;\query](Terms).
+	 */
+	class DLAtom 
+	{
+	private:
+		/// A set of updates to build up \lambda
+		Updates updates;	
+
+		/// A query to the KB in the form of UCQ (Union of Conjuctive Queries)
+		Pred2Dim ucq;
+
+		/// A set of Terms to get the instantiated result of the query
+		Terms terms;
+
+	public:
+		DLAtom(Pred2Dim&, Terms&);
+		DLAtom(Updates&, Pred2Dim&, Terms&);
 	
-	std::string toString();
-};
+		std::string
+		toString();
+	};
 
 }	// namespace df
 }	// namespace dlvhex

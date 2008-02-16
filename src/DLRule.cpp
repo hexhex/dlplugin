@@ -34,56 +34,78 @@
 namespace dlvhex {
 namespace df {
 
-DLRule::DLRule(const Predicate& head_) : head(head_) {
-}
+DLRule::DLRule(const Predicate& head_)
+	: head(head_) 
+{ }
 
-void DLRule::addPositiveBody(const Predicate& positive_body) {
+void
+DLRule::addPositiveBody(const Predicate& positive_body) 
+{
 	positive_bodies.push_back(positive_body);
 }
 
-void DLRule::addNegativeBody(const Predicate& negative_body) {
+void 
+DLRule::addNegativeBody(const Predicate& negative_body) 
+{
 	negative_bodies.push_back(negative_body);
 }
 
-void DLRule::addPositiveDLAtom(const DLAtom& positive_dl_atom) {
+void 
+DLRule::addPositiveDLAtom(const DLAtom& positive_dl_atom) 
+{
 	positive_dl_atoms.push_back(positive_dl_atom);
 }
 
-void DLRule::addNegativeDLAtom(const DLAtom& negative_dl_atom) {
+void 
+DLRule::addNegativeDLAtom(const DLAtom& negative_dl_atom) 
+{
 	negative_dl_atoms.push_back(negative_dl_atom);
 }
 
-std::string DLRule::toString() {
+std::string 
+DLRule::toString() 
+{
 	std::vector<Predicate>::iterator ppos;
 	std::vector<DLAtom>::iterator dpos;
 	std::string tmp = head.toString();
-	if (positive_bodies.size() > 0 || negative_bodies.size() > 0 || positive_dl_atoms.size() > 0 || negative_dl_atoms.size() > 0) {
-		tmp += " :- ";
-		if (positive_bodies.size() > 0) {
-			for (ppos = positive_bodies.begin(); ppos != positive_bodies.end(); ppos++) {
-				tmp = tmp + ppos->toString() + ", ";
-			}
-		}
-		if (positive_dl_atoms.size() > 0) {
-			for (dpos = positive_dl_atoms.begin(); dpos != positive_dl_atoms.end(); dpos++) {
-				tmp = tmp + dpos->toString() + ", ";
-			}
-		}
-		if (negative_dl_atoms.size() > 0) {
-			for (dpos = negative_dl_atoms.begin(); dpos != negative_dl_atoms.end(); dpos++) {
-				tmp = tmp + "not " + dpos->toString() + ", ";
-			}
-		}
-		if (negative_bodies.size() > 0) {
-			for (ppos = negative_bodies.begin(); ppos != negative_bodies.end(); ppos++) {
-				tmp = tmp + "not " + ppos->toString() + ", ";
-			}
-		}
-		tmp = tmp.erase(tmp.length()-2) + ".\n";
-	} else {
-		tmp += ".\n";
-	}
 
+	if (positive_bodies.size() > 0 || negative_bodies.size() > 0 || positive_dl_atoms.size() > 0 || negative_dl_atoms.size() > 0) 
+		{
+			tmp += " :- ";
+			if (positive_bodies.size() > 0) 
+				{
+					for (ppos = positive_bodies.begin(); ppos != positive_bodies.end(); ppos++) 
+					{
+						tmp = tmp + ppos->toString() + ", ";
+					}
+				}
+			if (positive_dl_atoms.size() > 0) 
+				{
+					for (dpos = positive_dl_atoms.begin(); dpos != positive_dl_atoms.end(); dpos++) 
+					{
+						tmp = tmp + dpos->toString() + ", ";
+					}
+				}
+			if (negative_dl_atoms.size() > 0) 
+				{
+					for (dpos = negative_dl_atoms.begin(); dpos != negative_dl_atoms.end(); dpos++) 
+					{
+						tmp = tmp + "not " + dpos->toString() + ", ";
+					}
+				}
+			if (negative_bodies.size() > 0) 
+				{
+					for (ppos = negative_bodies.begin(); ppos != negative_bodies.end(); ppos++) 
+					{
+						tmp = tmp + "not " + ppos->toString() + ", ";
+					}
+				}
+			tmp = tmp.erase(tmp.length()-2) + ".\n";
+		} 
+	else 
+		{
+			tmp += ".\n";
+		}
 	return tmp;
 }
 

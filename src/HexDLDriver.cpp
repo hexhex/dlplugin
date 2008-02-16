@@ -107,6 +107,12 @@ HexDLDriver::setURI(const std::string& s)
     }
 }
 
+void
+HexDLDriver::setDefaultFile(const std::string& dfname_)
+{
+  dfname = dfname_;
+}
+
 
 Ontology::shared_pointer
 HexDLDriver::getOntology() const
@@ -114,22 +120,9 @@ HexDLDriver::getOntology() const
   return this->ontology;
 }
 
-
 void
-HexDLDriver::convert(std::istream& input, std::ostream& output)
+HexDLDriver::rewriteHex()
 {
-  std::stringstream default_out;
-	dlvhex::df::DFRewriter dfr;
-	dfr.transform(input, default_out, ontology);
-
-  //
-  // setup streams
-  //
-
-	//getLexer()->switch_streams(&input, &output);
-  getLexer()->switch_streams(&default_out, &output);
-  this->output = &output;
-
   //
   // parse and rewrite that thing to HEX syntax
   //
@@ -161,6 +154,26 @@ HexDLDriver::convert(std::istream& input, std::ostream& output)
     {
       throw PluginError(e.what());
     }
+}
+
+
+void
+HexDLDriver::convert(std::istream& input, std::ostream& output)
+{
+  this->output = &output;
+
+  if (!dfname.empty())
+    {
+      std::stringstream default_out;
+      dlvhex::df::DFRewriter dfr;
+      dfr.transform(dfname, default_out, ontology);
+      //std::cout << default_out.str() << std::endl;
+      getLexer()->switch_streams(&default_out, &output);
+      rewriteHex();
+    }
+
+  getLexer()->switch_streams(&input, &output);
+  rewriteHex();
 }
 
 
