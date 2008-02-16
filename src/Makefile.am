@@ -68,7 +68,8 @@ Predicate.cpp \
 MTerm.cpp \
 Terms.cpp \
 Update.cpp \
-Updates.cpp
+Updates.cpp \
+Unifier.cpp
 
 #
 # in maintainer-mode we check for a sufficient version of the bison/flex combo

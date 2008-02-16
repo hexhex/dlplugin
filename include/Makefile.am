@@ -45,5 +45,6 @@ noinst_HEADERS = \
                  MTerm.h \
                  Terms.h \
                  Update.h \
-                 Updates.h
+                 Updates.h \
+								 Unifier.h
 
