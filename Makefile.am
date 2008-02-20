@@ -1,5 +1,5 @@
+AUTOMAKE_OPTIONS = gnu 1.10
 ACLOCAL_AMFLAGS = -I m4
-AUTOMAKE_OPTIONS = gnu
 include doxygen.am
 
 SUBDIRS = examples include src testsuite
