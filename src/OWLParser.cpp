@@ -155,7 +155,7 @@ namespace dlvhex {
     aboxHandler(void* userData, const raptor_statement* statement)
     {
       ABox* abox = (ABox*) userData;
-      
+
       const char* pred = (const char*) statement->predicate;
       const std::string obj = (const char*) statement->object;
       
@@ -178,7 +178,8 @@ namespace dlvhex {
 	   )
 	  )
 	{
-	  abox->addIndividual(Term((const char*) statement->subject, true));
+	  std::string subj = (const char*) statement->subject;
+	  abox->addIndividual(Term("<" + subj + ">", true));
 	}
     }
 
