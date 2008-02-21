@@ -1,3 +1,7 @@
+2008-02-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/OWLParser.cpp (aboxHandler): Wrap individual URIs in turtle brackets (<URI>).
+
 2008-02-20  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* configure.ac: Require autoconf >= 2.61.
