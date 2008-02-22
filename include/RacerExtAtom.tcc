@@ -312,7 +312,7 @@ namespace racer {
   QueryBaseDirector::shared_pointer
   RacerRoleAtom<GetKBManager,GetCache>::getDirectors(const dlvhex::dl::Query& query) const
   {
-    const DLQuery::shared_pointer& dlq = query.getDLQuery();
+    //const DLQuery::shared_pointer& dlq = query.getDLQuery();
 
     QueryCompositeDirector::shared_pointer comp(new QueryCompositeDirector(this->stream));
     
@@ -395,7 +395,8 @@ namespace racer {
 	throw PluginError("DLQuery has wrong query type, expected retrieval or mixed query");
       }
     
-    return this->cacheQuery(comp);
+    ///@todo right now we don't cache datatype queries
+    return comp;
   }
 
 
