@@ -45,6 +45,7 @@ namespace dl {
   {
     ///@todo right now, we only support plain queries
     assert(!q1.isConjQuery() && !q1.isUnionConjQuery());
+    assert(!q2.isConjQuery() && !q2.isUnionConjQuery());
 
     // first check if ontology of q1 is less or greater than the ontology of q2
 
