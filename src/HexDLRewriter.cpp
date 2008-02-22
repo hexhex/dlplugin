@@ -614,7 +614,7 @@ namespace dl {
   {
     std::string tmp;
     
-    if (s.find("\"-") == 0)
+    if (s.find("\"-") == 0 || s.find("-\"") == 0) ///@todo "-XXX" should never happen!
       {
 	tmp = s.substr(2, s.length() - 3);
       }
