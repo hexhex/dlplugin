@@ -99,14 +99,14 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
     {
       qstr = inputtuple[5].getUnquotedString();
 
-      if (qstr.length() >= 2) // kludge: check for turtle syntax
+      if (qstr.length() >= 2) ///@todo kludge: check for turtle syntax (this even breaks for negated uris)
 	{
 	  int end = qstr.length() - 1;
 
 	  char b = qstr[0];
 	  char e = qstr[end];
 
-	  if (b == '<' && e == '>') // kludge: remove turtle brackets
+	  if (b == '<' && e == '>') ///@todo kludge: remove turtle brackets
 	    {
 	      qstr.erase(end, 1);
 	      qstr.erase(0, 1);
@@ -170,15 +170,25 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
 	    }
 	  else // (negated) concept query
 	    {
+	      Term qu;
+
+	      if (qstr[0] == '-') // keep the strong negation in front!
+		{
+		  qu = Term("-\"" + qstr.substr(1) + "\"");
+		}
+	      else
+		{
+		  qu = Term(qstr, true);
+		}
+
 	      // create a plain query (oldschool)
-	      Term qu(qstr, true);
 	      dlq = DLQuery::shared_pointer(new DLQuery(onto, qu, query.getPatternTuple()));
 	    }
 	}
     }
   else // no query term, what now?
     {
-      dlq = DLQuery::shared_pointer(new DLQuery(onto, Term(), query.getPatternTuple()));
+      assert("No query term." == 0);
     }
 
   this->q = new Query(kb, dlq,
