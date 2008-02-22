@@ -1,3 +1,15 @@
+2008-02-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/HexDLRewriter.cpp: Treat '-' inside of "".
+
+	* src/QueryCtx.cpp (QueryCtx::QueryCtx): Keep '-' as first character in queries.
+
+	* include/RacerExtAtom.tcc (RacerRoleAtom<GetKBManager,GetCache>::getDirectors): Turn off caching for dlDR.
+
+	* src/DLQuery.cpp: Add a missing assertion.
+
+	* src/RacerNRQLBuilder.cpp (NRQLDatatypeBuilder::createBody): Datatype roles are CQs now.
+
 2008-02-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/OWLParser.cpp (aboxHandler): Wrap individual URIs in turtle brackets (<URI>).
