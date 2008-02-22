@@ -683,7 +683,13 @@ NRQLDatatypeBuilder::createBody(std::ostream& stream, const Query& query) const
   throw(DLBuildingError)
 {
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
-  const Term& q = dlq->getQuery();
+
+  // datatype queries are conjunctive queries now
+  const AtomSet& as = dlq->getConjQuery();
+  assert(as.size() == 1);
+
+  const Term& q = as.begin()->getPredicate();
+
   const Tuple& pat = dlq->getPatternTuple();
   const std::string& nspace = dlq->getOntology()->getNamespace();
 
