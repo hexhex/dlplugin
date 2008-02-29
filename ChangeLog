@@ -1,3 +1,15 @@
+2008-02-29  DAO Tran Minh  <daotranminh@gmail.com>
+
+	* src/Update.cpp: Add operator==
+
+	* src/Updates.cpp: Remove duplications of Update(s).
+
+	* src/Default.cpp: Add new transformation (testing).
+
+	* src/Defaults.cpp: Comment getForcingDLRules() and getDLRules() for the moment.
+
+	* src/DFRewriter.cpp: Fix bug in readIndividuals().
+
 2008-02-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/HexDLRewriter.cpp: Treat '-' inside of "".
