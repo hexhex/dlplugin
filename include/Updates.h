@@ -46,6 +46,9 @@ namespace df {
 	private:
 		std::vector<Update> updates;
 
+		bool
+		gotThisUpdate(const Update&);
+
 	public:
 		Updates();
 

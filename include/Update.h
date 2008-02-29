@@ -60,6 +60,9 @@ namespace df {
 
 	public:
 		Update(const std::string&, Operator, const std::string&);
+		
+		bool
+		operator==(const Update&) const;
 
 		std::string 
 		toString();

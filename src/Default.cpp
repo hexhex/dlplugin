@@ -366,5 +366,100 @@ DLRules Default::getDLRules()
 	return rules;	
 }
 
+DLRules 
+Default::getDLRules1() // Testing new transformation
+{
+	DLRules rules;
+
+	if (premise.size() == 0 && justification.size() == 0)
+	{
+		Pred1Dim::iterator c_pos;
+		for (c_pos = conclusion.begin(); c_pos != conclusion.end(); c_pos++)
+		{
+			std::string pred_name = c_pos->getPredicateName();
+			Terms ts = c_pos->getTerms();
+			Predicate pin(PREFIX_IN + pred_name, ts);
+			all_in_p = pin;
+			DLRule rin(pin);
+			rules.addDLRule(rin);			
+		}
+	}
+	else 
+	{
+		Updates lambda_prime = parent->getLambdaPrime();
+		Terms all_distinct_terms_conclusion = getAllDistinctTerms(conclusion);
+		std::stringstream strid;
+		strid << id;
+		// all_p_def_id(allTerms_conslusion) :-	
+		//		DL[\lambda; premise[0](Terms_premise[0]),...,premise[k](Terms_premise[k])](allTerms_premise),
+		//		not DL[\lambda'; -justification[0]](allTerms_justification_0),
+		//			...
+		//		not DL[\lambda'; -justification[i,0](Terms_justification[i,0]) v ... v -justification[i,m](Terms_justification[i,m])]
+		//			...
+		//		not DL[\lambda'; -justification[m]](allTerms_justification_m).
+		Predicate p_r_h(PREFIX_ALL_IN + strid.str(), all_distinct_terms_conclusion);
+		all_in_p = p_r_h;
+		DLRule r(p_r_h);
+		if (premise.size() > 0) 
+		{
+			Pred2Dim ucq_premise;
+			ucq_premise.push_back(premise);
+			Terms all_distinct_terms_premise = getAllDistinctTerms(premise);
+			DLAtom d_r_b1(lambda_prime, ucq_premise, all_distinct_terms_premise);			
+			r.addPositiveDLAtom(d_r_b1);
+		}
+		if (justification.size() > 0)
+		{
+			Pred2Dim::iterator j_pos;
+			for (j_pos = justification.begin(); j_pos != justification.end(); j_pos++) 
+			{
+				Pred1Dim one_justification = *j_pos;
+				Pred2Dim ucq_justification;
+				Pred1Dim::iterator pos;
+				for (pos = one_justification.begin(); pos != one_justification.end(); pos++) 
+					{
+						Predicate p_justification(!pos->isStronglyNegated(), pos->getPredicateName(), pos->getTerms());
+						Pred1Dim cq_justification;
+						cq_justification.push_back(p_justification);
+						ucq_justification.push_back(cq_justification);
+					}
+				Terms all_distinct_terms_justification = getAllDistinctTerms(one_justification);
+				DLAtom d_r_bi(lambda_prime, ucq_justification, all_distinct_terms_justification);
+				r.addNegativeDLAtom(d_r_bi);
+			}			
+		}
+
+		// adding dom() predicates for safety conditions
+		std::vector<MTerm> terms;
+		std::vector<MTerm>::iterator t_pos;	
+		terms = all_distinct_terms_conclusion.getMTerms();
+		for (t_pos = terms.begin(); t_pos != terms.end(); t_pos++) 
+		{
+			if (t_pos->isVar())
+			{
+				Predicate p_dom("dom", *t_pos);
+				r.addPositiveBody(p_dom);			
+			}
+		}
+		rules.addDLRule(r);
+
+		// ...
+		// in_conclusion_i(Y_i) :- all_in_def_id(Y).
+		// project Y to Y_i and let all other become '_'
+		// ...
+		Pred1Dim::iterator c_pos;
+		for (c_pos = conclusion.begin(); c_pos != conclusion.end(); c_pos++) 
+		{
+			Terms projected_terms = all_distinct_terms_conclusion.projectTo(c_pos->getTerms());
+			Predicate p_ri_h(PREFIX_IN + c_pos->getSignedPredicateName(), c_pos->getTerms());
+			Predicate p_ri_b(PREFIX_ALL_IN + strid.str(), projected_terms);
+			DLRule ri(p_ri_h);
+			ri.addPositiveBody(p_ri_b);
+			rules.addDLRule(ri);
+		}
+	}
+	return rules;
+}
+
 }	// namespace df
 }	// namespace dlvhex

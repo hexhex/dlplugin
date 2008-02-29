@@ -32,10 +32,10 @@ void DFRewriter::readIndividuals(dlvhex::dl::Ontology::shared_pointer o)
 	for (pos = inds->begin(); pos != inds->end(); pos++) 
 	{
 		std::string ind = pos->getString();
-		ind.insert(1, "<");
+		/*ind.insert(1, "<");
 		str_pos = ind.length();
 		str_pos--;
-		ind.insert(str_pos, ">");
+		ind.insert(str_pos, ">");*/
 		individuals.push_back(ind);
 	}
 }
@@ -72,13 +72,13 @@ void DFRewriter::transform(std::string filename, std::ostream& oss, dlvhex::dl::
 			rules.addDLRule(r);
 		}
 		program = program + rules.toString();		
-
-		oss << program;
+		std::cout << program << std::endl;
 		if (dlvhex::dl::Registry::getVerbose() > 1) 
 		{
 			std::cerr << "Transformed defaults to dlrules:" << std::endl;
 			std::cerr << program << std::endl;
 		}
+		oss << program;
 	}
 	catch (char const* mess) 
 	{

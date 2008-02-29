@@ -148,6 +148,12 @@ namespace df {
 		  */
 		DLRules 
 		getDLRules();
+
+		/**
+		  * @return New transformation
+			*/
+		DLRules 
+		getDLRules1();
 	
 		std::string 
 		toString();

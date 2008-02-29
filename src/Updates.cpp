@@ -40,7 +40,29 @@ Updates::Updates()
 void
 Updates::addUpdate(const Update& update_) 
 {
-	updates.push_back(update_);
+	if (!gotThisUpdate(update_)) 
+	{
+		updates.push_back(update_);
+	}
+}
+
+bool
+Updates::gotThisUpdate(const Update& update_)
+{
+	std::vector<Update>::iterator pos;
+	if (updates.size() == 0)
+	{
+		return false;
+	}
+
+	for (pos = updates.begin(); pos != updates.end(); pos++) 
+	{
+		if (*pos == update_)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void 
@@ -48,7 +70,16 @@ Updates::insertUpdates(const Updates& updates_)
 {
 	if (updates.size() > 0) 
 	{
-		updates.insert(updates.begin(), updates_.updates.begin(), updates_.updates.end());
+		std::vector<Update> us = updates_.updates;
+		std::vector<Update>::iterator pos;
+		for (pos = us.begin(); pos != us.end(); pos++)
+		{
+			if (!gotThisUpdate(*pos))
+			{
+				updates.push_back(*pos);
+			}
+		}
+		//updates.insert(updates.begin(), updates_.updates.begin(), updates_.updates.end());
 	} 
 	else 
 	{

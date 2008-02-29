@@ -196,7 +196,7 @@ Defaults::getForcingDLRules()
 			rename_terms(d_pos2_conclusion, d_pos2_all_disc_terms, str_id2);
 
 			// Check if any pair of predicates will force OUT			
-			Pred1Dim::iterator dc_pos;
+			/*Pred1Dim::iterator dc_pos;
 			Pred1Dim::iterator dc_pos2;
 			for (dc_pos = d_pos_conclusion.begin(); dc_pos != d_pos_conclusion.end(); dc_pos++)
 			{
@@ -241,7 +241,7 @@ Defaults::getForcingDLRules()
 						rules.addDLRule(r2);
 					}
 				}
-			}
+			}*/
 			// Checking for forcing in rules
 			// d_pos ~~Force IN~~> d_pos2 ???
 			Unifier2Dim uniset = check_forcing_in(d_pos_conclusion, d_pos2_conclusion);
@@ -321,8 +321,8 @@ Defaults::getDLRules()
 			DLRules rs = pos->getDLRules();
 			rules.insertDLRules(rs);
 		}
-	rules.insertDLRules(getForcingDLRules());
-	rules.insertDLRules(getDirectRules());
+	//rules.insertDLRules(getForcingDLRules());
+	//rules.insertDLRules(getDirectRules());
 	return rules;
 }
 

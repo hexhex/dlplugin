@@ -38,6 +38,14 @@ Update::Update(const std::string& cr_name_, Operator op_, const std::string& pre
 	: cr_name(cr_name_), op(op_), predicate_name(predicate_name_) 
 { }
 
+bool
+Update::operator==(const Update& u2) const
+{
+	return ((cr_name.compare(u2.cr_name) == 0)
+					&& (op == u2.op)
+					&& (predicate_name.compare(u2.predicate_name) == 0));
+}
+
 std::string 
 Update::toString() 
 {
