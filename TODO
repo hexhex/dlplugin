@@ -1,5 +1,13 @@
 -*- org -*-
 
+* TODO &dlDR and dlX in a rule will be pushed together
+Datatype roles are handled very weird in Racer: adding datatype
+support to (U)CQs should fix this problem.
+
+* TODO Testsuite is a mess!
+
+* TODO If there is a TBox with an absolute pathname as name, we dump "/" to std::cerr (see (all-tboxes))
+
 * TODO enhance doxygen documentation
 
 * TODO Remove Abox handling, use (retrieve-under-premise)?
@@ -33,5 +41,5 @@
 
 * TODO use boost::spirit
 ** to parse (U)CQs in the external atoms
-   fuse the dispatchin code in AtomSeparator.cpp and QueryCtx.cpp 
+   fuse the dispatching code in AtomSeparator.cpp and QueryCtx.cpp 
 ** to parse the answers from Racer?
