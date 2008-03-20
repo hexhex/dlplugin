@@ -40,6 +40,7 @@
 #include "QueryDirector.h"
 #include "QueryCtx.h"
 #include "Query.h"
+#include "Answer.h"
 #include "Cache.h"
 #include "RacerNRQL.h"
 #include "RacerNRQLBuilder.h"

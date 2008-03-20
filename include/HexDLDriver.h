@@ -69,9 +69,6 @@ namespace dl {
     /// current output stream
     std::ostream* output;
 
-		/// default file name
-		std::string dfname;
-
   public:
     /// ctor
     HexDLDriver();
@@ -93,11 +90,8 @@ namespace dl {
     std::ostream&
     getOutput() const;
 
-    void
-    setURI(const std::string& u);
-
 		void
-		setDefaultFile(const std::string& dfname_);
+		setOntology(const Ontology::shared_pointer& o);
 
     Ontology::shared_pointer
     getOntology() const;

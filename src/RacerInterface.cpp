@@ -36,7 +36,6 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "RacerInterface.h"
-
 #include "RacerExtAtom.h"
 #include "Ontology.h"
 #include "DLOptimizer.h"
@@ -67,8 +66,10 @@ RacerInterface::RacerInterface()
     stats(new CacheStats),
     cache(new Cache(*stats)),
     dlconverter(new HexDLDriver),
+    dfconverter(new dlvhex::df::DFConverter),
     dloptimizer(new DLOptimizer),
-    kbManager(new RacerKBManager(*stream))
+    kbManager(new RacerKBManager(*stream)),
+    hasDefault(false)
 { }
 
 
@@ -78,8 +79,10 @@ RacerInterface::RacerInterface(const RacerInterface&)
     stats(0),
     cache(0),
     dlconverter(0),
+    dfconverter(0),
     dloptimizer(0),
-    kbManager(0)
+    kbManager(0),
+    hasDefault(false)
 { /* ignore */ }
 
 
@@ -118,6 +121,7 @@ RacerInterface::~RacerInterface()
   delete kbManager;
   delete dloptimizer;
   delete dlconverter;
+	delete dfconverter;
   delete cache;
   delete stats;
   delete stream;
@@ -132,12 +136,17 @@ RacerInterface::instance()
 }
 
 
-PluginConverter*
-RacerInterface::createConverter()
+std::vector<PluginConverter*>
+RacerInterface::createConverters()
 {
-  return dlconverter;
+	std::vector<PluginConverter*> cvts;
+	if (hasDefault)
+	{
+		cvts.push_back(dfconverter);
+	}
+	cvts.push_back(dlconverter);
+  return cvts;
 }
-
 
 PluginOptimizer*
 RacerInterface::createOptimizer()
@@ -236,7 +245,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       return;
     }
 
-  const char *ontology     = "--ontology=";
+	const char *ontology     = "--ontology=";
   const char *reload       = "--kb-reload";
   const char *setup        = "--dlsetup=";
   const char *optimization = "--dlopt=";
@@ -254,7 +263,16 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       if (o != std::string::npos)
 	{
 	  std::string uri = it->substr(o + strlen(ontology)); // get URL
-	  dlconverter->setURI(uri);
+	  try
+    {
+      this->ontology = Ontology::createOntology(uri);
+    }
+  	catch (DLError& e)
+    {
+      throw PluginError(e.what());
+    }
+	  dlconverter->setOntology(this->ontology);
+		dfconverter->setOntology(this->ontology);
 
 	  it = argv.erase(it);
 	  continue;
@@ -354,9 +372,9 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 
 			if (o != std::string::npos)
 			{
-				std::string df_file = it->substr(o + strlen(dfparser)); // get df file name
-				std::cout << df_file << std::endl;
-				dlconverter->setDefaultFile(df_file);
+				hasDefault = true;
+				std::string df_file = it->substr(o + strlen(dfparser)); // get df file name				
+				dfconverter->setDefaultFile(df_file);
 			  it = argv.erase(it);
 				continue;    
 			}			

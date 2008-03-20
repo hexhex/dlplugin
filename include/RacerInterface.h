@@ -35,7 +35,9 @@
 
 #include <dlvhex/PluginInterface.h>
 #include <dlvhex/Term.h>
-
+#include "Ontology.h"
+#include "DFConverter.h"
+#include "HexDLDriver.h"
 
 namespace dlvhex {
 
@@ -83,10 +85,18 @@ namespace racer {
     BaseCache* cache;
     /// DL converter facility
     HexDLDriver* dlconverter;
+		/// DF converter facility
+		dlvhex::df::DFConverter* dfconverter;
     /// DL optimizer facility
     DLOptimizer* dloptimizer;
     /// the kb-manager for RACER
     KBManager* kbManager;
+
+		// current ontology
+		// moved to this level to be shared between the df-rewriter and the hex-rewriter
+		dlvhex::dl::Ontology::shared_pointer ontology;
+
+		bool hasDefault;
 
     //
     // keep those ctors private, we don't want multiple instantiations
@@ -127,8 +137,8 @@ namespace racer {
     /**
      * @return the DL converter.
      */
-    virtual PluginConverter* 
-    createConverter();
+    virtual std::vector<PluginConverter*>
+    createConverters();
 
     /**
      * @return the DL optimizer.

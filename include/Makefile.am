@@ -37,6 +37,7 @@ noinst_HEADERS = \
                  Default.h \
                  DefaultParser.h \
                  Defaults.h \
+                 DFConverter.h \
                  DFRewriter.h \
                  DLAtom.h \
                  DLRule.h \

@@ -75,7 +75,7 @@ Unifier::getUnifier()
 }
 
 bool
-Unifier::isConsistent(std::string var, std::string cons)
+Unifier::isConsistent(std::string var_, std::string cons_)
 {
 
 	MultimapStr::iterator pos;
@@ -83,7 +83,7 @@ Unifier::isConsistent(std::string var, std::string cons)
 	{
 		for (pos = unifier.begin(); pos != unifier.end(); pos++)
 		{
-			if ((pos->first.compare(var) == 0) && (pos->second.compare(cons) != 0))
+			if ((pos->first.compare(var_) == 0) && (pos->second.compare(cons_) != 0))
 			{
 				return false;
 			}

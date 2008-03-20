@@ -60,6 +60,7 @@ URI.cpp \
 Default.cpp \
 DefaultParser.cpp \
 Defaults.cpp \
+DFConverter.cpp \
 DFRewriter.cpp \
 DLAtom.cpp \
 DLRule.cpp \

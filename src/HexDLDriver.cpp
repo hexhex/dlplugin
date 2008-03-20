@@ -35,7 +35,6 @@
 #include "Ontology.h"
 #include "Registry.h"
 #include "DLError.h"
-
 #include "DFRewriter.h"
 
 #include <sstream>
@@ -93,26 +92,11 @@ HexDLDriver::getOutput() const
   return *this->output;
 }
 
-
 void
-HexDLDriver::setURI(const std::string& s)
+HexDLDriver::setOntology(const Ontology::shared_pointer& o)
 {
-  try
-    {
-      this->ontology = Ontology::createOntology(s);
-    }
-  catch (DLError& e)
-    {
-      throw PluginError(e.what());
-    }
+	ontology = o;
 }
-
-void
-HexDLDriver::setDefaultFile(const std::string& dfname_)
-{
-  dfname = dfname_;
-}
-
 
 Ontology::shared_pointer
 HexDLDriver::getOntology() const
@@ -161,17 +145,6 @@ void
 HexDLDriver::convert(std::istream& input, std::ostream& output)
 {
   this->output = &output;
-
-  if (!dfname.empty())
-    {
-      std::stringstream default_out;
-      dlvhex::df::DFRewriter dfr;
-      dfr.transform(dfname, default_out, ontology);
-      //std::cout << default_out.str() << std::endl;
-      getLexer()->switch_streams(&default_out, &output);
-      rewriteHex();
-    }
-
   getLexer()->switch_streams(&input, &output);
   rewriteHex();
 }
