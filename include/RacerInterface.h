@@ -92,11 +92,12 @@ namespace racer {
     /// the kb-manager for RACER
     KBManager* kbManager;
 
-		// current ontology
-		// moved to this level to be shared between the df-rewriter and the hex-rewriter
-		dlvhex::dl::Ontology::shared_pointer ontology;
+    /// current ontology; moved to this level to be shared between the
+    /// df-rewriter and the hex-rewriter
+    dlvhex::dl::Ontology::shared_pointer ontology;
 
-		bool hasDefault;
+    /// set to true, if we have --default
+    bool hasDefault;
 
     //
     // keep those ctors private, we don't want multiple instantiations

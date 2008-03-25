@@ -139,14 +139,18 @@ RacerInterface::instance()
 std::vector<PluginConverter*>
 RacerInterface::createConverters()
 {
-	std::vector<PluginConverter*> cvts;
-	if (hasDefault)
-	{
-		cvts.push_back(dfconverter);
-	}
-	cvts.push_back(dlconverter);
+  std::vector<PluginConverter*> cvts;
+
+  if (hasDefault)
+    {
+      cvts.push_back(dfconverter);
+    }
+
+  cvts.push_back(dlconverter);
+
   return cvts;
 }
+
 
 PluginOptimizer*
 RacerInterface::createOptimizer()
@@ -245,7 +249,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       return;
     }
 
-	const char *ontology     = "--ontology=";
+  const char *ontology     = "--ontology=";
   const char *reload       = "--kb-reload";
   const char *setup        = "--dlsetup=";
   const char *optimization = "--dlopt=";
@@ -263,16 +267,18 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       if (o != std::string::npos)
 	{
 	  std::string uri = it->substr(o + strlen(ontology)); // get URL
+
 	  try
-    {
-      this->ontology = Ontology::createOntology(uri);
-    }
-  	catch (DLError& e)
-    {
-      throw PluginError(e.what());
-    }
+	    {
+	      this->ontology = Ontology::createOntology(uri);
+	    }
+	  catch (DLError& e)
+	    {
+	      throw PluginError(e.what());
+	    }
+
 	  dlconverter->setOntology(this->ontology);
-		dfconverter->setOntology(this->ontology);
+	  dfconverter->setOntology(this->ontology);
 
 	  it = argv.erase(it);
 	  continue;
@@ -368,16 +374,16 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	  continue;
 	}
 		
-			o = it->find(dfparser);
+      o = it->find(dfparser);
 
-			if (o != std::string::npos)
-			{
-				hasDefault = true;
-				std::string df_file = it->substr(o + strlen(dfparser)); // get df file name				
-				dfconverter->setDefaultFile(df_file);
-			  it = argv.erase(it);
-				continue;    
-			}			
+      if (o != std::string::npos)
+	{
+	  hasDefault = true;
+	  std::string df_file = it->substr(o + strlen(dfparser)); // get df file name				
+	  dfconverter->setDefaultFile(df_file);
+	  it = argv.erase(it);
+	  continue;    
+	}			
 
       ++it; // nothing found, check next position
     }
