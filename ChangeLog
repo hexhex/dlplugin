@@ -1,3 +1,15 @@
+2008-03-25  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/DFConverter.cpp (DFConverter::readIndividuals): Use
+	PluginError for errors.
+	* src/DefaultParser.cpp (DefaultParser::parseInputStream): Likewise.
+
+	* src/HexDLDriver.cpp (HexDLDriver::rewriteHex): Remove.
+	* include/HexDLDriver.h: Likewise.
+
+	* src/RacerInterface.cpp: Cosmetic changes.
+	* include/RacerInterface.h: Likewise.
+
 2008-03-07  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* TODO: Update.
