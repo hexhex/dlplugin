@@ -29,10 +29,12 @@
  * 
  */
 
-#include <iostream>
-#include <fstream>
 #include "Registry.h"
 #include "DefaultParser.h"
+
+#include <dlvhex/Error.h>
+#include <iostream>
+#include <fstream>
 
 namespace dlvhex { 
 namespace df {
@@ -289,16 +291,15 @@ DefaultParser::evaluateDefaults(const iter_t& root, Defaults& dfs)
 void
 DefaultParser::parseInputStream(std::string& filename, std::string& program)
 {
-	std::ifstream iss;
-	iss.open(filename.c_str());
-	if (!iss.is_open()) 
-	{
-		std::cout << "No input!" << std::endl;
-	}
-	else 
-	{
-		parseInputStream(iss, program);
-	}
+  std::ifstream iss;
+  iss.open(filename.c_str());
+	
+  if (!iss.is_open()) 
+    {
+      throw PluginError("Could not open " + filename);
+    }
+
+  parseInputStream(iss, program);
 }
 
 void

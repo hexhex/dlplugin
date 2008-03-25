@@ -33,6 +33,8 @@
 #include "DFConverter.h"
 #include "Registry.h"
 
+#include <dlvhex/Error.h>
+
 namespace dlvhex {
 namespace df {
 
@@ -54,16 +56,14 @@ DFConverter::setOntology(const dlvhex::dl::Ontology::shared_pointer& o)
 void 
 DFConverter::readIndividuals(dlvhex::dl::Ontology::shared_pointer o) 
 {
-	dlvhex::dl::ABox abox = o->getABox();
-	dlvhex::dl::ABox::ObjectsPtr inds = abox.getIndividuals();
-	std::set<Term>::iterator pos;
-	std::size_t str_pos;
+  dlvhex::dl::ABox abox = o->getABox();
+  dlvhex::dl::ABox::ObjectsPtr inds = abox.getIndividuals();
 
-	for (pos = inds->begin(); pos != inds->end(); pos++) 
-	{
-		std::string ind = pos->getString();
-		individuals.push_back(ind);
-	}
+  for (std::set<Term>::iterator pos = inds->begin(); pos != inds->end(); ++pos) 
+    {
+      const std::string& ind = pos->getString();
+      individuals.push_back(ind);
+    }
 }
 
 std::string& 
@@ -80,39 +80,40 @@ DFConverter::delete_comment(std::string& s)
 void
 DFConverter::convert(std::istream& i, std::ostream& o)
 {
-	try 
-	{
-		DefaultParser dp;
-		std::string program;
-		dp.parseInputStream(dfname, program);
-		if (!ontology) 
-		{
-			throw "No ontology specified!";
-		}
-		DLRules rules;
-		readIndividuals(ontology);
-		std::vector<std::string>::iterator pos_i;
-		for (pos_i = individuals.begin(); pos_i != individuals.end(); pos_i++) 
-		{
-			MTerm t(*pos_i);
-			Predicate p("dom", t);
-			DLRule r(p);
-			rules.addDLRule(r);
-		}
-		program = program + rules.toString();		
-		std::cout << program << std::endl;
-		if (dlvhex::dl::Registry::getVerbose() > 1) 
-		{
-			std::cerr << "Transformed dlrules from defaults:" << std::endl;
-			std::cerr << program << std::endl;
-		}
-		o << i.rdbuf();
-		o << program;
-	}
-	catch (char const* mess) 
-	{
-		std::cout << "Error: " << mess << std::endl;
-	}
+  DefaultParser dp;
+  std::string program;
+
+  dp.parseInputStream(dfname, program);
+
+  if (!ontology) 
+    {
+      throw PluginError("No ontology specified!");
+    }
+
+  DLRules rules;
+
+  readIndividuals(ontology);
+
+  std::vector<std::string>::iterator pos_i;
+
+  for (pos_i = individuals.begin(); pos_i != individuals.end(); pos_i++) 
+    {
+      MTerm t(*pos_i);
+      Predicate p("dom", t);
+      DLRule r(p);
+      rules.addDLRule(r);
+    }
+
+  program = program + rules.toString();		
+  
+  if (dlvhex::dl::Registry::getVerbose() > 1) 
+    {
+      std::cerr << "Transformed dlrules from defaults:" << std::endl;
+      std::cerr << program << std::endl;
+    }
+  
+  o << i.rdbuf();
+  o << program;
 }
 
 }} // namespace dlvhex::df
