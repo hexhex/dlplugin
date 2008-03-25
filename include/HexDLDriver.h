@@ -90,14 +90,11 @@ namespace dl {
     std::ostream&
     getOutput() const;
 
-		void
-		setOntology(const Ontology::shared_pointer& o);
+    void
+    setOntology(const Ontology::shared_pointer& o);
 
     Ontology::shared_pointer
     getOntology() const;
-
-		void
-		HexDLDriver::rewriteHex();
 
     void
     convert(std::istream& i, std::ostream& o);

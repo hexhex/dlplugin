@@ -95,7 +95,7 @@ HexDLDriver::getOutput() const
 void
 HexDLDriver::setOntology(const Ontology::shared_pointer& o)
 {
-	ontology = o;
+  ontology = o;
 }
 
 Ontology::shared_pointer
@@ -104,15 +104,18 @@ HexDLDriver::getOntology() const
   return this->ontology;
 }
 
+
 void
-HexDLDriver::rewriteHex()
+HexDLDriver::convert(std::istream& input, std::ostream& output)
 {
+  this->output = &output;
+  getLexer()->switch_streams(&input, &output);
+
   //
   // parse and rewrite that thing to HEX syntax
   //
 
   DLAtomInput dlinput;
-
 
   try
     {
@@ -138,15 +141,6 @@ HexDLDriver::rewriteHex()
     {
       throw PluginError(e.what());
     }
-}
-
-
-void
-HexDLDriver::convert(std::istream& input, std::ostream& output)
-{
-  this->output = &output;
-  getLexer()->switch_streams(&input, &output);
-  rewriteHex();
 }
 
 
