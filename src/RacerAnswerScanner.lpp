@@ -51,6 +51,7 @@ using namespace std;
 %option c++ noyywrap nounput batch debug
 %option yyclass="RacerFlexLexer"
 %option prefix="yyRacer"
+%option case-insensitive
 
 NEWLINE         \r?\n
 BLANK           [ \t]
