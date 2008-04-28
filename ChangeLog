@@ -1,3 +1,9 @@
+2008-04-28  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerAnswerScanner.lpp: Add case-insensitive option to parse
+	T/t and NIL/nil (Racer 1.9.2 changed from uppercase to lowercase
+	output).
+
 2008-03-25  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/DFConverter.cpp (DFConverter::readIndividuals): Use
