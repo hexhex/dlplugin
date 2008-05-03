@@ -1,3 +1,16 @@
+2008-05-03  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/QueryDirector.h: Add support for dumping the
+	intermediate commands sent to Racer.
+	* include/QueryDirector.tcc: Likewise.
+
+	* include/RacerBuilder.h (RacerFullResetCmd): New command.
+
+	* include/RacerExtAtom.tcc: Temporary Racer workaround --
+	Perform (full-reset) before we start sending the query sequence;
+	this prevents this Racer from not recognizing an inconsistent ABox
+	in the second query attempt.
+
 2008-04-28  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerAnswerScanner.lpp: Add case-insensitive option to parse
