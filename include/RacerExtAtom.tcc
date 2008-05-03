@@ -110,7 +110,18 @@ namespace racer {
 	if (Registry::getVerbose() > 1)
 	  {
 	    boost::posix_time::time_duration diff = end - start;
-	    std::cerr << "Runtime: " << diff << ' ' << qctx->getQuery() << std::endl;
+	    std::cerr << "Runtime: " << diff << ' ' << qctx->getQuery() << " = (" << qctx->getAnswer().getIncoherent() << ") {";
+
+	    boost::shared_ptr<std::vector<Tuple> > ans = qctx->getAnswer().getTuples();
+
+	    for (std::vector<Tuple>::const_iterator it = ans->begin(); it != ans->end(); ++it)
+	      {
+		std::cerr << '(';
+		std::copy(it->begin(), it->end(), std::ostream_iterator<Term>(std::cerr,","));
+		std::cerr << "),";
+	      }
+
+	    std::cerr << "}" << std::endl;
 	  }
 
 	if (Registry::getVerbose() > 0 && !qctx->getAnswer().getWarningMessage().empty())
@@ -132,6 +143,17 @@ namespace racer {
   void
   RacerExtAtom<GetKBManager>::setupRacer(QueryCompositeDirector::shared_pointer& comp) const
   {
+    ///@todo this is a temporarly fix for Racer's bug with inconsistent ABoxen
+    comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerFullResetCmd>,
+	      RacerIgnoreAnswer>(this->stream)
+      );
+
+    ///@todo this is a temporarly fix for Racer's bug with inconsistent ABoxen
+    comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerUNACmd>,
+	      RacerIgnoreAnswer>(this->stream)
+      );
+
+#if 0
     if (!Registry::getUNA() && (Registry::getFlags() & Registry::UNA)) // only set UNA once
       {
 	// turn on unique name assumption
@@ -141,6 +163,7 @@ namespace racer {
 	
 	Registry::setUNA(true);
       }
+#endif // 0
   }
   
 
@@ -149,26 +172,34 @@ namespace racer {
   RacerExtAtom<GetKBManager>::openOntology(const dlvhex::dl::Query& query,
 					   QueryCompositeDirector::shared_pointer& comp) const
   {
+     ///@todo this is a temporarly fix for Racer's bug with inconsistent ABoxen
+#if 0    
     // check if Racer has an open KB with the name of the real URI of
     // the query's ontology, we can reuse it
-    
-    const std::string& kbname = query.getDLQuery()->getOntology()->getRealURI().getString();
+
+    std::string kbname = "<" + query.getDLQuery()->getOntology()->getRealURI().getString() + ">";
 
     if (!getKBManager().isOpenKB(kbname))
       {
 	// update opened KBs
 	getKBManager().updateOpenKB();
-  
+
 	if (!getKBManager().isOpenKB(kbname)) // only open OWL after we updated the open KBs
 	  {
+#endif // 0
+
 	    comp->add(new RacerOpenOWL(this->stream));
 	    
 	    // import all referenced ontologies
 	    comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerImportOntologiesCmd>,
 		      RacerIgnoreAnswer>(this->stream)
 		      );
+
+    ///@todo this is a temporarly fix for Racer's bug with inconsistent ABoxen
+#if 0
 	  }
       }
+#endif // 0
   }
 
 
@@ -327,7 +358,7 @@ namespace racer {
       (new QueryDirector<RacerAdapterBuilder<NRQLRetrieveUnderPremise<NRQLConjunctionBuilder> >,
        RacerAnswerDriver>(this->stream)
       );
-  
+
     // good news, in this setting, we can reuse our cache
     return this->cacheQuery(comp);
   }
@@ -477,7 +508,7 @@ namespace racer {
       (new QueryDirector<RacerAdapterBuilder<NRQLRetrieveUnderPremise<NRQLDisjunctionBuilder> >,
        RacerAnswerDriver>(this->stream)
       );
-  
+
     ///@todo right now we don't cache conjunctive queries
     return comp;
   }
