@@ -33,15 +33,27 @@
 #ifndef _QUERYDIRECTOR_TCC
 #define _QUERYDIRECTOR_TCC
 
+#include <boost/iostreams/tee.hpp>
+
 namespace dlvhex {
 namespace dl {
 
   template <class Builder, class Parser>
   QueryDirector<Builder, Parser>::QueryDirector(std::iostream& s)
     : QueryBaseDirector(),
+#if defined(DLPLUGIN_DEBUG)
+      debug(),
+      builder(debug),
+#else
       builder(s),
+#endif // DLPLUGIN_DEBUG
       parser(s)
-  { }
+  {
+#if defined(DLPLUGIN_DEBUG)
+    debug.push(boost::iostreams::tee_filter<std::ostream>(s));
+    debug.push(std::cerr);
+#endif // DLPLUGIN_DEBUG
+  }
 
   template <class Builder, class Parser>
   QueryCtx::shared_pointer

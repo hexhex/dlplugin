@@ -41,6 +41,7 @@
 
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
 
 namespace dlvhex {
 namespace dl {
@@ -75,6 +76,11 @@ namespace dl {
   class QueryDirector : public QueryBaseDirector
   {
   private:
+#if defined(DLPLUGIN_DEBUG)
+    /// a debugging output stream
+    boost::iostreams::filtering_ostream debug;
+#endif // DLPLUGIN_DEBUG
+
     /// Builder object
     Builder builder;
     /// Parser object
