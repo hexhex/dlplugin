@@ -314,6 +314,28 @@ namespace racer {
 
 
   /**
+   * @brief Perform a full reset in Racer.
+   *
+   * @see full-reset function in RacerPro Reference manual. 
+   */
+  struct RacerFullResetCmd
+  {
+    const char*
+    operator() (Query&)
+    {
+      return (*this)();
+    }
+
+    const char*
+    operator() ()
+    {
+      return "(full-reset)";
+    }
+  };
+
+
+
+  /**
    * @brief Clone the Ontology's |realuri| ABox into the KBManager's
    * kb-name.
    *
