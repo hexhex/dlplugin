@@ -1,3 +1,6 @@
+2008-05-07  DAO Tran Minh  <daotranminh@gmail.com>
+	* src/RacerInterface.cpp: Add 2 new command line options: --cq and --trans
+
 2008-05-03  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/QueryDirector.h: Add support for dumping the
