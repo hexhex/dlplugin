@@ -39,7 +39,22 @@ namespace dlvhex {
 namespace df {
 
 DFConverter::DFConverter()
-{ }
+{
+  cqmode = true;
+  trans = 2;
+}
+
+void
+DFConverter::setCQmode(bool cqmode_)
+{
+  cqmode = cqmode_;
+}
+
+void
+DFConverter::setTrans(int trans_)
+{
+  trans = trans_;
+}
 
 void
 DFConverter::setDefaultFile(const std::string dfname_)
@@ -50,7 +65,7 @@ DFConverter::setDefaultFile(const std::string dfname_)
 void
 DFConverter::setOntology(const dlvhex::dl::Ontology::shared_pointer& o)
 {
-	ontology = o;
+  ontology = o;
 }
 
 void 
@@ -69,12 +84,12 @@ DFConverter::readIndividuals(dlvhex::dl::Ontology::shared_pointer o)
 std::string& 
 DFConverter::delete_comment(std::string& s) 
 {
-	int pos = s.find("%", 0);
-	if (pos > -1) 
-	{
-		s.erase(pos, s.length());
-	}
-	return s;
+  int pos = s.find("%", 0);
+  if (pos > -1) 
+    {
+      s.erase(pos, s.length());
+    }
+  return s;
 }
 
 void
@@ -83,7 +98,7 @@ DFConverter::convert(std::istream& i, std::ostream& o)
   DefaultParser dp;
   std::string program;
 
-  dp.parseInputStream(dfname, program);
+  dp.parseInputStream(dfname, program, cqmode, trans);
 
   if (!ontology) 
     {
@@ -105,6 +120,7 @@ DFConverter::convert(std::istream& i, std::ostream& o)
     }
 
   program = program + rules.toString();		
+  std::cout << program << std::endl;
   
   if (dlvhex::dl::Registry::getVerbose() > 1) 
     {

@@ -56,7 +56,7 @@ void DFRewriter::transform(std::string filename, std::ostream& oss, dlvhex::dl::
 	{
 		DefaultParser dp;
 		std::string program;
-		dp.parseInputStream(filename, program);
+		dp.parseInputStream(filename, program, true, 2);
 		if (!o) 
 		{
 			throw "No ontology specified!";

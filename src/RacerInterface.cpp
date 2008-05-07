@@ -49,6 +49,7 @@
 #include "RacerAnswerDriver.h"
 #include "Answer.h"
 #include "RacerKBManager.h"
+#include "DFConverter.h"
 
 #include <iosfwd>
 #include <algorithm>
@@ -121,7 +122,7 @@ RacerInterface::~RacerInterface()
   delete kbManager;
   delete dloptimizer;
   delete dlconverter;
-	delete dfconverter;
+  delete dfconverter;
   delete cache;
   delete stats;
   delete stream;
@@ -245,7 +246,15 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       out << "                       -push    ... turn off pushing" << std::endl;
       out << "                       -dlcache ... turn off dl-cache" << std::endl;
       out << " --dldebug=LEVEL       Set debug level to LEVEL." << std::endl;
-			out << " --default=FILENAME    Set \"default logic\" file name." << std::endl;
+      out << " --default=FILENAME    Set \"default logic\" file name." << std::endl;
+      out << " --cq=CQMOD            Set DLAtoms' query options, where CQMOD may be" << std::endl;
+      out << "                       -on  ... use cq in DLAtoms' query" << std::endl;
+      out << "                       -off ... don't use cq in DLAtoms' query, applicable only for literal justifications" << std::endl;
+      out << " --trans=TRANS         Choose transformation from defaults to dl-rules. TRANS can be" << std::endl;
+      out << "                       -1: the old conclusion-based transformation." << std::endl;
+      out << "                       -2: the new conclusion-based transformation." << std::endl;
+      out << "                       -3: the justification-based transformation." << std::endl;
+
       return;
     }
 
@@ -255,6 +264,8 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
   const char *optimization = "--dlopt=";
   const char *dldebug      = "--dldebug=";
   const char *dfparser     = "--default=";
+  const char *cqmode       = "--cq=";
+  const char *trans        = "--trans=";
 
   std::vector<std::string>::iterator it = argv.begin();
 
@@ -383,8 +394,49 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	  dfconverter->setDefaultFile(df_file);
 	  it = argv.erase(it);
 	  continue;    
-	}			
+	}
 
+      o = it->find(cqmode);
+      
+      if (o != std::string::npos)
+	{
+	  hasDefault = true;
+	  std::string cq_option = it->substr(o + strlen(cqmode)); // get the option for cq mode
+	  if (cq_option.compare("off") == 0)
+	    {
+	      dfconverter->setCQmode(false);
+	    }
+	  else
+	    {
+	      dfconverter->setCQmode(true);
+	    }
+	  it = argv.erase(it);
+	  continue;    
+	}
+
+      o = it->find(trans);
+      if (o != std::string::npos)
+	{
+	  std::string trans_option = it->substr(o + strlen(trans));
+	  if (trans_option.compare("1") == 0)
+	    {
+	      dfconverter->setTrans(1);
+	    }
+	  else
+	    {
+	      if (trans_option.compare("3") == 0)
+		{
+		  dfconverter->setTrans(3);
+		}
+	      else
+		{
+		  dfconverter->setTrans(2);
+		}
+	    }
+	  it = argv.erase(it);
+	  continue;
+	}
+      
       ++it; // nothing found, check next position
     }
 }

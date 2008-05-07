@@ -40,38 +40,50 @@
 
 namespace dlvhex {
 namespace df {
+  
+  class DFConverter : public PluginConverter
+  {
+  private:
+    // cq mode
+    bool cqmode;
 
-	class DFConverter : public PluginConverter
-	{
-	private:
-		// "default logic" file name
-		std::string dfname;
+    // choose transformation
+    int trans;
 
-		// the transformed dl-program
-		std::string program;
-		
-		// current Ontology
-		dlvhex::dl::Ontology::shared_pointer ontology;
+    // "default logic" file name
+    std::string dfname;
+    
+    // the transformed dl-program
+    std::string program;
+    
+    // current Ontology
+    dlvhex::dl::Ontology::shared_pointer ontology;
+    
+    // list of individuals in the ontology
+    std::vector<std::string> individuals;
+    
+    void readIndividuals(dlvhex::dl::Ontology::shared_pointer);
+    
+    std::string& delete_comment(std::string&);
+  public:
+    DFConverter();
 
-		// list of individuals in the ontology
-		std::vector<std::string> individuals;
+    void
+    setCQmode(bool);
 
-		void readIndividuals(dlvhex::dl::Ontology::shared_pointer);
+    void
+    setTrans(int);
+    
+    void
+    setDefaultFile(std::string);
+    
+    void
+    setOntology(const dlvhex::dl::Ontology::shared_pointer&);
 
-		std::string& delete_comment(std::string&);
-	public:
-		DFConverter();
-
-		void
-		setDefaultFile(std::string);
-
-		void
-		setOntology(const dlvhex::dl::Ontology::shared_pointer&);
-
-		void
+    void
     convert(std::istream& i, std::ostream& o);
-	};
-
+  };
+  
 }}	// namespace dlvhex::df
 
 #endif /* _DFCONVERTER_H */
