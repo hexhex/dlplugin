@@ -250,7 +250,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       out << " --cq=CQMOD            Set DLAtoms' query options, where CQMOD may be" << std::endl;
       out << "                       -on  ... use cq in DLAtoms' query" << std::endl;
       out << "                       -off ... don't use cq in DLAtoms' query, applicable only for literal justifications" << std::endl;
-      out << " --trans=TRANS         Choose transformation from defaults to dl-rules. TRANS can be" << std::endl;
+      out << " --dftrans=DFTRANS     Choose transformation from defaults to dl-rules. TRANS can be" << std::endl;
       out << "                       -1: the old conclusion-based transformation." << std::endl;
       out << "                       -2: the new conclusion-based transformation." << std::endl;
       out << "                       -3: the justification-based transformation." << std::endl;
@@ -265,7 +265,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
   const char *dldebug      = "--dldebug=";
   const char *dfparser     = "--default=";
   const char *cqmode       = "--cq=";
-  const char *trans        = "--trans=";
+  const char *trans        = "--dftrans=";
 
   std::vector<std::string>::iterator it = argv.begin();
 

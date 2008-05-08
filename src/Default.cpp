@@ -114,7 +114,8 @@ Default::getUpdates4LambdaPrime()
       if (pos->isStronglyNegated()) 
 	{
 	  op = UMINUS;
-	} else {
+	} 
+      else {
 	  op = UPLUS;
 	}			
       Update u(pos->getPredicateName(), op, PREFIX_IN + pos->getSignedPredicateName());
@@ -515,7 +516,16 @@ Default::getDLRules1(bool cqmode) // Testing new transformation
 		}
 	      else
 		{
-		  throw PluginError("Conjuctive justification encountered. --cq must be ON!");
+		  if (one_justification.size() > 1)
+		    {
+		      throw PluginError("Conjuctive justification encountered. --cq must be ON!");
+		    }
+		  else
+		    {
+		      Pred1Dim::iterator p_pos = one_justification.begin();
+		      DLAtom d_r_bi(lambda_prime, p_pos->getLiteralName(), p_pos->getTerms());
+		      r.addPositiveDLAtom(d_r_bi);
+		    }
 		}
 	    }			
 	}
