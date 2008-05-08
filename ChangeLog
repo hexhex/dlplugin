@@ -1,5 +1,9 @@
-2008-05-07  DAO Tran Minh  <daotranminh@gmail.com>
+2008-05-08  DAO Tran Minh  <daotranminh@gmail.com>
 	* src/RacerInterface.cpp: Add 2 new command line options: --cq and --trans
+
+2008-05-07  DAO Tran Minh  <daotranminh@gmail.com>
+	* src/RacerInterface.cpp: Replace --trans by --dftrans
+	* src/Default.cpp: fix --cq=off bug for the 2nd transformation.
 
 2008-05-03  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
