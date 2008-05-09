@@ -31,6 +31,7 @@
  
 #include "Defaults.h" 
 #include <sstream> 
+#include <iostream>
  
 namespace dlvhex { 
 namespace df { 
@@ -78,15 +79,24 @@ Defaults::getLambdaPrime()
   return us; 
 } 
  
+void
+Defaults::rename_terms(Pred2Dim& justification, std::string& str_id)
+{
+  Pred2Dim::iterator j_pos;
+  for (j_pos = justification.begin(); j_pos != justification.end(); ++j_pos)
+    {
+      rename_terms(*j_pos, str_id);
+    }
+}
+
 void 
-Defaults::rename_terms(Pred1Dim& conclusion, Terms& terms, std::string& str_id) 
+Defaults::rename_terms(Pred1Dim& conclusion, std::string& str_id) 
 { 
   Pred1Dim::iterator c_pos; 
   for (c_pos = conclusion.begin(); c_pos != conclusion.end(); c_pos++) 
     { 
       c_pos->rename_terms(str_id); 
     } 
-  terms.rename_terms(str_id); 
 } 
 
 Unifier1Dim 
@@ -133,42 +143,59 @@ Defaults::gen_force_in_rules(DLRules& rules, Unifier2Dim& uniset,
 			     std::string pname1, Terms& ts1, 
 			     std::string pname2, Terms& ts2) 
 { 
-	Unifier1Dim uni_candidate = *uniset_pos; 
-	Unifier1Dim::iterator m_pos; 
-	for (m_pos = uni_candidate.begin(); m_pos != uni_candidate.end(); m_pos++) 
-	{		 
-		if (unifier.isConsistent(*m_pos)) 
-		{ 
-			Unifier new_uni = unifier; 
-			new_uni.getUnifier().insert(m_pos->getUnifier().begin(), m_pos->getUnifier().end()); 
-			Unifier2Dim::iterator uniset_pos_next = uniset_pos; 
-			uniset_pos_next++; 
-			if (uniset_pos_next == uniset.end()) 
-			{ 
-				// generating rules here 
-				Terms ts_h = ts2.unify(new_uni, false); 
-				Terms ts_b = ts1.unify(new_uni, false); 
-				Predicate p_h(pname2, ts_h); 
-				Predicate p_b(pname1, ts_b); 
-				DLRule ri(p_h); 
-				ri.addPositiveBody(p_b); 
-				rules.addDLRule(ri); 
+  Unifier1Dim uni_candidate = *uniset_pos; 
+  Unifier1Dim::iterator m_pos; 
+  for (m_pos = uni_candidate.begin(); m_pos != uni_candidate.end(); m_pos++) 
+    {		 
+      if (unifier.isConsistent(*m_pos)) 
+	{ 
+	  Unifier new_uni = unifier; 
+	  new_uni.getUnifier().insert(m_pos->getUnifier().begin(), m_pos->getUnifier().end()); 
+	  Unifier2Dim::iterator uniset_pos_next = uniset_pos; 
+	  uniset_pos_next++; 
+	  if (uniset_pos_next == uniset.end()) 
+	    { 
+	      // generating rules here 
+	      Terms ts_h = ts2.unify(new_uni, false); 
+	      Terms ts_b = ts1.unify(new_uni, false); 
+	      Predicate p_h(pname2, ts_h); 
+	      Predicate p_b(pname1, ts_b); 
+	      DLRule ri(p_h); 
+	      ri.addPositiveBody(p_b); 
+	      rules.addDLRule(ri); 
+	    } 
+	  else 
+	    { 
+	      // continue 
+	      gen_force_in_rules(rules, uniset,  
+				 uniset_pos_next, new_uni,  
+				 pname1, ts1,  
+				 pname2, ts2); 
 			} 
-			else 
-			{ 
-				// continue 
-				gen_force_in_rules(rules, uniset,  
-						   uniset_pos_next, new_uni,  
-						   pname1, ts1,  
-						   pname2, ts2); 
-			} 
-		} 
 	} 
+    } 
 } 
- 
+
+DLRule
+Defaults::forceOutRule(Default& d_pos, Default& d_pos2, Terms& d_pos_all_disc_terms, Terms& d_pos2_all_disc_terms, Unifier& pp_uni)
+{
+  Terms ts = d_pos_all_disc_terms.unify(pp_uni, true); 
+  Terms ts2 = d_pos2_all_disc_terms.unify(pp_uni, true); 
+  Predicate p_fail("fail");
+  DLRule r_force_out(p_fail);
+  r_force_out.addNegativeBody(p_fail);
+  Predicate d_pos_all_in(d_pos.getAllInPred().getPredicateName(), ts);
+  Predicate d_pos2_all_in(d_pos2.getAllInPred().getPredicateName(), ts2);
+  r_force_out.addPositiveBody(d_pos_all_in);
+  r_force_out.addPositiveBody(d_pos2_all_in);
+
+  return r_force_out;
+}
+
 DLRules 
 Defaults::getForcingDLRules() 
 { 
+  bool forced_out;
   DLRules rules; 
   std::vector<Default>::iterator d_pos; 
   std::vector<Default>::iterator d_pos_end_limit = dfs.end(); 
@@ -192,57 +219,88 @@ Defaults::getForcingDLRules()
 	  Pred1Dim d_pos2_conclusion = d_pos2->getConclusion(); 
 	  Terms d_pos_all_disc_terms = d_pos->getAllInPred().getTerms(); 
 	  Terms d_pos2_all_disc_terms = d_pos2->getAllInPred().getTerms(); 
+	  Pred2Dim d_pos_justifications = d_pos->getJustifications();
+	  Pred2Dim d_pos2_justifications = d_pos2->getJustifications();
+
+	  d_pos_all_disc_terms.rename_terms(str_id);
+	  d_pos2_all_disc_terms.rename_terms(str_id2);
+	  rename_terms(d_pos_conclusion, str_id); 
+	  rename_terms(d_pos2_conclusion, str_id2); 
+	  rename_terms(d_pos_justifications, str_id); 
+	  rename_terms(d_pos2_justifications, str_id2);
 	  
-	  rename_terms(d_pos_conclusion, d_pos_all_disc_terms, str_id); 
-	  rename_terms(d_pos2_conclusion, d_pos2_all_disc_terms, str_id2); 
+	  // Check if any pair of predicates will force OUT
+	  Pred1Dim::iterator dc_pos;
+	  Pred1Dim::iterator dc_pos2; 
+	  forced_out = false;
+	  for (dc_pos = d_pos_conclusion.begin(); dc_pos != d_pos_conclusion.end(); ++dc_pos) 
+	    { 
+	      for (dc_pos2 = d_pos2_conclusion.begin(); dc_pos2 != d_pos2_conclusion.end(); ++dc_pos2) 
+		{ 
+		  Unifier pp_uni = dc_pos->isNegatedUnifiable(*dc_pos2); 
+		  if (!pp_uni.getUnifier().empty()) 
+		    { 
+		      rules.addDLRule(forceOutRule(*d_pos, *d_pos2, d_pos_all_disc_terms,
+					     d_pos2_all_disc_terms, pp_uni));
+		      forced_out = true;
+		      break;
+		    }
+		}
+	      if (forced_out)
+		break;
+	      Pred2Dim::iterator djs_pos2;
+	      for (djs_pos2 = d_pos2_justifications.begin(); djs_pos2 != d_pos2_justifications.end(); ++djs_pos2)
+		{
+		  Pred1Dim one_justification = *djs_pos2;
+		  Pred1Dim::iterator dj_pos2;
+		  for (dj_pos2 = one_justification.begin(); dj_pos2 != one_justification.end(); ++dj_pos2)
+		    {
+		      Unifier pp_uni = dc_pos->isNegatedUnifiable(*dj_pos2);
+		      if (!pp_uni.getUnifier().empty())
+			{
+			  rules.addDLRule(forceOutRule(*d_pos, *d_pos2, d_pos_all_disc_terms,
+						 d_pos2_all_disc_terms, pp_uni));
+			  forced_out = true;
+			  break;
+			}
+		    }
+		  if (forced_out)
+		    break;
+		}
+	      if (forced_out)
+		break;
+	    }
+
+	  // One more chance for forcing out
+	  // i.e., d_pos' justification and d_pos2's conclusion
+	  if (!forced_out)
+	    {
+	      for (dc_pos2 = d_pos2_conclusion.begin(); dc_pos2 != d_pos2_conclusion.end(); ++dc_pos2)
+		{
+		  Pred2Dim::iterator djs_pos;
+		  for (djs_pos = d_pos_justifications.begin(); djs_pos != d_pos_justifications.end(); ++djs_pos)
+		    {
+		      Pred1Dim one_justification = *djs_pos;
+		      Pred1Dim::iterator dj_pos;
+		      for (dj_pos = one_justification.begin(); dj_pos != one_justification.end(); ++dj_pos)
+			{
+			  Unifier pp_uni = dj_pos->isNegatedUnifiable(*dc_pos2);
+			  if (!pp_uni.getUnifier().empty())
+			    {
+			      rules.addDLRule(forceOutRule(*d_pos, *d_pos2, d_pos_all_disc_terms,
+							   d_pos2_all_disc_terms, pp_uni));
+			      forced_out = true;
+			      break;			      
+			    }
+			}
+		      if (forced_out)
+			break;
+		    }
+		  if (forced_out)
+		    break;
+		}
+	    }
 	  
-	  // Check if any pair of predicates will force OUT			 
-	  /*Pred1Dim::iterator dc_pos; 
-	    Pred1Dim::iterator dc_pos2; 
-	    for (dc_pos = d_pos_conclusion.begin(); dc_pos != d_pos_conclusion.end(); dc_pos++) 
-	      { 
-		for (dc_pos2 = d_pos2_conclusion.begin(); dc_pos2 != d_pos2_conclusion.end(); dc_pos2++) 
-		  { 
-		Unifier pp_uni = dc_pos->isNegatedUnifiable(*dc_pos2); 
-		if (!pp_uni.getUnifier().empty()) 
-		  { 
-		    Terms ts = d_pos_all_disc_terms.unify(pp_uni, true); 
-		    Terms ts2 = d_pos2_all_disc_terms.unify(pp_uni, true); 
-		    Terms tp = dc_pos->getTerms().unify(pp_uni, false);						 
-		    Terms tp2 = dc_pos2->getTerms().unify(pp_uni, false);				 
-		    Predicate p_r1_h(d_pos->getOutPred().getPredicateName(), ts); 
-		    Predicate p_r1_b(PREFIX_IN + dc_pos2->getSignedPredicateName(), tp2); 
-		    DLRule r1(p_r1_h); 
-		    r1.addPositiveBody(p_r1_b); 
-		    std::vector<MTerm> r1_h_terms = ts.getMTerms(); 
-		    std::vector<MTerm>::iterator t_pos; 
-		    for (t_pos = r1_h_terms.begin(); t_pos != r1_h_terms.end(); t_pos++) 
-		      { 
-			if (!tp2.gotThisTerm(*t_pos)) 
-			  { 
-			    Predicate p_dom("dom", *t_pos); 
-			    r1.addPositiveBody(p_dom); 
-			  } 
-		      } 
-		    rules.addDLRule(r1); 
-		    
-		    Predicate p_r2_h(d_pos2->getOutPred().getPredicateName(), ts2); 
-		    Predicate p_r2_b(PREFIX_IN + dc_pos->getSignedPredicateName(), tp); 
-		    DLRule r2(p_r2_h); 
-		    r2.addPositiveBody(p_r2_b); 
-		    std::vector<MTerm> r2_h_terms = ts2.getMTerms();						 
-		    for (t_pos = r2_h_terms.begin(); t_pos != r2_h_terms.end(); t_pos++) 
-		      { 
-			if (!tp.gotThisTerm(*t_pos)) 
-			  { 
-			    Predicate p_dom("dom", *t_pos); 
-			    r2.addPositiveBody(p_dom); 
-			  } 
-		      } 
-		    rules.addDLRule(r2); 
-		  } 
-		  } 
-	      }*/ 
 	  // Checking for forcing in rules 
 	  // d_pos ~~Force IN~~> d_pos2 ??? 
 	  Unifier2Dim uniset = check_forcing_in(d_pos_conclusion, d_pos2_conclusion); 
@@ -313,7 +371,7 @@ Defaults::getDirectRules()
 } 
  
 DLRules  
-Defaults::getDLRules(bool cqmode, int trans)
+Defaults::getDLRules(bool cqmode, int trans, bool pruning)
 { 
   DLRules rules; 
   std::vector<Default>::iterator pos;	 
@@ -334,8 +392,11 @@ Defaults::getDLRules(bool cqmode, int trans)
 	}
       rules.insertDLRules(rs); 
     } 
-  //rules.insertDLRules(getForcingDLRules()); 
-  //rules.insertDLRules(getDirectRules()); 
+  if (pruning)
+    {
+      rules.insertDLRules(getForcingDLRules()); 
+      //rules.insertDLRules(getDirectRules()); 
+    }
   return rules; 
 } 
 

@@ -83,7 +83,7 @@ namespace df {
       
       /// Cache these special predicates (all_in_ and out_) for building forcing rules 
       Predicate all_in_p;	 
-      Predicate out_p; 
+
 
       /** 
        * @return A list of facts corresponding to the conclusion; used with prerequisite-free and justification-free defaults 
@@ -113,6 +113,9 @@ namespace df {
       
       Pred1Dim  
 	getConclusion(); 
+
+      Pred2Dim
+	getJustifications();
       
       /** 
        * @return An Updates to build \lambda 
@@ -139,6 +142,9 @@ namespace df {
        */ 
       Terms  
 	getAllDistinctTerms(Pred1Dim ps); 
+
+      Terms  
+	getAllDistinctTerms(Pred2Dim ps);
       
       /** 
        * @return The all_in_def_id predicate corresponding to this default 
@@ -146,11 +152,6 @@ namespace df {
       Predicate& 
 	getAllInPred(); 
       
-      /** 
-       * @return The out_def_id predicate corresponding to this default 
-       */ 
-      Predicate& 
-	getOutPred(); 
       
       /** 
        * @param no_cq Determines if cq is used in DLAtoms

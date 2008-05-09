@@ -42,6 +42,7 @@ DFConverter::DFConverter()
 {
   cqmode = true;
   trans = 2;
+  pruning = true;
 }
 
 void
@@ -54,6 +55,12 @@ void
 DFConverter::setTrans(int trans_)
 {
   trans = trans_;
+}
+
+void
+DFConverter::setDFP(bool pruning_)
+{
+  pruning = pruning_;
 }
 
 void
@@ -98,7 +105,7 @@ DFConverter::convert(std::istream& i, std::ostream& o)
   DefaultParser dp;
   std::string program;
 
-  dp.parseInputStream(dfname, program, cqmode, trans);
+  dp.parseInputStream(dfname, program, cqmode, trans, pruning);
 
   if (!ontology) 
     {

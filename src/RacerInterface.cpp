@@ -254,6 +254,8 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       out << "                       -1: the old conclusion-based transformation." << std::endl;
       out << "                       -2: the new conclusion-based transformation." << std::endl;
       out << "                       -3: the justification-based transformation." << std::endl;
+      out << " --dfpruning=DP        Choose to used pruning rules for default-dl transformation or not." << std::endl;
+      out << "                       DP can be -on or -off." << std::endl;
 
       return;
     }
@@ -266,6 +268,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
   const char *dfparser     = "--default=";
   const char *cqmode       = "--cq=";
   const char *trans        = "--dftrans=";
+  const char *dfpruning    = "--dfpruning=";
 
   std::vector<std::string>::iterator it = argv.begin();
 
@@ -432,6 +435,22 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 		{
 		  dfconverter->setTrans(2);
 		}
+	    }
+	  it = argv.erase(it);
+	  continue;
+	}
+
+      o = it->find(dfpruning);
+      if (o != std::string::npos)
+	{
+	  std::string dfp_option = it->substr(o + strlen(dfpruning));
+	  if (dfp_option.compare("off") == 0)
+	    {
+	      dfconverter->setDFP(false);
+	    }
+	  else
+	    {
+	      dfconverter->setDFP(true);
 	    }
 	  it = argv.erase(it);
 	  continue;

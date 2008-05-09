@@ -35,12 +35,15 @@ namespace df {
       /** 
        * Rename variables in a set of predicates and a Terms 
        * 
-       * @param ps The set of Predicate to be renamed 
-       * @param terms The set of Terms to be renamed 
+       * @param ps The set of Predicate whose terms to be renamed 
        * @param str_id The id from a Default, to be added to each variable's name 
        */ 
       void 
-	rename_terms(Pred1Dim& ps, Terms& terms, std::string& str_id); 
+	rename_terms(Pred1Dim& ps, std::string& str_id); 
+
+      void 
+	rename_terms(Pred2Dim& ps, std::string& str_id);
+
       
       /** 
        * Check if one predicate is unifiable with some predicates in a vector of Predicate 
@@ -67,6 +70,9 @@ namespace df {
        */ 
       Unifier2Dim 
 	check_forcing_in(Pred1Dim&, Pred1Dim&); 
+
+      DLRule
+	forceOutRule(Default&, Default&, Terms&, Terms&, Unifier&);
       
       /** 
        * Generate forcing in rules RECURSIVELY 
@@ -115,9 +121,11 @@ namespace df {
        * @return All DLRules generated from this set of Defaults 
        * 
        * @param cqmode Mode for constructing queries in DLAtoms
+       * @param trans Choose the transformation from defaults to dl-rules
+       * @param pruning Choose to use pruning rules or not
        */ 
       DLRules  
-	getDLRules(bool cqmode, int trans); 
+	getDLRules(bool cqmode, int trans, bool pruning); 
     }; 
   
 }	// namespace df 

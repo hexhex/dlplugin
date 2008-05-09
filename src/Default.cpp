@@ -79,6 +79,12 @@ Default::getConclusion()
   return conclusion;
 }
 
+Pred2Dim
+Default::getJustifications()
+{
+  return justification;
+}
+
 Updates 
 Default::getUpdates4Lambda() 
 {
@@ -140,6 +146,24 @@ Default::getAllDistinctTerms(Pred1Dim c)
   return ts;
 }
 
+Terms 
+Default::getAllDistinctTerms(Pred2Dim j) 
+{
+  Terms ts;
+  Pred2Dim::iterator j_pos;
+  for (j_pos = j.begin(); j_pos != j.end(); ++j_pos)
+    {
+      Pred1Dim c = *j_pos;    
+      Pred1Dim::iterator c_pos;
+      for (c_pos = c.begin(); c_pos != c.end(); ++c_pos) 
+	{
+	  Terms t1 = c_pos->getTerms();
+	  ts.insertNewTerms(t1);
+	}
+    }
+  return ts;
+}
+
 std::string 
 Default::toString() 
 {
@@ -153,7 +177,7 @@ Default::toString()
 	{
 	  tmp = tmp + pos1->toString() + " & ";
 	}
-			tmp = tmp.erase(tmp.length()-3);
+      tmp = tmp.erase(tmp.length()-3);
     }
   tmp += ":";
   
@@ -187,12 +211,6 @@ Predicate&
 Default::getAllInPred()
 {
   return all_in_p;
-}
-
-Predicate&
-Default::getOutPred()
-{
-  return out_p;
 }
 
 DLRules Default::getFacts()
@@ -235,6 +253,8 @@ DLRules Default::getDLRules(bool cqmode)
       std::string aux;
       
       Terms all_distinct_terms_conclusion = getAllDistinctTerms(conclusion);
+      Terms all_distinct_terms_justifications = getAllDistinctTerms(justification);
+      Terms all_distinct_terms_premise = getAllDistinctTerms(premise);
       std::stringstream strid;
       strid << id;
       // all_in_def_id(allTerms_conclusion) :- not out_def_id(allTerms_conclusion), dom(eachTerm).
@@ -246,7 +266,6 @@ DLRules Default::getDLRules(bool cqmode)
       // cache the all_in_def_id and out_def_id predicates
       // for building forcing rules
       all_in_p = p_r1_h;
-      out_p = p_r1_b;
       
       // out_def_id(allTerms_conclusion) :- not all_in_def_id(allTerms_conclusion), dom(eachTerm).
       DLRule r2(p_r1_b);
@@ -379,41 +398,45 @@ DLRules Default::getDLRules(bool cqmode)
 	    }			
 	}
       
-	// adding dom() predicates for safety conditions
-	for (t_pos = terms.begin(); t_pos != terms.end(); t_pos++) 
-	  {
-	    if (t_pos->isVar())
-	      {
-		Predicate p_dom("dom", *t_pos);
-		r4.addPositiveBody(p_dom);			
-	      }
-	  }
-	rules.addDLRule(r4);
-	
-	// conclusion_p[0](Terms_conclusion[0]) :- all_p_def_id(allTerms_conclusion).
-	// ...
-	// conclusion_p[n](Terms_conclusion[n]) :- all_p_def_id(allTerms_conclusion).
-	for (c_pos = conclusion.begin(); c_pos != conclusion.end(); c_pos++) 
-	  {
-	    Terms projected_terms = all_distinct_terms_conclusion.projectTo(c_pos->getTerms());
-	    //Predicate p_ri_h(PREFIX_PRED + c_pos->getPredicateName(), c_pos->getTerms());
-	    Predicate p_ri_h(PREFIX_PRED + c_pos->getSignedPredicateName(), c_pos->getTerms());
-	    Predicate p_ri_b(PREFIX_ALL_PRED + strid.str(), projected_terms);
-	    DLRule ri(p_ri_h);
-	    ri.addPositiveBody(p_ri_b);
-	    rules.addDLRule(ri);
-	  }
-
-	// fail :- not DL[\lambda; conclusion[0](Terms[0]),...,conclusion[n](Terms[n])](allTerms_conclusion), all_in_def_id(allTerms_conclusion), not fail.
-	DLRule r5(p_fail);
-	DLRule r6(p_fail);
-	if (cqmode)
-	  {
-	    DLAtom d_r5_b(lambda, ucq_conclusion, all_distinct_terms_conclusion);
-	    r5.addNegativeDLAtom(d_r5_b);
-	    r6.addPositiveDLAtom(d_r5_b);
-	  }
-	else
+      // adding dom() predicates for safety conditions
+      Terms all_distinct_terms = all_distinct_terms_conclusion;
+      all_distinct_terms.insertNewTerms(all_distinct_terms_justifications);
+      all_distinct_terms.insertNewTerms(all_distinct_terms_premise);
+      terms = all_distinct_terms.getMTerms();
+      for (t_pos = terms.begin(); t_pos != terms.end(); t_pos++) 
+	{
+	  if (t_pos->isVar())
+	    {
+	      Predicate p_dom("dom", *t_pos);
+	      r4.addPositiveBody(p_dom);			
+	    }
+	}
+      rules.addDLRule(r4);
+      
+      // conclusion_p[0](Terms_conclusion[0]) :- all_p_def_id(allTerms_conclusion).
+      // ...
+      // conclusion_p[n](Terms_conclusion[n]) :- all_p_def_id(allTerms_conclusion).
+      for (c_pos = conclusion.begin(); c_pos != conclusion.end(); c_pos++) 
+	{
+	  Terms projected_terms = all_distinct_terms_conclusion.projectTo(c_pos->getTerms());
+	  //Predicate p_ri_h(PREFIX_PRED + c_pos->getPredicateName(), c_pos->getTerms());
+	  Predicate p_ri_h(PREFIX_PRED + c_pos->getSignedPredicateName(), c_pos->getTerms());
+	  Predicate p_ri_b(PREFIX_ALL_PRED + strid.str(), projected_terms);
+	  DLRule ri(p_ri_h);
+	  ri.addPositiveBody(p_ri_b);
+	  rules.addDLRule(ri);
+	}
+      
+      // fail :- not DL[\lambda; conclusion[0](Terms[0]),...,conclusion[n](Terms[n])](allTerms_conclusion), all_in_def_id(allTerms_conclusion), not fail.
+      DLRule r5(p_fail);
+      DLRule r6(p_fail);
+      if (cqmode)
+	{
+	  DLAtom d_r5_b(lambda, ucq_conclusion, all_distinct_terms_conclusion);
+	  r5.addNegativeDLAtom(d_r5_b);
+	  r6.addPositiveDLAtom(d_r5_b);
+	}
+      else
 	  {
 	    if (conclusion.size() == 1)
 	      {
@@ -451,6 +474,8 @@ Default::getDLRules1(bool cqmode) // Testing new transformation
     {
       Updates lambda_prime = parent->getLambdaPrime();
       Terms all_distinct_terms_conclusion = getAllDistinctTerms(conclusion);
+      Terms all_distinct_terms_justifications = getAllDistinctTerms(justification);
+      Terms all_distinct_terms_premise = getAllDistinctTerms(premise);
       std::stringstream strid;
       strid << id;
       // all_p_def_id(allTerms_conslusion) :-	
@@ -533,7 +558,11 @@ Default::getDLRules1(bool cqmode) // Testing new transformation
       // adding dom() predicates for safety conditions
       std::vector<MTerm> terms;
       std::vector<MTerm>::iterator t_pos;	
-      terms = all_distinct_terms_conclusion.getMTerms();
+
+      Terms all_distinct_terms = all_distinct_terms_conclusion;
+      all_distinct_terms.insertNewTerms(all_distinct_terms_justifications);
+      all_distinct_terms.insertNewTerms(all_distinct_terms_premise);
+      terms = all_distinct_terms.getMTerms();
       for (t_pos = terms.begin(); t_pos != terms.end(); t_pos++) 
 	{
 	  if (t_pos->isVar())

@@ -50,6 +50,9 @@ namespace df {
     // choose transformation
     int trans;
 
+    // choose to use pruning rules or not
+    bool pruning;
+
     // "default logic" file name
     std::string dfname;
     
@@ -73,6 +76,9 @@ namespace df {
 
     void
     setTrans(int);
+
+    void
+    setDFP(bool);
     
     void
     setDefaultFile(std::string);

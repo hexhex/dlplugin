@@ -247,10 +247,12 @@ private:
    * @param filename File to be parsed 
    * @param program The output program containing the transformed result 
    * @param cqmode The mode for constructing queries in DLAtoms
+   * @param trans The transformation from defaults to dl-rules (1, 2, or 3)
+   * @paraam pruning Choose to use pruning rules or not
    */ 
   void 
     //parseInputStream(std::string& filename, std::ostream& oss);
-    parseInputStream(std::string& filename, std::string& program, bool cqmode, int trans); 
+    parseInputStream(std::string& filename, std::string& program, bool cqmode, int trans, bool pruning); 
   
   /** 
    * Parse an input stream 
@@ -258,10 +260,12 @@ private:
    * @param iss The input stream to be parsed 
    * @param program The output program containing the transformed result 
    * @param cqmode The mode for constructing queries in DLAtoms
+   * @param trans The transformation from defaults to dl-rules (1, 2, or 3)
+   * @paraam pruning Choose to use pruning rules or not
    */ 
   void 
     //parseInputStream(std::istream& iss, std::ostream& oss);
-    parseInputStream(std::istream& iss, std::string& program, bool cqmode, int trans); 
+    parseInputStream(std::istream& iss, std::string& program, bool cqmode, int trans, bool pruning); 
 }; 
  
 } // namespace df 

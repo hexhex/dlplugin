@@ -289,7 +289,7 @@ DefaultParser::evaluateDefaults(const iter_t& root, Defaults& dfs)
 }
 
 void
-DefaultParser::parseInputStream(std::string& filename, std::string& program, bool cqmode, int trans)
+DefaultParser::parseInputStream(std::string& filename, std::string& program, bool cqmode, int trans, bool pruning)
 {
   std::ifstream iss;
   iss.open(filename.c_str());
@@ -299,11 +299,11 @@ DefaultParser::parseInputStream(std::string& filename, std::string& program, boo
       throw PluginError("Could not open " + filename);
     }
 
-  parseInputStream(iss, program, cqmode, trans);
+  parseInputStream(iss, program, cqmode, trans, pruning);
 }
 
 void
-DefaultParser::parseInputStream(std::istream& iss, std::string& program, bool cqmode, int trans)
+DefaultParser::parseInputStream(std::istream& iss, std::string& program, bool cqmode, int trans, bool pruning)
 {
   std::string dfcontent = "";
   std::string line;
@@ -330,7 +330,7 @@ DefaultParser::parseInputStream(std::istream& iss, std::string& program, bool cq
 	}
       Defaults dfs;
       evaluateDefaults(info.trees.begin(), dfs);
-      DLRules dlrs = dfs.getDLRules(cqmode, trans);
+      DLRules dlrs = dfs.getDLRules(cqmode, trans, pruning);
       program = dlrs.toString();
     }
   else 
