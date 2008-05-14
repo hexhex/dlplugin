@@ -69,10 +69,7 @@ struct default_p : boost::spirit::grammar<default_p>
 	      | boost::spirit::range_p('0', '9')  
 	      | boost::spirit::ch_p('_')) 
 	|	boost::spirit::ch_p('\"') 
-	>> +( boost::spirit::range_p('a', 'z')  
-	      | boost::spirit::range_p('A', 'Z') 
-	      | boost::spirit::range_p('0', '9') 
-	      | boost::spirit::ch_p('_')) 
+	>> +( boost::spirit::anychar_p - '\"' )
 	>> 	boost::spirit::ch_p('\"') 
 	|	boost::spirit::int_p; 
       
@@ -82,7 +79,7 @@ struct default_p : boost::spirit::grammar<default_p>
 	      | boost::spirit::range_p('0', '9')  
 	      | boost::spirit::ch_p('_')); 
       
-      term				=	boost::spirit::ch_p('_') 
+      term =	boost::spirit::ch_p('_') 
 	|	constant 
 	|	variable; 
       
@@ -159,6 +156,9 @@ struct default_p : boost::spirit::grammar<default_p>
 class DefaultParser  
 { 
 private: 
+  std::string&
+    delete_comment(std::string&);
+
   /** 
    * Parse a predicate name 
    * 

@@ -302,6 +302,17 @@ DefaultParser::parseInputStream(std::string& filename, std::string& program, boo
   parseInputStream(iss, program, cqmode, trans, pruning);
 }
 
+std::string&
+DefaultParser::delete_comment(std::string& s)
+{
+  int pos = s.find("%", 0);
+  if (pos > -1) 
+    {
+      s.erase(pos, s.length());
+    }
+  return s;
+}
+
 void
 DefaultParser::parseInputStream(std::istream& iss, std::string& program, bool cqmode, int trans, bool pruning)
 {
@@ -312,7 +323,7 @@ DefaultParser::parseInputStream(std::istream& iss, std::string& program, bool cq
   while (!iss.eof()) 
     {
       getline(iss, line);
-      dfcontent = dfcontent + line + "\n";
+      dfcontent = dfcontent + delete_comment(line) + "\n";
     }
   
   if (dlvhex::dl::Registry::getVerbose() > 1) 

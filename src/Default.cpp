@@ -405,11 +405,11 @@ DLRules Default::getDLRules(bool cqmode)
       terms = all_distinct_terms.getMTerms();
       for (t_pos = terms.begin(); t_pos != terms.end(); t_pos++) 
 	{
-	  if (t_pos->isVar())
-	    {
+	  //	  if (t_pos->isVar())
+	  //{
 	      Predicate p_dom("dom", *t_pos);
 	      r4.addPositiveBody(p_dom);			
-	    }
+	      //}
 	}
       rules.addDLRule(r4);
       
@@ -565,11 +565,11 @@ Default::getDLRules1(bool cqmode) // Testing new transformation
       terms = all_distinct_terms.getMTerms();
       for (t_pos = terms.begin(); t_pos != terms.end(); t_pos++) 
 	{
-	  if (t_pos->isVar())
-	    {
+	  //	  if (t_pos->isVar())
+	  //{
 	      Predicate p_dom("dom", *t_pos);
 	      r.addPositiveBody(p_dom);			
-	    }
+	      //}
 	}
       rules.addDLRule(r);
       

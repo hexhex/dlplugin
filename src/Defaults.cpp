@@ -164,14 +164,14 @@ Defaults::gen_force_in_rules(DLRules& rules, Unifier2Dim& uniset,
 	      ri.addPositiveBody(p_b); 
 	      rules.addDLRule(ri); 
 	    } 
-	  else 
+	  else
 	    { 
 	      // continue 
 	      gen_force_in_rules(rules, uniset,  
 				 uniset_pos_next, new_uni,  
 				 pname1, ts1,  
 				 pname2, ts2); 
-			} 
+	    } 
 	} 
     } 
 } 
