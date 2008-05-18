@@ -34,14 +34,18 @@ fi
 AM_INIT_AUTOMAKE
 
 # Checks for programs.
-AC_PROG_CXX
 AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_CXXCPP
+
+# set default warning parameters for g++ compatible compilers
+if test "$GXX" = "yes"; then
+   CXXFLAGS="$CXXFLAGS -W -Wall"
+fi
+
 AM_PROG_LEX
 AC_PROG_YACC
 AC_PROG_LN_S
-
-
-# Checks for libraries.
 
 # Checks for header files.
 AC_CHECK_HEADERS([sys/select.h sys/socket.h sys/stat.h sys/time.h sys/types.h unistd.h])
