@@ -35,6 +35,7 @@
 #include <dlvhex/Error.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 namespace dlvhex { 
 namespace df {
@@ -305,10 +306,11 @@ DefaultParser::parseInputStream(std::string& filename, std::string& program, boo
 std::string&
 DefaultParser::delete_comment(std::string& s)
 {
-  int pos = s.find("%", 0);
-  if (pos > -1) 
+  ///@todo this is non-functional, consider a URI with escapecodes like "http://foobar.com/foo%20bar"
+  std::string::size_type pos = s.find('%');
+  if (pos != std::string::npos) 
     {
-      s.erase(pos, s.length());
+      s.erase(pos);
     }
   return s;
 }
@@ -316,29 +318,32 @@ DefaultParser::delete_comment(std::string& s)
 void
 DefaultParser::parseInputStream(std::istream& iss, std::string& program, bool cqmode, int trans, bool pruning)
 {
-  std::string dfcontent = "";
+  std::ostringstream dfcontent;
   std::string line;
-  default_p df_p;
   
   while (!iss.eof()) 
     {
-      getline(iss, line);
-      dfcontent = dfcontent + delete_comment(line) + "\n";
+      std::getline(iss, line);
+      dfcontent << delete_comment(line) << std::endl;
     }
   
   if (dlvhex::dl::Registry::getVerbose() > 1) 
     {
       std::cerr << "Input defaults:" << std::endl;
-      std::cerr << dfcontent << std::endl;
+      std::cerr << dfcontent.str() << std::endl;
     }
   
-  boost::spirit::tree_parse_info<> info = boost::spirit::ast_parse(dfcontent.c_str(), df_p, boost::spirit::space_p);
-  if (info.full) 
+  default_p df_p;
+  boost::spirit::tree_parse_info<> info = boost::spirit::ast_parse(dfcontent.str().c_str(),
+								   df_p, boost::spirit::space_p);
+
+  if (info.full)
     {
       if (dlvhex::dl::Registry::getVerbose() > 1)
 	{
-	  std::cerr << "Parsing succeeded\n";
+	  std::cerr << "Parsing succeeded" << std::endl;
 	}
+
       Defaults dfs;
       evaluateDefaults(info.trees.begin(), dfs);
       DLRules dlrs = dfs.getDLRules(cqmode, trans, pruning);
@@ -346,7 +351,9 @@ DefaultParser::parseInputStream(std::istream& iss, std::string& program, bool cq
     }
   else 
     {
-      std::cout << "Parsing FAILED\n";
+      std::ostringstream oss;
+      oss << "Parsing of the default rules failed at position " << info.length;
+      throw PluginError(oss.str());
     }
 }
 
