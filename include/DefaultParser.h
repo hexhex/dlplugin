@@ -37,6 +37,7 @@
 #include <boost/spirit/tree/tree_to_xml.hpp> 
 #include <boost/spirit/tree/parse_tree.hpp> 
 #include "Default.h" 
+#include "Prefixes.h"
  
 typedef char const*		                                        iterator_t; 
 typedef boost::spirit::tree_match<iterator_t>				parse_tree_match_t; 
@@ -56,98 +57,123 @@ struct default_p : boost::spirit::grammar<default_p>
   template <typename ScannerT> 
   struct definition  
   { 
-    definition(default_p const& self) { 
-      predicate_name = ( boost::spirit::range_p('a', 'z') | boost::spirit::range_p('A', 'Z') ) 
-	>> *( boost::spirit::range_p('a', 'z')  
-	      | boost::spirit::range_p('A', 'Z')  
-	      | boost::spirit::range_p('0', '9')  
-	      | boost::spirit::ch_p('_')); 
+    definition(default_p const& self) 
+    {
+      name_ = ( boost::spirit::range_p('a', 'z') | boost::spirit::range_p('A', 'Z') )
+	>> *( boost::spirit::range_p('a', 'z') 
+	      | boost::spirit::range_p('A', 'Z') 
+	      | boost::spirit::range_p('0', '9') 
+	      | boost::spirit::ch_p('_'));
       
-      constant		=	boost::spirit::range_p('a', 'z')  
-	>> *( boost::spirit::range_p('a', 'z')  
-	      | boost::spirit::range_p('A', 'Z')  
-	      | boost::spirit::range_p('0', '9')  
-	      | boost::spirit::ch_p('_')) 
-	|	boost::spirit::ch_p('\"') 
-	>> +( boost::spirit::anychar_p - '\"' )
-	>> 	boost::spirit::ch_p('\"') 
-	|	boost::spirit::int_p; 
+      namespace_ = boost::spirit::str_p("#namespace")
+	>> boost::spirit::ch_p('(')
+	>> boost::spirit::ch_p('\"')
+	>> (name_ | boost::spirit::str_p(""))
+	>> boost::spirit::ch_p('\"')
+	>> boost::spirit::ch_p(',')
+	 >> boost::spirit::ch_p('\"')
+	>> +(boost::spirit::anychar_p - '\"')
+	>> boost::spirit::ch_p('\"')
+	>> boost::spirit::ch_p(')');
+	 
+      predicate_name_ = ( boost::spirit::range_p('a', 'z') | boost::spirit::range_p('A', 'Z') )
+	>> *( boost::spirit::range_p('a', 'z') 
+	      | boost::spirit::range_p('A', 'Z') 
+	      | boost::spirit::range_p('0', '9') 
+	      | boost::spirit::ch_p('_'))
+	>> !boost::spirit::ch_p(':') 
+	>> *( boost::spirit::range_p('a', 'z') 
+	      | boost::spirit::range_p('A', 'Z') 
+	      | boost::spirit::range_p('0', '9') 
+	      | boost::spirit::ch_p('_'));
       
-      variable		=	boost::spirit::range_p('A', 'Z')  
-	>> *( boost::spirit::range_p('a', 'z')  
-	      | boost::spirit::range_p('A', 'Z')  
-	      | boost::spirit::range_p('0', '9')  
-	      | boost::spirit::ch_p('_')); 
-      
-      term =	boost::spirit::ch_p('_') 
-	|	constant 
-	|	variable; 
-      
-      terms			=	term 
-	>> *(boost::spirit::ch_p(',') >> term); 
-      
-      predicate		=	predicate_name 
-	>> boost::spirit::ch_p('(') 
-	>> terms 
-	>> boost::spirit::ch_p(')'); 
-      
-      lit					=	boost::spirit::ch_p('-') 
-	>> predicate								 
-	|	predicate; 
-      
-      conjunction	=	lit 
-	>> *(boost::spirit::ch_p('&') >> lit); 
-      
-      justifications	=	conjunction 
-	>> *(boost::spirit::ch_p(',') >> conjunction); 
-      
-      default_		=	boost::spirit::ch_p('[') 
-	>> conjunction 
-	>> boost::spirit::ch_p(':') 
-	>> justifications 
-	>> boost::spirit::ch_p(']')  
-	>> boost::spirit::ch_p('/')  
-	>> boost::spirit::ch_p('[') 
-	>> conjunction 
-	>> boost::spirit::ch_p(']') 
-	
-	|  boost::spirit::ch_p('[')  
-	>> boost::spirit::ch_p(':') 
-	>> justifications 
-	>> boost::spirit::ch_p(']')  
-	>> boost::spirit::ch_p('/')  
-	>> boost::spirit::ch_p('[') 
-	>> conjunction 
-	>> boost::spirit::ch_p(']') 
-	
-	|  boost::spirit::ch_p('[') 
-	>> conjunction 
-	>> boost::spirit::ch_p(':')  
-	>> boost::spirit::ch_p(']')  
-	>> boost::spirit::ch_p('/')  
-	>> boost::spirit::ch_p('[') 
-	>> conjunction 
-	>> boost::spirit::ch_p(']') 
-	
-	|  boost::spirit::ch_p('[')  
-	>> boost::spirit::ch_p(':')  
-	>> boost::spirit::ch_p(']')  
-	>> boost::spirit::ch_p('/')  
-	>> boost::spirit::ch_p('[') 
-	>> conjunction 
-	>> boost::spirit::ch_p(']'); 
-      
-      program_	= default_ >> boost::spirit::ch_p('.') 
-				   >> *(default_ >> boost::spirit::ch_p('.')); 
-    } 
+    constant = boost::spirit::range_p('a', 'z') 
+      >> *( boost::spirit::range_p('a', 'z') 
+	    | boost::spirit::range_p('A', 'Z') 
+	    | boost::spirit::range_p('0', '9') 
+	    | boost::spirit::ch_p('_'))
+      |boost::spirit::ch_p('\"')
+      >> +( boost::spirit::range_p('a', 'z') 
+	    | boost::spirit::range_p('A', 'Z')
+	    | boost::spirit::range_p('0', '9')
+	    | boost::spirit::ch_p('_'))
+      >> boost::spirit::ch_p('\"')
+      |	boost::spirit::int_p;
+	 
+    variable = boost::spirit::range_p('A', 'Z') 
+      >> *( boost::spirit::range_p('a', 'z') 
+	    | boost::spirit::range_p('A', 'Z') 
+	    | boost::spirit::range_p('0', '9') 
+	    | boost::spirit::ch_p('_'));
+	       
+    term = boost::spirit::ch_p('_')
+      | constant
+      | variable;
     
-    boost::spirit::rule<ScannerT> predicate_name, constant, variable, term, terms, predicate, lit, conjunction, justifications, default_, program_; 
+    terms = term
+      >> *(boost::spirit::ch_p(',') >> term);
     
-	boost::spirit::rule<ScannerT> const& start() const  
-    { 
-      return program_; 
-    } 
-  }; 
+    predicate = predicate_name_ 
+      >> boost::spirit::ch_p('(')
+      >> terms
+      >> boost::spirit::ch_p(')');
+    
+    lit = boost::spirit::ch_p('-')
+      >> predicate								
+      |	predicate;
+    
+    conjunction	=	lit
+      >> *(boost::spirit::ch_p('&') >> lit);
+    
+    justifications	=	conjunction
+      >> *(boost::spirit::ch_p(',') >> conjunction);
+    
+    default_ = boost::spirit::ch_p('[')
+      >> conjunction
+      >> boost::spirit::ch_p(';')
+      >> justifications
+      >> boost::spirit::ch_p(']') 
+      >> boost::spirit::ch_p('/') 
+      >> boost::spirit::ch_p('[')
+      >> conjunction
+      >> boost::spirit::ch_p(']')	 
+      | boost::spirit::ch_p('[') 
+      >> boost::spirit::ch_p(';')
+      >> justifications
+      >> boost::spirit::ch_p(']') 
+      >> boost::spirit::ch_p('/') 
+      >> boost::spirit::ch_p('[')
+      >> conjunction
+      >> boost::spirit::ch_p(']')
+      
+      | boost::spirit::ch_p('[')
+      >> conjunction
+      >> boost::spirit::ch_p(';') 
+      >> boost::spirit::ch_p(']') 
+      >> boost::spirit::ch_p('/') 
+      >> boost::spirit::ch_p('[')
+      >> conjunction
+      >> boost::spirit::ch_p(']')
+      
+      | boost::spirit::ch_p('[') 
+      >> boost::spirit::ch_p(';') 
+      >> boost::spirit::ch_p(']') 
+      >> boost::spirit::ch_p('/') 
+      >> boost::spirit::ch_p('[')
+      >> conjunction
+      >> boost::spirit::ch_p(']');
+    
+    program_ = (namespace_ | default_)
+      >> *(namespace_ | default_);
+    }
+    
+    boost::spirit::rule<ScannerT> predicate_name_, name_, namespace_, constant, variable, term, terms, predicate, lit, conjunction, justifications, default_, program_;
+    
+    boost::spirit::rule<ScannerT> const& start() const 
+    {
+      return program_;
+    }
+  };
 }; 
  
 /** 
@@ -196,47 +222,49 @@ private:
    * 
    * @return A Predicate 
    */ 
-  Predicate 
-    get_predicate(v_t_nvd::iterator); 
+  Predicate
+    get_predicate(v_t_nvd::iterator, Prefixes&);
   
-  /** 
-   * Parse a conjunction, in this particular case, it can be the premise,  
-   * the conclusion or a member of the DNF from the justification 
-   * 
-   * @param children_ A node of the AST corresponding to one conjucntion 
-   * 
-   * @return A vector of Predicates 
-   */ 
-  Pred1Dim 
-    analyze_conjunction(v_t_nvd&); 
+  /**
+   * Parse a conjunction, in this particular case, it can be the premise, 
+   * the conclusion or a member of the DNF from the justification
+   *
+   * @param children_ A node of the AST corresponding to one conjucntion
+   *
+   * @return A vector of Predicates
+   */
+  Pred1Dim
+    analyze_conjunction(v_t_nvd&, Prefixes&);
+
+
+  /**
+   * Parse a DNF, in this particular case, it can be only a member of the justification
+   *
+   * @param children_ A node of the AST corresponding to one DNF
+   *
+   * @return A vector of vector of Predicates
+   */
+  Pred2Dim
+    analyze_justification(v_t_nvd& children_, Prefixes&);
   
+  /**
+   * Parse a default
+   *
+   * @param branch A branch of the AST, corresponding to one default
+   *
+   * @return The parsed default
+   */
+  Default
+    getDefault(v_t_nvd& branch, Prefixes& ps);
   
-  /** 
-   * Parse a DNF, in this particular case, it can be only a member of the justification 
-   * 
-   * @param children_ A node of the AST corresponding to one DNF 
-   * 
-   * @return A vector of vector of Predicates 
-   */ 
-  Pred2Dim 
-    analyze_justification(v_t_nvd& children_); 
-  
-  /** 
-   * Parse a default 
-   * 
-   * @param branch A branch of the AST, corresponding to one default 
-   * 
-   * @return The parsed default 
-   */ 
-  Default 
-    getDefault(v_t_nvd& branch); 
- 
-  /** 
-   * @param i The begin node of the AST produced by boost spirit 
-   * @param dfs Set of defaults parsed 
-   */ 
-  void 
-    evaluateDefaults(const iter_t& i, Defaults& dfs); 
+  Prefix
+    getPrefix(v_t_nvd& branch);
+  /**
+   * @param i The begin node of the AST produced by boost spirit
+   * @param dfs Set of defaults parsed
+   */
+  void
+    evaluateDefaults(const iter_t& i, Prefixes& ps, Defaults& dfs);
   
  public: 
   DefaultParser(); 

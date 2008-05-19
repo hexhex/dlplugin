@@ -43,6 +43,8 @@ noinst_HEADERS = \
                  DLRule.h \
                  DLRules.h \
                  Predicate.h \
+                 Prefix.h \
+                 Prefixes.h \
                  MTerm.h \
                  Terms.h \
                  Update.h \

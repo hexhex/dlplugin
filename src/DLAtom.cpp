@@ -69,7 +69,7 @@ DLAtom::toString()
 	{ 
 	  for (cq_pos = u_pos->begin(); cq_pos != u_pos->end(); cq_pos++)  
 	    { 
-	      tmp = tmp + cq_pos->toString() + ","; 
+	      tmp = tmp + cq_pos->toStringWithNS() + ","; 
 	    } 
 	  tmp = tmp.erase(tmp.length()-1) + " v "; 
 	} 
@@ -80,5 +80,5 @@ DLAtom::toString()
   return ("DL[" + updates.toString() + query + "](" + terms.toString() + ")"); 
 } 
  
-}	// namespace df 
-}	// namespace dlvhex
+} // namespace df 
+} // namespace dlvhex

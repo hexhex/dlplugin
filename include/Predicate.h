@@ -45,6 +45,7 @@ namespace df {
     private: 
       bool isStrongNegated; 
       std::string predicate_name; 
+      std::string prefix;
       Terms terms; 
       
     public: 
@@ -59,12 +60,17 @@ namespace df {
       Predicate(bool, const std::string&); 
       
       Predicate(bool, const std::string&, const Terms&); 
+
+      Predicate(bool, const std::string&, const std::string&, const Terms&);
       
       bool  
 	isStronglyNegated(); 
       
       std::string  
-	getPredicateName(); 
+	getPredicateName();
+
+      std::string  
+	getPredicateNameWithNS(); 
       
       /** 
        * @return predicate's name with prefix "not_" if it's strongly negated 
@@ -81,6 +87,9 @@ namespace df {
       std::string  
 	getLiteralName(); 
       
+      std::string  
+	getLiteralNameWithNS();
+      
       /** 
        * @return negated predicate's name with its strong negation sign 
        *         i.e. P if the predicate is strongly negated 
@@ -88,6 +97,9 @@ namespace df {
        */ 
       std::string  
 	getNegatedLiteralName(); 
+
+      std::string  
+	getNegatedLiteralNameWithNS();
 	 
       Terms&  
 	getTerms();  
@@ -161,9 +173,15 @@ namespace df {
       
       std::string  
 	toString(); 
+
+      std::string  
+	toStringWithNS(); 
       
       std::string  
 	toNegatedString(); 
+
+      std::string  
+	toNegatedStringWithNS(); 
     }; 
   
 }	// namespace df 

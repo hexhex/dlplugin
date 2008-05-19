@@ -131,7 +131,7 @@ DefaultParser::get_terms(v_t_nvd::iterator pos)
 }
 
 Predicate
-DefaultParser::get_predicate(v_t_nvd::iterator pos) 
+DefaultParser::get_predicate(v_t_nvd::iterator pos, Prefixes& ps) 
 {
   v_t_nvd::iterator pos1;
   bool neg = false;
@@ -167,16 +167,35 @@ DefaultParser::get_predicate(v_t_nvd::iterator pos)
       pos++;
       ts = get_terms(pos);
     }
-  Predicate p(neg, pn, ts);
+  // Now check if we have a prefix or not
+  std::string::size_type sep = pn.find(":");
+  if (sep != std::string::npos)
+    {
+      std::string name_ = pn.substr(0, sep);
+      std::string path_ = ps.getPath(name_);
+      if (path_.compare("") != 0)
+	{
+	  pn = pn.substr(++sep);
+	  Predicate p(neg, pn, path_, ts);
+	  return p;
+	}
+      else
+	{
+	  std::cout << "Warning: namespace " << name_ << " not found. Ignore. " <<std::endl;
+	  pn = pn.substr(++sep);
+	}
+    }
+	
+  Predicate p(neg, pn, ts);	
   return p;
 }
 
 Pred1Dim
-DefaultParser::analyze_conjunction(v_t_nvd& children_) 
+DefaultParser::analyze_conjunction(v_t_nvd& children_, Prefixes& ps) 
 {
   Pred1Dim p_list;
   v_t_nvd::iterator pos;
-
+  
   pos = children_.begin();
   while (pos->children.size() > 0) 
     {
@@ -188,7 +207,7 @@ DefaultParser::analyze_conjunction(v_t_nvd& children_)
       pos = children_.begin();
       do 
 	{
-	  Predicate p = get_predicate(pos->children.begin());
+	  Predicate p = get_predicate(pos->children.begin(), ps);
 	  p_list.push_back(p);
 	  pos++;
 	  if (pos == children_.end()) break;
@@ -199,14 +218,14 @@ DefaultParser::analyze_conjunction(v_t_nvd& children_)
   else 
     {
       // single literal
-      Predicate p = get_predicate(children_.begin());
-			p_list.push_back(p);
+      Predicate p = get_predicate(children_.begin(), ps);
+      p_list.push_back(p);
     }
   return p_list;
 }
 
 Pred2Dim
-DefaultParser::analyze_justification(v_t_nvd& children_) 
+DefaultParser::analyze_justification(v_t_nvd& children_, Prefixes& ps) 
 {
   Pred2Dim c_list;
   v_t_nvd::iterator pos;
@@ -215,14 +234,14 @@ DefaultParser::analyze_justification(v_t_nvd& children_)
   while (pos->children.size() > 0) 
     {
       pos++;
-	}		
+    }		
   if (*pos->value.begin() == ',') 
     {
       //std::cout << "list of conjuction" << std::endl;
       pos = children_.begin();
       do 
 	{
-	  Pred1Dim c = analyze_conjunction(pos->children);				
+	  Pred1Dim c = analyze_conjunction(pos->children, ps);				
 	  c_list.push_back(c);
 	  pos++;
 	  if (pos == children_.end()) break;
@@ -233,14 +252,14 @@ DefaultParser::analyze_justification(v_t_nvd& children_)
   else 
     {
       //std::cout << "only one conjunction" << std::endl;
-      Pred1Dim c = analyze_conjunction(children_);
+      Pred1Dim c = analyze_conjunction(children_, ps);
       c_list.push_back(c);
     }
   return c_list;
 }
 
 Default
-DefaultParser::getDefault(v_t_nvd& branch) 
+DefaultParser::getDefault(v_t_nvd& branch, Prefixes& ps) 
 {
   Pred1Dim premise;
   Pred2Dim justification;
@@ -250,42 +269,81 @@ DefaultParser::getDefault(v_t_nvd& branch)
     {
     case 9:	
       // [A1 & ... & An : B1,...,Bk ]/[C].
-      premise = analyze_conjunction(branch[1].children);
-      justification = analyze_justification(branch[3].children);
-      conclusion = analyze_conjunction(branch[7].children);
+      premise = analyze_conjunction(branch[1].children, ps);
+      justification = analyze_justification(branch[3].children, ps);
+      conclusion = analyze_conjunction(branch[7].children, ps);
       break;
     case 8:
       // [: B1,...,Bk ]/[C].
       if (std::string(branch[1].value.begin(), branch[1].value.end()) == ":") 
 	{
-	  justification = analyze_justification(branch[2].children);
-	  conclusion = analyze_conjunction(branch[6].children);
+	  justification = analyze_justification(branch[2].children, ps);
+	  conclusion = analyze_conjunction(branch[6].children, ps);
 	} 
       else 
 	{
 	  // or
 	  // [A1 & ... & An:]/[C].			
-	  premise = analyze_conjunction(branch[1].children);
-	  conclusion = analyze_conjunction(branch[6].children);
+	  premise = analyze_conjunction(branch[1].children, ps);
+	  conclusion = analyze_conjunction(branch[6].children, ps);
 	}			
       break;
     case 7:
       // [:]/[C].
-      conclusion = analyze_conjunction(branch[5].children);
+      conclusion = analyze_conjunction(branch[5].children, ps);
       break;		
     }
   Default df(premise, justification, conclusion);	
   return df;
 }
 
+Prefix
+DefaultParser::getPrefix(v_t_nvd& branch)
+{
+  std::string name_ = "";
+  std::string path_ = "";
+  
+  v_t_nvd namenode = branch[3].children;
+  v_t_nvd::iterator pos;
+  for (pos = namenode.begin(); pos != namenode.end(); ++pos)
+    {
+      name_ += *pos->value.begin();
+    }
+  
+  pos = branch.begin();
+  for (int i = 0; i < 7; ++i)
+    {
+      ++pos;
+    }
+  v_t_nvd::iterator pos_end = branch.end();
+  --pos_end;
+  --pos_end;
+  
+  for (; pos != pos_end; ++pos)
+    {
+      path_ += *pos->value.begin();
+    }
+  Prefix p(name_, path_);
+  return p;
+}
+
 void
-DefaultParser::evaluateDefaults(const iter_t& root, Defaults& dfs)
+DefaultParser::evaluateDefaults(const iter_t& root, Prefixes& ps, Defaults& dfs)
 {
   int n = root->children.size();
-  for (int i = 0; i < n; i+= 2)
+  for (int i = 0; i < n; ++i)
     {
-      Default df = getDefault(root->children[i].children);
-      dfs.addDefault(df);		
+      v_t_nvd branch = root->children[i].children;
+      if (*branch[0].value.begin() == '#')
+	{
+	  Prefix p = getPrefix(branch);
+	  ps.addPrefix(p);
+	}
+      else
+	{
+	  Default df = getDefault(branch, ps);
+	  dfs.addDefault(df);		
+	}		
     }
 }
 
@@ -343,9 +401,9 @@ DefaultParser::parseInputStream(std::istream& iss, std::string& program, bool cq
 	{
 	  std::cerr << "Parsing succeeded" << std::endl;
 	}
-
       Defaults dfs;
-      evaluateDefaults(info.trees.begin(), dfs);
+      Prefixes ps;
+      evaluateDefaults(info.trees.begin(), ps, dfs);
       DLRules dlrs = dfs.getDLRules(cqmode, trans, pruning);
       program = dlrs.toString();
     }

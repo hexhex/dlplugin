@@ -38,26 +38,30 @@ Predicate::Predicate()
 { } 
  
 Predicate::Predicate(const std::string& predicate_name_) 
-  : isStrongNegated(false), predicate_name(predicate_name_)  
+  : isStrongNegated(false), predicate_name(predicate_name_), prefix("")
 { } 
  
 Predicate::Predicate(const std::string& predicate_name_, const Terms& terms_) 
-  : isStrongNegated(false), predicate_name(predicate_name_), terms(terms_)  
+  : isStrongNegated(false), predicate_name(predicate_name_), terms(terms_), prefix("")
 { } 
  
 Predicate::Predicate(const std::string& predicate_name_, const MTerm& term_) 
-  : isStrongNegated(false), predicate_name(predicate_name_)  
+  : isStrongNegated(false), predicate_name(predicate_name_), prefix("")
 { 
   terms.addTerm(term_); 
 } 
  
 Predicate::Predicate(bool isStrongNegated_, const std::string& predicate_name_) 
-  : isStrongNegated(isStrongNegated_), predicate_name(predicate_name_)  
+  : isStrongNegated(isStrongNegated_), predicate_name(predicate_name_), prefix("") 
 { } 
- 
-Predicate::Predicate(bool isStrongNegated_, const std::string& predicate_name_, const Terms& terms_) 
-  : isStrongNegated(isStrongNegated_), predicate_name(predicate_name_), terms(terms_)  
-{ } 
+
+Predicate::Predicate(bool isStrongNegated_, const std::string& predicate_name_, const Terms& terms_)
+: isStrongNegated(isStrongNegated_), predicate_name(predicate_name_), prefix(""), terms(terms_) 
+{ }
+
+Predicate::Predicate(bool isStrongNegated_, const std::string& predicate_name_, const std::string& prefix_, const Terms& terms_)
+: isStrongNegated(isStrongNegated_), predicate_name(predicate_name_), prefix(prefix_), terms(terms_) 
+{ }
  
 bool  
 Predicate::isStronglyNegated()  
@@ -70,6 +74,16 @@ Predicate::getPredicateName()
 { 
   return predicate_name; 
 } 
+
+std::string
+Predicate::getPredicateNameWithNS()
+{
+  if (prefix.compare("") == 0)
+    {
+      return predicate_name;
+    }
+  return prefix + '#' + predicate_name;
+}
  
 std::string  
 Predicate::getSignedPredicateName()  
@@ -89,8 +103,23 @@ Predicate::getLiteralName()
   if (isStrongNegated)  
     { 
       tmp = "-"; 
-	} 
+    }
   return (tmp + predicate_name); 
+} 
+
+std::string  
+Predicate::getLiteralNameWithNS()  
+{ 
+  std::string tmp = ""; 
+  if (isStrongNegated)  
+    { 
+      tmp = "-"; 
+    } 
+  if (prefix.compare("") == 0)
+    {
+      return (tmp + predicate_name); 
+    }
+  return tmp + prefix + '#' + predicate_name;
 } 
  
 std::string 
@@ -103,6 +132,21 @@ Predicate::getNegatedLiteralName()
     } 
   return (tmp + predicate_name); 
 } 
+
+std::string 
+Predicate::getNegatedLiteralNameWithNS()  
+{ 
+  std::string tmp = ""; 
+  if (!isStrongNegated)  
+    { 
+      tmp = "-"; 
+    } 
+  if (prefix.compare("") == 0)
+    {
+      return (tmp + predicate_name); 
+    }
+  return tmp + prefix + '#' + predicate_name;
+}
 
 Terms&  
 Predicate::getTerms()  
@@ -232,6 +276,32 @@ Predicate::toString()
     } 
   return tmp; 
 } 
+
+std::string  
+Predicate::toStringWithNS()  
+{ 
+  std::string tmp = ""; 
+  if (isStrongNegated)  
+    { 
+      tmp = "-"; 
+    } 
+  
+  if (!terms.isEmpty())  
+    { 
+      tmp = tmp + predicate_name + "(" + terms.toString() + ")"; 
+    }  
+  else  
+    { 
+      tmp += predicate_name; 
+    }
+
+  if (prefix.compare("") != 0)
+    {
+      tmp = prefix + '#' + tmp;
+    }
+
+  return tmp; 
+}
  
 std::string  
 Predicate::toNegatedString()  
@@ -250,6 +320,32 @@ Predicate::toNegatedString()
     { 
       tmp += predicate_name; 
     } 
+  return tmp; 
+}
+
+std::string  
+Predicate::toNegatedStringWithNS()  
+{ 
+  std::string tmp = ""; 
+  if (!isStrongNegated)  
+    { 
+      tmp = "-"; 
+    } 
+ 
+  if (!terms.isEmpty())  
+    { 
+      tmp = tmp + predicate_name + "(" + terms.toString() + ")"; 
+    }  
+  else  
+    { 
+      tmp += predicate_name; 
+    } 
+
+  if (prefix.compare("") != 0)
+    {
+      tmp = prefix + '#' + tmp;
+    }
+
   return tmp; 
 } 
  

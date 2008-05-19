@@ -102,7 +102,7 @@ Default::getUpdates4Lambda()
 	{
 	  op = UPLUS;
 	}			
-      Update u(pos->getPredicateName(), op, PREFIX_PRED + pos->getSignedPredicateName());
+      Update u(pos->getPredicateNameWithNS(), op, PREFIX_PRED + pos->getSignedPredicateName());
       us.addUpdate(u);
     }
   return us;
@@ -121,10 +121,11 @@ Default::getUpdates4LambdaPrime()
 	{
 	  op = UMINUS;
 	} 
-      else {
+      else 
+	{
 	  op = UPLUS;
 	}			
-      Update u(pos->getPredicateName(), op, PREFIX_IN + pos->getSignedPredicateName());
+      Update u(pos->getPredicateNameWithNS(), op, PREFIX_IN + pos->getSignedPredicateName());
       us.addUpdate(u);
     }
   return us;
@@ -512,7 +513,7 @@ Default::getDLRules1(bool cqmode) // Testing new transformation
 		}
 	      else
 		{
-		  DLAtom d_r_bi(lambda_prime, p_pos->getLiteralName(), p_pos->getTerms());
+		  DLAtom d_r_bi(lambda_prime, p_pos->getLiteralNameWithNS(), p_pos->getTerms());
 		  r.addPositiveDLAtom(d_r_bi);
 		}
 	    }
@@ -530,7 +531,7 @@ Default::getDLRules1(bool cqmode) // Testing new transformation
 		  Pred1Dim::iterator pos;
 		  for (pos = one_justification.begin(); pos != one_justification.end(); pos++) 
 		    {
-		      Predicate p_justification(!pos->isStronglyNegated(), pos->getPredicateName(), pos->getTerms());
+		      Predicate p_justification(!pos->isStronglyNegated(), pos->getPredicateNameWithNS(), pos->getTerms());
 		      Pred1Dim cq_justification;
 		      cq_justification.push_back(p_justification);
 		      ucq_justification.push_back(cq_justification);
@@ -548,8 +549,8 @@ Default::getDLRules1(bool cqmode) // Testing new transformation
 		  else
 		    {
 		      Pred1Dim::iterator p_pos = one_justification.begin();
-		      DLAtom d_r_bi(lambda_prime, p_pos->getLiteralName(), p_pos->getTerms());
-		      r.addPositiveDLAtom(d_r_bi);
+		      DLAtom d_r_bi(lambda_prime, p_pos->getLiteralNameWithNS(), p_pos->getTerms());
+		      r.addNegativeDLAtom(d_r_bi);
 		    }
 		}
 	    }			

@@ -66,6 +66,8 @@ DLAtom.cpp \
 DLRule.cpp \
 DLRules.cpp \
 Predicate.cpp \
+Prefix.cpp \
+Prefixes.cpp \
 MTerm.cpp \
 Terms.cpp \
 Update.cpp \
