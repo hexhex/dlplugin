@@ -47,7 +47,7 @@ bool
 Terms::gotThisTerm(MTerm& t)  
 { 
   std::vector<MTerm>::iterator pos; 
-  for (pos = terms.begin(); pos != terms.end(); pos++)  
+  for (pos = terms.begin(); pos != terms.end(); ++pos)  
     { 
       if (*pos == t) 
 	{ 
@@ -55,7 +55,21 @@ Terms::gotThisTerm(MTerm& t)
 	} 
     } 
   return false; 
-} 
+}
+
+bool
+Terms::containsTerms(Terms& ts2)
+{
+  std::vector<MTerm>::iterator pos;
+  for (pos = ts2.terms.begin(); pos != ts2.terms.end(); ++pos)
+    {
+      if (!gotThisTerm(*pos))
+	{
+	  return false;
+	}
+    }
+  return true;
+}
  
 ComparisonResult 
 Terms::compareTo(Terms& ts2) 

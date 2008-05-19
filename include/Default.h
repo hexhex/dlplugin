@@ -81,8 +81,11 @@ namespace df {
       /// The conclusion can be a conjunction 
       Pred1Dim conclusion; 
       
-      /// Cache these special predicates (all_in_ and out_) for building forcing rules 
-      Predicate all_in_p;	 
+      /// Cache these special predicates (all_in_) for building forcing rules 
+      Predicate all_in_p;
+
+      /// Typing predicate
+      Predicate arguments;
 
 
       /** 
@@ -94,7 +97,9 @@ namespace df {
     public: 
       Default(bool); 
       
-      Default(Pred1Dim, Pred2Dim, Pred1Dim); 
+      Default(Pred1Dim, Pred2Dim, Pred1Dim);
+
+      Default(Pred1Dim, Pred2Dim, Pred1Dim, Predicate);
       
       static  
 	Default null_default; 

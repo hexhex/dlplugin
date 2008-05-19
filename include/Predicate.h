@@ -69,6 +69,9 @@ namespace df {
       std::string  
 	getPredicateName();
 
+      std::string
+	getPrefix();
+
       std::string  
 	getPredicateNameWithNS(); 
       

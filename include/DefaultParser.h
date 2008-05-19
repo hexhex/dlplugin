@@ -136,8 +136,10 @@ struct default_p : boost::spirit::grammar<default_p>
       >> boost::spirit::ch_p('/') 
       >> boost::spirit::ch_p('[')
       >> conjunction
-      >> boost::spirit::ch_p(']')	 
-      | boost::spirit::ch_p('[') 
+      >> boost::spirit::ch_p(']')
+      >> !argument_
+      
+      |	boost::spirit::ch_p('[') 
       >> boost::spirit::ch_p(';')
       >> justifications
       >> boost::spirit::ch_p(']') 
@@ -145,8 +147,9 @@ struct default_p : boost::spirit::grammar<default_p>
       >> boost::spirit::ch_p('[')
       >> conjunction
       >> boost::spirit::ch_p(']')
+      >> !argument_
       
-      | boost::spirit::ch_p('[')
+      |	boost::spirit::ch_p('[')
       >> conjunction
       >> boost::spirit::ch_p(';') 
       >> boost::spirit::ch_p(']') 
@@ -154,20 +157,29 @@ struct default_p : boost::spirit::grammar<default_p>
       >> boost::spirit::ch_p('[')
       >> conjunction
       >> boost::spirit::ch_p(']')
+      >> !argument_
       
-      | boost::spirit::ch_p('[') 
+      |	boost::spirit::ch_p('[') 
       >> boost::spirit::ch_p(';') 
       >> boost::spirit::ch_p(']') 
       >> boost::spirit::ch_p('/') 
       >> boost::spirit::ch_p('[')
       >> conjunction
-      >> boost::spirit::ch_p(']');
+      >> boost::spirit::ch_p(']')
+      >> !argument_;
+    
+    argument_ = boost::spirit::ch_p('<')
+      >> name_
+      >> boost::spirit::ch_p('(')
+      >> terms
+      >> boost::spirit::ch_p(')')
+      >> boost::spirit::ch_p('>');
     
     program_ = (namespace_ | default_)
       >> *(namespace_ | default_);
     }
     
-    boost::spirit::rule<ScannerT> predicate_name_, name_, namespace_, constant, variable, term, terms, predicate, lit, conjunction, justifications, default_, program_;
+    boost::spirit::rule<ScannerT> predicate_name_, name_, namespace_, constant, variable, term, terms, predicate, lit, conjunction, justifications, argument_, default_, program_;
     
     boost::spirit::rule<ScannerT> const& start() const 
     {
@@ -255,10 +267,14 @@ private:
    * @return The parsed default
    */
   Default
-    getDefault(v_t_nvd& branch, Prefixes& ps);
+    getDefault(v_t_nvd& branch, Prefixes& ps, bool hasArgument);
   
   Prefix
     getPrefix(v_t_nvd& branch);
+
+  void
+    evaluateBranch(v_t_nvd& branch, Prefixes& ps, Defaults& dfs);
+
   /**
    * @param i The begin node of the AST produced by boost spirit
    * @param dfs Set of defaults parsed

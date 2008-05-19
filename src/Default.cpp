@@ -30,7 +30,7 @@
  */
 
 #include "Default.h"
-
+#include <iostream>
 #include <dlvhex/Error.h>
 
 namespace dlvhex {
@@ -44,6 +44,13 @@ Default::Default(bool is_null_)
 
 Default::Default(Pred1Dim premise_, Pred2Dim justification_, Pred1Dim conclusion_) 
   : premise(premise_), justification(justification_), conclusion(conclusion_) 
+{
+ is_null = false;
+ parent = NULL;
+}
+
+Default::Default(Pred1Dim premise_, Pred2Dim justification_, Pred1Dim conclusion_, Predicate arguments_) 
+  : premise(premise_), justification(justification_), conclusion(conclusion_), arguments(arguments_)
 {
  is_null = false;
  parent = NULL;
@@ -264,7 +271,7 @@ DLRules Default::getDLRules(bool cqmode)
       DLRule r1(p_r1_h);	
       r1.addNegativeBody(p_r1_b);
       
-      // cache the all_in_def_id and out_def_id predicates
+      // cache the all_in_def_id predicate
       // for building forcing rules
       all_in_p = p_r1_h;
       
@@ -277,12 +284,17 @@ DLRules Default::getDLRules(bool cqmode)
       terms = all_distinct_terms_conclusion.getMTerms();
       for (t_pos = terms.begin(); t_pos != terms.end(); t_pos++) 
 	{
-	  if (t_pos->isVar()) 
+	  if ((t_pos->isVar()) && (!arguments.getTerms().gotThisTerm(*t_pos)))
 	    {
 	      Predicate p_dom("dom", *t_pos);
 	      r1.addPositiveBody(p_dom);
 	      r2.addPositiveBody(p_dom);		
 	    }
+	}
+      if (!arguments.getTerms().isEmpty())
+	{
+	  r1.addPositiveBody(arguments);
+	  r2.addPositiveBody(arguments);
 	}
       rules.addDLRule(r1);
       rules.addDLRule(r2);
@@ -318,7 +330,7 @@ DLRules Default::getDLRules(bool cqmode)
 	  Pred1Dim::iterator c_pos;
 	  for (c_pos = conclusion.begin(); c_pos != conclusion.end(); ++c_pos)
 	    {
-	      DLAtom d_r3_b1i(lambda_prime, c_pos->getLiteralName(), c_pos->getTerms());
+	      DLAtom d_r3_b1i(lambda_prime, c_pos->getLiteralNameWithNS(), c_pos->getTerms());
 	      r3.addPositiveDLAtom(d_r3_b1i);
 	    }
 	}    
@@ -357,7 +369,7 @@ DLRules Default::getDLRules(bool cqmode)
 		}
 	      else
 		{
-		  DLAtom d_r4_bi(lambda_prime, p_pos->getLiteralName(), p_pos->getTerms());
+		  DLAtom d_r4_bi(lambda_prime, p_pos->getLiteralNameWithNS(), p_pos->getTerms());
 		  r4.addPositiveDLAtom(d_r4_bi);
 		}
 	    }
@@ -375,7 +387,7 @@ DLRules Default::getDLRules(bool cqmode)
 		  Pred1Dim::iterator pos;
 		  for (pos = one_justification.begin(); pos != one_justification.end(); pos++) 
 		    {
-		      Predicate p_justification(!pos->isStronglyNegated(), pos->getPredicateName(), pos->getTerms());
+		      Predicate p_justification(!pos->isStronglyNegated(), pos->getPredicateName(), pos->getPrefix(), pos->getTerms());
 		      Pred1Dim cq_justification;
 		      cq_justification.push_back(p_justification);
 		      ucq_justification.push_back(cq_justification);
@@ -392,7 +404,7 @@ DLRules Default::getDLRules(bool cqmode)
 		    }
 		  else
 		    {
-		      DLAtom d_r4_bi(lambda_prime, one_justification.begin()->getNegatedLiteralName(), one_justification.begin()->getTerms());
+		      DLAtom d_r4_bi(lambda_prime, one_justification.begin()->getNegatedLiteralNameWithNS(), one_justification.begin()->getTerms());
 		      r4.addNegativeDLAtom(d_r4_bi);
 		    }
 		}
@@ -408,9 +420,16 @@ DLRules Default::getDLRules(bool cqmode)
 	{
 	  //	  if (t_pos->isVar())
 	  //{
+	  if (!arguments.getTerms().gotThisTerm(*t_pos))
+	    {
 	      Predicate p_dom("dom", *t_pos);
 	      r4.addPositiveBody(p_dom);			
+	    }
 	      //}
+	}
+      if (!arguments.getTerms().isEmpty())
+	{
+	  r4.addPositiveBody(arguments);
 	}
       rules.addDLRule(r4);
       
@@ -441,7 +460,7 @@ DLRules Default::getDLRules(bool cqmode)
 	  {
 	    if (conclusion.size() == 1)
 	      {
-		DLAtom d_r5_b(lambda, conclusion.begin()->getLiteralName(), conclusion.begin()->getTerms());
+		DLAtom d_r5_b(lambda, conclusion.begin()->getLiteralNameWithNS(), conclusion.begin()->getTerms());
 		r5.addNegativeDLAtom(d_r5_b);
 		r6.addPositiveDLAtom(d_r5_b);
 	      }
@@ -549,7 +568,7 @@ Default::getDLRules1(bool cqmode) // Testing new transformation
 		  else
 		    {
 		      Pred1Dim::iterator p_pos = one_justification.begin();
-		      DLAtom d_r_bi(lambda_prime, p_pos->getLiteralNameWithNS(), p_pos->getTerms());
+		      DLAtom d_r_bi(lambda_prime, p_pos->getNegatedLiteralNameWithNS(), p_pos->getTerms());
 		      r.addNegativeDLAtom(d_r_bi);
 		    }
 		}
@@ -568,9 +587,17 @@ Default::getDLRules1(bool cqmode) // Testing new transformation
 	{
 	  //	  if (t_pos->isVar())
 	  //{
+	  if (!arguments.getTerms().gotThisTerm(*t_pos))
+	    {
 	      Predicate p_dom("dom", *t_pos);
 	      r.addPositiveBody(p_dom);			
+	    }
 	      //}
+	}
+      std::cout << arguments.toString() << std::endl;
+      if (!arguments.getTerms().isEmpty())
+	{
+	  r.addPositiveBody(arguments);
 	}
       rules.addDLRule(r);
       
@@ -629,14 +656,32 @@ DLRules rules;
 		  r2.addNegativeBody(pi);
 		  std::vector<MTerm> terms = pj.getTerms().getMTerms();
 		  std::vector<MTerm>::iterator t_pos;
+		  bool containsArg = pj.getTerms().containsTerms(arguments.getTerms());
 		  for (t_pos = terms.begin(); t_pos != terms.end(); ++t_pos)
 		    {
 		      if (t_pos->isVar())
 			{
-			  Predicate p_dom("dom", *t_pos);
-			  r1.addPositiveBody(p_dom);
-			  r2.addPositiveBody(p_dom);
+			  if (containsArg)
+			    {
+			      if (!arguments.getTerms().gotThisTerm(*t_pos))
+				{
+				  Predicate p_dom("dom", *t_pos);
+				  r1.addPositiveBody(p_dom);
+				  r2.addPositiveBody(p_dom);
+				}
+			    }
+			  else
+			    {
+			      Predicate p_dom("dom", *t_pos);
+			      r1.addPositiveBody(p_dom);
+			      r2.addPositiveBody(p_dom);
+			    }			  
 			}
+		    }
+		  if (containsArg && !arguments.getTerms().isEmpty())
+		    {
+		      r1.addPositiveBody(arguments);
+		      r2.addPositiveBody(arguments);
 		    }
 		  rules.addDLRule(r1);
 		  rules.addDLRule(r2);
@@ -656,14 +701,32 @@ DLRules rules;
 		  r2.addNegativeBody(p_cons);
 		  std::vector<MTerm> terms = all_distinct_terms_justification.getMTerms();
 		  std::vector<MTerm>::iterator t_pos;
+		  bool containsArg = all_distinct_terms_justification.containsTerms(arguments.getTerms());
 		  for (t_pos = terms.begin(); t_pos != terms.end(); ++t_pos)
 		    {
 		      if (t_pos->isVar())
 			{
-			  Predicate p_dom("dom", *t_pos);
-			  r1.addPositiveBody(p_dom);
-			  r2.addPositiveBody(p_dom);
+			  if (containsArg)
+			    {
+			      if (!arguments.getTerms().gotThisTerm(*t_pos))
+				{
+				  Predicate p_dom("dom", *t_pos);
+				  r1.addPositiveBody(p_dom);
+				  r2.addPositiveBody(p_dom);
+				}
+			    }
+			  else
+			    {
+			      Predicate p_dom("dom", *t_pos);
+			      r1.addPositiveBody(p_dom);
+			      r2.addPositiveBody(p_dom);
+			    }
 			}
+		    }
+		  if (containsArg && !arguments.getTerms().isEmpty())
+		    {
+		      r1.addPositiveBody(arguments);
+		      r2.addPositiveBody(arguments);
 		    }
 		  rules.addDLRule(r1);
 		  rules.addDLRule(r2);
@@ -704,7 +767,7 @@ DLRules rules;
 	    }
 	  else
 	    {
-	      DLAtom d_r3_bi(lambda_prime, p_pos->getLiteralName(), p_pos->getTerms());
+	      DLAtom d_r3_bi(lambda_prime, p_pos->getLiteralNameWithNS(), p_pos->getTerms());
 	      r3.addPositiveDLAtom(d_r3_bi);
 	    }
 	}
@@ -769,7 +832,7 @@ DLRules rules;
 		  if (cqmode)
 		    {
 		      Pred2Dim ucq_justification;
-		      Predicate p_justification(!one_justification.begin()->isStronglyNegated(), one_justification.begin()->getPredicateName(), one_justification.begin()->getTerms());
+		      Predicate p_justification(!one_justification.begin()->isStronglyNegated(), one_justification.begin()->getPredicateName(), one_justification.begin()->getPrefix(), one_justification.begin()->getTerms());
 		      Pred1Dim cq_justification;
 		      cq_justification.push_back(p_justification);
 		      ucq_justification.push_back(cq_justification);
@@ -779,7 +842,7 @@ DLRules rules;
 		    }
 		  else
 		    {
-		      DLAtom d_r_bi(lambda_prime, one_justification.begin()->getNegatedLiteralName(), one_justification.begin()->getTerms());
+		      DLAtom d_r_bi(lambda_prime, one_justification.begin()->getNegatedLiteralNameWithNS(), one_justification.begin()->getTerms());
 		      r4.addPositiveDLAtom(d_r_bi);
 		      r5.addNegativeDLAtom(d_r_bi);
 		    }
@@ -798,7 +861,7 @@ DLRules rules;
 		  Pred1Dim::iterator pos;	      
 		  for (pos = one_justification.begin(); pos != one_justification.end(); pos++) 
 		    {
-		      Predicate p_justification(!pos->isStronglyNegated(), pos->getPredicateName(), pos->getTerms());
+		      Predicate p_justification(!pos->isStronglyNegated(), pos->getPredicateName(), pos->getPrefix(), pos->getTerms());
 		      Pred1Dim cq_justification;
 		      cq_justification.push_back(p_justification);
 		      ucq_justification.push_back(cq_justification);
@@ -816,8 +879,7 @@ DLRules rules;
 		  r4.addPositiveBody(p_cons);
 		  Predicate p_out_cons(PREFIX_OUT_CONS + just_id, all_distinct_terms_justification);
 		  r5.addNegativeBody(p_out_cons);
-		}
-	     
+		}	     
 	      		
 	      rules.addDLRule(r4);
 	      rules.addDLRule(r5);

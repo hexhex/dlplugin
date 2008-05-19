@@ -68,6 +68,12 @@ Predicate::isStronglyNegated()
 { 
   return isStrongNegated; 
 } 
+
+std::string
+Predicate::getPrefix()
+{
+  return prefix;
+}
  
 std::string  
 Predicate::getPredicateName()  
@@ -281,11 +287,17 @@ std::string
 Predicate::toStringWithNS()  
 { 
   std::string tmp = ""; 
+
+  if (prefix.compare("") != 0)
+    {
+      tmp = prefix + '#';
+    }
+
   if (isStrongNegated)  
     { 
-      tmp = "-"; 
+      tmp = "-" + tmp; 
     } 
-  
+ 
   if (!terms.isEmpty())  
     { 
       tmp = tmp + predicate_name + "(" + terms.toString() + ")"; 
@@ -293,12 +305,7 @@ Predicate::toStringWithNS()
   else  
     { 
       tmp += predicate_name; 
-    }
-
-  if (prefix.compare("") != 0)
-    {
-      tmp = prefix + '#' + tmp;
-    }
+    } 
 
   return tmp; 
 }
@@ -324,12 +331,18 @@ Predicate::toNegatedString()
 }
 
 std::string  
-Predicate::toNegatedStringWithNS()  
+Predicate::toNegatedStringWithNS()
 { 
-  std::string tmp = ""; 
+  std::string tmp = "";
+
+  if (prefix.compare("") != 0)
+    {
+      tmp = prefix + '#';
+    }
+
   if (!isStrongNegated)  
     { 
-      tmp = "-"; 
+      tmp = "-" + tmp; 
     } 
  
   if (!terms.isEmpty())  
@@ -340,11 +353,6 @@ Predicate::toNegatedStringWithNS()
     { 
       tmp += predicate_name; 
     } 
-
-  if (prefix.compare("") != 0)
-    {
-      tmp = prefix + '#' + tmp;
-    }
 
   return tmp; 
 } 

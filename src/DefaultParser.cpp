@@ -259,23 +259,36 @@ DefaultParser::analyze_justification(v_t_nvd& children_, Prefixes& ps)
 }
 
 Default
-DefaultParser::getDefault(v_t_nvd& branch, Prefixes& ps) 
+DefaultParser::getDefault(v_t_nvd& branch, Prefixes& ps, bool hasArgument) 
 {
   Pred1Dim premise;
   Pred2Dim justification;
-  Pred1Dim conclusion;	
+  Pred1Dim conclusion;
+  Predicate argument;
+  int choice_point = branch.size();
   
-  switch (branch.size())
+  if (hasArgument)
+    {
+      choice_point--;
+    }
+  
+  switch (choice_point)
     {
     case 9:	
       // [A1 & ... & An : B1,...,Bk ]/[C].
       premise = analyze_conjunction(branch[1].children, ps);
       justification = analyze_justification(branch[3].children, ps);
       conclusion = analyze_conjunction(branch[7].children, ps);
+      if (hasArgument)
+	{
+	  v_t_nvd::iterator pos = branch[9].children.begin();
+	  pos++;
+	  argument = get_predicate(pos, ps);
+	}
       break;
     case 8:
       // [: B1,...,Bk ]/[C].
-      if (std::string(branch[1].value.begin(), branch[1].value.end()) == ":") 
+      if (std::string(branch[1].value.begin(), branch[1].value.end()) == ";") 
 	{
 	  justification = analyze_justification(branch[2].children, ps);
 	  conclusion = analyze_conjunction(branch[6].children, ps);
@@ -286,12 +299,29 @@ DefaultParser::getDefault(v_t_nvd& branch, Prefixes& ps)
 	  // [A1 & ... & An:]/[C].			
 	  premise = analyze_conjunction(branch[1].children, ps);
 	  conclusion = analyze_conjunction(branch[6].children, ps);
-	}			
+	}
+      if (hasArgument)
+	{
+	  v_t_nvd::iterator pos = branch[8].children.begin();
+	  pos++;
+	  argument = get_predicate(pos, ps);
+	}
       break;
     case 7:
       // [:]/[C].
       conclusion = analyze_conjunction(branch[5].children, ps);
+      if (hasArgument)
+	{
+	  v_t_nvd::iterator pos = branch[7].children.begin();
+	  pos++;
+	  argument = get_predicate(pos, ps);;
+	}
       break;		
+    }
+  if (hasArgument)
+    {
+      Default df(premise, justification, conclusion, argument);
+      return df;
     }
   Default df(premise, justification, conclusion);	
   return df;
@@ -328,22 +358,48 @@ DefaultParser::getPrefix(v_t_nvd& branch)
 }
 
 void
-DefaultParser::evaluateDefaults(const iter_t& root, Prefixes& ps, Defaults& dfs)
+DefaultParser::evaluateBranch(v_t_nvd& branch, Prefixes& ps, Defaults& dfs)
 {
-  int n = root->children.size();
-  for (int i = 0; i < n; ++i)
+  v_t_nvd::iterator branch_last = branch.end();
+  branch_last--;
+
+  if (*branch[0].value.begin() == '#')
     {
-      v_t_nvd branch = root->children[i].children;
-      if (*branch[0].value.begin() == '#')
+      // namespace
+      Prefix p = getPrefix(branch);
+      ps.addPrefix(p);
+    }
+  else
+    {
+      if (branch_last->children.size() == 0)
 	{
-	  Prefix p = getPrefix(branch);
-	  ps.addPrefix(p);
+	  // defaults without typing arguments
+	  Default df = getDefault(branch, ps, false);
+	  dfs.addDefault(df);
 	}
       else
 	{
-	  Default df = getDefault(branch, ps);
-	  dfs.addDefault(df);		
-	}		
+	  // defaults with typing arguments
+	  Default df = getDefault(branch, ps, true);
+	  dfs.addDefault(df);
+	}					
+    }	
+}
+
+void
+DefaultParser::evaluateDefaults(const iter_t& root, Prefixes& ps, Defaults& dfs)
+{
+  if (root->children[0].children.size() == 0)
+    {
+      evaluateBranch(root->children, ps, dfs);
+    }
+  else
+    {
+      int n = root->children.size();
+      for (int i = 0; i < n; ++i)
+	{				
+	  evaluateBranch(root->children[i].children, ps, dfs);
+	}
     }
 }
 
@@ -393,7 +449,7 @@ DefaultParser::parseInputStream(std::istream& iss, std::string& program, bool cq
   
   default_p df_p;
   boost::spirit::tree_parse_info<> info = boost::spirit::ast_parse(dfcontent.str().c_str(),
-								   df_p, boost::spirit::space_p);
+								   df_p >> boost::spirit::end_p, boost::spirit::space_p);
 
   if (info.full)
     {
