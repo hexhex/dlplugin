@@ -49,6 +49,20 @@ ABoxQueryExpr::output(std::ostream& s) const
   if (symbol.isString() || symbol.isSymbol())
     {
       sym = symbol.getUnquotedString();
+
+      if (sym[0] == '-')
+	{
+	  ///@todo we have to check if the remainder is enclosed in
+	  ///quotes... very ugly
+
+	  std::string::size_type last = sym.size() - 1;
+
+	  // remove unwanted quotes
+	  if (sym[1] == '"' && sym[last] == '"')
+	    {
+	      sym = "-" + sym.substr(2, last - 2);
+	    }
+	}
     }
   else
     {
