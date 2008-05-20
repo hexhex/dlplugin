@@ -22,8 +22,8 @@
   </owl:Class>
 
 	<Penguin rdf:ID="Tweety"/> 
-	<Bird rdf:ID="Joe"/> 
-<!--	<Penguin rdf:ID="Jin"/> 
+<!--	<Bird rdf:ID="Joe"/> 
+	<Penguin rdf:ID="Jin"/> 
 	<Bird rdf:ID="John"/>
 	<Penguin rdf:ID="Joan"/> 
 	<Bird rdf:ID="Min"/>
