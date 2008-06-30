@@ -1,10 +1,16 @@
+2008-06-30  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* TODO: Update.
+
 2008-05-19  DAO Tran Minh  <daotranminh@gmail.com>
-	* src/DefaultParser.cpp: New syntax for defaults [foo:A(X);bar:B(X)]/[foo:C(X)]<arg1(X)>
-                           Allowing namespace definitions in df files.
-                           Allowing typing predicates in defaults' definitions.
-	* include/DefaultParser.h: Likewise
-  * src/Default.cpp: Fix transformation 2's negated atom (cq=off)
-	* include/Default.h: Likewise
+
+	* src/DefaultParser.cpp: New syntax for defaults [foo:A(X);bar:B(X)]/[foo:C(X)]<arg1(X)>.
+        Allowing namespace definitions in df files.
+        Allowing typing predicates in defaults' definitions.
+	* include/DefaultParser.h: Likewise.
+
+	* src/Default.cpp: Fix transformation 2's negated atom (cq=off).
+	* include/Default.h: Likewise.
 
 2008-05-19  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
