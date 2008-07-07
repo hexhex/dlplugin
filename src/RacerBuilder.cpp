@@ -94,6 +94,7 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
   const Term& q = dlq->getQuery();
   const Tuple& indv = dlq->getPatternTuple();
+  const std::string concept = q.getUnquotedString();
   const std::string& nspace = dlq->getOntology()->getNamespace();
 
   if (!(dlq->isBoolean() && indv.size() == 1))
@@ -103,10 +104,22 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 
   try
     {
+      std::auto_ptr<ABoxConceptDescrExpr> c;
+
+      if (concept[0] != '-')
+	{
+	  c.reset(new ABoxQueryConcept(q, nspace));
+	}
+      else
+	{
+	  Term tmp(concept.substr(1), true);
+	  c.reset(new ABoxNegatedConcept(new ABoxQueryConcept(tmp, nspace)));
+	}
+
       stream << "(individual-instance? "
 	     << ABoxQueryIndividual(indv[0], nspace)
 	     << ' '
-	     << ABoxQueryConcept(q, nspace)
+	     << *c
 	     << ' '
 	     << query.getKBManager().getKBName()
 	     << ')'
@@ -141,6 +154,8 @@ RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 
   try
     {
+      ///@todo no negated role support
+
       stream << "(individuals-related? "
 	     << ABoxQueryIndividual(indv[0], nspace)
 	     << ' '
@@ -243,7 +258,8 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (DLBuildingError)
 	}
       else
 	{
-	  c.reset(new ABoxNegatedConcept(new ABoxQueryConcept(q, nspace)));
+	  Term tmp(concept.substr(1), true);
+	  c.reset(new ABoxNegatedConcept(new ABoxQueryConcept(tmp, nspace)));
 	}
 
       stream << "(concept-instances "
@@ -276,6 +292,8 @@ RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (DLBuildingError)
 
   try
     {
+      ///@todo no negated role?
+
       stream << "(retrieve-related-individuals "
 	     << ABoxQueryRole(q, nspace)
 	     << ' '
