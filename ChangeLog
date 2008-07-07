@@ -1,3 +1,9 @@
+2008-07-07  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerBuilder.cpp (RacerIsConceptMemberBuilder::buildCommand): Fix
+	negated concept query expressions.
+        (RacerConceptInstancesBuilder::buildCommand): Likewise.
+	
 2008-06-30  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* TODO: Update.
