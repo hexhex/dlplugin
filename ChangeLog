@@ -1,3 +1,8 @@
+2008-10-29  DAO Tran Minh  <daotranminh@gmail.com>
+	* src/Default.cpp: Update transformation \Upsilon to work with typing predicates.
+	* examples: bird, nixon and small_wine: add cases using typing predicates.
+                    student: new example.
+
 2008-07-07  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerBuilder.cpp (RacerIsConceptMemberBuilder::buildCommand): Fix
