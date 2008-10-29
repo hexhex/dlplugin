@@ -1,0 +1,5 @@
+[SparklingWine(X);WhiteWine(X)]
+/[WhiteWine(X)]<mywine(X)>
+
+[WhiteWine(X);ServedCold(X)]
+/[ServedCold(X)]<mywine(X)>

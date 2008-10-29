@@ -1,0 +1,2 @@
+mywine("<file://example/wine_small#Lambrusco_di_Modena>").
+mywine("<file://example/wine_small#Veuve_Cliquot>").

@@ -1,1 +1,1 @@
-[Bird(X):Flier(X)]/[Flier(X)].
+[Bird(X);Flier(X)]/[Flier(X)]

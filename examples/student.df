@@ -1,0 +1,7 @@
+[GraduateStudent(X);Assistant(X)]
+	/[Assistant(X)]<arg1(X)>
+
+[GraduateStudent(X)&hasScholarship(X,S);-Assistant(X)]
+	/[-Assistant(X)]<arg2(X,S)>
+
+
