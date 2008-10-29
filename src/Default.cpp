@@ -594,7 +594,7 @@ Default::getDLRules1(bool cqmode) // Testing new transformation
 	    }
 	      //}
 	}
-      std::cout << arguments.toString() << std::endl;
+      //std::cout << arguments.toString() << std::endl;
       if (!arguments.getTerms().isEmpty())
 	{
 	  r.addPositiveBody(arguments);
@@ -795,7 +795,32 @@ DLRules rules;
 		}
 	    }
 	}
-      
+
+      // adding dom() predicates for safety conditions
+      std::vector<MTerm> terms;
+      std::vector<MTerm>::iterator t_pos;
+
+      Terms all_distinct_terms_justifications = getAllDistinctTerms(justification);
+      Terms all_distinct_terms_premise = getAllDistinctTerms(premise);
+      Terms all_distinct_terms = all_distinct_terms_conclusion;
+      all_distinct_terms.insertNewTerms(all_distinct_terms_justifications);
+      all_distinct_terms.insertNewTerms(all_distinct_terms_premise);
+      terms = all_distinct_terms.getMTerms();
+      for (t_pos = terms.begin(); t_pos != terms.end(); t_pos++) 
+	{
+	  //	  if (t_pos->isVar())
+	  //{
+	  if (!arguments.getTerms().gotThisTerm(*t_pos))
+	    {
+	      Predicate p_dom("dom", *t_pos);
+	      r3.addPositiveBody(p_dom);			
+	    }
+	      //}
+	}
+      if (!arguments.getTerms().isEmpty())
+	{
+	  r3.addPositiveBody(arguments);
+	}
       rules.addDLRule(r3);
 
       // ...
