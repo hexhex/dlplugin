@@ -126,17 +126,21 @@ DFConverter::convert(std::istream& i, std::ostream& o)
       rules.addDLRule(r);
     }
 
-  program = program + rules.toString();		
-  std::cout << program << std::endl;
-  
+  program = program + rules.toString();
+  //std::cout << program << std::endl;
+
   if (dlvhex::dl::Registry::getVerbose() > 1) 
     {
       std::cerr << "Transformed dlrules from defaults:" << std::endl;
       std::cerr << program << std::endl;
     }
   
-  o << i.rdbuf();
   o << program;
+
+  if (!i.eof())
+    {
+      o << i.rdbuf();
+    }
 }
 
 }} // namespace dlvhex::df
