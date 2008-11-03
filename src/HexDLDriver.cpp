@@ -35,7 +35,6 @@
 #include "Ontology.h"
 #include "Registry.h"
 #include "DLError.h"
-#include "DFRewriter.h"
 
 #include <sstream>
 

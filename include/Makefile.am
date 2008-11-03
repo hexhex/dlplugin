@@ -38,7 +38,6 @@ noinst_HEADERS = \
                  DefaultParser.h \
                  Defaults.h \
                  DFConverter.h \
-                 DFRewriter.h \
                  DLAtom.h \
                  DLRule.h \
                  DLRules.h \
@@ -49,5 +48,5 @@ noinst_HEADERS = \
                  Terms.h \
                  Update.h \
                  Updates.h \
-								 Unifier.h
+		 Unifier.h
 
