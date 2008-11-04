@@ -1,3 +1,7 @@
+2008-11-03  DAO Tran Minh  <daotranminh@gmail.com>
+	* src/DFConverter.cpp: Switch order of outputing to the output-buffer.
+	* src/HexDLDriver.cpp: Remove DFRewriter.h
+
 2008-10-29  DAO Tran Minh  <daotranminh@gmail.com>
 	* src/Default.cpp: Update transformation \Upsilon to work with typing predicates.
 	* examples: bird, nixon and small_wine: add cases using typing predicates.
