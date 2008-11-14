@@ -354,6 +354,7 @@ namespace racer {
     // we don't have to increase the ABox here, we use retrieve-under-premise
     
     // pose a conjunctive query with only a single role query atom
+    // because Racer can handle (not R) in nRQLs.
     comp->add
       (new QueryDirector<RacerAdapterBuilder<NRQLRetrieveUnderPremise<NRQLConjunctionBuilder> >,
        RacerAnswerDriver>(this->stream)
