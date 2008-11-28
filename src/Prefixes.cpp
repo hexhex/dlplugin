@@ -36,11 +36,10 @@ namespace dlvhex {
 namespace df {
 
 Prefixes::Prefixes()
-{
-}
+{ }
 
 void
-Prefixes::addPrefix(Prefix& p)
+Prefixes::push_back(Prefix& p)
 {
   prefixes.push_back(p);
 }
@@ -48,22 +47,18 @@ Prefixes::addPrefix(Prefix& p)
 std::string
 Prefixes::getPath(std::string& name_)
 {
-  std::string path_ = "";
-  std::vector<Prefix>::iterator pos;
-  
   if (prefixes.size() > 0)
     {
-      for (pos = prefixes.begin(); pos != prefixes.end(); ++pos)
+      for (std::list<Prefix>::iterator i = prefixes.begin(); i != prefixes.end(); ++i)
 	{
-	  if (name_.compare(pos->getName()) == 0)
+	  if (name_.compare(i->getName()) == 0)
 	    {
-	      path_ = pos->getPath();
-	      break;
+	      return i->getPath();
 	    }
 	}
     }
   
-  return path_;
+  return "";
 }
 
 } // namespace df

@@ -36,6 +36,11 @@
  
 namespace dlvhex { 
 namespace df { 
+
+  enum PredicateMode
+  {
+    mRule, mQuery, mDefault
+  };
  
   /** 
    * @brief An auxilary predicate  
@@ -43,14 +48,15 @@ namespace df {
   class Predicate  
     { 
     private: 
+      bool isNull;
       bool isStrongNegated; 
       std::string predicate_name; 
       std::string prefix;
       Terms terms; 
       
     public: 
-      Predicate(); 
-      
+      Predicate();
+
       Predicate(const std::string&); 
       
       Predicate(const std::string&, const Terms&); 
@@ -62,9 +68,18 @@ namespace df {
       Predicate(bool, const std::string&, const Terms&); 
 
       Predicate(bool, const std::string&, const std::string&, const Terms&);
+
+      bool
+	isNULL();
       
+      void
+	setNULL(bool);
+
       bool  
 	isStronglyNegated(); 
+
+      bool
+	gotThisTerm(MTerm&);
       
       std::string  
 	getPredicateName();
@@ -103,76 +118,12 @@ namespace df {
 
       std::string  
 	getNegatedLiteralNameWithNS();
-	 
+
       Terms&  
 	getTerms();  
       
-      /** 
-       * Compare two predicates 
-       *  
-       * @param p2 the 2nd predicate 
-       * 
-       * @return MORE_GENERAL if this predicate is more general than p2 
-       *         LESS_GENERAL if this predicate is less general than p2 
-       *         NOT_COMPARABLE if two predicates are incomparable 
-       */ 
-      ComparisonResult 
-	compareTo(Predicate& p2); 
-      
-      /** 
-       * Compare a predicate with a set of predicates 
-       *  
-       * @param ps2 the set of predicates to be compared 
-       * 
-       * @return MORE_GENERAL if this predicate is more general than some predicates in ps2, 
-       *                      those 'less general' predicates will be removed from ps2 
-       *         LESS_GENERAL if this predicate is less general than one predicate in ps2 
-       *         NOT_COMPARABLE if this predicate is incomparable to any of the predicates in ps2 
-       */ 
-      ComparisonResult 
-	compareTo(std::vector<Predicate>& ps2); 
-      
-      /** 
-	* Rename all variables in preparing for unification 
-	* 
-	* @param std_id The id from a Default, to be added to each variable's name 
-	*/ 
-      void 
-	rename_terms(std::string& str_id); 
-      
       Predicate& 
 	operator=(const Predicate&); 
-      
-      /** 
-       * Check if two predicates are unifiable 
-       * 
-       * @param p2 the predicate to be checked 
-       * 
-       * @return an empty unifier if the two predicates are not unifiable 
-       *         the unifer otw. 
-       */ 
-      Unifier 
-	isUnifiable(const Predicate& p2); 
-      
-      /** 
-       * Check if two literals are 'negated unifiable' 
-       * ('negated unifiable' means 2 literals have opposite strong negation signs 
-       *   and two predicate are unifiable) 
-       * 
-       * @param p2 the literal to be checked 
-       * 
-       * @return an empty unifier if the two literals are not 'negated unifiable' 
-       *         the unifer otw. 
-       */		 
-      Unifier 
-	isNegatedUnifiable(const Predicate& p2); 
-      
-      /** 
-       * Apply the strong negation to a predicate 
-       * i.e. change isStrongNegation to its negated truth value 
-       */ 
-      void  
-	applyNegation(); 
       
       std::string  
 	toString(); 

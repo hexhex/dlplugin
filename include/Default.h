@@ -1,5 +1,5 @@
 /* dlvhex-dlplugin -- Integration of Answer-Set Programming and Description Logics. 
- *
+ * 
  * Copyright (C) 2007, 2008 DAO Tran Minh 
  *  
  * This file is part of dlvhex-dlplugin. 
@@ -20,173 +20,93 @@
  */ 
  
 /** 
- * @file   Default.h 
+ * @file   Default.h
  * @author DAO Tran Minh 
  * @date   Tue Dec 18 17:20:24 2007 
  *  
- * @brief  A Default of the form [A:B]/[C]. 
+ * @brief  A Default of the form [A;B]/[C]. 
  *  
  *  
  */ 
- 
-#ifndef _DLVHEX_DF_DEFAULT_H 
-#define _DLVHEX_DF_DEFAULT_H 
- 
-#include <vector> 
-#include <sstream> 
-#include "DLRules.h" 
-#include "Defaults.h" 
-#include "Predicate.h" 
-#include "Update.h" 
- 
+
+#ifndef _DLVHEX_DF_DEFAULT_H_ 
+#define _DLVHEX_DF_DEFAULT_H_ 
+
+#include <list>
+#include <dlvhex/PluginInterface.h>
+#include "Defaults.h"
+#include "DLRules.h"
+#include "Pred2Dim.h"
+#include "Updates.h"
+
 #define PREFIX_IN	"in_" 
-#define PREFIX_OUT_CONS "out_cons_"
-#define	PREFIX_OUT_DEF	"out_def_" 
-#define	PREFIX_PRED	"p_" 
-#define PREFIX_ALL_IN 	"all_in_def_" 
-#define PREFIX_ALL_PRED	"all_p_def_" 
-#define PREFIX_MY 	"my_" 
-#define PREFIX_CONS     "cons_" // consistent
-#define PREFIX_CONS_DEF "cons_def_" // consistent
- 
-namespace dlvhex { 
-namespace df { 
- 
-  class Defaults; 
+#define	PREFIX_PRED	"p_"
+#define	PREFIX_CONS	"cons_"
+#define PREFIX_INCONS   "incons_"
+#define	PREFIX_OUT	"out_"
+
+namespace dlvhex {
+namespace df {
+
+  class Defaults;
+
+  class Default
+  {
+  private:
+    Defaults* parent;
+    unsigned int id;
+    Pred1Dim prerequisite;
+    Pred2Dim justifications;
+    Pred1Dim conclusion;
+    Predicate argument;
+    
+    DLRules
+      getFacts_Pi();
+
+    DLRules
+      getFacts_Omega_Upsilon();
+
+    DLRules
+      additionalDLRules4Conclusion(Pred1Dim&, Predicate&, std::string prefix = PREFIX_IN);
+
+    DLAtoms
+      getDLBodies(Updates&, Pred1Dim&, bool);
+
+  public:
+    Default(Pred1Dim, Pred2Dim, Pred1Dim);
+    Default(Pred1Dim, Pred2Dim, Pred1Dim, Predicate);
+    
+    unsigned int
+      getID();
+    
+    void
+      setID(unsigned int);
+
+    void
+      setParent(Defaults*);
+
+    /** 
+     * @return An Updates to build \lambda 
+     *         \union(concept/role +=/-= (prefix)_concept/p_role) 
+     *         for all concepts/roles in the conclusion 
+     */ 
+    Updates 
+      getUpdates(std::string); 
+
+    DLRules
+      getDLRules_Pi(bool);
+
+    DLRules
+      getDLRules_Omega(bool);
+
+    DLRules
+      getDLRules_Upsilon(bool);
+
+    std::string 
+      toString();
+  };
   
-  /** 
-   * @breif A Default of the form [A:B]/[C]. 
-   */ 
-  class Default  
-    { 
-    private: 
-      /// Each default is assigned with an an id 
-      /// This id is used in the all_in_def_id and out_def_id names  
-      /// for guessing the in/out status of the whole conjunctive conclusion 
-      unsigned int id; 
-      
-      /// A boolean variable used to mark NULL defaults 
-      /// A NULL default is generated when the parser fails to parse an input 
-      bool is_null; 
-      
-      /// The pointer to the set of all defaults 
-      Defaults* parent; 
-      
-      /// The premise can be a conjunction 
-      Pred1Dim premise; 
-      
-      /// The justification can be a set of conjunctions 
-      Pred2Dim justification; 
-      
-      /// The conclusion can be a conjunction 
-      Pred1Dim conclusion; 
-      
-      /// Cache these special predicates (all_in_) for building forcing rules 
-      Predicate all_in_p;
+} // namespace df
+} // namespace dlvhex
 
-      /// Typing predicate
-      Predicate arguments;
-
-
-      /** 
-       * @return A list of facts corresponding to the conclusion; used with prerequisite-free and justification-free defaults 
-       */ 
-      DLRules  
-	getFacts();
- 
-    public: 
-      Default(bool); 
-      
-      Default(Pred1Dim, Pred2Dim, Pred1Dim);
-
-      Default(Pred1Dim, Pred2Dim, Pred1Dim, Predicate);
-      
-      static  
-	Default null_default; 
-      
-      unsigned int 
-	getID(); 
-      
-      bool  
-	isNULL(); 
-      
-      void  
-	setID(unsigned int); 
-      
-      void  
-	setParent(Defaults*); 
-      
-      Pred1Dim  
-	getConclusion(); 
-
-      Pred2Dim
-	getJustifications();
-      
-      /** 
-       * @return An Updates to build \lambda 
-       *         \union(concept/role +=/-= p_concept/p_role) 
-       *         for all concepts/roles in the conclusion 
-       */ 
-      Updates 
-	getUpdates4Lambda(); 
-      
-      /** 
-       * @return An Updates to build \lambda' 
-       *         \union(concept/role +=/-= in_concept/in_role) 
-       *         for all concepts/roles in the conclusion 
-       */ 
-      Updates  
-	getUpdates4LambdaPrime(); 
-	 
-      /** 
-       * @param ps A set of predicates 
-       * 
-       * @return A Terms including all ps's MTerm(s) but no overlap 
-       *         e.g. ps = P(X,Y), Q(Y,Z) 
-       *         then Terms = <X,Y,Z> 
-       */ 
-      Terms  
-	getAllDistinctTerms(Pred1Dim ps); 
-
-      Terms  
-	getAllDistinctTerms(Pred2Dim ps);
-      
-      /** 
-       * @return The all_in_def_id predicate corresponding to this default 
-       */ 
-      Predicate& 
-	getAllInPred(); 
-      
-      
-      /** 
-       * @param no_cq Determines if cq is used in DLAtoms
-       *
-       * @return All the transformed DL rules corresponding to this default 
-       */ 
-      DLRules  
-	getDLRules(bool no_cq);
-      
-      /** 
-       * @param no_cq Determines if cq is used in DLAtoms
-       *
-       * @return New conclusions-based transformation 
-       */ 
-      DLRules  
-	getDLRules1(bool no_cq); 
-
-      /** 
-       * @param no_cq Determines if cq is used in DLAtoms
-       *
-       * @return justifications-based transformation 
-       */ 
-      DLRules  
-	getDLRules2(bool no_cq);
-      
-      std::string  
-	toString(); 
-    }; 
-  
-} // namespace df 
-} // namespace dlvhex 
-
-#endif /* _DLVHEX_DF__H */
+#endif /* _DLVHEX_DF_DEFAULT_H */

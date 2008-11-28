@@ -35,7 +35,7 @@ namespace dlvhex {
 namespace df { 
  
 Update::Update(const std::string& cr_name_, Operator op_, const std::string& predicate_name_) 
-  : cr_name(cr_name_), op(op_), predicate_name(predicate_name_)  
+  : cr_name(cr_name_), op(op_), predicate_name(predicate_name_)
 { } 
 
 bool
@@ -45,7 +45,7 @@ Update::operator==(const Update& u2) const
 	  && (op == u2.op)
 	  && (predicate_name.compare(u2.predicate_name) == 0));
 }
- 
+
 std::string  
 Update::toString()  
 { 
@@ -57,7 +57,7 @@ Update::toString()
     case UMINUS: tmp = "-="; 
       break; 
     }
-  // For the moment, when updates with namespace need "..."
+  // For the moment, when updates with namespace need to be quoted
   std::string::size_type find_sharp = cr_name.find("#");
   if (find_sharp != std::string::npos)
     {
@@ -67,5 +67,5 @@ Update::toString()
   return cr_name + tmp + predicate_name; 
 } 
 
-}	// namespace df 
-}	// namespace dlvhex
+} // namespace df 
+} // namespace dlvhex

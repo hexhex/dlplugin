@@ -20,60 +20,47 @@
  */ 
  
 /** 
- * @file   DLAtom.h 
+ * @file   DLAtom.h
  * @author DAO Tran Minh 
  * @date   Tue Dec 18 17:20:24 2007 
  *  
- * @brief  A DLAtom of the form DL[\lambda;\query](Terms). 
+ * @brief  A DLAtom of the form DL[\lambda;\ucq](Terms). 
  *  
  *  
  */ 
- 
-#ifndef _DLVHEX_DF_DLATOM_H 
-#define _DLVHEX_DF_DLATOM_H 
- 
-#include <string> 
-#include <vector> 
-#include "Predicate.h" 
-#include "Terms.h" 
-#include "Updates.h" 
- 
-typedef std::vector<dlvhex::df::Predicate> Pred1Dim; 
-typedef std::vector<Pred1Dim>		   Pred2Dim; 
- 
-namespace dlvhex { 
-namespace df { 
- 
+
+#ifndef _DLVHEX_DF_DLATOM_H_
+#define _DLVHEX_DF_DLATOM_H_
+
+#include "Pred2Dim.h"
+#include "Updates.h"
+
+namespace dlvhex {
+namespace df {
+
   /** 
    * @brief A DLAtom of the form DL[\lambda;\query](Terms). 
    */ 
-  class DLAtom  
-    { 
-    private: 
-      /// A set of updates to build up \lambda 
-      Updates updates;	 
-      
-      /// A query to the KB in the form of UCQ (Union of Conjuctive Queries) 
-      Pred2Dim ucq; 
+  class DLAtom 
+  {
+  private:
+    bool naf;
+    Updates updates;
+    Pred2Dim ucq;
+    std::string query;
+    Terms terms;
+  public:
+    DLAtom(bool, Updates&, Predicate&, Terms&);
+    DLAtom(bool, Updates&, Pred1Dim&, Terms&);
+    DLAtom(bool, Pred1Dim&, Terms&);
+    DLAtom(bool, Updates&, Pred2Dim&, Terms&);
+    DLAtom(bool, Updates&, std::string, Terms&);
+    
+    std::string 
+      toString();
+  };
 
-      /// Simple query, with concept/role name only.
-      /// Used when --cq=no
-      std::string query;
-      
-      /// A set of Terms to get the instantiated result of the query 
-      Terms terms; 
- 
-    public: 
-      DLAtom(Updates&, Predicate&, Terms&);
-      DLAtom(Pred2Dim&, Terms&); 
-      DLAtom(Updates&, Pred2Dim&, Terms&); 
-      DLAtom(Updates&, std::string, Terms&);
-      
-      std::string 
-	toString(); 
-    }; 
-  
-}	// namespace df 
-}	// namespace dlvhex 
+} // namespace df
+} // namespace dlvhex
 
-#endif /* _DLVHEX_DF_DLATOM_H */
+#endif /* _DLVHEX_DF_DLATOM_H_ */

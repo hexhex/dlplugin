@@ -20,53 +20,46 @@
  */ 
  
 /** 
- * @file   Updates.cpp 
+ * @file   DLAtoms.h
  * @author DAO Tran Minh 
  * @date   Tue Dec 18 17:20:24 2007 
  *  
- * @brief  A set of Updates. 
+ * @brief  A list of DLAtom(s). 
  *  
  *  
- */ 
+ */
 
-#include <iostream>
-#include <algorithm> 
-#include "Updates.h" 
- 
+#ifndef _DLVHEX_DF_DLATOMS_H_
+#define _DLVHEX_DF_DLATOMS_H_
+
+#include <list>
+#include "DLAtom.h"
+
 namespace dlvhex { 
 namespace df { 
- 
-Updates::Updates()  
-{ } 
- 
-void 
-Updates::push_back(Update& update_)  
-{
-  if (std::find(updates.begin(), updates.end(), update_) == updates.end())
-    {
-      updates.push_back(update_); 
-    }
-}
-void  
-Updates::insert(const Updates& updates_)  
-{ 
-  updates.insert(updates.begin(), updates_.updates.begin(), updates_.updates.end());
-} 
- 
-std::string  
-Updates::toString()  
-{ 
-  std::string tmp = ""; 
-  if (updates.size() > 0)  
-    { 
-      for (std::list<Update>::iterator pos = updates.begin(); pos != updates.end(); pos++)  
-	{ 
-	  tmp = tmp + pos->toString() + ", "; 
-	} 
-      tmp = tmp.erase(tmp.length()-2) + ";"; 
-    } 
-  return tmp; 
-} 
 
-} // namespace df 
-} // namespace dlvhex 
+  class DLAtoms {
+  private:
+    std::list<DLAtom> dlatoms;
+
+  public:
+    DLAtoms() { };
+    DLAtoms(std::list<DLAtom>&);
+    
+    void
+      push_back(DLAtom&);
+
+    void
+      insert(DLAtoms&);
+
+    int
+      size();
+
+    std::string
+      toString();
+  };
+
+} // namespace df
+} // namespace dlvhex
+
+#endif /* _DLVHEX_DF_DLATOMS_H_ */

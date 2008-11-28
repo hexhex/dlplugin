@@ -29,39 +29,38 @@
  * 
  */
 
-#ifndef _DLVHEX_DF_DLRULES_H
-#define _DLVHEX_DF_DLRULES_H
+#ifndef _DLVHEX_DF_DLRULES_H_
+#define _DLVHEX_DF_DLRULES_H_
 
-#include <vector>
 #include "DLRule.h"
 
 namespace dlvhex {
 namespace df {
 
-	class DLRules 
-	{
-	private:
-		std::vector<DLRule> dlrules;
+  class DLRules 
+  {
+  private:
+    std::list<DLRule> dlrules;
+    
+  public:
+    DLRules() { };
+    
+    void 
+      push_back(DLRule&);
+    
+    /**
+     * Append a DLRules (a set of DLRule) into this DLRules
+     *
+     * @param dlrs2 the DLRules to be appended
+     */
+    void 
+      insert(DLRules&);
+    
+    std::string 
+      toString();
+  };
+  
+} // namespace df
+} // namespace dlvhex
 
-	public:
-		DLRules();
-	
-		void 
-		addDLRule(const DLRule&);
-	
-		/**
-		 * Append a DLRules (a set of DLRule) into this DLRules
-		 *
-		 * @param dlrs2 the DLRules to be appended
-		 */
-		void 
-		insertDLRules(const DLRules& dlrs2);
-	
-		std::string 
-		toString();
-};
-
-}	// namespace df
-}	// namespace dlvhex
-
-#endif /* _DLVHEX_DF_DLRULES_H */
+#endif /* _DLVHEX_DF_DLRULES_H_ */

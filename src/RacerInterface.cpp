@@ -69,8 +69,7 @@ RacerInterface::RacerInterface()
     dlconverter(new HexDLDriver),
     dfconverter(new dlvhex::df::DFConverter),
     dloptimizer(new DLOptimizer),
-    kbManager(new RacerKBManager(*stream)),
-    hasDefault(false)
+    kbManager(new RacerKBManager(*stream))
 { }
 
 
@@ -82,8 +81,7 @@ RacerInterface::RacerInterface(const RacerInterface&)
     dlconverter(0),
     dfconverter(0),
     dloptimizer(0),
-    kbManager(0),
-    hasDefault(false)
+    kbManager(0)
 { /* ignore */ }
 
 
@@ -142,11 +140,9 @@ RacerInterface::createConverters()
 {
   std::vector<PluginConverter*> cvts;
 
-  if (hasDefault)
-    {
-      cvts.push_back(dfconverter);
-    }
-
+  // always push the dfconverter since default rules
+  // and dl-/HEX-rules are now can live in the same input
+  cvts.push_back(dfconverter);
   cvts.push_back(dlconverter);
 
   return cvts;
@@ -246,16 +242,13 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       out << "                       -push    ... turn off pushing" << std::endl;
       out << "                       -dlcache ... turn off dl-cache" << std::endl;
       out << " --dldebug=LEVEL       Set debug level to LEVEL." << std::endl;
-      out << " --default=FILENAME    Set \"default logic\" file name." << std::endl;
-      out << " --cq=CQMOD            Set DLAtoms' query options, where CQMOD may be" << std::endl;
-      out << "                       -on  ... use cq in DLAtoms' query" << std::endl;
-      out << "                       -off ... don't use cq in DLAtoms' query, applicable only for literal justifications" << std::endl;
       out << " --dftrans=DFTRANS     Choose transformation from defaults to dl-rules. TRANS can be" << std::endl;
       out << "                       -1: the old conclusion-based transformation." << std::endl;
       out << "                       -2: the new conclusion-based transformation." << std::endl;
       out << "                       -3: the justification-based transformation." << std::endl;
-      out << " --dfpruning=DP        Choose to used pruning rules for default-dl transformation or not." << std::endl;
-      out << "                       DP can be -on or -off." << std::endl;
+      out << " --cq=CQMOD            Set DLAtoms' query options, where CQMOD may be" << std::endl;
+      out << "                       -on  ... use cq in DLAtoms' query" << std::endl;
+      out << "                       -off ... don't use cq in DLAtoms' query" << std::endl;
 
       return;
     }
@@ -265,10 +258,8 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
   const char *setup        = "--dlsetup=";
   const char *optimization = "--dlopt=";
   const char *dldebug      = "--dldebug=";
-  const char *dfparser     = "--default=";
+  const char *dftrans      = "--dftrans=";
   const char *cqmode       = "--cq=";
-  const char *trans        = "--dftrans=";
-  const char *dfpruning    = "--dfpruning=";
 
   std::vector<std::string>::iterator it = argv.begin();
 
@@ -388,23 +379,33 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	  continue;
 	}
 		
-      o = it->find(dfparser);
-
+      o = it->find(dftrans);
       if (o != std::string::npos)
 	{
-	  hasDefault = true;
-	  std::string df_file = it->substr(o + strlen(dfparser)); // get df file name				
-	  dfconverter->setDefaultFile(df_file);
+	  std::string trans_option = it->substr(o + strlen(dftrans));
+	  if (trans_option.compare("1") == 0)
+	    {
+	      dfconverter->setDFTrans(1);
+	    }
+	  else
+	    {
+	      if (trans_option.compare("3") == 0)
+		{
+		  dfconverter->setDFTrans(3);
+		}
+	      else
+		{
+		  dfconverter->setDFTrans(2);
+		}
+	    }
 	  it = argv.erase(it);
-	  continue;    
+	  continue;
 	}
-
-      o = it->find(cqmode);
       
+      o = it->find(cqmode);
       if (o != std::string::npos)
 	{
-	  hasDefault = true;
-	  std::string cq_option = it->substr(o + strlen(cqmode)); // get the option for cq mode
+	  std::string cq_option = it->substr(o+strlen(cqmode));
 	  if (cq_option.compare("off") == 0)
 	    {
 	      dfconverter->setCQmode(false);
@@ -414,48 +415,9 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	      dfconverter->setCQmode(true);
 	    }
 	  it = argv.erase(it);
-	  continue;    
-	}
-
-      o = it->find(trans);
-      if (o != std::string::npos)
-	{
-	  std::string trans_option = it->substr(o + strlen(trans));
-	  if (trans_option.compare("1") == 0)
-	    {
-	      dfconverter->setTrans(1);
-	    }
-	  else
-	    {
-	      if (trans_option.compare("3") == 0)
-		{
-		  dfconverter->setTrans(3);
-		}
-	      else
-		{
-		  dfconverter->setTrans(2);
-		}
-	    }
-	  it = argv.erase(it);
 	  continue;
 	}
 
-      o = it->find(dfpruning);
-      if (o != std::string::npos)
-	{
-	  std::string dfp_option = it->substr(o + strlen(dfpruning));
-	  if (dfp_option.compare("off") == 0)
-	    {
-	      dfconverter->setDFP(false);
-	    }
-	  else
-	    {
-	      dfconverter->setDFP(true);
-	    }
-	  it = argv.erase(it);
-	  continue;
-	}
-      
       ++it; // nothing found, check next position
     }
 }

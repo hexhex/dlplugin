@@ -29,10 +29,10 @@
  * 
  */
 
-#ifndef _DLVHEX_DF_PREFIXES
-#define _DLVHEX_DF_PREFIXES
+#ifndef _DLVHEX_DF_PREFIXES_H_
+#define _DLVHEX_DF_PREFIXES_H_
 
-#include <vector>
+#include <list>
 #include "Prefix.h"
 
 namespace dlvhex {
@@ -41,13 +41,13 @@ namespace df {
   class Prefixes
     {
     private:
-      std::vector<Prefix> prefixes;
+      std::list<Prefix> prefixes;
       
     public:		
       Prefixes();
 
       void
-	addPrefix(Prefix&);
+	push_back(Prefix&);
       
       std::string
 	getPath(std::string&);
@@ -56,4 +56,4 @@ namespace df {
 } // namespace df
 } // namespace dlvhex
 
-#endif /* _DLVHEX_DF_PREFIXES */
+#endif /* _DLVHEX_DF_PREFIXES_H_ */

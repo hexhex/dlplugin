@@ -32,42 +32,39 @@
 #ifndef _DLVHEX_DF_UPDATES_H
 #define _DLVHEX_DF_UPDATES_H
 
-#include <vector>
+#include <list>
 #include "Update.h"
 
 namespace dlvhex {
 namespace df {
 
-	/**
-	 * @brief  A set of Update(s)
-	 */
-	class Updates 
-	{
-	private:
-		std::vector<Update> updates;
-
-		bool
-		gotThisUpdate(const Update&);
-
-	public:
-		Updates();
-
-		void 
-		addUpdate(const Update&);
-
-		/**
-		 * Append an Updates (a set of Update(s)) into this Updates
-		 *
-		 * @param us2 the Updates to be appended
-		 */
-		void 
-		insertUpdates(const Updates& us2);
-	
-		std::string 
-		toString();
-	};
-
-}	// namespace df
-}	// namespace dlvhex
+  /**
+   * @brief  A set of Update(s)
+   */
+  class Updates 
+  {
+  private:
+    std::list<Update> updates;
+    
+  public:
+    Updates();
+    
+    void 
+      push_back(Update&);
+    
+    /**
+     * Append an Updates (a set of Update(s)) into this Updates
+     *
+     * @param us2 the Updates to be appended
+     */
+    void 
+      insert(const Updates& us2);
+    
+    std::string 
+      toString();
+  };
+  
+} // namespace df
+} // namespace dlvhex
 
 #endif /* _DLVHEX_DF_UPDATES_H */

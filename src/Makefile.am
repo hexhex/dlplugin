@@ -58,20 +58,22 @@ Registry.cpp \
 TCPStream.cpp \
 URI.cpp \
 Default.cpp \
-DefaultParser.cpp \
 Defaults.cpp \
 DFConverter.cpp \
+DFProcessor.cpp \
 DLAtom.cpp \
+DLAtoms.cpp \
 DLRule.cpp \
 DLRules.cpp \
 Predicate.cpp \
+Pred1Dim.cpp \
+Pred2Dim.cpp \
 Prefix.cpp \
 Prefixes.cpp \
 MTerm.cpp \
 Terms.cpp \
 Update.cpp \
-Updates.cpp \
-Unifier.cpp
+Updates.cpp
 
 #
 # in maintainer-mode we check for a sufficient version of the bison/flex combo

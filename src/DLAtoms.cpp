@@ -20,53 +20,58 @@
  */ 
  
 /** 
- * @file   Updates.cpp 
+ * @file   DLAtoms.cpp 
  * @author DAO Tran Minh 
  * @date   Tue Dec 18 17:20:24 2007 
  *  
- * @brief  A set of Updates. 
+ * @brief  A list of DLAtom(s). 
  *  
  *  
  */ 
 
-#include <iostream>
-#include <algorithm> 
-#include "Updates.h" 
- 
-namespace dlvhex { 
-namespace df { 
- 
-Updates::Updates()  
-{ } 
- 
-void 
-Updates::push_back(Update& update_)  
-{
-  if (std::find(updates.begin(), updates.end(), update_) == updates.end())
-    {
-      updates.push_back(update_); 
-    }
-}
-void  
-Updates::insert(const Updates& updates_)  
-{ 
-  updates.insert(updates.begin(), updates_.updates.begin(), updates_.updates.end());
-} 
- 
-std::string  
-Updates::toString()  
-{ 
-  std::string tmp = ""; 
-  if (updates.size() > 0)  
-    { 
-      for (std::list<Update>::iterator pos = updates.begin(); pos != updates.end(); pos++)  
-	{ 
-	  tmp = tmp + pos->toString() + ", "; 
-	} 
-      tmp = tmp.erase(tmp.length()-2) + ";"; 
-    } 
-  return tmp; 
-} 
+#include "DLAtoms.h"
 
-} // namespace df 
-} // namespace dlvhex 
+namespace dlvhex { 
+namespace df {
+
+  DLAtoms::DLAtoms(std::list<DLAtom>& dlatoms_)
+  {
+    for (std::list<DLAtom>::iterator i = dlatoms_.begin(); i != dlatoms_.end(); ++i)
+      {
+	DLAtom d = *i;
+	dlatoms.push_back(d);
+      }
+  };
+
+  void
+  DLAtoms::push_back(DLAtom& d)
+  {
+    dlatoms.push_back(d);
+  }
+
+  int
+  DLAtoms::size()
+  {
+    return dlatoms.size();
+  }
+
+  void
+  DLAtoms::insert(DLAtoms& dlatoms_)
+  {
+    dlatoms.insert(dlatoms.begin(), dlatoms_.dlatoms.begin(), dlatoms_.dlatoms.end());
+  }
+
+  std::string
+  DLAtoms::toString()
+  {
+    std::string tmp = "";
+    for (std::list<DLAtom>::iterator i = dlatoms.begin(); i != dlatoms.end(); ++i)
+      {
+	tmp = tmp + i->toString() + ", ";
+      }
+
+    return tmp.substr(0, tmp.length() - 2);
+  }
+
+} // namespace df
+} // namespace dlvhex

@@ -101,5 +101,5 @@ MTerm::setName(std::string new_name)
   term_representation = new_name; 
 } 
  
-}	// namespace df 
-}	// namespace dlvhex
+} // namespace df 
+} // namespace dlvhex

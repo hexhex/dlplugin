@@ -37,38 +37,38 @@
 namespace dlvhex {
 namespace df {
 
-	enum Operator 
-		{ 
-			UPLUS, 
-			UMINUS 
-		};
+  enum Operator 
+  { 
+    UPLUS, 
+    UMINUS 
+  };
+  
+  /**
+   * @brief  An update of the form: Concept/Role +=/-= Predicate
+   */
+  class Update 
+  {
+  private:
+    /// Concept or Role name
+    std::string cr_name;
+    
+    /// operator += or -=
+    Operator op;
+    
+    /// predicate used for updating the concept or role
+    std::string predicate_name;
+    
+  public:
+    Update(const std::string&, Operator, const std::string&);
+    
+    bool
+      operator==(const Update&) const;
 
-	/**
-	 * @brief  An update of the form: Concept/Role +=/-= Predicate
-	 */
-	class Update 
-	{
-	private:
-		/// Concept or Role name
-		std::string cr_name;
-
-		/// operator += or -=
-		Operator op;
-
-		/// predicate used for updating the concept or role
-		std::string predicate_name;
-
-	public:
-		Update(const std::string&, Operator, const std::string&);
-		
-		bool
-		operator==(const Update&) const;
-
-		std::string 
-		toString();
-	};
-
-}	// namespace df
-}	// namespace dlvhex
+    std::string 
+      toString();
+  };
+  
+} // namespace df
+} // namespace dlvhex
 
 #endif	/* _UPDATE_H */

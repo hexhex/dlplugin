@@ -20,53 +20,58 @@
  */ 
  
 /** 
- * @file   Updates.cpp 
+ * @file   Pred2Dim.h
  * @author DAO Tran Minh 
  * @date   Tue Dec 18 17:20:24 2007 
  *  
- * @brief  A set of Updates. 
+ * @brief  A list of Pred1Dim(s), i.e., a 2-dimensional list of Predicate(s).
  *  
  *  
- */ 
+ */
 
-#include <iostream>
-#include <algorithm> 
-#include "Updates.h" 
- 
-namespace dlvhex { 
-namespace df { 
- 
-Updates::Updates()  
-{ } 
- 
-void 
-Updates::push_back(Update& update_)  
-{
-  if (std::find(updates.begin(), updates.end(), update_) == updates.end())
-    {
-      updates.push_back(update_); 
-    }
-}
-void  
-Updates::insert(const Updates& updates_)  
-{ 
-  updates.insert(updates.begin(), updates_.updates.begin(), updates_.updates.end());
-} 
- 
-std::string  
-Updates::toString()  
-{ 
-  std::string tmp = ""; 
-  if (updates.size() > 0)  
-    { 
-      for (std::list<Update>::iterator pos = updates.begin(); pos != updates.end(); pos++)  
-	{ 
-	  tmp = tmp + pos->toString() + ", "; 
-	} 
-      tmp = tmp.erase(tmp.length()-2) + ";"; 
-    } 
-  return tmp; 
-} 
+#ifndef _DLVHEX_DF_PRED2DIM_H_
+#define _DLVHEX_DF_PRED2DIM_H_
 
-} // namespace df 
-} // namespace dlvhex 
+#include "Pred1Dim.h"
+
+namespace dlvhex {
+namespace df {
+
+  class Pred1Dim;
+
+  class Pred2Dim
+  {
+  private:
+    std::list<Pred1Dim> pred2dim;
+  public:
+    Pred2Dim() { };
+    Pred2Dim(Predicate&);
+    Pred2Dim(Pred1Dim&);
+    Pred2Dim(std::list<Pred1Dim>&);
+
+    void
+      setContent(std::list<Pred1Dim>&);
+
+    Terms
+      getAllDistinctTerms();
+
+    int
+      size();
+
+    std::list<Pred1Dim>::iterator
+      begin();
+
+    std::list<Pred1Dim>::iterator
+      end();
+
+    void
+      push_back(Pred1Dim&);
+
+    std::string
+      toString(PredicateMode);
+  };
+  
+} // namespace df
+} // namespace dlvhex
+
+#endif /* _DLVHEX_DF_PRED2DIM_H_*/

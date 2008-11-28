@@ -1,5 +1,7 @@
 -*- org -*-
 
+* TODO If the path to the owl file has a blank then there will be an error from the external atom.
+
 * TODO &dlDR and dlX in a rule will be pushed together
 Datatype roles are handled very weird in Racer: adding datatype
 support to (U)CQs should fix this problem.

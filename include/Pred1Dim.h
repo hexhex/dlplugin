@@ -20,51 +20,73 @@
  */ 
  
 /** 
- * @file   DLAtom.cpp 
+ * @file   Pred1Dim.h
  * @author DAO Tran Minh 
  * @date   Tue Dec 18 17:20:24 2007 
  *  
- * @brief  A DLAtom of the form DL[\lambda;\ucq](Terms). 
+ * @brief  A list of Predicate(s). 
  *  
  *  
- */ 
+ */
 
-#include "DLAtom.h"
+#ifndef _DLVHEX_DF_PRED1DIM_H_
+#define _DLVHEX_DF_PRED1DIM_H_
+
+#include <list>
+#include "Predicate.h"
+#include "Pred2Dim.h"
+#include "Updates.h"
 
 namespace dlvhex {
 namespace df {
 
-  DLAtom::DLAtom(bool naf_, Updates& us, Predicate& p, Terms& ts)
-    : naf(naf_), updates(us), ucq(p), terms(ts), query("")
-  { }
+  class Pred2Dim;
 
-  DLAtom::DLAtom(bool naf_, Pred1Dim& ps, Terms& ts)
-    : naf(naf_), ucq(ps), terms(ts), query("")
-  { }
-
-  DLAtom::DLAtom(bool naf_, Updates& us, Pred1Dim& ps, Terms& ts)
-    : naf(naf_), updates(us), ucq(ps), terms(ts), query("")
-  { }
-
-  DLAtom::DLAtom(bool naf_, Updates& us, Pred2Dim& ucq_, Terms& ts)
-    : naf(naf_), updates(us), ucq(ucq_), terms(ts), query("")
-  { }
-
-  DLAtom::DLAtom(bool naf_, Updates& us, std::string query_, Terms& ts)
-    : naf(naf_), updates(us), query(query_), terms(ts)
-  { }
-
-  std::string
-  DLAtom::toString()
+  class Pred1Dim
   {
-    std::string snot = "";
-    if (naf) snot = "not ";
-    if (query == "") // cqmode is ON
-    {
-      return (snot + "DL[" + updates.toString() + ucq.toString(mQuery) + "](" + terms.toString() + ")"); 
-    }    
-    return (snot + "DL[" + updates.toString() + query + "](" + terms.toString() + ")"); 
-  }
+  protected:
+    std::list<Predicate> pred1dim;
+    
+  public:
+    Pred1Dim() { };
+    Pred1Dim(Predicate&);
+    Pred1Dim(std::list<Predicate>&);
+    
+    Pred1Dim&
+      operator=(const Pred1Dim&);
+    
+    Terms
+      getAllDistinctTerms();
+    
+    void
+      setContent(std::list<Predicate>&);
+    
+    void
+      push_back(Predicate&);
+    
+    int
+      size();
+    
+    std::list<Predicate>::iterator
+      begin();
+    
+    std::list<Predicate>::iterator
+      end();
+    
+    Updates
+      getUpdates(std::string);
+
+    Pred2Dim
+      deMorgan();
+
+    std::string
+      behalf_name(std::string prefix = "", int id1 = 0, int id2 = 0);
+    
+    std::string 
+      toString(PredicateMode, bool naf = false);
+  };
   
 } // namespace df
 } // namespace dlvhex
+
+#endif /* _DLVHEX_DF_PRED1DIM_H_*/

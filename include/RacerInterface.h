@@ -96,9 +96,6 @@ namespace racer {
     /// df-rewriter and the hex-rewriter
     dlvhex::dl::Ontology::shared_pointer ontology;
 
-    /// set to true, if we have --default
-    bool hasDefault;
-
     //
     // keep those ctors private, we don't want multiple instantiations
     //

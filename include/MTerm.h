@@ -38,60 +38,60 @@
 namespace dlvhex {
 namespace df {
 
-	enum UnificationResult
-	{
-		BOTH_VARS,
-		VAR1CONST2,
-		VAR2CONST1,
-		BOTH_CONSTS,
-		NOT_UNIFIABLE
-	};
-
-	/**
-	 * @brief A Term. Have to use the name MTerm in order to avoid a naming clash with dlvhex's Term.
-	 *
-	 */
-	class MTerm 
-	{
-	private:
-		std::string term_representation;
-		bool isvar;
-
-	public:
-		MTerm(const std::string&);
-		
-		MTerm(const std::string&, bool);
+  enum UnificationResult
+  {
+    BOTH_VARS,
+    VAR1CONST2,
+    VAR2CONST1,
+    BOTH_CONSTS,
+    NOT_UNIFIABLE
+  };
+  
+  /**
+   * @brief A Term. Have to use the name MTerm in order to avoid a naming clash with dlvhex's Term.
+   *
+   */
+  class MTerm 
+  {
+  private:
+    std::string term_representation;
+    bool isvar;
+    
+  public:
+    MTerm(const std::string&);
+    
+    MTerm(const std::string&, bool);
+    
+    bool 
+      isVar();
 	
-		bool 
-		isVar();
-	
-		bool 
-		operator==(const MTerm&) const;
+    bool 
+      operator==(const MTerm&) const;
+    
+    MTerm&
+      operator=(const MTerm&);
 
-		MTerm&
-		operator=(const MTerm&);
-
-		/**
-		 * Check if 2 terms are unifiable or not
-		 *
-		 * @param t2 the 2nd term
-		 * 
-		 * @return BOTH_VARS if two terms are both variables
-		 *         VAR1CONST2 if 1st term is a variable and 2nd term is a const
-		 *         VAR2CONST1 if 1st term is a const and 2nd is a variable
-		 *         BOTH_CONSTS if both terms are a same const
-		 *         NOT_UNIFIABLE if both terms are different constants
-		 */
-		UnificationResult
-		isUnifiable(const MTerm& t2);
-
-		void
-		setName(std::string);
-	
-		std::string 
-		toString();
-	};
-
+    /**
+     * Check if 2 terms are unifiable or not
+     *
+     * @param t2 the 2nd term
+     * 
+     * @return BOTH_VARS if two terms are both variables
+     *         VAR1CONST2 if 1st term is a variable and 2nd term is a const
+     *         VAR2CONST1 if 1st term is a const and 2nd is a variable
+     *         BOTH_CONSTS if both terms are a same const
+     *         NOT_UNIFIABLE if both terms are different constants
+     */
+    UnificationResult
+      isUnifiable(const MTerm& t2);
+    
+    void
+      setName(std::string);
+    
+    std::string 
+      toString();
+  };
+  
 }	// namespace df
 }	// namespace dlvhex
 

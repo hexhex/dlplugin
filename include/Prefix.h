@@ -37,24 +37,24 @@
 namespace dlvhex {
 namespace df {
 
-	class Prefix
-	{
-	private:
-		std::string name;
-		std::string path;
-
-	public:
-		Prefix();
-
-		Prefix(std::string&, std::string&);
-
-		std::string
-			getName();
-
-		std::string
-			getPath();
-};
-
+  class Prefix
+  {
+  private:
+    std::string name;
+    std::string path;
+    
+  public:
+    Prefix();
+    
+    Prefix(std::string&, std::string&);
+    
+    std::string
+      getName();
+    
+    std::string
+      getPath();
+  };
+  
 }	// namespace df
 }	// namespace dlvhex
 

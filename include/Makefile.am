@@ -35,18 +35,20 @@ noinst_HEADERS = \
                  RacerNRQLBuilder.h \
                  URI.h \
                  Default.h \
-                 DefaultParser.h \
                  Defaults.h \
                  DFConverter.h \
+                 DFProcessor.h \
                  DLAtom.h \
+                 DLAtoms.h \
                  DLRule.h \
                  DLRules.h \
                  Predicate.h \
+                 Pred1Dim.h \
+                 Pred2Dim.h \
                  Prefix.h \
                  Prefixes.h \
                  MTerm.h \
                  Terms.h \
                  Update.h \
-                 Updates.h \
-		 Unifier.h
+                 Updates.h 
 
