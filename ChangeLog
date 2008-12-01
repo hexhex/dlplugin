@@ -1,8 +1,13 @@
-2008-11-13  DAO Tran Minh  <dao@kr.tuwien.ac.at>
+2008-12-01  DAO Tran Minh  <dao@kr.tuwien.ac.at>
+	* include/Defaults.h: add size().
+	* src/Defaults.cpp: Likewise.
+	* src/DFProcessor: remove "\n" at the end of each other stuff.
+	* src/DFConverter: distinguish between having defaults and not.
+
+2008-11-29  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* src/DefaultParser.cpp: removed
 	* include/DefaultParser.h: Likewise.
-
 	* src/Pred1Dim.cpp: New file.
 	* src/Pred2Dim.cpp: Likewise.
 	* src/DLAtoms.cpp: Likewise.
