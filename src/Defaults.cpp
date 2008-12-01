@@ -41,6 +41,12 @@ namespace df {
     count = 0;
   }
 
+  int
+  Defaults::size()
+  {
+    return dfs.size();
+  }
+
   void
   Defaults::push_back(Default& df)
   {

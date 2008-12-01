@@ -50,6 +50,8 @@ namespace df {
 
   public:
     Defaults();
+
+    int size();
     
     void
       push_back(Default&);

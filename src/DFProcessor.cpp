@@ -59,8 +59,8 @@ namespace df {
     j = s.find_last_of("\"");
     std::string t = s.substr(i+2, j-i-2);
     s = s.substr(1, i-2);
-    std::cout << s << std::endl;
-    std::cout << t << std::endl;
+    //std::cout << s << std::endl;
+    //std::cout << t << std::endl;
     Prefix ns(s, t);
     namespaces.push_back(ns);
     push_others(first, last);
@@ -69,7 +69,7 @@ namespace df {
   void DFProcessor::push_others(const char* first, const char* last)
   {
     std::string str(first, last);
-    others << str << "\n";
+    others << str;
     //std::cout << "blabla..." << std::endl;
     //std::cout << "passing through: " << str << std::endl;    
   }
@@ -108,8 +108,8 @@ namespace df {
 	s = s.substr(i+1);
       }
     
-    std::cout << s << std::endl;
-    std::cout << prefix << std::endl;
+    //std::cout << s << std::endl;
+    //std::cout << prefix << std::endl;
     //std::cout << ts.toString() << std::endl;
     Predicate p(isStrongNegated, s, prefix, ts);
     //std::cout << p.toStringWithNS() << std::endl;

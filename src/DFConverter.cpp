@@ -111,30 +111,39 @@ namespace df {
       }
 
     std::string other_stuff = DFProcessor::others.str();
-    std::string dlprogram = DFProcessor::defaults.getDLRules(cqmode, dftrans).toString();
+    std::string dlprogram;
+
+    if (DFProcessor::defaults.size() > 0)
+      {    
+	dlprogram = DFProcessor::defaults.getDLRules(cqmode, dftrans).toString();
+	
+	DLRules rules;
     
-    DLRules rules;
-    
-    readIndividuals(ontology);
-    
-    for (std::list<std::string>::iterator i = individuals.begin(); i != individuals.end(); ++i) 
-      {
-	MTerm t(*i);
-	Predicate p_dom("dom", t);
-	DLRule r(p_dom);
-	rules.push_back(r);
+	readIndividuals(ontology);
+	
+	for (std::list<std::string>::iterator i = individuals.begin(); i != individuals.end(); ++i) 
+	  {
+	    MTerm t(*i);
+	    Predicate p_dom("dom", t);
+	    DLRule r(p_dom);
+	    rules.push_back(r);
+	  }
+	dlprogram = other_stuff + "\n" + dlprogram + "\n" + rules.toString();
+	//std::cout << dlprogram << std::endl;
+	
+	if (dlvhex::dl::Registry::getVerbose() > 1) 
+	  {
+	    std::cerr << "Transformed dlrules from defaults:" << std::endl;
+	    std::cerr << dlprogram << std::endl;
+	  }
+	
+	os << dlprogram;
       }
-    
-    dlprogram = other_stuff + "\n" + dlprogram + "\n" + rules.toString();
-    std::cout << dlprogram << std::endl;
-    
-    if (dlvhex::dl::Registry::getVerbose() > 1) 
+    else // NO default at all. We just need to switch input and output stream
       {
-	std::cerr << "Transformed dlrules from defaults:" << std::endl;
-	std::cerr << dlprogram << std::endl;
+	os << inputcontent.str();
       }
-    
-    os << dlprogram;
+
   }
   
 } // namespace df
