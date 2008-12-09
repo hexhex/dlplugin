@@ -1,3 +1,7 @@
+2008-12-09  DAO Tran Minh  <dao@kr.tuwien.ac.at>
+	* include/DFProcessor.h: add a rule for constant_
+	* src/Default.cpp: more dom predicates for transformation \Upsilon
+
 2008-12-01  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 	* include/Defaults.h: add size().
 	* src/Defaults.cpp: Likewise.
