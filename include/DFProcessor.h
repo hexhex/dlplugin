@@ -100,6 +100,10 @@ struct DefaultParser : boost::spirit::grammar<DefaultParser>
       
       predicate_name_ = !(name_ >> boost::spirit::ch_p(':')) >> name_;
 
+      constant_ = boost::spirit::chseq_p("\"")
+	>> *(boost::spirit::anychar_p - '\"')
+	>>  boost::spirit::chseq_p("\"");
+
       variable_ = boost::spirit::range_p('A', 'Z') 
 	>> *( boost::spirit::range_p('a', 'z') 
 	      | boost::spirit::range_p('A', 'Z') 

@@ -506,18 +506,18 @@ namespace df {
 
 	  }
 
-// 	for (std::list<MTerm>::iterator i = all_distinct_terms.begin(); i != all_distinct_terms.end(); ++i)
-// 	  {
-// 	    if ((i->isVar()) && (!argument.gotThisTerm(*i)))
-// 	      {
-// 		Predicate p_dom("dom", *i);
-// 		r_gamma.addPositiveBody(p_dom);
-// 	      }	    
-// 	  }
-// 	if (!argument.getTerms().isEmpty())
-// 	{
-// 	  r_gamma.addPositiveBody(argument);
-// 	}
+ 	for (std::list<MTerm>::iterator i = all_distinct_terms.begin(); i != all_distinct_terms.end(); ++i)
+ 	  {
+ 	    if ((i->isVar()) && (!argument.gotThisTerm(*i)))
+ 	      {
+ 		Predicate p_dom("dom", *i);
+ 		r_gamma.addPositiveBody(p_dom);
+ 	      }	    
+ 	  }
+ 	if (!argument.getTerms().isEmpty())
+ 	{
+ 	  r_gamma.addPositiveBody(argument);
+ 	}
 	
 	rules.push_back(r_gamma);
 	if (conclusion.size() > 1)
