@@ -1,8 +1,15 @@
+2008-12-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/wires3.dlp: New test case.
+	* examples/wires3.owl: Likewise.
+
 2008-12-09  DAO Tran Minh  <dao@kr.tuwien.ac.at>
+	
 	* include/DFProcessor.h: add a rule for constant_
 	* src/Default.cpp: more dom predicates for transformation \Upsilon
 
 2008-12-01  DAO Tran Minh  <dao@kr.tuwien.ac.at>
+
 	* include/Defaults.h: add size().
 	* src/Defaults.cpp: Likewise.
 	* src/DFProcessor: remove "\n" at the end of each other stuff.
