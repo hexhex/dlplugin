@@ -1,0 +1,29 @@
+#namespace ("", "<http://wires.com/wire#>")
+
+% the domain
+node("<http://wires.com/wire#n1>").
+node("<http://wires.com/wire#n2>").
+node("<http://wires.com/wire#n3>").
+node("<http://wires.com/wire#n4>").
+node("<http://wires.com/wire#n5>").
+node("<http://wires.com/wire#x1>").
+node("<http://wires.com/wire#x2>").
+
+newnode("<http://wires.com/wire#x1>").
+newnode("<http://wires.com/wire#x2>").
+
+% this won't work due to gnc bug
+%n(X) :- DL[Node](X).
+% simulate n:
+n("<http://wires.com/wire#n1>").
+n("<http://wires.com/wire#n2>").
+n("<http://wires.com/wire#n3>").
+n("<http://wires.com/wire#n4>").
+n("<http://wires.com/wire#n5>").
+
+overloaded(X) :- node(X), DL[wired += connect; HighTrafficNode](X).
+connect(X,Y) :- newnode(X), n(Y), not overloaded(Y), not excl(X,Y).
+
+excl(X,Z) :- connect(X,Y), n(Z), Y != Z.
+excl(X,Y) :- connect(Z,Y), newnode(Z), newnode(X), X != Z.
+excl("<http://wires.com/wire#x1>","<http://wires.com/wire#n4>").
