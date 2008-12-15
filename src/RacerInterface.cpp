@@ -49,7 +49,6 @@
 #include "RacerAnswerDriver.h"
 #include "Answer.h"
 #include "RacerKBManager.h"
-#include "DFConverter.h"
 
 #include <iosfwd>
 #include <algorithm>
@@ -68,9 +67,10 @@ RacerInterface::RacerInterface()
     cache(new Cache(*stats)),
     dlconverter(new HexDLDriver),
     dfconverter(new dlvhex::df::DFConverter),
+    dfoutputbuilder(new dlvhex::df::DFOutputBuilder),
     dloptimizer(new DLOptimizer),
     kbManager(new RacerKBManager(*stream))
-{ }
+{ std::cout << "RacerInterface Ctor" << std::endl; }
 
 
 RacerInterface::RacerInterface(const RacerInterface&)
@@ -80,9 +80,11 @@ RacerInterface::RacerInterface(const RacerInterface&)
     cache(0),
     dlconverter(0),
     dfconverter(0),
+    dfoutputbuilder(0),
     dloptimizer(0),
-    kbManager(0)
-{ /* ignore */ }
+   kbManager(0)
+{ std::cout << "RacerInterface empty Ctor" << std::endl; }
+    //{ /* ignore */ }
 
 
 RacerInterface&
@@ -121,6 +123,7 @@ RacerInterface::~RacerInterface()
   delete dloptimizer;
   delete dlconverter;
   delete dfconverter;
+  //delete dfoutputbuilder;
   delete cache;
   delete stats;
   delete stream;
@@ -153,6 +156,15 @@ PluginOptimizer*
 RacerInterface::createOptimizer()
 {
   return dloptimizer;
+}
+
+OutputBuilder*
+RacerInterface::createOutputBuilder()
+{
+  if (dfconverter->hasDefaults())
+    {
+      return dfoutputbuilder;
+    }
 }
 
 

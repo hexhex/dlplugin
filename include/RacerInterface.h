@@ -37,6 +37,7 @@
 #include <dlvhex/Term.h>
 #include "Ontology.h"
 #include "DFConverter.h"
+#include "DFOutputBuilder.h"
 #include "HexDLDriver.h"
 
 namespace dlvhex {
@@ -85,8 +86,9 @@ namespace racer {
     BaseCache* cache;
     /// DL converter facility
     HexDLDriver* dlconverter;
-		/// DF converter facility
-		dlvhex::df::DFConverter* dfconverter;
+    /// DF converter facility
+    dlvhex::df::DFConverter* dfconverter;
+    dlvhex::df::DFOutputBuilder* dfoutputbuilder;
     /// DL optimizer facility
     DLOptimizer* dloptimizer;
     /// the kb-manager for RACER
@@ -161,6 +163,13 @@ namespace racer {
      */
     virtual void
     setOptions(bool doHelp, std::vector<std::string>& argv, std::ostream& out);
+
+    /**
+     *  Refine output if default rules are in the input
+     *
+     */
+    virtual OutputBuilder*
+    createOutputBuilder();
 
   };
 

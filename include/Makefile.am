@@ -38,6 +38,7 @@ noinst_HEADERS = \
                  Defaults.h \
                  DFConverter.h \
                  DFProcessor.h \
+                 DFOutputBuilder.h \
                  DLAtom.h \
                  DLAtoms.h \
                  DLRule.h \

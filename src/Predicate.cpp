@@ -116,7 +116,7 @@ namespace df {
     std::string tmp = ""; 
     if (isStrongNegated)  
       { 
-	tmp = "neg_"; 
+	tmp = PREFIX_NEG; 
       } 
     return (tmp + predicate_name); 
   } 

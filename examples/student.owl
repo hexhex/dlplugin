@@ -116,7 +116,7 @@
     <hasScholarship>
       <Scholarship rdf:ID="ErasmusMundus"/>
     </hasScholarship>
-    <!--<rdf:type rdf:resource="#MasterStudent"/>-->
+    <rdf:type rdf:resource="#MasterStudent"/>
   </MasterStudent>
   <PhDStudent rdf:ID="tkren"/>
 </rdf:RDF>

@@ -48,6 +48,11 @@ namespace df {
   std::ostringstream DFProcessor::others;
   Prefixes DFProcessor::namespaces;
 
+  bool DFProcessor::hasDefaults()
+  {
+    return (defaults.size() > 0);
+  }
+
   void DFProcessor::push_namespace(const char* first, const char* last)
   {
     std::string s(first, last);
@@ -70,7 +75,6 @@ namespace df {
   {
     std::string str(first, last);
     others << str;
-    //std::cout << "blabla..." << std::endl;
     //std::cout << "passing through: " << str << std::endl;    
   }
 

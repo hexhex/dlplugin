@@ -61,6 +61,7 @@ Default.cpp \
 Defaults.cpp \
 DFConverter.cpp \
 DFProcessor.cpp \
+DFOutputBuilder.cpp \
 DLAtom.cpp \
 DLAtoms.cpp \
 DLRule.cpp \

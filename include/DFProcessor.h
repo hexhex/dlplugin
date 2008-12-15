@@ -59,6 +59,7 @@ class DFProcessor
  public:
   static std::ostringstream others;
   static Defaults defaults;
+  static bool hasDefaults();
   static void push_namespace(const char*, const char*);
   static void push_others(const char*, const char*);
   static void push_lst_term(const char*, const char*);

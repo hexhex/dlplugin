@@ -42,6 +42,12 @@ namespace df {
     dftrans = 3;
   }
 
+  bool
+  DFConverter::hasDefaults()
+  {
+    return DFProcessor::hasDefaults();
+  }
+
   void
   DFConverter::setCQmode(bool cqmode_)
   {
@@ -105,16 +111,16 @@ namespace df {
 	throw PluginError("Default rules syntax error!");
       }
 
-    if (!ontology) 
-      {
-	throw PluginError("No ontology specified!");
-      }
-
     std::string other_stuff = DFProcessor::others.str();
     std::string dlprogram;
 
-    if (DFProcessor::defaults.size() > 0)
+    if (DFProcessor::hasDefaults())
       {    
+	if (!ontology) 
+	  {
+	    throw PluginError("No ontology specified!");
+	  }
+
 	dlprogram = DFProcessor::defaults.getDLRules(cqmode, dftrans).toString();
 	
 	DLRules rules;
@@ -129,7 +135,7 @@ namespace df {
 	    rules.push_back(r);
 	  }
 	dlprogram = other_stuff + "\n" + dlprogram + "\n" + rules.toString();
-	//std::cout << dlprogram << std::endl;
+	std::cout << dlprogram << std::endl;
 	
 	if (dlvhex::dl::Registry::getVerbose() > 1) 
 	  {

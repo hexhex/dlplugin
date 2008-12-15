@@ -28,6 +28,9 @@ namespace df {
   public:
     DFConverter();
 
+    bool
+      hasDefaults();
+
     void
       setCQmode(bool);
 

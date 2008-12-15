@@ -58,7 +58,7 @@ namespace df {
   Updates
   Defaults::getLambda(std::string prefix)
   {
-    Updates us; 
+   Updates us; 
     if (dfs.size() > 0)  
       { 
 	for (std::list<Default>::iterator i = dfs.begin(); i != dfs.end(); ++i)
@@ -91,6 +91,31 @@ namespace df {
 	rules.insert(rs); 
       }
     return rules;
+  }
+
+  std::list<std::string>
+  Defaults::getConclusionsNames()
+  {
+    std::list<std::string> tmp;
+    for (std::list<Default>::iterator i = dfs.begin(); i != dfs.end(); ++i)
+      {
+	std::list<std::string> tmp_ = i->getConclusionNames();
+	for (std::list<std::string>::iterator j = tmp_.begin(); j != tmp_.end(); ++j)
+	  {
+	    if (find(tmp.begin(), tmp.end(), *j) == tmp.end())
+	      {
+		tmp.push_back(*j);
+	      }
+	  }
+      }
+
+    // testing
+    //std::cout << "Conclusions' Names:"<< std::endl;
+    //for (std::list<std::string>::iterator k = tmp.begin(); k != tmp.end(); ++k)
+    //  {
+    //std::cout << *k << std::endl;
+    //  }
+    return tmp;
   }
 
   std::string

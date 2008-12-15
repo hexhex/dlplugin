@@ -502,8 +502,6 @@ namespace df {
 	    rules.push_back(r2);
 	    rules.push_back(r3);
 	    rules.push_back(r4);
-
-
 	  }
 
  	for (std::list<MTerm>::iterator i = all_distinct_terms.begin(); i != all_distinct_terms.end(); ++i)
@@ -528,6 +526,19 @@ namespace df {
       }    
 
     return rules;
+  }
+
+  std::list<std::string>
+  Default::getConclusionNames()
+  {
+    std::list<std::string> tmp;
+
+    for (std::list<Predicate>::iterator i = conclusion.begin(); i != conclusion.end(); ++i)
+      {
+	tmp.push_back(i->getPredicateName());
+      }
+
+    return tmp;
   }
   
   std::string

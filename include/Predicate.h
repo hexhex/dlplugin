@@ -33,6 +33,8 @@
 #define _DLVHEX_DF_PREDICATE_H 
  
 #include "Terms.h" 
+
+#define PREFIX_NEG      "neg_"
  
 namespace dlvhex { 
 namespace df { 

@@ -32,6 +32,7 @@
 #ifndef _DLVHEX_DF_DEFAULTS_H_ 
 #define _DLVHEX_DF_DEFAULTS_H_
 
+#include <algorithm>
 #include <list>
 #include "Default.h"
 #include "DLRules.h"
@@ -61,6 +62,9 @@ namespace df {
 
     DLRules
       getDLRules(bool cqmode, int dftrans);
+
+    std::list<std::string>
+      getConclusionsNames();
 
     std::string
       toString();

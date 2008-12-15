@@ -4,4 +4,7 @@
 [GraduateStudent(X)&hasScholarship(X,S);-Assistant(X)]
 	/[-Assistant(X)]<arg2(X,S)>
 
+arg1("<http://minscl.info/Student.owl#min>").
+arg1("<http://minscl.info/Student.owl#tkren>").
 
+arg2("<http://minscl.info/Student.owl#min>", "<http://minscl.info/Student.owl#ErasmusMundus>").

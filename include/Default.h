@@ -102,6 +102,9 @@ namespace df {
     DLRules
       getDLRules_Upsilon(bool);
 
+    std::list<std::string>
+      getConclusionNames();
+
     std::string 
       toString();
   };
