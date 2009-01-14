@@ -70,7 +70,7 @@ RacerInterface::RacerInterface()
     dfoutputbuilder(new dlvhex::df::DFOutputBuilder),
     dloptimizer(new DLOptimizer),
     kbManager(new RacerKBManager(*stream))
-{ std::cout << "RacerInterface Ctor" << std::endl; }
+{ }
 
 
 RacerInterface::RacerInterface(const RacerInterface&)
@@ -83,8 +83,7 @@ RacerInterface::RacerInterface(const RacerInterface&)
     dfoutputbuilder(0),
     dloptimizer(0),
    kbManager(0)
-{ std::cout << "RacerInterface empty Ctor" << std::endl; }
-    //{ /* ignore */ }
+{ /* ignore */ }
 
 
 RacerInterface&
