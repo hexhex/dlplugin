@@ -1,3 +1,13 @@
+2009-01-14  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerInterface.cpp: Remove debug output.
+
+	* src/Answer.cpp: Fix g++4.3 compile errors by #include missing
+	headers, see <http://gcc.gnu.org/gcc-4.3/porting_to.html>.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* src/TCPStream.cpp: Likewise.
+	* src/Terms.cpp: Likewise.
+
 2008-12-15  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 	* include/DFOutputBuilder.h: new file
 	* src/DFOutputBuilder.cpp: new file
