@@ -41,6 +41,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <limits>
 
 using namespace dlvhex::dl::racer;
 

@@ -40,6 +40,7 @@
 
 #include <string>
 #include <iterator>
+#include <limits>
 #include <iosfwd>
 
 using namespace dlvhex::dl;

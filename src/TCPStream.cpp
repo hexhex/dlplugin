@@ -37,6 +37,7 @@
 #include <ios>
 #include <sstream>
 
+#include <cstdlib>      // exit()
 #include <csignal>      // sigaction()
 #include <cerrno>       // errno & co.
 #include <cstring>      // memset()

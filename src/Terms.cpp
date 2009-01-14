@@ -29,7 +29,10 @@
  *  
  */ 
  
-#include "Terms.h" 
+
+#include "Terms.h"
+
+#include <algorithm>
  
 namespace dlvhex { 
 namespace df { 
