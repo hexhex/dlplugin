@@ -9,13 +9,18 @@
 	* src/Terms.cpp: Likewise.
 
 2008-12-15  DAO Tran Minh  <dao@kr.tuwien.ac.at>
-	* include/DFOutputBuilder.h: new file
-	* src/DFOutputBuilder.cpp: new file
-	* src/DFConverter.cpp: add hasDefaults()
-	* src/DFProcessor.cpp: add hasDefaults()
-	* src/Default.cpp: add getConclusionNames()
-	* src/Defaults.cpp: add getConclusionsNames()
-	* src/RacerInterface.cpp: only return the dfoutputbuilder if any default was specified in the input
+	
+	* include/DFOutputBuilder.h: New file.
+	* src/DFOutputBuilder.cpp: Likewise.
+	
+	* src/DFConverter.cpp: Add hasDefaults().
+	* src/DFProcessor.cpp: Likewise.
+	
+	* src/Default.cpp: Add getConclusionNames().
+	* src/Defaults.cpp: Likewise.
+	
+	* src/RacerInterface.cpp: Only return the dfoutputbuilder if any
+	default was specified in the input.
 
 2008-12-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
@@ -24,20 +29,24 @@
 
 2008-12-09  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 	
-	* include/DFProcessor.h: add a rule for constant_
-	* src/Default.cpp: more dom predicates for transformation \Upsilon
+	* include/DFProcessor.h: Add a rule for constant_.
+	
+	* src/Default.cpp: More dom predicates for transformation \Upsilon.
 
 2008-12-01  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
-	* include/Defaults.h: add size().
+	* include/Defaults.h: Add size().
 	* src/Defaults.cpp: Likewise.
-	* src/DFProcessor: remove "\n" at the end of each other stuff.
-	* src/DFConverter: distinguish between having defaults and not.
+	
+	* src/DFProcessor: Remove "\n" at the end of each other stuff.
+	
+	* src/DFConverter: Distinguish between having defaults and not.
 
 2008-11-29  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
-	* src/DefaultParser.cpp: removed
+	* src/DefaultParser.cpp: Remove.
 	* include/DefaultParser.h: Likewise.
+	
 	* src/Pred1Dim.cpp: New file.
 	* src/Pred2Dim.cpp: Likewise.
 	* src/DLAtoms.cpp: Likewise.
@@ -46,10 +55,14 @@
 	* include/Pred2Dim.h: Likewise.
 	* include/DLAtoms.h: Likewise.
 	* include/DFProcessor.h: Likewise.
+
 	* src/RacerInterface.cpp: Remove option --dfpruning.
+
 	* src/Defaults.cpp: Remove all functions related to creating pruning rules.
-	* src/DLAtom.cpp: add property naf to a dl-atom.
-	* src/DLRule.cpp: remain only one list of dl-atoms in a dl-rule.
+
+	* src/DLAtom.cpp: Add property naf to a dl-atom.
+	
+	* src/DLRule.cpp: Remain only one list of dl-atoms in a dl-rule.
 
 2008-11-13  DAO Tran Minh  <daotranminh@gmail.com>
 
@@ -58,11 +71,13 @@
 2008-11-03  DAO Tran Minh  <daotranminh@gmail.com>
 
 	* src/DFConverter.cpp: Switch order of outputing to the output-buffer.
+
 	* src/HexDLDriver.cpp: Remove DFRewriter.h
 
 2008-10-29  DAO Tran Minh  <daotranminh@gmail.com>
 
 	* src/Default.cpp: Update transformation \Upsilon to work with typing predicates.
+
 	* examples: bird, nixon and small_wine: add cases using typing predicates.
                     student: new example.
 
@@ -99,19 +114,27 @@
 	error output.
 
 2008-05-14  DAO Tran Minh  <daotranminh@gmail.com>
-	* src/DefaultParser.cpp: Allowing comments in df files
-	* include/DefaultParser.h: Likewise
+
+	* src/DefaultParser.cpp: Allowing comments in df files.
+	* include/DefaultParser.h: Likewise.
 
 2008-05-09  DAO Tran Minh  <daotranminh@gmail.com>
-	* src/RacerInterface.cpp: Add a new command line option: --dfpruning
-	* src/Defaults.cpp: New pruning rules: forcing out
+
+	* src/RacerInterface.cpp: Add a new command line option:
+	--dfpruning.
+
+	* src/Defaults.cpp: New pruning rules: forcing out.
 
 2008-05-08  DAO Tran Minh  <daotranminh@gmail.com>
-	* src/RacerInterface.cpp: Replace --trans by --dftrans
+
+	* src/RacerInterface.cpp: Replace --trans by --dftrans.
+	
 	* src/Default.cpp: fix --cq=off bug for the 2nd transformation.
 
 2008-05-07  DAO Tran Minh  <daotranminh@gmail.com>
-	* src/RacerInterface.cpp: Add 2 new command line options: --cq and --trans
+
+	* src/RacerInterface.cpp: Add 2 new command line options: --cq and
+	--trans.
 
 2008-05-03  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
@@ -212,8 +235,9 @@
 	* include/Terms.h: Likewise.
 	* include/Update.h: Likewise.
 	* include/Updates.h: Likewise.
-	* src/Unifier.cpp: New file
-	* inlucde/Unifier.h: Likewise
+
+	* src/Unifier.cpp: New file.
+	* inlucde/Unifier.h: Likewise.
 
 2008-02-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
