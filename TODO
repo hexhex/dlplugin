@@ -1,5 +1,8 @@
 -*- org -*-
 
+* TODO &dlConsistent is currently not working
+dlvhex: QueryCtx.cpp:191: dlvhex::dl::QueryCtx::QueryCtx(const dlvhex::PluginAtom::Query&, dlvhex::dl::KBManager&): Assertion `"No query term." == 0' failed.
+
 * TODO If the path to the owl file has a blank then there will be an error from the external atom.
 
 * TODO &dlDR and dlX in a rule will be pushed together
@@ -13,7 +16,7 @@ support to (U)CQs should fix this problem.
 * TODO enhance doxygen documentation
 
 * TODO Remove Abox handling, use (retrieve-under-premise)?
-
+  
 * TODO if someone queries a non-occuring individual RacerPro sends an error
   good, bad?
   
