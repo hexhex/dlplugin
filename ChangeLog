@@ -1,3 +1,9 @@
+2009-03-15  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* TODO: Add todo item.
+
+	* COPYING: New file.
+
 2009-01-14  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/RacerInterface.cpp: Remove debug output.
