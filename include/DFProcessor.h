@@ -33,6 +33,8 @@
 #define _DLVHEX_DF_DFPROCESSOR_H_
 
 #include <boost/spirit/core.hpp>
+#include <boost/spirit/tree/common.hpp>
+#include <boost/spirit/utility/confix.hpp>
 #include <list>
 #include <sstream>
 #include "Defaults.h"
@@ -177,8 +179,9 @@ struct DefaultParser : boost::spirit::grammar<DefaultParser>
       
       //program_ = *(default_[&DFProcessor::print_out] | namespace_[&DFProcessor::print_out] | others_[&DFProcessor::print_out]);
 
-      program_ = *(namespace_[&DFProcessor::push_namespace]) 
-	>> *(default_[&DFProcessor::push_default] | others_[&DFProcessor::push_others]);
+      program_ = *(namespace_[&DFProcessor::push_namespace] | boost::spirit::discard_node_d[boost::spirit::comment_p("%")]) 
+       
+	>> *(default_[&DFProcessor::push_default] | others_[&DFProcessor::push_others] | boost::spirit::discard_node_d[boost::spirit::comment_p("%")]);
     }
     
     boost::spirit::rule<ScannerT> predicate_name_, name_, namespace_, constant_, variable_, term_, terms_, predicate_, lit_, conjunction_, prerequisite_, justification_, justifications_, conclusion_, argument_, default_, others_, program_;

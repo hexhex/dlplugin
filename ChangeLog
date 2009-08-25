@@ -1,4 +1,16 @@
+2009-08-25  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* include/RacerExtAtom.tcc: No longer caching role queries.
+	* src/RacerInterface.cpp: Returning 0 instead of not specifying
+	return value.
+
 2009-08-25  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* include/DFProcessor.h: Ignoring comments in DFProcessor.h instead
+	of deleting them in DFConverter. This fixes issues with % characters
+	in string literals.
+	* include/DFConverter.h: Likewise.
+	* src/DFConverter.cpp: Likewise.
 
 	* examples/wires3.dlp: Updated to changed #namespace syntax of dlvhex.
 	* examples/test.dlp: Likewise.

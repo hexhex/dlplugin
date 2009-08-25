@@ -80,17 +80,6 @@ namespace df {
       }
   }
   
-  std::string& 
-  DFConverter::delete_comment(std::string& s) 
-  {
-    int pos = s.find("%", 0);
-    if (pos > -1) 
-      {
-	s.erase(pos, s.length());
-      }
-    return s;
-  } 
-
   void
   DFConverter::convert(std::istream& is, std::ostream& os)
   {
@@ -99,7 +88,7 @@ namespace df {
     while (!is.eof())
       {
 	std::getline(is, line);
-	inputcontent << delete_comment(line) << std::endl;
+	inputcontent << line << std::endl;
       }
     
     DefaultParser dfp;

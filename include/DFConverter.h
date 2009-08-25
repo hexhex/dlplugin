@@ -24,7 +24,6 @@ namespace df {
     
     void readIndividuals(dlvhex::dl::Ontology::shared_pointer);
     
-    std::string& delete_comment(std::string&);    
   public:
     DFConverter();
 

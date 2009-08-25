@@ -164,6 +164,7 @@ RacerInterface::createOutputBuilder()
     {
       return dfoutputbuilder;
     }
+  return 0;
 }
 
 

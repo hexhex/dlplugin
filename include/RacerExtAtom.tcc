@@ -361,7 +361,10 @@ namespace racer {
       );
 
     // good news, in this setting, we can reuse our cache
-    return this->cacheQuery(comp);
+    //return this->cacheQuery(comp);
+
+    ///@todo right now we don't cache role queries, because the (not R) stuff can only be handled in CQs
+    return comp;
   }
 
 
