@@ -42,9 +42,11 @@
 #include "DFProcessor.h"
 
 namespace dlvhex {
+
+class ResultContainer;
+
 namespace df {
 
-  class dlvhex::ResultContainer;
 
   class DLVHEX_EXPORT DFOutputBuilder : public dlvhex::OutputBuilder
     {

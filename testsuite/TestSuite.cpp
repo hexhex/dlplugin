@@ -40,6 +40,7 @@
 #include <string>
 #include <functional>
 #include <iterator>
+#include <cstdlib>
 
 using namespace dlvhex::dl::test;
 

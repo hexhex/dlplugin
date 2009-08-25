@@ -1,3 +1,12 @@
+2009-08-25  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* m4/boost.m4: Updating boost.m4 to version currently used in dlvhex.
+
+	* testsuite/TestDLRewriter.cpp: Fixing testsuite compilation.
+	* testsuite/TestSuite.cpp: Likewise.
+
+	* include/DFOutputBuilder: Fixed compiler warning.
+
 2009-03-15  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* TODO: Add todo item.

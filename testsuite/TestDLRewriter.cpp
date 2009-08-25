@@ -53,7 +53,7 @@ TestDLRewriter::runDLRewrite()
    std::ostringstream os;
    
    HexDLDriver dlr;
-   dlr.setURI("file:" + examples + "/tweety_bird.owl");
+   dlr.setOntology(Ontology::createOntology("file:" + examples + "/tweety_bird.owl"));
    dlr.convert(fs, os);
    
    std::cout << "## " << std::endl << os.str() << std::endl;
@@ -66,7 +66,7 @@ TestDLRewriter::runDLRewrite()
    std::ostringstream os;
    
    HexDLDriver dlr;
-   dlr.setURI(shopuri);
+   dlr.setOntology(Ontology::createOntology(shopuri));
    dlr.convert(fs, os);
    
    std::cout << "## " << std::endl << os.str() << std::endl;
@@ -96,7 +96,7 @@ TestDLRewriter::runDLNoRewrite()
   std::ostringstream os;
 
   HexDLDriver dlr;
-  dlr.setURI(shop);
+  dlr.setOntology(Ontology::createOntology(shop));
   dlr.convert(fs, os);
 
   std::fstream fs2((examples + "/shop.dlp").c_str(), std::fstream::in);
