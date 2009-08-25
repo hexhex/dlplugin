@@ -44,16 +44,16 @@
 	* src/Terms.cpp: Likewise.
 
 2008-12-15  DAO Tran Minh  <dao@kr.tuwien.ac.at>
-	
+
 	* include/DFOutputBuilder.h: New file.
 	* src/DFOutputBuilder.cpp: Likewise.
-	
+
 	* src/DFConverter.cpp: Add hasDefaults().
 	* src/DFProcessor.cpp: Likewise.
-	
+
 	* src/Default.cpp: Add getConclusionNames().
 	* src/Defaults.cpp: Likewise.
-	
+
 	* src/RacerInterface.cpp: Only return the dfoutputbuilder if any
 	default was specified in the input.
 
@@ -63,25 +63,25 @@
 	* examples/wires3.owl: Likewise.
 
 2008-12-09  DAO Tran Minh  <dao@kr.tuwien.ac.at>
-	
+
 	* include/DFProcessor.h: Add a rule for constant_.
-	
+
 	* src/Default.cpp: More dom predicates for transformation \Upsilon.
 
 2008-12-01  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* include/Defaults.h: Add size().
 	* src/Defaults.cpp: Likewise.
-	
+
 	* src/DFProcessor: Remove "\n" at the end of each other stuff.
-	
+
 	* src/DFConverter: Distinguish between having defaults and not.
 
 2008-11-29  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* src/DefaultParser.cpp: Remove.
 	* include/DefaultParser.h: Likewise.
-	
+
 	* src/Pred1Dim.cpp: New file.
 	* src/Pred2Dim.cpp: Likewise.
 	* src/DLAtoms.cpp: Likewise.
@@ -96,20 +96,20 @@
 	* src/Defaults.cpp: Remove all functions related to creating pruning rules.
 
 	* src/DLAtom.cpp: Add property naf to a dl-atom.
-	
+
 	* src/DLRule.cpp: Remain only one list of dl-atoms in a dl-rule.
 
-2008-11-13  DAO Tran Minh  <daotranminh@gmail.com>
+2008-11-13  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* include/RacerExtAtom.tcc: Add some comments.
 
-2008-11-03  DAO Tran Minh  <daotranminh@gmail.com>
+2008-11-03  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* src/DFConverter.cpp: Switch order of outputing to the output-buffer.
 
 	* src/HexDLDriver.cpp: Remove DFRewriter.h
 
-2008-10-29  DAO Tran Minh  <daotranminh@gmail.com>
+2008-10-29  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* src/Default.cpp: Update transformation \Upsilon to work with typing predicates.
 
@@ -121,12 +121,12 @@
 	* src/RacerBuilder.cpp (RacerIsConceptMemberBuilder::buildCommand): Fix
 	negated concept query expressions.
         (RacerConceptInstancesBuilder::buildCommand): Likewise.
-	
+
 2008-06-30  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* TODO: Update.
 
-2008-05-19  DAO Tran Minh  <daotranminh@gmail.com>
+2008-05-19  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* src/DefaultParser.cpp: New syntax for defaults [foo:A(X);bar:B(X)]/[foo:C(X)]<arg1(X)>.
         Allowing namespace definitions in df files.
@@ -148,25 +148,25 @@
 	* src/DefaultParser.cpp (DefaultParser::parseInputStream): Improve
 	error output.
 
-2008-05-14  DAO Tran Minh  <daotranminh@gmail.com>
+2008-05-14  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* src/DefaultParser.cpp: Allowing comments in df files.
 	* include/DefaultParser.h: Likewise.
 
-2008-05-09  DAO Tran Minh  <daotranminh@gmail.com>
+2008-05-09  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* src/RacerInterface.cpp: Add a new command line option:
 	--dfpruning.
 
 	* src/Defaults.cpp: New pruning rules: forcing out.
 
-2008-05-08  DAO Tran Minh  <daotranminh@gmail.com>
+2008-05-08  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* src/RacerInterface.cpp: Replace --trans by --dftrans.
-	
+
 	* src/Default.cpp: fix --cq=off bug for the 2nd transformation.
 
-2008-05-07  DAO Tran Minh  <daotranminh@gmail.com>
+2008-05-07  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* src/RacerInterface.cpp: Add 2 new command line options: --cq and
 	--trans.
@@ -206,7 +206,7 @@
 
 	* TODO: Update.
 
-2008-02-29  DAO Tran Minh  <daotranminh@gmail.com>
+2008-02-29  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* src/Update.cpp: Add operator==
 
@@ -240,8 +240,8 @@
 
 	* Makefile.am: Require automake >= 1.10.
 
-2008-02-15  DAO Tran Minh  <daotranminh@gmail.com>
-	
+2008-02-15  DAO Tran Minh  <dao@kr.tuwien.ac.at>
+
 	* src/DefaultParser.cpp: Parse the whole, separated df file.
 
 	* src/Defaults.cpp: Transformation with forcing IN/OUT and DIRECT QUERY rules.
@@ -286,11 +286,11 @@
 	
 	* m4/boost.m4: Use boost.m4 from http://repo.or.cz/w/boost.m4.git.
 
-2008-02-03  DAO Tran Minh  <daotranminh@gmail.com>
+2008-02-03  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* src/DFRewriter.cpp: Fix bug for non-defaultrule program.
 
-2008-02-02  DAO Tran Minh  <daotranminh@gmail.com>
+2008-02-02  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* src/DefaultParser.cpp: More complex defaults whose each
 	justfication can be a conjunction.
@@ -317,24 +317,24 @@
 
 	* src/QueryCtx.cpp: Translate plain role queries to single atom CQs.
 
-2008-01-29  DAO Tran Minh  <daotranminh@gmail.com>
+2008-01-29  DAO Tran Minh  <dao@kr.tuwien.ac.at>
 
 	* src/DFRewriter.cpp: Update input reading ability of DFRewriter;
 	a default now can be written in multiple lines.
-	
+
 	* include/DFRewriter.h (DFRewriter::incomplete_input): Check if a
 	line is ended by a dot or not.
 	(DFRewriter::triml): Trim all the blanks from the left hand side
 	of a string (blank = ' ','\t').
 
-2008-01-28  DAO Tran Minh  <daotranminh@gmail.com>
-	
+2008-01-28  DAO Tran Minh  <dao@kr.tuwien.ac.at>
+
 	* src/Makefile.am: Add new cpp file names.
 
 	* include/Makefile.am: Add new header file names.
 
 	* src/Default.cpp: A Default of the form [A:B]/[C].
-	
+
 	* src/DefaultParser.cpp: A Parser for a Default of the
 	form [A:B]/[C]. Right now A can be a conjunction, B can be a list
 	of literals, and C can be a literal.
@@ -470,7 +470,7 @@
 2007-05-25  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	All files are now GPLed.
-	
+
 	* README: Use dlplugin instead of racerplugin.
 	* MAINTAINER-README: Likewise.
 
@@ -612,7 +612,7 @@
 	(ExtAtomRewriter::getLiteral): Set function name to &dlCQn/&dlUCQn
 	of extatom when pushing ext atoms.
 	* include/HexDLRewriter.h: Likewise.
- 
+
 	* src/DLOptimizer.cpp (DLOptimizer::optimize): Rebuild NodeGraph
 	after optimization process.
 
@@ -798,11 +798,11 @@
 
 	* examples/lubm-fast.sh: Add lubm tests.
 	* examples/lubm-fast1.dlp: Likewise.
-	* examples/lubm-fast2.dlp: Likewise. 
+	* examples/lubm-fast2.dlp: Likewise.
 	* examples/lubm-fast3.dlp: Likewise.
 	* examples/lubm-fast4.dlp: Likewise.
 	* examples/lubm.dlp: Likewise.
-	* examples/lubm.sh: Likewise. 
+	* examples/lubm.sh: Likewise.
 	* examples/lubm_1.owl: Likewise.
 	* examples/lubm_2.owl: Likewise.
 	* examples/lubm_3.owl: Likewise.
@@ -931,7 +931,7 @@
 	* testsuite/Makefile.am: Add TestDLOptimizer.
 	* testsuite/TestDLOptimizer.cpp: Likewise.
 	* testsuite/TestDLOptimizer.h: Likewise.
-	
+
 	* testsuite/TestDLRewriter.cpp: Fix testcases.
 
 	* src/DLOptimizer.cpp: Small fixes.
@@ -1012,7 +1012,7 @@
 2006-10-30  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	Release version 0.4.0.
-	
+
 	* src/RacerInterface.cpp (RacerInterface::setOptions): Rename
 	--norewrite to --nopush.
 
@@ -1035,7 +1035,7 @@
 	* src/HexDLRewriterParser.ypp: Likewise.
 	* src/HexDLRewriterScanner.lpp: Likewise.
 
-	* src/RacerAnswerDriver.cpp: Include sstream.h. 
+	* src/RacerAnswerDriver.cpp: Include sstream.h.
 	* src/RacerNRQLBuilder.cpp: Likewise.
 
 2006-10-14  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
@@ -1143,7 +1143,7 @@
 	* testsuite/run-dlvhex-tests.sh: BSD mktemp and find are a bit
 	different from their GNU counterparts.
 	Escape ' chars in python lists.
-	
+
 2006-09-19  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/TCPStream.cpp (TCPStream::open): Close socket after a
@@ -1206,7 +1206,7 @@
 2006-09-13  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	Release version 0.3.0.
-	
+
 	* testsuite/Makefile.am: Start only one RacerPro instance for the testsuite.
 	* testsuite/run-dlvhex-tests.sh: Likewise.
 
@@ -1263,7 +1263,7 @@
 	* src/Answer.cpp: Likewise.
 	* src/QueryCtx.cpp: Likewise.
 	* src/RacerQueryExpr.cpp: Likewise.
-	
+
 	* configure.ac: Check sys/select.h and sys/socket.h headers.
 
 	* src/RacerKBManager.cpp: Use std namespace for C-library functions.
@@ -1328,12 +1328,12 @@
 
 	* src/Makefile.am (libdlvhexracer_la_SOURCES): Add DLQuery.cpp and HexDLRewriter.cpp.
 	(libdlvhexracer_la_LDFLAGS): Add -no-undefined.
-	
+
 	* include/DLQuery.h: Move DLQuery to its own file.
 	* include/Query.h: Likewise.
 	* src/DLQuery.cpp: Likewise.
 	* src/Query.cpp: Likewise.
-	
+
 	* configure.ac: Add ACE_LIBTOOL_WIN32_DLL.
 
 2006-08-29  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
@@ -1390,10 +1390,10 @@
 2006-08-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/Cache.h: Add cache statistics.
-	* include/RacerInterface.h: Likewise. 
-	* src/Cache.cpp: Likewise. 
-	* src/RacerInterface.cpp: Likewise. 
-	
+	* include/RacerInterface.h: Likewise.
+	* src/Cache.cpp: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+
 2006-08-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/KBManager.h: Improve checking of opened tboxes.
@@ -1440,7 +1440,7 @@
 2006-08-20  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	Release version 0.2.0.
-	
+
 	* include/Ontology.h: Move some operators to the header file.
 	* include/QueryCtx.h: Likewise.
 	* include/RacerNRQL.h: Likewise.
@@ -1510,21 +1510,21 @@
 	* src/RacerNRQLBuilder.cpp: Likewise.
 	* src/RacerQueryExpr.cpp: Likewise.
 	* testsuite/TestRacerBuilder.cpp: Likewise.
-	
+
 	* include/TCPStream.h: Add isOpen() methods to TCPStreamBuf and
 	TCPIOStream.
 	* src/TCPStream.cpp: Likewise.
 
 	* testsuite/Makefile.am: Start Racer outside of dlvhex.
-	* testsuite/RacerRunner.sh: Likewise. 
-	* testsuite/TestRacerBuilder.cpp: Likewise. 
+	* testsuite/RacerRunner.sh: Likewise.
+	* testsuite/TestRacerBuilder.cpp: Likewise.
 
-	* testsuite/TestRacerDirector.cpp: Likewise. 
-	* testsuite/TestRacerNRQL.cpp: Likewise. 
-	* testsuite/TestRacerQuery.cpp: Likewise. 
-	* testsuite/TestRacerRunner.cpp: Likewise. 
-	* testsuite/TestRacerStream.cpp: Likewise. 
-	* testsuite/run-dlvhex-tests.sh: Likewise. 
+	* testsuite/TestRacerDirector.cpp: Likewise.
+	* testsuite/TestRacerNRQL.cpp: Likewise.
+	* testsuite/TestRacerQuery.cpp: Likewise.
+	* testsuite/TestRacerRunner.cpp: Likewise.
+	* testsuite/TestRacerStream.cpp: Likewise.
+	* testsuite/run-dlvhex-tests.sh: Likewise.
 
 	* src/RacerAnswerScanner.lpp: Fix URI regexp for scheme:path URIs
 	without //.
@@ -1532,129 +1532,129 @@
 	* src/RacerAnswerParser.ypp: Fix status message parsing.
 
 	* src/OWLParser.cpp: Fix file:// URIs.
-	* src/Ontology.cpp: Likewise. 
+	* src/Ontology.cpp: Likewise.
 
 	* include/Registry.h: Remove KB and open URI getter/setter
 	methods.
-	* src/Registry.cpp: Likewise. 
+	* src/Registry.cpp: Likewise.
 
 	* include/QueryDirector.h (QueryBaseBuilder,QueryBaseParser): New
 	interfaces.
-	* include/RacerAnswerDriver.h: Likewise. 
-	* src/RacerAnswerDriver.cpp: Likewise. 
+	* include/RacerAnswerDriver.h: Likewise.
+	* src/RacerAnswerDriver.cpp: Likewise.
 
 	* include/Ontology.h (Ontology::getRealURI): New method.
 
 	* include/Makefile.am: Add KBManager and RacerKBManager.
-	* src/Makefile.am: Likewise. 
+	* src/Makefile.am: Likewise.
 
 	* include/LogBuf.h: Fix documentation.
-	* include/RacerNRQL.h: Likewise. 
+	* include/RacerNRQL.h: Likewise.
 	* documentation.dox: Likewise.
 
 	* include/KBManager.h: Introduce KB Manager.
-	* include/Query.h: Likewise. 
-	* include/QueryCtx.h: Likewise. 
-	* include/RacerBuilder.h: Likewise. 
-	* include/RacerExtAtom.h: Likewise. 
-	* include/RacerInterface.h: Likewise. 
-	* include/RacerKBManager.h: Likewise. 
-	* include/RacerNRQL.tcc: Likewise. 
-	* src/Query.cpp: Likewise. 
-	* src/QueryCtx.cpp: Likewise. 
-	* src/RacerBuilder.cpp: Likewise. 
- 
-	* src/RacerExtAtom.cpp: Likewise. 
-	* src/RacerInterface.cpp: Likewise. 
-	* src/RacerKBManager.cpp: Likewise. 
+	* include/Query.h: Likewise.
+	* include/QueryCtx.h: Likewise.
+	* include/RacerBuilder.h: Likewise.
+	* include/RacerExtAtom.h: Likewise.
+	* include/RacerInterface.h: Likewise.
+	* include/RacerKBManager.h: Likewise.
+	* include/RacerNRQL.tcc: Likewise.
+	* src/Query.cpp: Likewise.
+	* src/QueryCtx.cpp: Likewise.
+	* src/RacerBuilder.cpp: Likewise.
+
+	* src/RacerExtAtom.cpp: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+	* src/RacerKBManager.cpp: Likewise.
 
 2006-08-13  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* configure.ac: Check for dlvhex >= 1.1.
 
 	* testsuite/TestDLRewriter.cpp: Introduce dlvhex::dl::test namespace.
-	* testsuite/TestDLRewriter.h: Likewise. 
-	* testsuite/TestOWLParser.cpp: Likewise. 
-	* testsuite/TestOWLParser.h: Likewise. 
-	* testsuite/TestRacerBuilder.cpp: Likewise. 
-	* testsuite/TestRacerBuilder.h: Likewise. 
-	* testsuite/TestRacerDirector.cpp: Likewise. 
-	* testsuite/TestRacerDirector.h: Likewise. 
-	* testsuite/TestRacerInterface.cpp: Likewise. 
-	* testsuite/TestRacerInterface.h: Likewise. 
-	* testsuite/TestRacerNRQL.cpp: Likewise. 
-	* testsuite/TestRacerNRQL.h: Likewise. 
-	* testsuite/TestRacerParse.cpp: Likewise. 
-	* testsuite/TestRacerParse.h: Likewise. 
-	* testsuite/TestRacerQuery.cpp: Likewise. 
-	* testsuite/TestRacerQuery.h: Likewise. 
-	* testsuite/TestRacerRunner.cpp: Likewise. 
-	* testsuite/TestRacerRunner.h: Likewise. 
-	* testsuite/TestRacerStream.cpp: Likewise. 
-	* testsuite/TestRacerStream.h: Likewise. 
-	* testsuite/TestRacerTypes.cpp: Likewise. 
-	* testsuite/TestRacerTypes.h: Likewise. 
-	* testsuite/TestSuite.cpp: Likewise. 
-	* testsuite/TestSuite.h: Likewise. 
+	* testsuite/TestDLRewriter.h: Likewise.
+	* testsuite/TestOWLParser.cpp: Likewise.
+	* testsuite/TestOWLParser.h: Likewise.
+	* testsuite/TestRacerBuilder.cpp: Likewise.
+	* testsuite/TestRacerBuilder.h: Likewise.
+	* testsuite/TestRacerDirector.cpp: Likewise.
+	* testsuite/TestRacerDirector.h: Likewise.
+	* testsuite/TestRacerInterface.cpp: Likewise.
+	* testsuite/TestRacerInterface.h: Likewise.
+	* testsuite/TestRacerNRQL.cpp: Likewise.
+	* testsuite/TestRacerNRQL.h: Likewise.
+	* testsuite/TestRacerParse.cpp: Likewise.
+	* testsuite/TestRacerParse.h: Likewise.
+	* testsuite/TestRacerQuery.cpp: Likewise.
+	* testsuite/TestRacerQuery.h: Likewise.
+	* testsuite/TestRacerRunner.cpp: Likewise.
+	* testsuite/TestRacerRunner.h: Likewise.
+	* testsuite/TestRacerStream.cpp: Likewise.
+	* testsuite/TestRacerStream.h: Likewise.
+	* testsuite/TestRacerTypes.cpp: Likewise.
+	* testsuite/TestRacerTypes.h: Likewise.
+	* testsuite/TestSuite.cpp: Likewise.
+	* testsuite/TestSuite.h: Likewise.
 
 	* include/RacerAnswerDriver.h: Introduce dlvhex::dl::racer namespace.
-	* include/RacerRunner.h: Likewise. 
-	* include/RacerQueryExpr.tcc: Likewise. 
-	* include/RacerQueryExpr.h: Likewise. 
-	* include/RacerNRQLBuilder.h: Likewise. 
-	* include/RacerNRQL.tcc: Likewise. 
-	* include/RacerInterface.h: Likewise. 
-	* include/RacerFlexLexer.h: Likewise. 
-	* include/RacerExtAtom.h: Likewise. 
-	* include/RacerBuilder.h: Likewise. 
-	* src/RacerAnswerDriver.cpp: Likewise. 
-	* src/RacerAnswerParser.ypp: Likewise. 
-	* src/RacerAnswerScanner.lpp: Likewise. 
-	* src/RacerBuilder.cpp: Likewise. 
-	* src/RacerExtAtom.cpp: Likewise. 
-	* src/RacerInterface.cpp: Likewise. 
-	* src/RacerNRQL.cpp: Likewise. 
-	* src/RacerNRQLBuilder.cpp: Likewise. 
-	* src/RacerQueryExpr.cpp: Likewise. 
-	* src/RacerRunner.cpp: Likewise. 
+	* include/RacerRunner.h: Likewise.
+	* include/RacerQueryExpr.tcc: Likewise.
+	* include/RacerQueryExpr.h: Likewise.
+	* include/RacerNRQLBuilder.h: Likewise.
+	* include/RacerNRQL.tcc: Likewise.
+	* include/RacerInterface.h: Likewise.
+	* include/RacerFlexLexer.h: Likewise.
+	* include/RacerExtAtom.h: Likewise.
+	* include/RacerBuilder.h: Likewise.
+	* src/RacerAnswerDriver.cpp: Likewise.
+	* src/RacerAnswerParser.ypp: Likewise.
+	* src/RacerAnswerScanner.lpp: Likewise.
+	* src/RacerBuilder.cpp: Likewise.
+	* src/RacerExtAtom.cpp: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+	* src/RacerNRQL.cpp: Likewise.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* src/RacerQueryExpr.cpp: Likewise.
+	* src/RacerRunner.cpp: Likewise.
 
 	* include/LogBuf.h: Introduce dlvhex::util namespace.
-	* include/TCPStream.h: Likewise. 
-	* include/UserDir.h: Likewise. 
-	* src/LogBuf.cpp: Likewise. 
-	* src/TCPStream.cpp: Likewise. 
-	* src/UserDir.cpp: Likewise. 
+	* include/TCPStream.h: Likewise.
+	* include/UserDir.h: Likewise.
+	* src/LogBuf.cpp: Likewise.
+	* src/TCPStream.cpp: Likewise.
+	* src/UserDir.cpp: Likewise.
 
 	* include/Answer.h: Introduce dlvhex::dl namespace.
-	* include/HexDLRewriterFlexLexer.h: Likewise. 
-	* include/HexDLRewriterDriver.h: Likewise. 
-	* include/Cache.h: Likewise. 
-	* include/QueryCtx.h: Likewise. 
-	* include/Query.h: Likewise. 
-	* include/Ontology.h: Likewise. 
-	* include/OWLParser.h: Likewise. 
-	* include/Registry.h: Likewise. 
-	* src/Answer.cpp: Likewise. 
-	* src/Cache.cpp: Likewise. 
-	* src/HexDLRewriterDriver.cpp: Likewise. 
-	* src/HexDLRewriterParser.ypp: Likewise. 
-	* src/QueryCtx.cpp: Likewise. 
-	* src/Query.cpp: Likewise. 
-	* src/Ontology.cpp: Likewise. 
-	* src/OWLParser.cpp: Likewise. 
-	* src/Registry.cpp: Likewise. 
+	* include/HexDLRewriterFlexLexer.h: Likewise.
+	* include/HexDLRewriterDriver.h: Likewise.
+	* include/Cache.h: Likewise.
+	* include/QueryCtx.h: Likewise.
+	* include/Query.h: Likewise.
+	* include/Ontology.h: Likewise.
+	* include/OWLParser.h: Likewise.
+	* include/Registry.h: Likewise.
+	* src/Answer.cpp: Likewise.
+	* src/Cache.cpp: Likewise.
+	* src/HexDLRewriterDriver.cpp: Likewise.
+	* src/HexDLRewriterParser.ypp: Likewise.
+	* src/QueryCtx.cpp: Likewise.
+	* src/Query.cpp: Likewise.
+	* src/Ontology.cpp: Likewise.
+	* src/OWLParser.cpp: Likewise.
+	* src/Registry.cpp: Likewise.
 
 	* documentation.dox: Fix documentation.
 
 	* include/Makefile.am: Add QueryDirector and DLError.
-	* src/Makefile.am: Likewise. 
+	* src/Makefile.am: Likewise.
 
-	* include/QueryDirector.h: Move RacerDirector to QueryDirector. 
-	* include/RacerDirector.tcc: Likewise. 
-	* include/RacerDirector.h: Likewise. 
-	* include/QueryDirector.tcc: Likewise. 
-	* src/RacerDirector.cpp: Likewise. 
-	* src/QueryDirector.cpp: Likewise. 
+	* include/QueryDirector.h: Move RacerDirector to QueryDirector.
+	* include/RacerDirector.tcc: Likewise.
+	* include/RacerDirector.h: Likewise.
+	* include/QueryDirector.tcc: Likewise.
+	* src/RacerDirector.cpp: Likewise.
+	* src/QueryDirector.cpp: Likewise.
 
 	* include/RacerError.h: Move RacerError to DLError.
 	* include/DLError.h: Likewise.
@@ -1665,8 +1665,8 @@
 	queries.
 
 	* include/Ontology.h: Code cleanups.
-	* src/LogBuf.cpp: Likewise. 
-	* src/Ontology.cpp: Likewise. 
+	* src/LogBuf.cpp: Likewise.
+	* src/Ontology.cpp: Likewise.
 
 	* include/OWLParser.h: Get rid of static member functions for the
 	raptor parser.
@@ -1678,9 +1678,9 @@
 	scenarious in order to simplify the RacerBuilder class hierarchy.
 	* include/RacerDirector.h: Likewise.
 	* src/RacerBuilder.cpp: Likewise.
-	* src/RacerDirector.cpp: Likewise. 
-	* src/RacerExtAtom.cpp: Likewise. 
-	* testsuite/TestRacerDirector.cpp: Likewise. 
+	* src/RacerDirector.cpp: Likewise.
+	* src/RacerExtAtom.cpp: Likewise.
+	* testsuite/TestRacerDirector.cpp: Likewise.
 
 	* include/Answer.h: Code cleanups.
 	* include/LogBuf.h: Likewise.
@@ -1697,10 +1697,10 @@
 
 	* include/Cache.h (Cache::CacheSet): Use boost::indirect_fun<>
 	instead of homebrewn comparator.
- 
+
 	* include/QueryCtx.h (operator<<,operator<): Add some operators
 	for QueryCtx.
-	* src/QueryCtx.cpp: Likewise. 
+	* src/QueryCtx.cpp: Likewise.
 
 2006-08-09  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
@@ -1708,46 +1708,46 @@
 	* examples/tests/test.out: Likewise.
 
 	* include/Answer.h: Fix documentation + code cleanups.
-	* include/TCPStream.h: Likewise. 
-	* include/Registry.h: Likewise. 
-	* include/RacerRunner.h: Likewise. 
-	* include/RacerQueryExpr.tcc: Likewise. 
-	* include/RacerQueryExpr.h: Likewise. 
-	* include/RacerNRQLBuilder.h: Likewise. 
-	* include/RacerNRQL.h: Likewise. 
-	* include/RacerInterface.h: Likewise. 
-	* include/RacerFlexLexer.h: Likewise. 
-	* include/RacerExtAtom.h: Likewise. 
-	* include/RacerDirector.h: Likewise. 
-	* include/RacerBuilder.h: Likewise. 
-	* include/RacerAnswerDriver.h: Likewise. 
-	* include/QueryCtx.h: Likewise. 
-	* include/Query.h: Likewise. 
-	* include/Ontology.h: Likewise. 
-	* include/OWLParser.h: Likewise. 
-	* include/LogBuf.h: Likewise. 
-	* include/HexDLRewriterFlexLexer.h: Likewise. 
-	* include/HexDLRewriterDriver.h: Likewise. 
-	* include/Cache.h: Likewise. 
-	* include/UserDir.h: Likewise. 
-	* src/TCPStream.cpp: Likewise. 
-	* src/Registry.cpp: Likewise. 
-	* src/RacerRunner.cpp: Likewise. 
-	* src/RacerQueryExpr.cpp: Likewise. 
-	* src/RacerNRQLBuilder.cpp: Likewise. 
-	* src/RacerInterface.cpp: Likewise. 
-	* src/RacerDirector.cpp: Likewise. 
-	* src/RacerAnswerDriver.cpp: Likewise. 
-	* src/QueryCtx.cpp: Likewise. 
-	* src/Query.cpp: Likewise. 
-	* src/Ontology.cpp: Likewise. 
-	* src/OWLParser.cpp: Likewise. 
-	* src/LogBuf.cpp: Likewise. 
-	* src/HexDLRewriterDriver.cpp: Likewise. 
-	* src/Cache.cpp: Likewise. 
-	* src/Answer.cpp: Likewise. 
-	* src/UserDir.cpp: Likewise. 
-	* testsuite/TestRacerDirector.cpp: Likewise. 
+	* include/TCPStream.h: Likewise.
+	* include/Registry.h: Likewise.
+	* include/RacerRunner.h: Likewise.
+	* include/RacerQueryExpr.tcc: Likewise.
+	* include/RacerQueryExpr.h: Likewise.
+	* include/RacerNRQLBuilder.h: Likewise.
+	* include/RacerNRQL.h: Likewise.
+	* include/RacerInterface.h: Likewise.
+	* include/RacerFlexLexer.h: Likewise.
+	* include/RacerExtAtom.h: Likewise.
+	* include/RacerDirector.h: Likewise.
+	* include/RacerBuilder.h: Likewise.
+	* include/RacerAnswerDriver.h: Likewise.
+	* include/QueryCtx.h: Likewise.
+	* include/Query.h: Likewise.
+	* include/Ontology.h: Likewise.
+	* include/OWLParser.h: Likewise.
+	* include/LogBuf.h: Likewise.
+	* include/HexDLRewriterFlexLexer.h: Likewise.
+	* include/HexDLRewriterDriver.h: Likewise.
+	* include/Cache.h: Likewise.
+	* include/UserDir.h: Likewise.
+	* src/TCPStream.cpp: Likewise.
+	* src/Registry.cpp: Likewise.
+	* src/RacerRunner.cpp: Likewise.
+	* src/RacerQueryExpr.cpp: Likewise.
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* src/RacerInterface.cpp: Likewise.
+	* src/RacerDirector.cpp: Likewise.
+	* src/RacerAnswerDriver.cpp: Likewise.
+	* src/QueryCtx.cpp: Likewise.
+	* src/Query.cpp: Likewise.
+	* src/Ontology.cpp: Likewise.
+	* src/OWLParser.cpp: Likewise.
+	* src/LogBuf.cpp: Likewise.
+	* src/HexDLRewriterDriver.cpp: Likewise.
+	* src/Cache.cpp: Likewise.
+	* src/Answer.cpp: Likewise.
+	* src/UserDir.cpp: Likewise.
+	* testsuite/TestRacerDirector.cpp: Likewise.
 
 2006-08-07  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
@@ -1787,7 +1787,7 @@
 	* src/Ontology.cpp: Download http:// ontologies and put them into
 	a temporary file in ~/.dlvhex so we don't need to download them
 	in the OWLParser code *and* in the Racer code.
-	Add support for parsing errors in libraptor. 
+	Add support for parsing errors in libraptor.
 
 	* include/Ontology.h: Likewise.
 
@@ -1824,11 +1824,11 @@
 
 2006-08-04  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
-	* testsuite/TestRacerQuery.cpp: Use AtomSet instead of Interpretation. 
-	* testsuite/TestRacerNRQL.cpp: Likewise. 
-	* testsuite/TestRacerInterface.cpp: Likewise. 
-	* testsuite/TestRacerDirector.cpp: Likewise. 
-	* testsuite/TestRacerBuilder.cpp: Likewise. 
+	* testsuite/TestRacerQuery.cpp: Use AtomSet instead of Interpretation.
+	* testsuite/TestRacerNRQL.cpp: Likewise.
+	* testsuite/TestRacerInterface.cpp: Likewise.
+	* testsuite/TestRacerDirector.cpp: Likewise.
+	* testsuite/TestRacerBuilder.cpp: Likewise.
 
 	* src/HexDLRewriterScanner.lpp: Add support for naf extatoms.
 	* src/HexDLRewriterParser.ypp: Likewise.
@@ -1841,14 +1841,14 @@
 	into query term.
 
 	* include/Query.h (Query::getProjectedInterpretation): New method.
-	
+
 	* src/Query.cpp (Query::isSubseteq): Use projected interpretation.
 	Fix operator< and operator==.
 
 	* include/Cache.h: Better debugging output.
 
 	* src/Cache.cpp: Use projected interpretation.
-	
+
 2006-08-03  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/Makefile.am (noinst_HEADERS): Add Answer.h, Query.h and
@@ -1904,7 +1904,7 @@
 	nRQL answers.
 	In case of a boolean answers we just add an empty Tuple and let
 	Answer handle it.
-	
+
 2006-08-01  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/HexDLRewriterFlexLexer.h: Fix documentation.
@@ -1913,7 +1913,7 @@
 
 	* src/RacerQuery.cpp: Add support for negated concept expressions.
 	* src/RacerNRQLBuilder.cpp: Likewise.
-	
+
 	* include/RacerInterface.h: Move plugin overview to
 	documentation.dox.
 	* documentation.dox: Likewise.
@@ -2089,7 +2089,7 @@
 
 2006-07-21  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
-	* examples/wires2.hex: Add a hex program with conj. queries.
+	* examples/wires2.hex: Add a hex program with conj.queries.
 
 	* testsuite/TestRacerNRQL.cpp: Assert outcome of a nRQL query.
 
@@ -2129,7 +2129,7 @@
 	* examples/tests/shop-http.out: Likewise.
 	* examples/tests/shop-consistent.out: Likewise.
 	* examples/tests/shop+test.out: Likewise.
-	
+
 	* README: Small version number fixes.
 
 	* configure.ac: Bump version to 0.2.
@@ -2242,8 +2242,8 @@
 2006-06-15  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	Release version 0.1.0.
-	
-	* src/RacerAnswerScanner.lpp: Adapt parser to bison 2.2/2.3. 
+
+	* src/RacerAnswerScanner.lpp: Adapt parser to bison 2.2/2.3.
 	* src/RacerAnswerParser.ypp: Likewise.
 	* include/RacerFlexLexer.h: Likewise.
 	* include/RacerAnswerDriver.h: Likewise.
@@ -2284,7 +2284,7 @@
 
 	* src/LogBuf.cpp (LogBuf::sync): Only write if buffer is non-empty.
 
-	* src/RacerExtAtom.cpp: Optimize command sequence, i.e. only load
+	* src/RacerExtAtom.cpp: Optimize command sequence, i.e., only load
 	an OWL if its not already loaded.
 	Use Registry.
 
@@ -2344,7 +2344,7 @@
 	* src/RacerInterface.cpp (RacerInterface::setOptions): Setup
 	std::clog for LogBuf logging.
 	(RacerInterface::startRacer): Run Racer and setup stream.
-	
+
 	* src/Makefile.am (libdlvhexracer_la_SOURCES): Add LogBuf.cpp.
 	* include/Makefile.am (noinst_HEADERS): Add LogBuf.h.
 
@@ -2365,7 +2365,7 @@
 
 	* src/RacerInterface.cpp (RacerInterface::setOptions): Setup
 	property map for the atoms.
-	
+
 	* src/RacerExtAtom.cpp (RacerCachingAtom::getCachedDirectors):
 	Consult property map whether user wants verbose output.
 
@@ -2414,7 +2414,7 @@
 
 	* src/DLRewriter.cpp: Use input/output streams of PluginRewriter.
 	* include/DLRewriter.h: Likewise.
-	
+
 2006-05-02  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/DLRewriter.cpp (DLRewriter::rewrite): Don't rewrite if uri
@@ -2478,7 +2478,7 @@
 	* testsuite/TestDLRewriter.h: Likewise.
 
 2006-04-26  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
-	
+
 	* src/DLRewriter.cpp: New file.
 	Some updates, currently non-working.
 	* include/DLRewriter.h: Likewise.
@@ -2577,7 +2577,7 @@
 	* src/RacerNRQL.cpp: Add documentation.
 	Refine class hierarchy.
 	* include/RacerNRQL.h: Likewise.
-	
+
 	* include/RacerQueryExpr.h: Add documentation.
 	Refine class hierarchy.
 	Add support for namespace identifier and different types of variables.
