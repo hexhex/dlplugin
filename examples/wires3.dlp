@@ -1,4 +1,4 @@
-#namespace ("", "<http://wires.com/wire#>")
+#namespace ("", "<http://wires.com/wire#>").
 
 % the domain
 node("<http://wires.com/wire#n1>").

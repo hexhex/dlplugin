@@ -1,6 +1,6 @@
 % -*- prolog -*-
 
-#namespace("shop","http://www.kr.tuwien.ac.at/staff/roman/shop#")
+#namespace("shop","http://www.kr.tuwien.ac.at/staff/roman/shop#").
 
 plusProvides("provides","foo","moo").
 plusPart("Part","cpu1").

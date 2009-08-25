@@ -1,5 +1,13 @@
 2009-08-25  Peter Schueller  <ps@kr.tuwien.ac.at>
 
+	* examples/wires3.dlp: Updated to changed #namespace syntax of dlvhex.
+	* examples/test.dlp: Likewise.
+	* examples/shop-inconsistent.dlp: Likewise.
+	* examples/ucq.dlp: Likewise.
+	* examples/shop.dlp: Likewise.
+	* examples/wires2.hex: Likewise.
+	* examples/shop+test.dlp: Likewise.
+
 	* m4/boost.m4: Updating boost.m4 to version currently used in dlvhex.
 
 	* testsuite/TestDLRewriter.cpp: Fixing testsuite compilation.

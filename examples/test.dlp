@@ -1,9 +1,9 @@
 % -*- prolog -*-
 
-#namespace("test","http://www.test.com/test#")
-#namespace("another-test","http://www.test.com/test#")
-#namespace("yet-another-test","http://www.yet-another-test.com/test%20with%20spaces#")
-#namespace("tst","http://www.another-test.com/test/")
+#namespace("test","http://www.test.com/test#").
+#namespace("another-test","http://www.test.com/test#").
+#namespace("yet-another-test","http://www.yet-another-test.com/test%20with%20spaces#").
+#namespace("tst","http://www.another-test.com/test/").
 	   
 testns(X) :- &dlC["test.owl",a,b,c,d,"test:Test"](X).
 testanother(X) :- &dlC["test.owl",a,b,c,d,"another-test:Test"](X).

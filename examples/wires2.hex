@@ -1,6 +1,6 @@
 % -*- prolog -*-
 
-#namespace(w, "http://wires.com/wire#")
+#namespace(w, "http://wires.com/wire#").
 
 
 over(X) :- &dlC["file://wires.owl",a,b,c,d,"HighTrafficNode"](X).

@@ -1,4 +1,4 @@
-#namespace("shop","http://www.kr.tuwien.ac.at/staff/roman/shop#")
+#namespace("shop","http://www.kr.tuwien.ac.at/staff/roman/shop#").
 
 s("supplier","s1","foo1@s1").
 s("supplier","s1","foo2@s1").
