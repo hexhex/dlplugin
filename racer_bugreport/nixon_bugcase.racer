@@ -1,0 +1,6 @@
+(set-unique-name-assumption t)
+(owl-read-file "nixon.owl" :kb-name |file:nixon.owl|)
+(kb-ontologies |file:nixon.owl|)
+(retrieve ($?X) (and ($?X |file://nixon_diamond/foobar#P|)) :abox |file:nixon.owl|)
+(retrieve-under-premise ((instance |file://nixon_diamond/foobar#nixon| |file://nixon_diamond/foobar#P|) (instance |file://nixon_diamond/foobar#nixon| (not |file://nixon_diamond/foobar#P|))) ($?X) (and ($?X |file://nixon_diamond/foobar#P|)) :abox |file:nixon.owl|)
+(retrieve ($?X) (and ($?X |file://nixon_diamond/foobar#P|)) :abox |file:nixon.owl|)
