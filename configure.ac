@@ -98,7 +98,9 @@ if test -r $FLEXLEXER_H ; then : ; else
 
 	AC_MSG_RESULT([$FLEXLEXER_H])
 
-	if test -z "$FLEXLEXER_H" ; then AC_MSG_ERROR([Could not find FlexLexer.h]) fi
+	if test -z "$FLEXLEXER_H" ; then
+    AC_MSG_ERROR([Could not find FlexLexer.h])
+  fi
 
 fi
 
