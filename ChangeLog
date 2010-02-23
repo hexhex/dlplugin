@@ -1,3 +1,9 @@
+2010-02-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/TCPStream.cpp: Remove std namespace from ::exit and
+	::perror, g++4.4 does not like it.
+	* src/URI.cpp: Likewise.
+
 2010-02-14  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* m4/boost.m4: Use boost.m4 from http://github.com/tsuna/boost.m4/raw/master/build-aux/boost.m4.

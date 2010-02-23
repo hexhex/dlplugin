@@ -82,8 +82,8 @@ URI::getAbsolutePath(const std::string& s)
 
       if (::getcwd(buf, PATH_MAX) == 0)
 	{
-	  std::perror("getcwd");
-	  std::exit(1);
+	  ::perror("getcwd");
+	  ::exit(1);
 	}
 
       return buf + std::string("/") + s;
