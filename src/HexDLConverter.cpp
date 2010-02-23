@@ -202,10 +202,10 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
   #endif
 
   // wrap with position iterator, to record the position
-  //typedef classic::position_iterator<base_iterator_type> iterator_type;
-  typedef base_iterator_type iterator_type;
-  iterator_type first(base_begin); //, base_end, "TODO.input");
-  iterator_type last(base_end);
+  typedef classic::position_iterator<base_iterator_type> iterator_type;
+  //typedef base_iterator_type iterator_type;
+  iterator_type first(base_begin, base_end, "TODO.input");
+  iterator_type last;
 
   //
   // setup lexer
@@ -232,7 +232,7 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
   //typedef DLGrammar<lexer_iterator_type> ConcreteParser;
 
   ConcreteLexer lexer;
-  lexer_iterator_type start = lexer.begin(base_begin, input.end());
+  lexer_iterator_type start = lexer.begin(first, last);
   lexer_iterator_type end;
 
   for(lexer_iterator_type it = start; it!= end && token_is_valid(*it); ++it)
@@ -245,6 +245,7 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
     typedef boost::iterator_range<iterator_type> lexer_iterator_pair;
     const lexer_iterator_pair* p = boost::get<lexer_iterator_pair>(&it->value());
     if( p != NULL ) std::cerr << "iterator p: " << std::string(p->begin(), p->end()) << std::endl;
+    if( p != NULL ) std::cerr << "at line " << p->begin().get_position().line << " column " << p->begin().get_position().column << std::endl;
   }
   /*
   ConcreteParser parser(lexer, o);
