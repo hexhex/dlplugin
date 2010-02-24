@@ -38,8 +38,9 @@
 #include <string>
 #include <algorithm>
 
+#include <cstdio>   // perror
 #include <cctype>   // toupper()
-#include <cerrno>   // perror
+#include <cerrno>   
 #include <climits>  // PATH_MAX
 #include <unistd.h> // getcwd()
 

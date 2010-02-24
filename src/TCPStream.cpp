@@ -37,6 +37,7 @@
 #include <ios>
 #include <sstream>
 
+#include <cstdio>   // perror
 #include <cstdlib>      // exit()
 #include <csignal>      // sigaction()
 #include <cerrno>       // errno & co.
