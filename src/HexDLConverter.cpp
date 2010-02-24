@@ -66,10 +66,35 @@ struct set_lexer_state
     BOOST_SCOPED_ENUM(boost::spirit::lex::pass_flags)&,
     std::size_t&, Context& ctx) const
   {
+    std::cerr << "going to lexer state '" << state << "'" << std::endl;
     ctx.set_state_name(state.c_str());
   }
 
   std::string state;
+};
+
+struct lex_atom
+{
+  template<typename Iterator, typename Context, typename IdType>
+  void operator()(Iterator& start, Iterator& end, 
+    BOOST_SCOPED_ENUM(boost::spirit::lex::pass_flags)&,
+    IdType&, Context& ctx) const
+  {
+    // go to [ with iterator tmp
+    Iterator tmp = start;
+    while( *tmp != '[' ) ++tmp;
+
+    // end is tmp
+    end = tmp;
+
+    // start parsing DL atom inputs
+    ctx.set_state_name("DLATOMINPUT");
+    std::cerr << "going to lexer state '" << ctx.get_state_name() << "' *" << std::endl;
+
+    // debugging code:
+    //std::string atom(start, end);
+    //std::cerr << "in dl atom '" << atom << "'!" << std::endl;
+  }
 };
 
 /**
@@ -84,82 +109,100 @@ struct DLLexer: lex::lexer<Lexer>
   DLLexer():
     DLLexer::base_type(lex::match_flags::match_default)
   {
+    // macros
+    this->self.add_pattern
+      ("BLANK", "[ \\t]")
+      ("NEWLINE", "\\r?\\n")
+      ("INPUTLIST", "\\[[^\\]]*\\]")
+      ("OUTPUTLIST", "\\([^\\)]*\\)")
+      ("NUMBER", "\\-?[0-9]+")
+      ("STRING", "[A-Za-z][A-Za-z_0-9\\'\\_]*")
+      ("QUOTEDSTRING", "\\\"[^\\\"]*\\\"")
+    ;
+
     // find comments and strings in regular text
-    comment = "[ \t]*%.*$";
-    stringstart = "\\\"";
-    newline = "\r?\n";
-    any1 = ".";
-    kwDL = "DL";
-    kwdlC = "&dlC"; kwdlR = "&dlR"; kwdlDR = "&dlDR"; kwdlCQ = "&dlCQ"; kwdlUCQ = "&dlUCQ";
-    this->self =
+    iComment = "{BLANK}*%.*$";
+    iDLAtom = "DL{INPUTLIST}{OUTPUTLIST}?";
+    iNewline = "{NEWLINE}";
+    iAny = ".";
+    // = "&dlC"; kwdlR = "&dlR"; kwdlDR = "&dlDR"; kwdlCQ = "&dlCQ"; kwdlUCQ = "&dlUCQ";
+    this->self("INITIAL") =
         // comments
-        comment
+        iComment
         // string starter
-      | stringstart [ set_lexer_state("STRING") ]
-      | newline
-      | lex::token_def<lex::omit>('[') [ set_lexer_state("INPUTLIST") ]
-      | kwDL | kwdlC | kwdlR | kwdlDR | kwdlCQ | kwdlUCQ
-      | any1
+      | iDLAtom [ lex_atom() ]
+      | lex::token_def<lex::omit>("{BLANK}")
+      | iNewline
+      | iAny
       ;
 
-    // wait for final " of string allow escaped " in string
-    stringend = "\\\"";
-    // this is the regex for matching the following string within the ': '\"'
-    escaped_stringend = "\\\\\\\"";
-    any2 = ".";
-    this->self("STRING") =
-        stringend [ set_lexer_state("INITIAL") ]
-      | escaped_stringend
-      | any2
+    aiEquals  = "==";
+    aiNEquals = "!=";
+    aiPlusop  = "\\+=";
+    aiMinusop = "-=";
+    aiTerm  = "{STRING}|{QUOTEDSTRING}";
+    this->self("DLATOMINPUT") =
+        lex::token_def<>(']') [ set_lexer_state("DLATOMAFTERINPUT") ]
+      | '[' | ';' | ',' | '-'
+      | aiEquals | aiNEquals
+      | aiPlusop | aiMinusop
+      | aiTerm
+      | lex::token_def<lex::omit>("{BLANK}")
       ;
 
-    any3 = ".";
-    this->self("INPUTLIST") =
-        lex::token_def<lex::omit>(']') [ set_lexer_state("INITIAL") ]
-      | any3
+    aaiSentinel = "[,\\.]";
+    this->self("DLATOMAFTERINPUT") =
+      // continue with atom inputs
+        lex::token_def<>('(') [ set_lexer_state("DLATOMOUTPUT") ]
+      // continue with toplevel parsing (dl atom finished)
+      | aaiSentinel [ set_lexer_state("INITIAL") ]
+      | lex::token_def<lex::omit>("{BLANK}")
+      ;
+
+    aoTerm = "{QUOTEDSTRING}|{STRING}|{NUMBER}|\\_";
+    this->self("DLATOMOUTPUT") =
+        lex::token_def<>(')') [ set_lexer_state("INITIAL") ]
+      | ','
+      | aoTerm
+      | lex::token_def<lex::omit>("{BLANK}")
       ;
 
     this->self("WS") =
       lex::token_def<>("[ \\t\\n]+");
   }
 
-  lex::token_def<> newline, stringstart, any1;
+  lex::token_def<> iNewline, iAny;
+  lex::token_def<std::string> iComment, iDLAtom;
   lex::token_def<lex::omit> kwDL, kwdlC, kwdlR, kwdlDR, kwdlCQ, kwdlUCQ;
-  lex::token_def<std::string> comment;
-
-  lex::token_def<> stringend, any2;
-  lex::token_def<std::string> escaped_stringend; 
-  //lex::token_def<std::string> escaped_stringend;
-
-  lex::token_def<> any3;
+  lex::token_def<std::string> aiTerm, aiEquals, aiNEquals, aiPlusop, aiMinusop;
+  lex::token_def<>            aaiSentinel;
+  lex::token_def<std::string> aoTerm;
 };
 
-namespace
+#if 0
+void do_fee()
 {
-  void do_fee()
-  {
-    std::cerr << "found fee " << std::endl;
-  }
-  void do_foo(std::string s)
-  {
-    std::cerr << "found foo '" << s << "'" << std::endl;
-  }
-  void do_dlatom(boost::fusion::vector<std::string, std::string> input)
-  {
-    using boost::phoenix::at_c;
-    std::cerr << "found dlatom '" << at_c<0>(input) << "'/'" << at_c<1>(input) << "'" << std::endl;
-  }
-  void do_passthrough(const std::string& s)
-  {
-    std::cerr << "found passthrough '" << s << "'" << std::endl;
-  }
+  std::cerr << "found fee " << std::endl;
+}
+void do_foo(std::string s)
+{
+  std::cerr << "found foo '" << s << "'" << std::endl;
+}
+void do_dlatom(boost::fusion::vector<std::string, std::string> input)
+{
+  using boost::phoenix::at_c;
+  std::cerr << "found dlatom '" << at_c<0>(input) << "'/'" << at_c<1>(input) << "'" << std::endl;
+}
+void do_passthrough(const std::string& s)
+{
+  std::cerr << "found passthrough '" << s << "'" << std::endl;
+}
 
-  const std::string& mkstring(char c)
-  {
-    std::string s(" ");
-    s[0] = c;
-    return s;
-  }
+const std::string& mkstring(char c)
+{
+  std::string s(" ");
+  s[0] = c;
+  return s;
 }
 
 /**
@@ -209,6 +252,7 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
   //qi::rule<Iterator, dlvhex::Tuple(), Skipper> output;
   std::ostream& outStream;
 };
+#endif
 
 } // anonymous namespace
 
@@ -289,7 +333,7 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
 
   #ifdef DLPLUGIN_DEBUG_LEXER_TOKENIZATION
   // lexer test (tokenize input and output the result)
-  std::cerr << "START lexer test";
+  std::cerr << "START lexer test" << std::endl;
   {
     iterator_type remember_first = first;
     iterator_type remember_last = last;
@@ -318,12 +362,13 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
   std::cerr << "END lexer test";
   #endif
 
+  #if 0
   //
   // setup parser
   //
   typedef DLGrammar<lexer_iterator_type, ConcreteLexer::lexer_def> ConcreteParser;
 
-  ConcreteLexer lexer;
+  ConcreteLexer lexer(o);
   ConcreteParser parser(lexer, o);
 
   std::cerr << "$$$parsing" << std::endl;
@@ -332,6 +377,7 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
   bool r = qi::phrase_parse(start, end, parser, qi::in_state("WS")[lexer.self]);
   std::cerr << "$$$parsing returned " << r << std::endl;
   std::cerr << "at token id" << start->id() << " end?" << (start == end) << std::endl;
+  #endif
 
   #if 0
   {
