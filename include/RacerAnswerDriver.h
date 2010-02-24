@@ -37,24 +37,13 @@
 #include "DLError.h"
 #include "QueryDirector.h"
 
-#include "RacerAnswerParser.hpp"
-
 #include <iosfwd>
 #include <string>
-
-//
-// forward declarations
-//
-class RacerFlexLexer;
-
 
 namespace dlvhex {
 namespace dl {
 
-  //
-  // forward declarations
-  //
-  class Answer;
+class Answer;
 
 namespace racer {
 
@@ -65,9 +54,6 @@ namespace racer {
   class RacerBaseAnswerDriver : public QueryBaseParser
   {
   protected:
-    /// lexer object which scans the stream
-    RacerFlexLexer* lexer;
-
     /// sync and clear #stream
     void
     syncStream();
@@ -86,17 +72,6 @@ namespace racer {
   public:
     /// dtor
     ~RacerBaseAnswerDriver();
-
-    /// Error handling.
-    void
-    error(const yy::location& l, const std::string& m) throw (DLParsingError);
-
-    /// Error handling.
-    void
-    error(const std::string& m) throw (DLParsingError);
-
-    RacerFlexLexer*
-    getLexer() const;
   };
 
 

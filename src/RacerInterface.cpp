@@ -39,7 +39,7 @@
 #include "RacerExtAtom.h"
 #include "Ontology.h"
 #include "DLOptimizer.h"
-#include "HexDLDriver.h"
+#include "HexDLConverter.h"
 #include "LogBuf.h"
 #include "Registry.h"
 #include "TCPStream.h"
@@ -65,7 +65,7 @@ RacerInterface::RacerInterface()
   : stream(new dlvhex::util::TCPIOStream("localhost", 8088)),
     stats(new CacheStats),
     cache(new Cache(*stats)),
-    dlconverter(new HexDLDriver),
+    dlconverter(new HexDLConverter),
     dfconverter(new dlvhex::df::DFConverter),
     dfoutputbuilder(new dlvhex::df::DFOutputBuilder),
     dloptimizer(new DLOptimizer),

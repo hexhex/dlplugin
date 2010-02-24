@@ -39,73 +39,16 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 
 # set default warning parameters for g++ compatible compilers
+# allow to disable certain warnings using custom CXXFLAGS
 if test "$GXX" = "yes"; then
-   CXXFLAGS="$CXXFLAGS -W -Wall"
+   CXXFLAGS="-W -Wall $CXXFLAGS"
 fi
-
-AM_PROG_LEX
-AC_PROG_YACC
-AC_PROG_LN_S
 
 # Checks for header files.
 AC_CHECK_HEADERS([sys/select.h sys/socket.h sys/stat.h sys/time.h sys/types.h unistd.h])
 AC_HEADER_STAT
 AC_HEADER_STDC
 AC_HEADER_TIME
-
-#
-# search for FlexLexer.h so we can add it at `make dist' time
-#
-absolute_srcdir=`pwd`
-absolute_srcdir=$absolute_srcdir/$srcdir
-FLEXLEXER_H=$absolute_srcdir/src/FlexLexer.h
-if test -r $FLEXLEXER_H ; then : ; else
-
-	AC_LANG_PUSH([C++])
-	AC_CHECK_HEADER([FlexLexer.h])
-	AC_LANG_POP([C++])
-
-	# first we guess the prefix of flex
-	AC_PATH_PROG([flexexec], [flex], [notfound])
-	flexbindir=`AS_DIRNAME(["$flexexec"])`
-	flexprefix=`AS_DIRNAME(["$flexbindir"])`
-
-	if test "$flexexec" = notfound; then
-	   AC_MSG_ERROR([flex not found. Download it at http://flex.sourceforge.net/])
-	fi
-
-	include_paths="$flexprefix/include"
-
-	# then we check all compiler flags for include paths
-	flags="$CPPFLAGS $CXXFLAGS $CFLAGS"
-	for f in $flags
-	do
-		case $f in
-		-I*) include_paths="$include_paths $f" ;;
-		esac
-	done
-
-	# TODO: get default include paths from compiler?
-	include_paths="$include_paths /usr/local/include /usr/include"
-
-	# get rid of -I compiler flags
-	paths=`echo $include_paths | sed s,-I,,g`
-
-	AC_MSG_CHECKING([for FlexLexer.h path in $paths])
-
-	# get the FIRST occurence of FlexLexer.h
-	FLEXLEXER_H=`find $paths -maxdepth 1 -name FlexLexer.h 2>/dev/null | head -n1`
-
-	AC_MSG_RESULT([$FLEXLEXER_H])
-
-	if test -z "$FLEXLEXER_H" ; then
-    AC_MSG_ERROR([Could not find FlexLexer.h])
-  fi
-
-fi
-
-AC_SUBST([FLEXLEXER_H])
-
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -145,7 +88,7 @@ if test x$have_cppunit = xfalse; then
 fi
 
 # checking for boost libs
-BOOST_REQUIRE([1.33.0])
+BOOST_REQUIRE([1.42.0])
 BOOST_SMART_PTR
 BOOST_STRING_ALGO
 BOOST_TOKENIZER

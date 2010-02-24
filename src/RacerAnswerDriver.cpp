@@ -33,8 +33,6 @@
 
 #include "RacerAnswerDriver.h"
 #include "Answer.h"
-#include "RacerFlexLexer.h"
-#include "RacerAnswerParser.hpp"
 #include "DLError.h"
 #include "Registry.h"
 
@@ -45,14 +43,12 @@ using namespace dlvhex::dl::racer;
 
 
 RacerBaseAnswerDriver::RacerBaseAnswerDriver(std::istream& i)
-  : QueryBaseParser(i),
-    lexer(new RacerFlexLexer(this))
+  : QueryBaseParser(i)
 { }
 
 
 RacerBaseAnswerDriver::RacerBaseAnswerDriver(const RacerBaseAnswerDriver& d)
-  : QueryBaseParser(d),
-    lexer(new RacerFlexLexer(this))
+  : QueryBaseParser(d)
 { }
 
 
@@ -65,13 +61,6 @@ RacerBaseAnswerDriver::operator= (const RacerBaseAnswerDriver&)
 
 RacerBaseAnswerDriver::~RacerBaseAnswerDriver()
 {
-  delete lexer;
-}
-
-RacerFlexLexer*
-RacerBaseAnswerDriver::getLexer() const
-{
-  return lexer;
 }
 
 void
@@ -86,25 +75,6 @@ RacerBaseAnswerDriver::syncStream()
 }
 
 
-void
-RacerBaseAnswerDriver::error(const yy::location& l,
-			     const std::string& m) throw (DLParsingError)
-{
-  syncStream();
-  std::stringstream s;
-  s << "Parsing error at " << l << ": " << m;
-  throw DLParsingError(s.str());
-}
-     
-void
-RacerBaseAnswerDriver::error(const std::string& m) throw (DLParsingError)
-{
-  syncStream();
-  throw DLParsingError("Parsing error: " + m);
-}
-
-
-
 RacerAnswerDriver::RacerAnswerDriver(std::istream& i)
   : RacerBaseAnswerDriver(i)
 { }
@@ -115,6 +85,7 @@ RacerAnswerDriver::parse(Answer &a) throw (DLParsingError)
 {
   try
     {
+#if 0
       if (!stream.eof())
 	{
 	  yy::RacerAnswerParser parser(*this, a);
@@ -123,6 +94,7 @@ RacerAnswerDriver::parse(Answer &a) throw (DLParsingError)
 	  parser.parse();
 	  syncStream();
 	}
+#endif
     }
   catch (std::ios_base::failure& f)
     {
