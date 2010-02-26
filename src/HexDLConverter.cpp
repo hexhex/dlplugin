@@ -165,9 +165,10 @@ struct DLLexer: lex::lexer<Lexer>
     aiNumber = "{NUMBER}";
     this->self("DLATOMINPUT") =
         lex::token_def<>(']') [ set_lexer_state("DLATOMAFTERINPUT") ]
-      | '[' | ';' | ',' | '(' | ')' | aiMinus
+      | '[' | ';' | ',' | '(' | ')'
      // | aiEquals | aiNEquals
       | aiPlusop | aiMinusop
+      | aiMinus
       | aiOr
       | aiString
       | aiNumber
@@ -202,7 +203,7 @@ struct DLLexer: lex::lexer<Lexer>
   lex::token_def<>             iNewline, iBlank, iAny, iComment;
   lex::token_def<std::string>  iDLAtom, iDLExtAtom;
   lex::token_def<>             aiOr;
-  lex::token_def<char>         aiMinus;
+  lex::token_def<>             aiMinus;
   lex::token_def<std::string>  aiString, aiEquals, aiNEquals, aiPlusop, aiMinusop;
   lex::token_def<int>          aiNumber;
   lex::token_def<>             aaiSentinel;
@@ -275,11 +276,17 @@ void do_dlatom(fusion::vector<std::string, std::string> input)
 
 struct handle_passthrough
 {
+  handle_passthrough(ConverterState& state):
+    state(state) { }
+
   void operator()(const std::string& s, qi::unused_type, qi::unused_type) const
   {
+    state.out << s;
     //std::cerr << s;
     //std::cerr << "found passthrough '" << s << "'" << std::endl;
   }
+
+  ConverterState state;
 };
 
 template<typename Attrib>
@@ -337,7 +344,7 @@ struct handle_dlatom
       Context& ctx, qi::unused_type) const
   {
     dlvhex::AtomSet ops;
-    if( !!fusion::at_c<0>(args) )
+    if( boost::none != fusion::at_c<0>(args) )
       ops = fusion::at_c<0>(args).get();
 
     dlvhex::dl::HexDLRewriterBasePtr rewriter(
@@ -353,7 +360,48 @@ struct handle_dlatom
   ConverterState& state;
 };
 
-struct handle_ops
+struct handle_dlextatom
+{
+  handle_dlextatom(ConverterState& state): state(state) {}
+
+  template<typename Context>
+  void operator()(boost::fusion::vector4<
+      std::string, dlvhex::Term, std::vector<dlvhex::Term>, dlvhex::Tuple> const& args,
+      Context& ctx, qi::unused_type) const
+  {
+    std::string atom = fusion::at_c<0>(args);
+
+    dlvhex::Tuple inputs;
+    // we always have at least one input
+    inputs.push_back(fusion::at_c<1>(args));
+    // we may have more
+    inputs.insert(inputs.end(), fusion::at_c<2>(args).begin(), fusion::at_c<2>(args).end());
+
+    const dlvhex::Tuple& outputs = fusion::at_c<3>(args);
+
+    if( atom == "&dlCQ" || atom == "&dlUCQ" )
+    {
+      // need to append arity
+      std::ostringstream oss;
+      oss << atom << outputs.size();
+      atom = oss.str();
+    }
+
+    dlvhex::ExternalAtomPtr extAtom(
+        new dlvhex::ExternalAtom(atom, outputs, inputs, 0));
+
+    dlvhex::dl::HexDLRewriterBasePtr rewriter(
+      new dlvhex::dl::ExtAtomRewriter(extAtom));
+
+    dlvhex::Literal* lit = rewriter->getLiteral();
+    state.out << *lit;
+    delete lit;
+  }
+
+  ConverterState& state;
+};
+
+struct handle_atomset_from_atomptrs
 {
   template<typename Context>
   void operator()(fusion::vector2<dlvhex::AtomPtr, std::vector<dlvhex::AtomPtr> > const& ops, Context& ctx, qi::unused_type) const
@@ -375,6 +423,7 @@ struct handle_ops
     for(std::vector<dlvhex::AtomPtr>::const_iterator it = ops.begin(); it != ops.end(); ++it)
       ruleAttr.insert(*it);
     #endif
+    //std::cerr << "handle_atomset_from_atomptrs: got " << ruleAttr.size() << " arguments" << std::endl;
   }
 };
 
@@ -498,7 +547,7 @@ struct handle_output
   {
     dlvhex::Tuple& ruleAttr = boost::fusion::at_c<0>(ctx.attributes);
     dlvhex::Tuple t;
-    if( !!output && !output.get().empty() )
+    if( boost::none != output && !output.get().empty() )
     {
       for(std::vector<dlvhex::Term>::const_iterator it = output.get().begin();
           it != output.get().end(); ++it)
@@ -508,33 +557,31 @@ struct handle_output
   }
 };
 
+// TODO: write minimal testcase for rule r = (-tok.foo >> tok.bar) [handle()] where foo attribute
+// type is char and bar attribute type is string -> boost::optional is created, but string contains
+// initial \0 if foo token is absent
+
 struct handle_atom
 {
-  template<typename Context>
-  void operator()(boost::fusion::vector4<boost::optional<char>, std::string, dlvhex::Term, boost::optional<dlvhex::Term> > const& tokens, Context& ctx, qi::unused_type) const
+  template<typename Context, typename LexerTokenAttrib>
+  void operator()(boost::fusion::vector4<boost::optional<LexerTokenAttrib>, std::string, dlvhex::Term, boost::optional<dlvhex::Term> > const& tokens, Context& ctx, qi::unused_type) const
   {
     dlvhex::AtomPtr& ruleAttr = fusion::at_c<0>(ctx.attributes);
 
-    // presence of tok.aiMinus sets this optional char, meaning that we have a "-"
-    bool neg = !!fusion::at_c<0>(tokens);
+    // presence of tok.aiMinus sets this optional int, meaning that we have a "-"
+    bool neg = (boost::none != fusion::at_c<0>(tokens));
 
     const std::string& predicate = fusion::at_c<1>(tokens);
 
     dlvhex::Tuple arguments;
     arguments.push_back( fusion::at_c<2>(tokens) );
-    if( !!fusion::at_c<3>(tokens) )
+    if( boost::none != fusion::at_c<3>(tokens) )
       arguments.push_back( fusion::at_c<3>(tokens).get() );
 
+    //std::cerr << "atom: predicate='" << predicate << "' " << int(predicate[0]) << "'" << int(predicate[1]) << "'  with " << arguments.size() << " arguments" << std::endl;
     ruleAttr = dlvhex::AtomPtr(new dlvhex::Atom(predicate, arguments, neg));
   }
 };
-
-const std::string& mkstring(char c)
-{
-  std::string s(" ");
-  s[0] = c;
-  return s;
-}
 
 /**
  * This grammar uses the above lexer to pick DL atoms out of an incoming data stream, and to rewrite
@@ -552,16 +599,16 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
     using qi::lexeme;
     root =
      *( dlatom
-      | passthrough [ handle_passthrough() ]
+      | passthrough [ handle_passthrough(state) ]
       );
     dlatom =
         (qi::omit[tok.iDLAtom] >> '[' >> -(ops >> ';') >> dlquery >> ']' >> output) [ handle_dlatom(state) ]
-      | (qi::omit[tok.iDLAtom] >> '[' >> -(ops >> ';') >> cq >> ']' >> output) [ handle_dlatom(state) ]
-      | (qi::omit[tok.iDLAtom] >> '[' >> -(ops >> ';') >> ucq >> ']' >> output) [ handle_dlatom(state) ]
+      | (qi::omit[tok.iDLAtom] >> '[' >> -(ops >> ';') >> cq      >> ']' >> output) [ handle_dlatom(state) ]
+      | (qi::omit[tok.iDLAtom] >> '[' >> -(ops >> ';') >> ucq     >> ']' >> output) [ handle_dlatom(state) ]
+      | (tok.iDLExtAtom >>        '[' >> iterm >> *(',' >> iterm) >> ']' >> output) [ handle_dlextatom(state) ]
       ;
-    // TODO: iDLExtAtom handling
     ops =
-      (op >> *(',' >> op)) [ handle_ops() ];
+      (op >> *(',' >> op)) [ handle_atomset_from_atomptrs() ];
     op =
       (tok.aiString >> pmop >> tok.aiString) [ handle_op(state) ];
     pmop %=
@@ -569,7 +616,7 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
     dlquery %=
       lexeme[-tok.aiMinus >> tok.aiString];
     cq =
-      (atom >> *(',' >> atom)) [ handle_ops() ]; // we can reuse the handle_ops() here!
+      (atom >> *(',' >> atom)) [ handle_atomset_from_atomptrs() ];
     ucq =
       (cq >> +(qi::omit[tok.aiOr] >> cq)) [ handle_ucq() ];
     atom =
@@ -733,17 +780,15 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
   std::cerr << "at token id" << start->id() << " end?" << (start == end) << std::endl;
   #endif
 
-  #if 0
+  std::cerr << "writing extra rules" << std::endl;
+
+  typedef std::vector<dlvhex::Rule*> RuleVector;
+  const RuleVector& rules = dlinput.getDLInputRules();
+  for(RuleVector::const_iterator it = rules.begin(); it != rules.end(); ++it)
   {
-    std::cerr << "$$$parsing" << std::endl;
-    bool r = lex::tokenize_and_parse(first, last, lexer, parser);
-    std::cerr << "$$$parsing returned " << r << std::endl;
+    o << *(*it) << std::endl;
+    delete *it;
   }
-  #endif
-  
-  // TODO check ret
-  //i >> qi::match(parser);
-  // TODO check i.fail();
 }
 
 // vim:ts=8:sw=2:tw=100:
