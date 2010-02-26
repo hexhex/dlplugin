@@ -18,13 +18,15 @@
 #include <libcwd/debug.h>
 
 #include "HexDLConverter.h"
-#include <dlvhex/Term.h>
+#include "HexDLRewriter.h"
+#include "Ontology.h"
 
 #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/lex_lexertl.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/qi_eoi.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
+#include <boost/spirit/include/phoenix_object.hpp>
 #include <boost/spirit/include/phoenix_fusion.hpp>
 #include <boost/spirit/include/qi_match.hpp>
 #include <boost/spirit/include/support_multi_pass.hpp>
@@ -39,6 +41,8 @@
 
 using namespace boost::spirit;
 using namespace boost::spirit::ascii;
+namespace fusion = boost::fusion;
+namespace phoenix = boost::phoenix;
 
 #if 0
 // required for lexer tokens
@@ -157,14 +161,16 @@ struct DLLexer: lex::lexer<Lexer>
     aiMinusop = "-=";
     aiMinus = '-';
     aiOr = " v ";
-    aiTerm  = "{STRING}|{QUOTEDSTRING}|{NUMBER}";
+    aiString  = "{STRING}|{QUOTEDSTRING}";
+    aiNumber = "{NUMBER}";
     this->self("DLATOMINPUT") =
         lex::token_def<>(']') [ set_lexer_state("DLATOMAFTERINPUT") ]
-      | '[' | ';' | ',' | aiMinus
+      | '[' | ';' | ',' | '(' | ')' | aiMinus
      // | aiEquals | aiNEquals
       | aiPlusop | aiMinusop
       | aiOr
-      | aiTerm
+      | aiString
+      | aiNumber
       | lex::token_def<lex::omit>("{BLANK}") [ _pass = lex::pass_flags::pass_ignore ] // do not pass this token to parser
       ;
 
@@ -177,11 +183,15 @@ struct DLLexer: lex::lexer<Lexer>
       | lex::token_def<lex::omit>("{BLANK}") [ _pass = lex::pass_flags::pass_ignore ] // do not pass this token to parser
       ;
 
-    aoTerm = "{STRING}|{QUOTEDSTRING}|{NUMBER}|\\_";
+    aoString = "{STRING}|{QUOTEDSTRING}";
+    aoNumber = "{NUMBER}";
+    aoAnonymousVar = "\\_";
     this->self("DLATOMOUTPUT") =
         lex::token_def<>(')') [ set_lexer_state("INITIAL") ]
       | lex::token_def<lex::omit>(',') [ _pass = lex::pass_flags::pass_ignore ] // do not pass this token to parser
-      | aoTerm
+      | aoString
+      | aoNumber
+      | aoAnonymousVar
       | lex::token_def<lex::omit>("{BLANK}") [ _pass = lex::pass_flags::pass_ignore ] // do not pass this token to parser
       ;
 
@@ -189,15 +199,66 @@ struct DLLexer: lex::lexer<Lexer>
       lex::token_def<>("[ \\t\\n]+");
   }
 
-  lex::token_def<>            iNewline, iBlank, iAny, iComment;
-  lex::token_def<std::string> iDLAtom, iDLExtAtom;
-  lex::token_def<>            aiOr, aiMinus;
-  lex::token_def<std::string> aiTerm, aiEquals, aiNEquals, aiPlusop, aiMinusop;
-  lex::token_def<>            aaiSentinel;
-  lex::token_def<std::string> aoTerm;
+  lex::token_def<>             iNewline, iBlank, iAny, iComment;
+  lex::token_def<std::string>  iDLAtom, iDLExtAtom;
+  lex::token_def<>             aiOr;
+  lex::token_def<char>         aiMinus;
+  lex::token_def<std::string>  aiString, aiEquals, aiNEquals, aiPlusop, aiMinusop;
+  lex::token_def<int>          aiNumber;
+  lex::token_def<>             aaiSentinel;
+  lex::token_def<std::string>  aoString;
+  lex::token_def<int>          aoNumber;
+  lex::token_def<>             aoAnonymousVar;
 };
 
+#if 0
+struct lexer_handle_term
+{
+  template<typename Iterator, typename Context, typename IdType>
+  void operator()(Iterator& orig_start, Iterator& orig_end, 
+    BOOST_SCOPED_ENUM(boost::spirit::lex::pass_flags)&,
+    IdType&, Context& ctx) const
+  {
+    Iterator start(orig_start);
+    Iterator end(orig_end);
+    std::string s(start, end);
+
+    if( s == "_") 
+    {
+      ctx.set_value(dlvhex::Term());
+    }
+    else
+    {
+      int i;
+      if( qi::parse(start, end, qi::int_, i) && start == end )
+      {
+        ctx.set_value(dlvhex::Term(i));
+      }
+      else
+      {
+        ctx.set_value(dlvhex::Term(s));
+      }
+    }
+  }
+};
+#endif
+
+
 #if 1
+
+// state passed to grammar for parsing
+struct ConverterState
+{
+  ConverterState(std::ostream& out, dlvhex::dl::Ontology::shared_pointer ontology,
+      dlvhex::dl::DLAtomInput& dlinput):
+    out(out), ontology(ontology), dlinput(dlinput) {}
+
+  std::ostream& out;
+  dlvhex::dl::Ontology::shared_pointer ontology;
+  dlvhex::dl::DLAtomInput& dlinput;
+};
+
+
 void do_fee()
 {
   std::cerr << "found fee " << std::endl;
@@ -206,7 +267,7 @@ void do_foo(std::string s)
 {
   std::cerr << "found foo '" << s << "'" << std::endl;
 }
-void do_dlatom(boost::fusion::vector<std::string, std::string> input)
+void do_dlatom(fusion::vector<std::string, std::string> input)
 {
   using boost::phoenix::at_c;
   std::cerr << "found dlatom '" << at_c<0>(input) << "'/'" << at_c<1>(input) << "'" << std::endl;
@@ -224,7 +285,11 @@ struct handle_passthrough
 template<typename Attrib>
 void houtput(Attrib const& a)
 {
-  std::cerr << "XXX handling attribute " << libcwd::type_info_of<Attrib const&>().demangled_name() << std::endl;
+  //std::cerr << "XXX handling attribute " << libcwd::type_info_of<Attrib>().demangled_name() << std::endl;
+  std::cerr << "XXX handling attribute " << libcwd::type_info_of(a).demangled_name() << std::endl;
+  //std::string s;
+  //libcwd::demangle_type(typeid(a).name(), s);
+  //std::cerr << "XXX handling attribute " << s << std::endl;
 };
 
 template<typename Content>
@@ -248,25 +313,219 @@ void houtput(std::string const& a)
 }
 
 
-struct handle_dlatom
+struct handle_dbg
 {
+  handle_dbg(std::string s): s(s) {}
+  std::string s;
   template<typename Attrib>
   void operator()(Attrib& a, qi::unused_type, qi::unused_type) const
   {
+    std::cerr << "DBG=" << s << std::endl;
     houtput(a);
+  }
+};
+
+struct handle_dlatom
+{
+  handle_dlatom(ConverterState& state): state(state) {}
+
+  // dlquery: Query = std::string
+  // cq: Query = dlvhex::AtomSet
+  // ucq: Query = std::vector<dlvhex::AtomSet>
+  template<typename Context, typename Query>
+  void operator()(boost::fusion::vector3<boost::optional<dlvhex::AtomSet>, Query, dlvhex::Tuple> const& args,
+      Context& ctx, qi::unused_type) const
+  {
+    dlvhex::AtomSet ops;
+    if( !!fusion::at_c<0>(args) )
+      ops = fusion::at_c<0>(args).get();
+
+    dlvhex::dl::HexDLRewriterBasePtr rewriter(
+      new dlvhex::dl::DLAtomRewriter(
+        state.ontology, state.dlinput,
+        ops, & fusion::at_c<1>(args), & fusion::at_c<2>(args)));
+
+    dlvhex::Literal* lit = rewriter->getLiteral();
+    state.out << *lit;
+    delete lit;
+  }
+
+  ConverterState& state;
+};
+
+struct handle_ops
+{
+  template<typename Context>
+  void operator()(fusion::vector2<dlvhex::AtomPtr, std::vector<dlvhex::AtomPtr> > const& ops, Context& ctx, qi::unused_type) const
+  //void operator()(std::vector<dlvhex::AtomPtr> const& ops, Context& ctx, qi::unused_type) const
+  {
+    // for debugging
+    //std::cerr << "OPS" << std::endl;
+    //houtput(triple);
+
+    dlvhex::AtomSet& ruleAttr = fusion::at_c<0>(ctx.attributes);
+    #if 1
+    ruleAttr.insert( fusion::at_c<0>(ops) );
+    // TODO create AtomSet::insert(iterator, iterator) -> TODO derive atomset from set -> then the line below can be used instead of the loop
+    //ruleAttr.insert( fusion::at_c<1>(ops).begin(), fusion::at_c<1>(ops).end() );
+    for(std::vector<dlvhex::AtomPtr>::const_iterator it = fusion::at_c<1>(ops).begin();
+        it != fusion::at_c<1>(ops).end(); ++it)
+      ruleAttr.insert(*it);
+    #else
+    for(std::vector<dlvhex::AtomPtr>::const_iterator it = ops.begin(); it != ops.end(); ++it)
+      ruleAttr.insert(*it);
+    #endif
+  }
+};
+
+struct handle_ucq
+{
+  // TODO: why is this not simply std::vector<dlvhex::AtomSet> ?
+  template<typename Context>
+  void operator()(boost::fusion::vector2<dlvhex::AtomSet, std::vector<dlvhex::AtomSet, std::allocator<dlvhex::AtomSet> > > const& cqs, Context& ctx, qi::unused_type) const
+  //void operator()(std::vector<dlvhex::AtomSet> const& cqs, Context& ctx, qi::unused_type) const
+  {
+    std::vector<dlvhex::AtomSet>& ruleAttr = fusion::at_c<0>(ctx.attributes);
+
+    ruleAttr.insert( ruleAttr.end(), fusion::at_c<0>(cqs) );
+    ruleAttr.insert( ruleAttr.end(), fusion::at_c<1>(cqs).begin(), fusion::at_c<1>(cqs).end() );
   }
 };
 
 struct handle_op
 {
+  handle_op(ConverterState& state):
+    state(state) {}
+
   template<typename Context>
   void operator()(boost::fusion::vector<std::string, std::string, std::string> const& triple, Context& ctx, qi::unused_type) const
   {
-    //std::cerr << "op!";
-    //houtput(triple);
-    //houtput(ctx.attributes);
-    dlvhex::AtomPtr atom; // todo initialize atom
-    boost::fusion::at_c<0>(ctx.attributes) = atom;
+    dlvhex::AtomPtr& ruleAttr = fusion::at_c<0>(ctx.attributes);
+
+    const std::string& arg1 = fusion::at_c<0>(triple);
+    const std::string& op = fusion::at_c<1>(triple);
+    const std::string& arg2 = fusion::at_c<2>(triple);
+
+    dlvhex::dl::Ontology::shared_pointer ontology = state.ontology;
+
+      if (!ontology)
+	{
+	  throw DLVHEX_NAMESPACE PluginError("Cannot rewrite dl-atoms, option --ontology is empty.");
+	}
+
+      std::string tmp;
+
+      if (arg1.find("\"-") == 0)
+	{
+	  tmp = ontology->getNamespace() + arg1.substr(2, arg1.length() - 3);
+	}
+      else if (arg1.find("\"") == 0)
+	{
+	  tmp = ontology->getNamespace() + arg1.substr(1, arg1.length() - 2);
+	}
+      else if (arg1.find("-") == 0)
+	{
+	  tmp = ontology->getNamespace() + arg1.substr(1, arg1.length() - 1);
+	}
+      else
+	{
+	  tmp = ontology->getNamespace() + arg1;
+	}
+
+      DLVHEX_NAMESPACE Tuple t;
+      t.push_back(DLVHEX_NAMESPACE Term(tmp, true));
+      t.push_back(DLVHEX_NAMESPACE Term(arg2));
+
+      DLVHEX_NAMESPACE Term q(tmp);
+
+      dlvhex::dl::TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
+      dlvhex::dl::TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
+      dlvhex::dl::TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
+
+      if (op == "+=") // PMOP is +=
+	{
+	  if (concepts->find(q) != concepts->end())
+	    {
+	      ruleAttr = DLVHEX_NAMESPACE AtomPtr(new DLVHEX_NAMESPACE Atom("pc", t));
+	    }
+	  else if (roles->find(q) != roles->end() ||
+		   datatypeRoles->find(q) != datatypeRoles->end()
+		   )
+	    {
+	      ruleAttr = DLVHEX_NAMESPACE AtomPtr(new DLVHEX_NAMESPACE Atom("pr", t));
+	    }
+	  else
+	    {
+	      std::ostringstream oss;
+	      oss << "Incompatible dl-atom-op `" << arg1 << "+=" << arg2 << "' supplied: ";
+	      oss << "Cannot find " << q << " in " << ontology->getRealURI();
+	      throw DLVHEX_NAMESPACE PluginError(oss.str());
+	    }
+	}
+      else if (op == "-=") // PMOP is -=
+	{
+	  if (concepts->find(q) != concepts->end())
+	    {
+	      ruleAttr = DLVHEX_NAMESPACE AtomPtr(new DLVHEX_NAMESPACE Atom("mc", t));
+	    }
+	  else if (roles->find(q) != roles->end() ||
+		   datatypeRoles->find(q) != datatypeRoles->end()
+		   )
+	    {
+	      ruleAttr = DLVHEX_NAMESPACE AtomPtr(new DLVHEX_NAMESPACE Atom("mr", t));
+	    }
+	  else
+	    {
+	      std::ostringstream oss;
+	      oss << "Incompatible dl-atom-op `" << arg1 << "-=" << arg2 << "' supplied: ";
+	      oss << "Cannot find " << q << " in " << ontology->getRealURI();
+	      throw DLVHEX_NAMESPACE PluginError(oss.str());
+	    }
+	}
+      else // hm, PMOP is neither '+' nor '-', this is a programming error
+	{
+	  assert(false);
+	}
+  }
+
+  ConverterState state;
+};
+
+struct handle_output
+{
+  template<typename Context>
+  void operator()(boost::optional<std::vector<dlvhex::Term> > const& output, Context& ctx, qi::unused_type) const
+  {
+    dlvhex::Tuple& ruleAttr = boost::fusion::at_c<0>(ctx.attributes);
+    dlvhex::Tuple t;
+    if( !!output && !output.get().empty() )
+    {
+      for(std::vector<dlvhex::Term>::const_iterator it = output.get().begin();
+          it != output.get().end(); ++it)
+        t.push_back(*it);
+    }
+    ruleAttr = t;
+  }
+};
+
+struct handle_atom
+{
+  template<typename Context>
+  void operator()(boost::fusion::vector4<boost::optional<char>, std::string, dlvhex::Term, boost::optional<dlvhex::Term> > const& tokens, Context& ctx, qi::unused_type) const
+  {
+    dlvhex::AtomPtr& ruleAttr = fusion::at_c<0>(ctx.attributes);
+
+    // presence of tok.aiMinus sets this optional char, meaning that we have a "-"
+    bool neg = !!fusion::at_c<0>(tokens);
+
+    const std::string& predicate = fusion::at_c<1>(tokens);
+
+    dlvhex::Tuple arguments;
+    arguments.push_back( fusion::at_c<2>(tokens) );
+    if( !!fusion::at_c<3>(tokens) )
+      arguments.push_back( fusion::at_c<3>(tokens).get() );
+
+    ruleAttr = dlvhex::AtomPtr(new dlvhex::Atom(predicate, arguments, neg));
   }
 };
 
@@ -286,9 +545,9 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
 {
   typedef typename qi::in_state_skipper<Lexer> Skipper;
   template <typename TokenDef>
-  DLGrammar(TokenDef const& tok, std::ostream& out):
+  DLGrammar(TokenDef const& tok, ConverterState& state):
     DLGrammar::base_type(root),
-    outStream(out)
+    state(state)
   {
     using qi::lexeme;
     root =
@@ -296,60 +555,52 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
       | passthrough [ handle_passthrough() ]
       );
     dlatom =
-      (tok.iDLAtom >> '[' >> -(ops >> ';') >> query >> ']' >> output) [ handle_dlatom() ];
+        (qi::omit[tok.iDLAtom] >> '[' >> -(ops >> ';') >> dlquery >> ']' >> output) [ handle_dlatom(state) ]
+      | (qi::omit[tok.iDLAtom] >> '[' >> -(ops >> ';') >> cq >> ']' >> output) [ handle_dlatom(state) ]
+      | (qi::omit[tok.iDLAtom] >> '[' >> -(ops >> ';') >> ucq >> ']' >> output) [ handle_dlatom(state) ]
+      ;
     // TODO: iDLExtAtom handling
     ops =
-      op >> *(',' >> op) [ handle_dlatom() ]; // TODO: put all atomptrs into one atomset
+      (op >> *(',' >> op)) [ handle_ops() ];
     op =
-      (tok.aiTerm >> pmop >> tok.aiTerm) [ handle_op() ];
+      (tok.aiString >> pmop >> tok.aiString) [ handle_op(state) ];
     pmop %=
       tok.aiPlusop | tok.aiMinusop;
-    query =
-      (dlquery | cq | ucq) [ handle_dlatom() ];
     dlquery %=
-      lexeme[-tok.aiMinus >> tok.aiTerm] [ &do_foo ];
+      lexeme[-tok.aiMinus >> tok.aiString];
     cq =
-      atom >> *(',' >> atom);
+      (atom >> *(',' >> atom)) [ handle_ops() ]; // we can reuse the handle_ops() here!
     ucq =
-      cq >> tok.aiOr >> cq >> *(tok.aiOr >> cq);
+      (cq >> +(qi::omit[tok.aiOr] >> cq)) [ handle_ucq() ];
     atom =
-      (-tok.aiMinus >> tok.aiTerm >> '(' >> tok.aiTerm >> -(',' >> tok.aiTerm) >> ')');
+      (-tok.aiMinus >> tok.aiString >> '(' >> iterm >> -(',' >> iterm) >> ')') [ handle_atom() ];
+    iterm =
+        tok.aiString [ _val = phoenix::construct<dlvhex::Term>(_1) ]
+      | tok.aiNumber [ _val = phoenix::construct<dlvhex::Term>(_1) ];
     output =
-      -('(' >> *tok.aoTerm >> ')');
+      -('(' >> *oterm >> ')') [ handle_output() ];
+    oterm =
+        tok.aoString [ _val = phoenix::construct<dlvhex::Term>(_1) ]
+      | tok.aoNumber [ _val = phoenix::construct<dlvhex::Term>(_1) ]
+      | tok.aoAnonymousVar [ _val = phoenix::construct<dlvhex::Term>() ];
     passthrough %=
         tok.iComment
       | tok.iBlank
       | tok.iNewline
       | tok.iAny
       ;
-    #if 0
-    string %=
-      lexeme[tok.stringstart >> *(tok.escaped_stringend | tok.any2) >> tok.stringend];
-    dlatom =
-      (tok.kwDL >> '[' >> dlquery >> ']') [ &do_foo ];
-    dlatom2 = (tok.kwDL >> '[' >> string3 >> ']') [ &do_foo ];
-    string3 %= lexeme[*(tok.any3)];
-     // |
-      //("DL" >> '[' >> ops >> ';' >> dlquery >> ']' >> output) [ &do_dlatom ];
-         //tok.dlatombody [ std::cerr << "atombody" << _1 << std::endl ]
-      //>> '[' >> *( string | (char_ - ']') ) >> ']'
-      //>> -('(' >> *( string | (char_ - ')') ) >> ')' );
-    dlquery %=
-      lexeme[-char_('-') >> alnum >> *(alnum | '\'' | '_')];
-    output %= lexeme[*char_];
-    #endif
   };
 
   qi::rule<Iterator, Skipper> root, dlatom;
   qi::rule<Iterator, std::string(), Skipper> passthrough, dlquery, pmop;
-  //qi::rule<Iterator, dlvhex::AtomSet(), Skipper> ops;
-  qi::rule<Iterator, boost::variant<std::string, dlvhex::Tuple>(), Skipper> query;
-  qi::rule<Iterator, Skipper> cq, ucq, atom;
-  qi::rule<Iterator, std::vector<std::string>(), Skipper> output;
-  qi::rule<Iterator, dlvhex::AtomSet(), Skipper> ops;
-  qi::rule<Iterator, dlvhex::AtomPtr(), Skipper> op;
-  //qi::rule<Iterator, dlvhex::Tuple(), Skipper> output;
-  std::ostream& outStream;
+  qi::rule<Iterator, dlvhex::AtomPtr(), Skipper> op, atom;
+  qi::rule<Iterator, dlvhex::AtomSet(), Skipper> ops, cq;
+  #warning originally, the ucq was a boost::ptr_vector<AtomSet>, perhaps AtomSet needs to be improved to allow this new usage
+  qi::rule<Iterator, std::vector<dlvhex::AtomSet>(), Skipper> ucq;
+  qi::rule<Iterator, dlvhex::Term(), Skipper> iterm, oterm;
+  qi::rule<Iterator, dlvhex::Tuple(), Skipper> output;
+
+  ConverterState& state;
 };
 #endif
 
@@ -462,13 +713,17 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
   #endif
 
   #if 1
-  //
-  // setup parser
-  //
   typedef DLGrammar<lexer_iterator_type, ConcreteLexer::lexer_def> ConcreteParser;
 
+  // setup lexer
   ConcreteLexer lexer;
-  ConcreteParser parser(lexer, o);
+
+  // setup converter state passed to parser
+  dlvhex::dl::DLAtomInput dlinput;
+  ConverterState state(o, ontology, dlinput);
+
+  // setup parser
+  ConcreteParser parser(lexer, state);
 
   std::cerr << "$$$parsing" << std::endl;
   lexer_iterator_type start = lexer.begin(first, last);

@@ -24,9 +24,12 @@ public:
 
   void convert(std::istream& i, std::ostream& o);
 
-  void setOntology(const Ontology::shared_pointer& o) {} // <-- TODO
+  void setOntology(const Ontology::shared_pointer& o) { ontology = o; }
 
-  Ontology::shared_pointer getOntology() const { return Ontology::shared_pointer(); } // <-- TODO
+  Ontology::shared_pointer getOntology() const { return ontology; }
+
+protected:
+  Ontology::shared_pointer ontology;
 };
 
 }

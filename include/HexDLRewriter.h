@@ -38,7 +38,7 @@
 #include <iosfwd>
 #include <string>
 
-#include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_deque.hpp>
 
 #include <dlvhex/Atom.h>
@@ -86,6 +86,7 @@ namespace dl {
       return 0;
     }
   };
+  typedef boost::shared_ptr<HexDLRewriterBase> HexDLRewriterBasePtr;
 
 
   /**
@@ -186,7 +187,7 @@ namespace dl {
     
     const std::string* const query;
     const AtomSet* const cq;
-    const boost::ptr_vector<AtomSet>* const ucq;
+    const std::vector<AtomSet>* const ucq;
 
     DLAtomInput& dlinput;
     const Tuple* output;
@@ -223,7 +224,7 @@ namespace dl {
     DLAtomRewriter(const Ontology::shared_pointer& onto,
 		   DLAtomInput& dlinput,
 		   const AtomSet& o,
-		   const boost::ptr_vector<AtomSet>* ucq,
+		   const std::vector<AtomSet>* ucq,
 		   const Tuple* out);
 
     ~DLAtomRewriter();
