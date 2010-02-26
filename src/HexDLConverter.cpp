@@ -20,6 +20,7 @@
 #include "HexDLConverter.h"
 #include "HexDLRewriter.h"
 #include "Ontology.h"
+#include <dlvhex/Error.h>
 
 #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/lex_lexertl.hpp>
@@ -33,7 +34,7 @@
 #include <boost/spirit/include/classic_position_iterator.hpp>
 //#include <boost/spirit/include/phoenix_core.hpp>
 
-#define DLPLUGIN_DEBUG_LEXER_TOKENIZATION
+#undef DLPLUGIN_DEBUG_LEXER_TOKENIZATION
 #undef DLPLUGIN_USE_POSITION_ITERATOR
 
 //#define BOOST_SPIRIT_LEXERTL_DEBUG
@@ -43,30 +44,6 @@ using namespace boost::spirit;
 using namespace boost::spirit::ascii;
 namespace fusion = boost::fusion;
 namespace phoenix = boost::phoenix;
-
-#if 0
-// required for lexer tokens
-namespace boost { namespace spirit { namespace traits
-{
-  template <typename Iterator>
-  struct assign_to_attribute_from_iterators<std::string, Iterator>
-  {
-    static void 
-    call(Iterator const& first, Iterator const& last, std::string& attr)
-    {
-      attr = std::string(first, last);
-      std::cerr << "converted string '" << attr << "'" << std::endl;
-      /*
-      int x, y;
-      Iterator b = first;
-      qi::parse(b, last, 
-          '{' >> qi::int_ >> ',' >> qi::int_ >> '}', x, y);
-      attr = rational(x, y);
-      */
-    }
-  };
-}}}
-#endif
 
 namespace {
 
@@ -759,7 +736,10 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
   std::cerr << "END lexer test";
   #endif
 
-  #if 1
+  //
+  // setup parser
+  //
+
   typedef DLGrammar<lexer_iterator_type, ConcreteLexer::lexer_def> ConcreteParser;
 
   // setup lexer
@@ -772,16 +752,14 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
   // setup parser
   ConcreteParser parser(lexer, state);
 
-  std::cerr << "$$$parsing" << std::endl;
+  // do the parsing
   lexer_iterator_type start = lexer.begin(first, last);
   lexer_iterator_type end = lexer.end();
   bool r = qi::phrase_parse(start, end, parser, qi::in_state("WS")[lexer.self]);
-  std::cerr << "$$$parsing returned " << r << std::endl;
-  std::cerr << "at token id" << start->id() << " end?" << (start == end) << std::endl;
-  #endif
+  if( start != end )
+    throw dlvhex::PluginError("could not parse complete input!");
 
-  std::cerr << "writing extra rules" << std::endl;
-
+  // output extra rules
   typedef std::vector<dlvhex::Rule*> RuleVector;
   const RuleVector& rules = dlinput.getDLInputRules();
   for(RuleVector::const_iterator it = rules.begin(); it != rules.end(); ++it)
