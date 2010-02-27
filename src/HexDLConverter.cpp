@@ -342,19 +342,14 @@ struct handle_dlextatom
   handle_dlextatom(ConverterState& state): state(state) {}
 
   template<typename Context>
-  void operator()(boost::fusion::vector4<
-      std::string, dlvhex::Term, std::vector<dlvhex::Term>, dlvhex::Tuple> const& args,
+  void operator()(boost::fusion::vector3<
+      std::string, std::vector<dlvhex::Term>, dlvhex::Tuple> const& args,
       Context& ctx, qi::unused_type) const
   {
     std::string atom = fusion::at_c<0>(args);
 
-    dlvhex::Tuple inputs;
-    // we always have at least one input
-    inputs.push_back(fusion::at_c<1>(args));
-    // we may have more
-    inputs.insert(inputs.end(), fusion::at_c<2>(args).begin(), fusion::at_c<2>(args).end());
-
-    const dlvhex::Tuple& outputs = fusion::at_c<3>(args);
+    const dlvhex::Tuple& inputs = fusion::at_c<1>(args);
+    const dlvhex::Tuple& outputs = fusion::at_c<2>(args);
 
     if( atom == "&dlCQ" || atom == "&dlUCQ" )
     {
@@ -381,40 +376,11 @@ struct handle_dlextatom
 struct handle_atomset_from_atomptrs
 {
   template<typename Context>
-  void operator()(fusion::vector2<dlvhex::AtomPtr, std::vector<dlvhex::AtomPtr> > const& ops, Context& ctx, qi::unused_type) const
-  //void operator()(std::vector<dlvhex::AtomPtr> const& ops, Context& ctx, qi::unused_type) const
+  void operator()(std::vector<dlvhex::AtomPtr> const& ops, Context& ctx, qi::unused_type) const
   {
-    // for debugging
-    //std::cerr << "OPS" << std::endl;
-    //houtput(triple);
-
     dlvhex::AtomSet& ruleAttr = fusion::at_c<0>(ctx.attributes);
-    #if 1
-    ruleAttr.insert( fusion::at_c<0>(ops) );
-    // TODO create AtomSet::insert(iterator, iterator) -> TODO derive atomset from set -> then the line below can be used instead of the loop
-    //ruleAttr.insert( fusion::at_c<1>(ops).begin(), fusion::at_c<1>(ops).end() );
-    for(std::vector<dlvhex::AtomPtr>::const_iterator it = fusion::at_c<1>(ops).begin();
-        it != fusion::at_c<1>(ops).end(); ++it)
-      ruleAttr.insert(*it);
-    #else
     for(std::vector<dlvhex::AtomPtr>::const_iterator it = ops.begin(); it != ops.end(); ++it)
       ruleAttr.insert(*it);
-    #endif
-    //std::cerr << "handle_atomset_from_atomptrs: got " << ruleAttr.size() << " arguments" << std::endl;
-  }
-};
-
-struct handle_ucq
-{
-  // TODO: why is this not simply std::vector<dlvhex::AtomSet> ?
-  template<typename Context>
-  void operator()(boost::fusion::vector2<dlvhex::AtomSet, std::vector<dlvhex::AtomSet, std::allocator<dlvhex::AtomSet> > > const& cqs, Context& ctx, qi::unused_type) const
-  //void operator()(std::vector<dlvhex::AtomSet> const& cqs, Context& ctx, qi::unused_type) const
-  {
-    std::vector<dlvhex::AtomSet>& ruleAttr = fusion::at_c<0>(ctx.attributes);
-
-    ruleAttr.insert( ruleAttr.end(), fusion::at_c<0>(cqs) );
-    ruleAttr.insert( ruleAttr.end(), fusion::at_c<1>(cqs).begin(), fusion::at_c<1>(cqs).end() );
   }
 };
 
@@ -582,10 +548,10 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
         (qi::omit[tok.iDLAtom] >> '[' >> -(ops >> ';') >> dlquery >> ']' >> output) [ handle_dlatom(state) ]
       | (qi::omit[tok.iDLAtom] >> '[' >> -(ops >> ';') >> cq      >> ']' >> output) [ handle_dlatom(state) ]
       | (qi::omit[tok.iDLAtom] >> '[' >> -(ops >> ';') >> ucq     >> ']' >> output) [ handle_dlatom(state) ]
-      | (tok.iDLExtAtom >>        '[' >> iterm >> *(',' >> iterm) >> ']' >> output) [ handle_dlextatom(state) ]
+      | (tok.iDLExtAtom >>        '[' >> (iterm % ',') >>            ']' >> output) [ handle_dlextatom(state) ]
       ;
     ops =
-      (op >> *(',' >> op)) [ handle_atomset_from_atomptrs() ];
+      (op % ',') [ handle_atomset_from_atomptrs() ];
     op =
       (tok.aiString >> pmop >> tok.aiString) [ handle_op(state) ];
     pmop %=
@@ -593,9 +559,9 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
     dlquery %=
       lexeme[-tok.aiMinus >> tok.aiString];
     cq =
-      (atom >> *(',' >> atom)) [ handle_atomset_from_atomptrs() ];
-    ucq =
-      (cq >> +(qi::omit[tok.aiOr] >> cq)) [ handle_ucq() ];
+      (atom % ',') [ handle_atomset_from_atomptrs() ];
+    ucq %=
+      (cq % tok.aiOr);
     atom =
       (-tok.aiMinus >> tok.aiString >> '(' >> iterm >> -(',' >> iterm) >> ')') [ handle_atom() ];
     iterm =
