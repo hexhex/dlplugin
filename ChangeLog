@@ -1,3 +1,8 @@
+2010-02-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/TCPStream.cpp: #include <cstdio> for g++4.4.
+	* src/URI.cpp: Likewise.
+
 2010-02-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/TCPStream.cpp: Remove std namespace from ::exit and
