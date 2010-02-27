@@ -98,8 +98,8 @@ TCPStreamBuf::TCPStreamBuf(const std::string& host,
 
   if (::sigaction(SIGPIPE, &sa, 0))
     {
-      std::perror("sigaction");
-      std::exit(1);
+      ::perror("sigaction");
+      ::exit(1);
     }
 
   initBuffers(); // don't call virtual methods in the ctor
@@ -207,8 +207,8 @@ TCPStreamBuf::open()
 
 	  if (sockfd < 0)
 	    {
-	      std::perror("socket");
-	      std::exit(1);
+	      ::perror("socket");
+	      ::exit(1);
 	    }
 
 	  // connect to the TCP server at host:port
