@@ -38,6 +38,7 @@
 #include "QueryCtx.h"
 #include "Query.h"
 #include "RacerKBManager.h"
+#include "Answer.h"
 
 #include <iostream>
 #include <string>
