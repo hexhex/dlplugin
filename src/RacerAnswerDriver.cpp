@@ -225,7 +225,7 @@ struct handle_uri
   {
     dlvhex::Term& ruleAttr = fusion::at_c<0>(ctx.attributes);
 
-    ruleAttr = dlvhex::Term("<" + s + ">");
+    ruleAttr = dlvhex::Term("<" + s + ">", true);
     //std::cerr << "created uri '<" << s << ">'" << std::endl;
   }
 };
@@ -346,7 +346,7 @@ RacerAnswerDriver::parse(Answer &a) throw (DLParsingError)
 {
   try
   {
-    // read input stream into string completely (TODO use iterator)
+    #warning TODO use stream iterator and create better error messages!
     std::ostringstream buf;
     buf << stream.rdbuf();
     std::string input = buf.str();

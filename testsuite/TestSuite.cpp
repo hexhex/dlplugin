@@ -33,6 +33,8 @@
 #include "TestSuite.h"
 
 #include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/BriefTestProgressListener.h> 
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
 
@@ -98,6 +100,10 @@ int main(int /* argc */, char*[] /* argv */)
 
   // Change the default outputter to a compiler error format outputter
   runner.setOutputter(new CppUnit::CompilerOutputter(&runner.result(), std::cerr));
+
+  // Give progress reports
+  CppUnit::BriefTestProgressListener listener;
+  runner.eventManager().addListener(&listener);
     
   // Run the tests.
   bool wasSucessful = runner.run();

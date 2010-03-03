@@ -241,6 +241,7 @@ struct handle_dlextatom
       Context& ctx, qi::unused_type) const
   {
     std::string atom = fusion::at_c<0>(args);
+    atom.erase(atom.begin());
 
     const dlvhex::Tuple& inputs = fusion::at_c<1>(args);
     const dlvhex::Tuple& outputs = fusion::at_c<2>(args);
