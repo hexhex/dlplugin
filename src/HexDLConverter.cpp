@@ -7,16 +7,6 @@
  * output unaltered.
  */
 
-#ifndef _GNU_SOURCE
-# define _GNU_SOURCE
-#endif
-#ifndef CWDEBUG
-# define CWDEBUG
-#endif
-
-#include <libcwd/sys.h>
-#include <libcwd/debug.h>
-
 #include "HexDLConverter.h"
 #include "HexDLRewriter.h"
 #include "Ontology.h"
@@ -32,7 +22,6 @@
 #include <boost/spirit/include/qi_match.hpp>
 #include <boost/spirit/include/support_multi_pass.hpp>
 #include <boost/spirit/include/classic_position_iterator.hpp>
-//#include <boost/spirit/include/phoenix_core.hpp>
 
 #undef DLPLUGIN_DEBUG_LEXER_TOKENIZATION
 #undef DLPLUGIN_USE_POSITION_ITERATOR
@@ -189,41 +178,6 @@ struct DLLexer: lex::lexer<Lexer>
   lex::token_def<>             aoAnonymousVar;
 };
 
-#if 0
-struct lexer_handle_term
-{
-  template<typename Iterator, typename Context, typename IdType>
-  void operator()(Iterator& orig_start, Iterator& orig_end, 
-    BOOST_SCOPED_ENUM(boost::spirit::lex::pass_flags)&,
-    IdType&, Context& ctx) const
-  {
-    Iterator start(orig_start);
-    Iterator end(orig_end);
-    std::string s(start, end);
-
-    if( s == "_") 
-    {
-      ctx.set_value(dlvhex::Term());
-    }
-    else
-    {
-      int i;
-      if( qi::parse(start, end, qi::int_, i) && start == end )
-      {
-        ctx.set_value(dlvhex::Term(i));
-      }
-      else
-      {
-        ctx.set_value(dlvhex::Term(s));
-      }
-    }
-  }
-};
-#endif
-
-
-#if 1
-
 // state passed to grammar for parsing
 struct ConverterState
 {
@@ -236,21 +190,6 @@ struct ConverterState
   dlvhex::dl::DLAtomInput& dlinput;
 };
 
-
-void do_fee()
-{
-  std::cerr << "found fee " << std::endl;
-}
-void do_foo(std::string s)
-{
-  std::cerr << "found foo '" << s << "'" << std::endl;
-}
-void do_dlatom(fusion::vector<std::string, std::string> input)
-{
-  using boost::phoenix::at_c;
-  std::cerr << "found dlatom '" << at_c<0>(input) << "'/'" << at_c<1>(input) << "'" << std::endl;
-}
-
 struct handle_passthrough
 {
   handle_passthrough(ConverterState& state):
@@ -259,54 +198,9 @@ struct handle_passthrough
   void operator()(const std::string& s, qi::unused_type, qi::unused_type) const
   {
     state.out << s;
-    //std::cerr << s;
-    //std::cerr << "found passthrough '" << s << "'" << std::endl;
   }
 
   ConverterState state;
-};
-
-template<typename Attrib>
-void houtput(Attrib const& a)
-{
-  //std::cerr << "XXX handling attribute " << libcwd::type_info_of<Attrib>().demangled_name() << std::endl;
-  std::cerr << "XXX handling attribute " << libcwd::type_info_of(a).demangled_name() << std::endl;
-  //std::string s;
-  //libcwd::demangle_type(typeid(a).name(), s);
-  //std::cerr << "XXX handling attribute " << s << std::endl;
-};
-
-template<typename Content>
-void houtput(boost::optional<Content> const& a)
-{
-  if( !a )
-  {
-    std::cerr << "YYY optional (unset)" << std::endl;
-  }
-  else
-  {
-    std::cerr << "YYY optional:";
-    houtput(a.get());
-  }
-}
-
-template<>
-void houtput(std::string const& a)
-{
-  std::cerr << "YYY string '" << a << "'" << std::endl;
-}
-
-
-struct handle_dbg
-{
-  handle_dbg(std::string s): s(s) {}
-  std::string s;
-  template<typename Attrib>
-  void operator()(Attrib& a, qi::unused_type, qi::unused_type) const
-  {
-    std::cerr << "DBG=" << s << std::endl;
-    houtput(a);
-  }
 };
 
 struct handle_dlatom
@@ -592,7 +486,6 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
 
   ConverterState& state;
 };
-#endif
 
 } // anonymous namespace
 
