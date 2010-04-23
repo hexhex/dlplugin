@@ -1,5 +1,3 @@
-AUTOMAKE_OPTIONS = gnu
-
 noinst_HEADERS = \
                  TestCache.h \
                  TestDLOptimizer.h \

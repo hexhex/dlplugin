@@ -1,3 +1,9 @@
+2010-04-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* testsuite/Makefile.am (AUTOMAKE_OPTIONS): Remove.
+	* src/Makefile.am: Likewise.
+	* include/Makefile.am: Likewise.
+
 2010-02-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/TCPStream.cpp: #include <cstdio> for g++4.4.
