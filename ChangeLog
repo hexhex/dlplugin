@@ -1,3 +1,7 @@
+2010-04-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* AUTHORS: Fix content.
+
 2010-04-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* testsuite/Makefile.am (AUTOMAKE_OPTIONS): Remove.
