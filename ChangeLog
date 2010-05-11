@@ -4,6 +4,8 @@
 	data-substrate mirroring, as we have to issue a full reset after
 	every query due to a Racer bug.
 
+	Closes ticket #9.
+
 2010-04-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* AUTHORS: Fix content.
