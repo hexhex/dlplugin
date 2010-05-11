@@ -392,16 +392,22 @@ namespace racer {
   RacerDatatypeRoleAtom<GetKBManager,GetCache>::setupRacer(QueryCompositeDirector::shared_pointer& comp) const
   {
     RacerExtAtom<GetKBManager>::setupRacer(comp);
-    
+
+    ///@todo we have to enable datasubstrate mirroring all the time as racer will be resetted all the time
+#if 0    
     if (!Registry::getDataSubstrateMirroring())
       {
+#endif // 0
+
 	// enable data substrate mirroring
 	comp->add(new QueryDirector<RacerFunAdapterBuilder<RacerDataSubstrateMirroringCmd>,
 		  RacerIgnoreAnswer>(this->stream)
 	  );
-	
+
+#if 0	
 	Registry::setDataSubstrateMirroring(true);
       }
+#endif // 0
   }
 
 
