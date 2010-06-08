@@ -155,8 +155,9 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
 	  // i.e., (retrieve-related-individuals (not R)) is
 	  // broken. But, nRQL queries are able to process (not R).
 
-	  if (outputlist.size() == 2) // (negated) role query, create a CQ here
+	  if (outputlist.size() == 2) // (negated) role query, create a CQ for -R, a old-school query for R
 	    {
+              #if 0
 	      // create single atom conjunctive query for R
 	      std::ostringstream oss;
 	      oss << qstr << '(' << outputlist[0] << ',' << outputlist[1] << ')';
@@ -167,6 +168,29 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
 	      AtomSeparator(oss.str(), as).parse();
 		  
 	      dlq = DLQuery::shared_pointer(new DLQuery(onto, as, outputlist));
+              #endif // 0
+
+
+	      if (qstr[0] == '-') // keep the strong negation in front and use a CQ, see above
+		{
+		    // create single atom conjunctive query for -R
+		    std::ostringstream oss;
+		    oss << qstr << '(' << outputlist[0] << ',' << outputlist[1] << ')';
+		    
+		    AtomSet as;
+		    
+		    // separate atomlist
+		    AtomSeparator(oss.str(), as).parse();
+		    
+		    dlq = DLQuery::shared_pointer(new DLQuery(onto, as, outputlist));
+		}
+	      else
+	        {
+		  Term qu;
+		  qu = Term(qstr, true);
+		  // create a plain query (oldschool)
+		  dlq = DLQuery::shared_pointer(new DLQuery(onto, qu, query.getPatternTuple()));
+		}
 	    }
 	  else // (negated) concept query
 	    {

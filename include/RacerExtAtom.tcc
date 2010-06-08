@@ -344,27 +344,53 @@ namespace racer {
   QueryBaseDirector::shared_pointer
   RacerRoleAtom<GetKBManager,GetCache>::getDirectors(const dlvhex::dl::Query& query) const
   {
-    //const DLQuery::shared_pointer& dlq = query.getDLQuery();
+    const DLQuery::shared_pointer& dlq = query.getDLQuery();
 
     QueryCompositeDirector::shared_pointer comp(new QueryCompositeDirector(this->stream));
     
     this->setupRacer(comp);
     this->openOntology(query, comp);
 
-    // we don't have to increase the ABox here, we use retrieve-under-premise
-    
-    // pose a conjunctive query with only a single role query atom
-    // because Racer can handle (not R) in nRQLs.
-    comp->add
-      (new QueryDirector<RacerAdapterBuilder<NRQLRetrieveUnderPremise<NRQLConjunctionBuilder> >,
-       RacerAnswerDriver>(this->stream)
-      );
+    ///@todo Racer has a bug with negative role queries, is currently handled here
 
-    // good news, in this setting, we can reuse our cache
-    //return this->cacheQuery(comp);
+    if (!dlq->isConjQuery() && !dlq->isUnionConjQuery()) // positive role queries are old-school queries
+    {
+	this->increaseABox(query, comp);
+	
+	if (dlq->isRetrieval()) // retrieval mode
+	{
+	    comp->add(new RacerRoleQuery(this->stream));
+	}
+	else if (dlq->isBoolean()) // boolean query mode
+	{
+	    comp->add(new RacerIsRoleQuery(this->stream));
+	}
+	else if (dlq->isMixed()) // pattern retrieval mode
+	{
+	    comp->add(new RacerIndvFillersQuery(this->stream));
+	}
+	else
+	{
+	    throw PluginError("DLQuery has wrong query type, expected retrieval, boolean or mixed query");
+	}
 
-    ///@todo right now we don't cache role queries, because the (not R) stuff can only be handled in CQs
-    return comp;
+	// good news, in this setting, we can reuse our cache
+	return this->cacheQuery(comp);
+    } 
+    else // negative role queries (not R) are conjunctive queries due to a racer bug
+    {
+	// we don't have to increase the ABox here, we use retrieve-under-premise
+	
+	// pose a conjunctive query with only a single role query atom
+	// because Racer can handle (not R) in nRQLs.
+	comp->add
+	    (new QueryDirector<RacerAdapterBuilder<NRQLRetrieveUnderPremise<NRQLConjunctionBuilder> >,
+	     RacerAnswerDriver>(this->stream)
+	    );
+
+	///@todo right now we don't cache role queries, because the (not R) stuff can only be handled in CQs
+	return comp;
+    }
   }
 
 
