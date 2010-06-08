@@ -36,6 +36,7 @@
 #include <cppunit/TextOutputter.h>
 #include <cppunit/TestResult.h>
 #include <cppunit/BriefTestProgressListener.h>
+#include <cppunit/TextTestProgressListener.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
 
@@ -99,7 +100,8 @@ int main(int /* argc */, char*[] /* argv */)
   CppUnit::TextUi::TestRunner runner;
   runner.addTest(suite);
 
-  CppUnit::BriefTestProgressListener listener;
+  //CppUnit::BriefTestProgressListener listener;
+  CppUnit::TextTestProgressListener listener;
   runner.eventManager().addListener( &listener );
 
   // Change the default outputter to a compiler error format outputter
