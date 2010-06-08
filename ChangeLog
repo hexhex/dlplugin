@@ -1,5 +1,7 @@
 2010-06-08  Peter Schueller  <ps@kr.tuwien.ac.at>
 
+	* examples/tests/test.out: Fixing testcase (by reordering reference output).
+
 	* testsuite/run-dlvhex-tests.sh: Fix answer sets processing.
 
 	* testsuite/Makefile.am (TESTS): Remove RacerRunner.sh
