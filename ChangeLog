@@ -1,3 +1,24 @@
+2010-06-08  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* testsuite/run-dlvhex-tests.sh: Fix answer sets processing.
+
+	* testsuite/Makefile.am (TESTS): Remove RacerRunner.sh
+	(TESTS_ENVIRONMENT): Fix --plugindir for make check for builddir checks.
+
+	* testsuite/TestSuite.cpp: Get more testsuite feedback.
+
+2010-06-08  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/RacerNRQLBuilder.cpp (NRQLDatatypeBuilder::createBody): Use
+	old-school DLQuery for datatype roles.
+
+	* src/Answer.cpp: Add sanity checks for pattern and answer tuple.
+
+	* include/RacerExtAtom.tcc (RacerRoleAtom<GetKBManager,GetCache>::getDirectors): Use
+	old-school queries with positive role queries, and CQs with
+	negative (not R) queries.
+	* src/QueryCtx.cpp: Likewise.
+	
 2010-05-11  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/RacerExtAtom.tcc (setupRacer): Always turn on
