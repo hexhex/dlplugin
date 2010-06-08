@@ -188,7 +188,9 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
     }
   else // no query term, what now?
     {
-      assert("No query term." == 0);
+      // use empty query
+      //assert("No query term." == 0);
+      dlq = DLQuery::shared_pointer(new DLQuery(onto, Term(), query.getPatternTuple()));
     }
 
   this->q = new Query(kb, dlq,

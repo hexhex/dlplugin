@@ -52,6 +52,7 @@ TestDLOptimizer::runDLOptimize()
 {
   // initialize the PluginContainer with our own plugin
   PluginContainer* container = PluginContainer::instance("");
+  container->importPlugins();
 
   AtomPtr h1(new Atom("p(X,Y)"));
   RuleHead_t h;

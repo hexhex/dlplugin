@@ -33,6 +33,9 @@
 #include "TestSuite.h"
 
 #include <cppunit/CompilerOutputter.h>
+#include <cppunit/TextOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/BriefTestProgressListener.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
 
@@ -96,8 +99,12 @@ int main(int /* argc */, char*[] /* argv */)
   CppUnit::TextUi::TestRunner runner;
   runner.addTest(suite);
 
+  CppUnit::BriefTestProgressListener listener;
+  runner.eventManager().addListener( &listener );
+
   // Change the default outputter to a compiler error format outputter
   runner.setOutputter(new CppUnit::CompilerOutputter(&runner.result(), std::cerr));
+  //runner.setOutputter(new CppUnit::TextOutputter(&runner.result(), std::cerr));
     
   // Run the tests.
   bool wasSucessful = runner.run();
