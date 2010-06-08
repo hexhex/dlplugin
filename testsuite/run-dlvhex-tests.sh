@@ -51,19 +51,20 @@ do
 		a1=$(echo $REPLY | cut -f1 | sed s/"'"/"\\\'"/g | sed s/"{"/"['"/ | sed s/", "/"', '"/g | sed s/"}"/"']"/)
 		a2=$(echo $REPLY | cut -f2 | sed s/"'"/"\\\'"/g | sed s/"{"/"['"/ | sed s/", "/"', '"/g | sed s/"}"/"']"/)
 
+
 		# now check if set difference yields incomparability
 		if cat <<EOF | python
 # -*- coding: utf-8 -*-
-import sys, sets
+import sys
 a1 = $a1
 a2 = $a2
 z1 = zip(a1,a2)
 z2 = zip(z1, range(len(z1)))
 z3 = [ e for e in z2 if e[0][0] != e[0][1] ]
 for e in z3: print 'In Answerset ' + str($nas) + ' (fact ' + str(e[1]) + '): ' + e[0][0] + ' vs. ' + e[0][1]
-s1 = sets.Set(a1)
-s2 = sets.Set(a2)
-sys.exit(len(s1 - s2))
+s1 = set(a1)
+s2 = set(a2)
+sys.exit(len(s1.symmetric_difference(s2)))
 EOF
 		then
 		    echo "WARN: $HEXPROGRAM (answerset $nas has different ordering)"
