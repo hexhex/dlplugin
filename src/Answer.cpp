@@ -199,6 +199,8 @@ Answer::addTuple(const Tuple& out)
 						    // we only check
 						    // for anon. vars
     {
+
+
       const DLQuery::shared_pointer& dlq = query->getDLQuery();
       const Tuple& pat = dlq->getPatternTuple();
 
@@ -211,6 +213,8 @@ Answer::addTuple(const Tuple& out)
 	  Tuple tmp;
 	  Tuple::const_iterator pit = pat.begin();
 	  Tuple::const_iterator oit = out.begin();
+
+          assert(out.size() <= pat.size());
 
 	  //
 	  // Iterate output list and look for anonymous variables. If
@@ -229,6 +233,7 @@ Answer::addTuple(const Tuple& out)
 		}
 	      else
 		{
+                  assert(oit != out.end());
 		  tmp.push_back(*oit);
 		  ++oit;
 		}
@@ -286,6 +291,7 @@ Answer::addTuple(const Tuple& out)
 	}
       else // full retrieval query
 	{
+          assert(pat.size() == out.size());
 	  PluginAtom::Answer::addTuple(out);
 	}
     }
