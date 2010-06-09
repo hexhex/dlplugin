@@ -79,7 +79,6 @@ typedef int flex_int32_t;
 typedef unsigned char flex_uint8_t; 
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
-#endif /* ! C99 */
 
 /* Limits of integral types. */
 #ifndef INT8_MIN
@@ -110,6 +109,8 @@ typedef unsigned int flex_uint32_t;
 #define UINT32_MAX             (4294967295U)
 #endif
 
+#endif /* ! C99 */
+
 #endif /* ! FLEXINT_H */
 
 /* %endif */
@@ -119,6 +120,7 @@ typedef unsigned int flex_uint32_t;
 #include <iostream> 
 #include <errno.h>
 #include <cstdlib>
+#include <cstdio>
 #include <cstring>
 /* end standard C++ headers. */
 /* %endif */
@@ -190,7 +192,15 @@ typedef unsigned int flex_uint32_t;
 
 /* Size of default input buffer. */
 #ifndef YY_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k.
+ * Moreover, YY_BUF_SIZE is 2*YY_READ_BUF_SIZE in the general case.
+ * Ditto for the __ia64__ case accordingly.
+ */
+#define YY_BUF_SIZE 32768
+#else
 #define YY_BUF_SIZE 16384
+#endif /* __ia64__ */
 #endif
 
 /* The state buf must be large enough to hold one state per character in the main buffer.
@@ -1174,7 +1184,7 @@ static yyconst flex_int16_t yy_rule_linenum[22] =
 // URI(X) or URI(X,Y) as input query in an cq- or ucq-atom -> you have
 // to PCTENCODE URIs with (),
 
-#line 1178 "HexDLScanner.cpp"
+#line 1188 "HexDLScanner.cpp"
 
 #define INITIAL 0
 #define dlatominput 1
@@ -1234,7 +1244,12 @@ static int yy_flex_strlen (yyconst char * );
 
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k */
+#define YY_READ_BUF_SIZE 16384
+#else
 #define YY_READ_BUF_SIZE 8192
+#endif /* __ia64__ */
 #endif
 
 /* Copy whatever the last rule matched to the standard output. */
@@ -1348,7 +1363,7 @@ typedef yy::HexDLParser::token token;
 
 
 
-#line 1352 "HexDLScanner.cpp"
+#line 1367 "HexDLScanner.cpp"
 
 	if ( !(yy_init) )
 		{
@@ -1644,7 +1659,7 @@ YY_RULE_SETUP
 #line 258 "HexDLScanner.lpp"
 ECHO;
 	YY_BREAK
-#line 1648 "HexDLScanner.cpp"
+#line 1663 "HexDLScanner.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(dlatominput):
 case YY_STATE_EOF(dlatomoutput):
