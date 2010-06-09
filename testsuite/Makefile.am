@@ -13,11 +13,11 @@ noinst_HEADERS = \
                  TestRacerTypes.h \
                  TestSuite.h
 
-EXTRA_DIST = run-dlvhex-tests.sh RacerRunner.sh
+EXTRA_DIST = run-tests.sh compare_answersets_plain.py RacerRunner.sh
 
 #TESTS = RacerRunner.sh TestSuite RacerRunner.sh
 #TESTS = RacerRunner.sh run-dlvhex-tests.sh RacerRunner.sh
-TESTS = TestSuite run-dlvhex-tests.sh
+TESTS = TestSuite run-tests.sh
 
 TESTS_ENVIRONMENT = EXAMPLES=$(top_srcdir)/examples TESTDIR=$(top_srcdir)/examples DLVHEX=dlvhex PARAMETERS="-s -a --keepnsprefix --plugindir=$(CURDIR)/$(top_builddir)/src/"
 

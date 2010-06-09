@@ -1,3 +1,12 @@
+2010-06-09  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* testsuite/compare_answersets_plain.py: Improving testsuite by adding generic
+	(unweighted) answer set comparison python script (order of answer sets no
+	longer matters).
+	* testsuite/run-tests.sh: Likewise.
+	* testsuite/run-dlvhex-tests.sh: Likewise.
+	* testsuite/Makefile.am: Likewise.
+
 2010-06-09  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/HexDLScanner.cpp: Regenerate flex scanner using Ubuntu's
