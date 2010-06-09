@@ -1,0 +1,694 @@
+Grammar
+
+    0 $accept: racer $end
+
+    1 racer: ANSWER message STRING '\n'
+    2      | ERROR STRING STRING '\n'
+
+    3 message: boolean
+    4        | list
+    5        | status
+
+    6 boolean: TRUE
+    7        | NIL
+
+    8 list: '(' individuals ')'
+    9     | '(' pairs ')'
+   10     | '(' tuples ')'
+
+   11 status: ':' STRING
+   12       | '|' URI '|'
+   13       | STRING
+
+   14 individuals: individual
+   15            | individuals individual
+
+   16 pairs: '(' pair ')'
+   17      | pairs '(' pair ')'
+
+   18 pair: individual individual
+
+   19 tuples: '(' tuple ')'
+   20       | tuples '(' tuple ')'
+
+   21 tuple: '(' variable individual ')'
+   22      | tuple '(' variable individual ')'
+
+   23 individual: '|' URI '|'
+   24           | STRING
+   25           | NUMBER
+
+   26 variable: '?' STRING
+   27         | '$' '?' STRING
+   28         | '?' '*' STRING
+   29         | '$' '?' '*' STRING
+   30         | '|' '?' URI '|'
+   31         | '|' '$' '?' URI '|'
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'\n' (10) 1 2
+'$' (36) 27 29 31
+'(' (40) 8 9 10 16 17 19 20 21 22
+')' (41) 8 9 10 16 17 19 20 21 22
+'*' (42) 28 29
+':' (58) 11
+'?' (63) 26 27 28 29 30 31
+'|' (124) 12 23 30 31
+error (256)
+STRING (258) 1 2 11 13 24 26 27 28 29
+URI (259) 12 23 30 31
+NUMBER (260) 25
+NIL (261) 7
+TRUE (262) 6
+ANSWER (263) 1
+ERROR (264) 2
+
+
+Nonterminals, with rules where they appear
+
+$accept (18)
+    on left: 0
+racer (19)
+    on left: 1 2, on right: 0
+message (20)
+    on left: 3 4 5, on right: 1
+boolean (21)
+    on left: 6 7, on right: 3
+list (22)
+    on left: 8 9 10, on right: 4
+status (23)
+    on left: 11 12 13, on right: 5
+individuals (24)
+    on left: 14 15, on right: 8 15
+pairs (25)
+    on left: 16 17, on right: 9 17
+pair (26)
+    on left: 18, on right: 16 17
+tuples (27)
+    on left: 19 20, on right: 10 20
+tuple (28)
+    on left: 21 22, on right: 19 20 22
+individual (29)
+    on left: 23 24 25, on right: 14 15 18 21 22
+variable (30)
+    on left: 26 27 28 29 30 31, on right: 21 22
+
+
+state 0
+
+    0 $accept: . racer $end
+
+    ANSWER  shift, and go to state 1
+    ERROR   shift, and go to state 2
+
+    racer  go to state 3
+
+
+state 1
+
+    1 racer: ANSWER . message STRING '\n'
+
+    STRING  shift, and go to state 4
+    NIL     shift, and go to state 5
+    TRUE    shift, and go to state 6
+    '('     shift, and go to state 7
+    ':'     shift, and go to state 8
+    '|'     shift, and go to state 9
+
+    message  go to state 10
+    boolean  go to state 11
+    list     go to state 12
+    status   go to state 13
+
+
+state 2
+
+    2 racer: ERROR . STRING STRING '\n'
+
+    STRING  shift, and go to state 14
+
+
+state 3
+
+    0 $accept: racer . $end
+
+    $end  shift, and go to state 15
+
+
+state 4
+
+   13 status: STRING .
+
+    $default  reduce using rule 13 (status)
+
+
+state 5
+
+    7 boolean: NIL .
+
+    $default  reduce using rule 7 (boolean)
+
+
+state 6
+
+    6 boolean: TRUE .
+
+    $default  reduce using rule 6 (boolean)
+
+
+state 7
+
+    8 list: '(' . individuals ')'
+    9     | '(' . pairs ')'
+   10     | '(' . tuples ')'
+
+    STRING  shift, and go to state 16
+    NUMBER  shift, and go to state 17
+    '('     shift, and go to state 18
+    '|'     shift, and go to state 19
+
+    individuals  go to state 20
+    pairs        go to state 21
+    tuples       go to state 22
+    individual   go to state 23
+
+
+state 8
+
+   11 status: ':' . STRING
+
+    STRING  shift, and go to state 24
+
+
+state 9
+
+   12 status: '|' . URI '|'
+
+    URI  shift, and go to state 25
+
+
+state 10
+
+    1 racer: ANSWER message . STRING '\n'
+
+    STRING  shift, and go to state 26
+
+
+state 11
+
+    3 message: boolean .
+
+    $default  reduce using rule 3 (message)
+
+
+state 12
+
+    4 message: list .
+
+    $default  reduce using rule 4 (message)
+
+
+state 13
+
+    5 message: status .
+
+    $default  reduce using rule 5 (message)
+
+
+state 14
+
+    2 racer: ERROR STRING . STRING '\n'
+
+    STRING  shift, and go to state 27
+
+
+state 15
+
+    0 $accept: racer $end .
+
+    $default  accept
+
+
+state 16
+
+   24 individual: STRING .
+
+    $default  reduce using rule 24 (individual)
+
+
+state 17
+
+   25 individual: NUMBER .
+
+    $default  reduce using rule 25 (individual)
+
+
+state 18
+
+   16 pairs: '(' . pair ')'
+   19 tuples: '(' . tuple ')'
+
+    STRING  shift, and go to state 16
+    NUMBER  shift, and go to state 17
+    '('     shift, and go to state 28
+    '|'     shift, and go to state 19
+
+    pair        go to state 29
+    tuple       go to state 30
+    individual  go to state 31
+
+
+state 19
+
+   23 individual: '|' . URI '|'
+
+    URI  shift, and go to state 32
+
+
+state 20
+
+    8 list: '(' individuals . ')'
+   15 individuals: individuals . individual
+
+    STRING  shift, and go to state 16
+    NUMBER  shift, and go to state 17
+    ')'     shift, and go to state 33
+    '|'     shift, and go to state 19
+
+    individual  go to state 34
+
+
+state 21
+
+    9 list: '(' pairs . ')'
+   17 pairs: pairs . '(' pair ')'
+
+    '('  shift, and go to state 35
+    ')'  shift, and go to state 36
+
+
+state 22
+
+   10 list: '(' tuples . ')'
+   20 tuples: tuples . '(' tuple ')'
+
+    '('  shift, and go to state 37
+    ')'  shift, and go to state 38
+
+
+state 23
+
+   14 individuals: individual .
+
+    $default  reduce using rule 14 (individuals)
+
+
+state 24
+
+   11 status: ':' STRING .
+
+    $default  reduce using rule 11 (status)
+
+
+state 25
+
+   12 status: '|' URI . '|'
+
+    '|'  shift, and go to state 39
+
+
+state 26
+
+    1 racer: ANSWER message STRING . '\n'
+
+    '\n'  shift, and go to state 40
+
+
+state 27
+
+    2 racer: ERROR STRING STRING . '\n'
+
+    '\n'  shift, and go to state 41
+
+
+state 28
+
+   21 tuple: '(' . variable individual ')'
+
+    '|'  shift, and go to state 42
+    '?'  shift, and go to state 43
+    '$'  shift, and go to state 44
+
+    variable  go to state 45
+
+
+state 29
+
+   16 pairs: '(' pair . ')'
+
+    ')'  shift, and go to state 46
+
+
+state 30
+
+   19 tuples: '(' tuple . ')'
+   22 tuple: tuple . '(' variable individual ')'
+
+    '('  shift, and go to state 47
+    ')'  shift, and go to state 48
+
+
+state 31
+
+   18 pair: individual . individual
+
+    STRING  shift, and go to state 16
+    NUMBER  shift, and go to state 17
+    '|'     shift, and go to state 19
+
+    individual  go to state 49
+
+
+state 32
+
+   23 individual: '|' URI . '|'
+
+    '|'  shift, and go to state 50
+
+
+state 33
+
+    8 list: '(' individuals ')' .
+
+    $default  reduce using rule 8 (list)
+
+
+state 34
+
+   15 individuals: individuals individual .
+
+    $default  reduce using rule 15 (individuals)
+
+
+state 35
+
+   17 pairs: pairs '(' . pair ')'
+
+    STRING  shift, and go to state 16
+    NUMBER  shift, and go to state 17
+    '|'     shift, and go to state 19
+
+    pair        go to state 51
+    individual  go to state 31
+
+
+state 36
+
+    9 list: '(' pairs ')' .
+
+    $default  reduce using rule 9 (list)
+
+
+state 37
+
+   20 tuples: tuples '(' . tuple ')'
+
+    '('  shift, and go to state 28
+
+    tuple  go to state 52
+
+
+state 38
+
+   10 list: '(' tuples ')' .
+
+    $default  reduce using rule 10 (list)
+
+
+state 39
+
+   12 status: '|' URI '|' .
+
+    $default  reduce using rule 12 (status)
+
+
+state 40
+
+    1 racer: ANSWER message STRING '\n' .
+
+    $default  reduce using rule 1 (racer)
+
+
+state 41
+
+    2 racer: ERROR STRING STRING '\n' .
+
+    $default  reduce using rule 2 (racer)
+
+
+state 42
+
+   30 variable: '|' . '?' URI '|'
+   31         | '|' . '$' '?' URI '|'
+
+    '?'  shift, and go to state 53
+    '$'  shift, and go to state 54
+
+
+state 43
+
+   26 variable: '?' . STRING
+   28         | '?' . '*' STRING
+
+    STRING  shift, and go to state 55
+    '*'     shift, and go to state 56
+
+
+state 44
+
+   27 variable: '$' . '?' STRING
+   29         | '$' . '?' '*' STRING
+
+    '?'  shift, and go to state 57
+
+
+state 45
+
+   21 tuple: '(' variable . individual ')'
+
+    STRING  shift, and go to state 16
+    NUMBER  shift, and go to state 17
+    '|'     shift, and go to state 19
+
+    individual  go to state 58
+
+
+state 46
+
+   16 pairs: '(' pair ')' .
+
+    $default  reduce using rule 16 (pairs)
+
+
+state 47
+
+   22 tuple: tuple '(' . variable individual ')'
+
+    '|'  shift, and go to state 42
+    '?'  shift, and go to state 43
+    '$'  shift, and go to state 44
+
+    variable  go to state 59
+
+
+state 48
+
+   19 tuples: '(' tuple ')' .
+
+    $default  reduce using rule 19 (tuples)
+
+
+state 49
+
+   18 pair: individual individual .
+
+    $default  reduce using rule 18 (pair)
+
+
+state 50
+
+   23 individual: '|' URI '|' .
+
+    $default  reduce using rule 23 (individual)
+
+
+state 51
+
+   17 pairs: pairs '(' pair . ')'
+
+    ')'  shift, and go to state 60
+
+
+state 52
+
+   20 tuples: tuples '(' tuple . ')'
+   22 tuple: tuple . '(' variable individual ')'
+
+    '('  shift, and go to state 47
+    ')'  shift, and go to state 61
+
+
+state 53
+
+   30 variable: '|' '?' . URI '|'
+
+    URI  shift, and go to state 62
+
+
+state 54
+
+   31 variable: '|' '$' . '?' URI '|'
+
+    '?'  shift, and go to state 63
+
+
+state 55
+
+   26 variable: '?' STRING .
+
+    $default  reduce using rule 26 (variable)
+
+
+state 56
+
+   28 variable: '?' '*' . STRING
+
+    STRING  shift, and go to state 64
+
+
+state 57
+
+   27 variable: '$' '?' . STRING
+   29         | '$' '?' . '*' STRING
+
+    STRING  shift, and go to state 65
+    '*'     shift, and go to state 66
+
+
+state 58
+
+   21 tuple: '(' variable individual . ')'
+
+    ')'  shift, and go to state 67
+
+
+state 59
+
+   22 tuple: tuple '(' variable . individual ')'
+
+    STRING  shift, and go to state 16
+    NUMBER  shift, and go to state 17
+    '|'     shift, and go to state 19
+
+    individual  go to state 68
+
+
+state 60
+
+   17 pairs: pairs '(' pair ')' .
+
+    $default  reduce using rule 17 (pairs)
+
+
+state 61
+
+   20 tuples: tuples '(' tuple ')' .
+
+    $default  reduce using rule 20 (tuples)
+
+
+state 62
+
+   30 variable: '|' '?' URI . '|'
+
+    '|'  shift, and go to state 69
+
+
+state 63
+
+   31 variable: '|' '$' '?' . URI '|'
+
+    URI  shift, and go to state 70
+
+
+state 64
+
+   28 variable: '?' '*' STRING .
+
+    $default  reduce using rule 28 (variable)
+
+
+state 65
+
+   27 variable: '$' '?' STRING .
+
+    $default  reduce using rule 27 (variable)
+
+
+state 66
+
+   29 variable: '$' '?' '*' . STRING
+
+    STRING  shift, and go to state 71
+
+
+state 67
+
+   21 tuple: '(' variable individual ')' .
+
+    $default  reduce using rule 21 (tuple)
+
+
+state 68
+
+   22 tuple: tuple '(' variable individual . ')'
+
+    ')'  shift, and go to state 72
+
+
+state 69
+
+   30 variable: '|' '?' URI '|' .
+
+    $default  reduce using rule 30 (variable)
+
+
+state 70
+
+   31 variable: '|' '$' '?' URI . '|'
+
+    '|'  shift, and go to state 73
+
+
+state 71
+
+   29 variable: '$' '?' '*' STRING .
+
+    $default  reduce using rule 29 (variable)
+
+
+state 72
+
+   22 tuple: tuple '(' variable individual ')' .
+
+    $default  reduce using rule 22 (tuple)
+
+
+state 73
+
+   31 variable: '|' '$' '?' URI '|' .
+
+    $default  reduce using rule 31 (variable)

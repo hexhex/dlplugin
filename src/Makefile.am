@@ -21,9 +21,10 @@ position.hh \
 stack.hh
 
 
+# Warning: FlexLexer.h is now in the repository, if we update the bison/flex combo, we have to update FlexLexer.h as well
 # before we package ourselves, we add FlexLexer.h to the distribution directory
-dist-hook:
-	$(LN_S) @FLEXLEXER_H@ $(top_distdir)/src
+#dist-hook:
+#	$(LN_S) @FLEXLEXER_H@ $(top_distdir)/src
 
 
 dlvhexlib_LTLIBRARIES = libdlvhexracer.la
