@@ -88,7 +88,16 @@ if test x$have_cppunit = xfalse; then
 fi
 
 # checking for boost libs
-BOOST_REQUIRE([1.42.0])
+BOOST_REQUIRE([1.40.0])
+
+AC_MSG_CHECKING([for non-buggy boost version])
+if test x$boost_major_version = x141; then
+  AC_MSG_RESULT([no])
+  AC_MSG_ERROR([boost 1.41 is broken (spirit lexer), please use 1.40 or >=1.42])
+else
+  AC_MSG_RESULT([yes])
+fi
+
 BOOST_SMART_PTR
 BOOST_STRING_ALGO
 BOOST_TOKENIZER
