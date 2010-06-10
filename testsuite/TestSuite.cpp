@@ -107,7 +107,7 @@ int main(int /* argc */, char*[] /* argv */)
   // Change the default outputter to a compiler error format outputter
   runner.setOutputter(new CppUnit::CompilerOutputter(&runner.result(), std::cerr));
   //runner.setOutputter(new CppUnit::TextOutputter(&runner.result(), std::cerr));
-    
+
   // Run the tests.
   bool wasSucessful = runner.run();
 

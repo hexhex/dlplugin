@@ -30,7 +30,7 @@
  * 
  */
 
-#include "HexDLDriver.h"
+#include "HexDLConverter.h"
 
 #include "TestDLRewriter.h"
 
@@ -52,7 +52,7 @@ TestDLRewriter::runDLRewrite()
 
    std::ostringstream os;
    
-   HexDLDriver dlr;
+   HexDLConverter dlr;
    dlr.setOntology(Ontology::createOntology("file:" + examples + "/tweety_bird.owl"));
    dlr.convert(fs, os);
    
@@ -65,7 +65,7 @@ TestDLRewriter::runDLRewrite()
 
    std::ostringstream os;
    
-   HexDLDriver dlr;
+   HexDLConverter dlr;
    dlr.setOntology(Ontology::createOntology(shopuri));
    dlr.convert(fs, os);
    
@@ -76,7 +76,7 @@ TestDLRewriter::runDLRewrite()
    std::istringstream is("p(X,Y) :- &dlCQ[\"my.owl\",a,b,c,d,\"Q1(X),Q2(Y)\"](X, Y), &dlCQ[\"my.owl\",a,b,c,d,\"Q3(Y),Q4(Z)\"](Y,Z).");
    std::ostringstream os;
 
-   HexDLDriver dlr;
+   HexDLConverter dlr;
    dlr.convert(is, os);
 
    std::string s = os.str();
@@ -95,7 +95,7 @@ TestDLRewriter::runDLNoRewrite()
   
   std::ostringstream os;
 
-  HexDLDriver dlr;
+  HexDLConverter dlr;
   dlr.setOntology(Ontology::createOntology(shop));
   dlr.convert(fs, os);
 

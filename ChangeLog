@@ -1,3 +1,27 @@
+2010-06-10  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* include/HexDLRewriter.h: Replaced flex/bison parsers by
+	boost spirit V2 parser, including several new test cases.
+	* include/RacerInterface.h: Likewise.
+	* include/RacerAnswerDriver.h: Likewise.
+	* include/HexDLConverter.h: Likewise (new file).
+	* src/RacerInterface.cpp: Likewise.
+	* src/RacerAnswerDriver.cpp: Likewise.
+	* src/RacerKBManager.cpp: Likewise.
+	* src/HexDLRewriter.cpp: Likewise.
+	* src/Makefile.am: Likewise.
+	* src/HexDLConverter.cpp: Likewise (new file).
+	* src/RacerAnswerParser.ypp: Likewise (removed file).
+	* src/RacerAnswerScanner.lpp: Likewise (removed file).
+	* src/HexDLDriver.cpp: Likewise (removed file).
+	* testsuite/TestRacerDirector.cpp: Likewise.
+	* testsuite/TestSuite.cpp: Likewise.
+	* testsuite/TestRacerParse.h: Likewise.
+	* testsuite/TestDLRewriter.cpp: Likewise.
+	* testsuite/TestRacerParse.cpp: Likewise.
+	* testsuite/Makefile.am: Likewise.
+	* configure.ac: Likewise.
+
 2010-06-09  Peter Schueller  <ps@kr.tuwien.ac.at>
 
 	* testsuite/compare_answersets_plain.py: Improving testsuite by adding generic

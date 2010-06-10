@@ -38,7 +38,7 @@
 #include "Ontology.h"
 #include "DFConverter.h"
 #include "DFOutputBuilder.h"
-#include "HexDLDriver.h"
+#include "HexDLConverter.h"
 
 namespace dlvhex {
 
@@ -57,7 +57,6 @@ namespace dl {
   class BaseCache;
   class CacheStats;
   class DLOptimizer;
-  class HexDLDriver;
   class KBManager;
 
 namespace racer {
@@ -85,7 +84,7 @@ namespace racer {
     /// the cache for RACER queries
     BaseCache* cache;
     /// DL converter facility
-    HexDLDriver* dlconverter;
+    HexDLConverter* dlconverter;
     /// DF converter facility
     dlvhex::df::DFConverter* dfconverter;
     dlvhex::df::DFOutputBuilder* dfoutputbuilder;

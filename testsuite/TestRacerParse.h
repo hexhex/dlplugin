@@ -54,6 +54,7 @@ namespace test {
   class TestRacerParse : public TestSuite
   {
     CPPUNIT_TEST_SUITE(TestRacerParse);
+    CPPUNIT_TEST(runRacerErrorTest);
     CPPUNIT_TEST(runRacerSimpleAnswerTest);
     CPPUNIT_TEST(runRacerAnswerListTest);
     CPPUNIT_TEST_SUITE_END();
@@ -62,6 +63,8 @@ namespace test {
     void runRacerSimpleAnswerTest();
 
     void runRacerAnswerListTest();    
+
+    void runRacerErrorTest();    
   };
 
 } // namespace test

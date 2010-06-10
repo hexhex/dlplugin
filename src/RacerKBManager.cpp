@@ -35,6 +35,7 @@
 #include "QueryDirector.h"
 #include "RacerBuilder.h"
 #include "RacerAnswerDriver.h"
+#include "Answer.h"
 
 #include <iostream>
 #include <string>

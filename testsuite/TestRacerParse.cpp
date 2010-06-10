@@ -33,6 +33,7 @@
 #include "RacerAnswerDriver.h"
 
 #include "TestRacerParse.h"
+#include "Answer.h"
 
 #include <sstream>
 #include <iosfwd>
@@ -57,17 +58,118 @@ TestRacerParse::runRacerSimpleAnswerTest()
 }
     
 void
-TestRacerParse::runRacerAnswerListTest()
+TestRacerParse::runRacerErrorTest()
 {
-  std::istringstream ss(":answer 1 \"(|file://foobar#myfoo1| |file://foobar#myfoo2|)\" \"\"\n");
-  
-  RacerAnswerDriver al(ss);
+  std::istringstream ss(":error 1 Illegal syntax: help \"foo\"\n");
+
+  RacerAnswerDriver sa(ss);
   Answer a(0);
 
-  CPPUNIT_ASSERT_NO_THROW( al.parse(a) );
-  
-  CPPUNIT_ASSERT((*a.getTuples())[0][0].getUnquotedString() == std::string("<file://foobar#myfoo1>"));
-  CPPUNIT_ASSERT((*a.getTuples())[1][0].getUnquotedString() == std::string("<file://foobar#myfoo2>"));
+  CPPUNIT_ASSERT_THROW( sa.parse(a), dlvhex::dl::DLParsingError );
+}
+    
+void
+TestRacerParse::runRacerAnswerListTest()
+{
+  // 2 individuals
+  {
+    std::istringstream ss(":answer 1 \"(|file://foobar#myfoo1| |file://foobar#myfoo2|)\" \"\"\n");
+    
+    RacerAnswerDriver al(ss);
+    Answer a(0);
+
+    CPPUNIT_ASSERT_NO_THROW( al.parse(a) );
+    
+    std::vector<dlvhex::Tuple> &at = *a.getTuples();
+    CPPUNIT_ASSERT(at.size() == 2);
+    CPPUNIT_ASSERT(at[0][0].getUnquotedString() == std::string("<file://foobar#myfoo1>"));
+    CPPUNIT_ASSERT(at[1][0].getUnquotedString() == std::string("<file://foobar#myfoo2>"));
+  }
+
+  // 1 pair
+  {
+    std::istringstream ss(":answer 1 \"((|file://foobar#myfoo1| |file://foobar#myfoo2|))\" \"\"\n");
+    
+    RacerAnswerDriver al(ss);
+    Answer a(0);
+
+    CPPUNIT_ASSERT_NO_THROW( al.parse(a) );
+    
+    std::vector<dlvhex::Tuple> &at = *a.getTuples();
+    CPPUNIT_ASSERT(at.size() == 1);
+    CPPUNIT_ASSERT(at[0].size() == 2);
+    CPPUNIT_ASSERT(at[0][0].getUnquotedString() == std::string("<file://foobar#myfoo1>"));
+    CPPUNIT_ASSERT(at[0][1].getUnquotedString() == std::string("<file://foobar#myfoo2>"));
+  }
+
+  // 2 pairs
+  {
+    std::istringstream ss(":answer 1 \"( (|file://foobar#myfoo1| |file://foobar#myfoo2|) (|file://foobar#myfoo3| |file://foobar#myfoo4|) )\" \"\"\n");
+    
+    RacerAnswerDriver al(ss);
+    Answer a(0);
+
+    CPPUNIT_ASSERT_NO_THROW( al.parse(a) );
+    
+    std::vector<dlvhex::Tuple> &at = *a.getTuples();
+    CPPUNIT_ASSERT(at.size() == 2);
+    CPPUNIT_ASSERT(at[0].size() == 2);
+    CPPUNIT_ASSERT(at[0][0].getUnquotedString() == std::string("<file://foobar#myfoo1>"));
+    CPPUNIT_ASSERT(at[0][1].getUnquotedString() == std::string("<file://foobar#myfoo2>"));
+    CPPUNIT_ASSERT(at[1].size() == 2);
+    CPPUNIT_ASSERT(at[1][0].getUnquotedString() == std::string("<file://foobar#myfoo3>"));
+    CPPUNIT_ASSERT(at[1][1].getUnquotedString() == std::string("<file://foobar#myfoo4>"));
+  }
+
+  // 1 tuple with 1 variable
+  {
+    std::istringstream ss(":answer 4 \"(((? VAR |file://foobar#myfoo1|)))\" \"\"\n");
+    
+    RacerAnswerDriver al(ss);
+    Answer a(0);
+
+    CPPUNIT_ASSERT_NO_THROW( al.parse(a) );
+    
+    std::vector<dlvhex::Tuple> &at = *a.getTuples();
+    CPPUNIT_ASSERT(at.size() == 1);
+    CPPUNIT_ASSERT(at[0][0].getUnquotedString() == std::string("<file://foobar#myfoo1>"));
+  }
+
+  // 1 tuple with 3 variables
+  {
+    std::istringstream ss(":answer 3 \"((($? foo |file://foobar#myfoo1|) ($? Bar |file://foobar#myfoo2|) ($?* X |file://foobar#myfoo3|)))\" \"\"\n");
+    
+    RacerAnswerDriver al(ss);
+    Answer a(0);
+
+    CPPUNIT_ASSERT_NO_THROW( al.parse(a) );
+    
+    std::vector<dlvhex::Tuple> &at = *a.getTuples();
+    CPPUNIT_ASSERT(at.size() == 1);
+    CPPUNIT_ASSERT(at[0].size() == 3);
+    CPPUNIT_ASSERT(at[0][0].getUnquotedString() == std::string("<file://foobar#myfoo1>"));
+    CPPUNIT_ASSERT(at[0][1].getUnquotedString() == std::string("<file://foobar#myfoo2>"));
+    CPPUNIT_ASSERT(at[0][2].getUnquotedString() == std::string("<file://foobar#myfoo3>"));
+  }
+
+  // 3 tuple with 1 variable
+  {
+    std::istringstream ss(":answer 3 \"(((?* foo |file://foobar#myfoo1|)) (($? Bar |file://foobar#myfoo2|)) (($?* X |file://foobar#myfoo3|)))\" \"\"\n");
+    
+    RacerAnswerDriver al(ss);
+    Answer a(0);
+
+    CPPUNIT_ASSERT_NO_THROW( al.parse(a) );
+    
+    std::vector<dlvhex::Tuple> &at = *a.getTuples();
+    CPPUNIT_ASSERT(at.size() == 3);
+    CPPUNIT_ASSERT(at[0].size() == 1);
+    CPPUNIT_ASSERT(at[0][0].getUnquotedString() == std::string("<file://foobar#myfoo1>"));
+    CPPUNIT_ASSERT(at[1].size() == 1);
+    CPPUNIT_ASSERT(at[1][0].getUnquotedString() == std::string("<file://foobar#myfoo2>"));
+    CPPUNIT_ASSERT(at[2].size() == 1);
+    CPPUNIT_ASSERT(at[2][0].getUnquotedString() == std::string("<file://foobar#myfoo3>"));
+  }
 }
 
 

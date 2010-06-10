@@ -543,7 +543,7 @@ DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
 DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
 			       DLAtomInput& d,
 			       const AtomSet& ops,
-			       const boost::ptr_vector<AtomSet>* u,
+			       const std::vector<AtomSet>* u,
 			       const Tuple* o)
   : HexDLRewriterBase(),
     ontology(onto),
@@ -590,11 +590,12 @@ DLAtomRewriter::operator= (const DLAtomRewriter&)
 
 DLAtomRewriter::~DLAtomRewriter()
 {
-  delete query;
-  delete cq;
-  delete ucq;
-  delete output;
-  delete input;
+  // these are given to us from references to heap-allocated objects, they will be deleted elsewhere!
+  //delete query;
+  //delete cq;
+  //delete ucq;
+  //delete output;
+  //delete input;
 }
 
 
@@ -697,7 +698,7 @@ DLAtomRewriter::getInputTuple() const
     {
       std::ostringstream oss;
       
-      for (boost::ptr_vector<AtomSet>::const_iterator it = ucq->begin();
+      for(std::vector<AtomSet>::const_iterator it = ucq->begin();
 	   it != --ucq->end(); ++it)
 	{
 	  if (it->size() > 1)
