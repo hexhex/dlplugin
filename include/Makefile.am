@@ -7,7 +7,7 @@ noinst_HEADERS = \
                  DLOptimizer.h \
                  DLQuery.h \
                  HexDLDriver.h \
-                 HexDLFlexLexer.h \
+                 HexDLConverter.h \
                  HexDLRewriter.h \
                  KBManager.h \
                  LogBuf.h \
@@ -27,7 +27,6 @@ noinst_HEADERS = \
                  Registry.h \
                  TCPStream.h \
                  RacerAnswerDriver.h \
-                 RacerFlexLexer.h \
                  RacerNRQL.h \
                  RacerNRQL.tcc \
                  RacerNRQLBuilder.h \
