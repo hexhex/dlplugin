@@ -55,6 +55,7 @@ namespace df {
 
   void DFProcessor::push_namespace(const char* first, const char* last)
   {
+    //@todo TK: the offset calculation is nasty here!
     std::string s(first, last);
     std::size_t i = s.find("(");
     std::size_t j = s.find(")");
