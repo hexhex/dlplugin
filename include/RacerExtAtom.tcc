@@ -133,7 +133,11 @@ namespace racer {
       }
     catch (std::exception& e)
       {
-	throw PluginError(e.what());
+	std::stringstream oss;
+
+	oss << "An error occurred while communicating with RacerPro: " << e.what();
+
+	throw PluginError(oss.str());
       }
   }
   
