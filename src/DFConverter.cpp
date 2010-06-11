@@ -92,9 +92,9 @@ namespace df {
       }
     
     DefaultParser dfp;
-    boost::spirit::parse_info<> info = boost::spirit::parse(inputcontent.str().c_str(),
-							    dfp >> boost::spirit::end_p,
-							    boost::spirit::space_p);
+    BOOST_SPIRIT_CLASSIC_NS :: parse_info<> info = BOOST_SPIRIT_CLASSIC_NS :: parse(inputcontent.str().c_str(),
+							    dfp >> BOOST_SPIRIT_CLASSIC_NS :: end_p,
+							    BOOST_SPIRIT_CLASSIC_NS :: space_p);
     if (!info.full)
       {
 	throw PluginError("Default rules syntax error!");
