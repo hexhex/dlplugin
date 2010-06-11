@@ -1,15 +1,12 @@
 -*- org -*-
 
-* TODO &dlConsistent is currently not working
-dlvhex: QueryCtx.cpp:191: dlvhex::dl::QueryCtx::QueryCtx(const dlvhex::PluginAtom::Query&, dlvhex::dl::KBManager&): Assertion `"No query term." == 0' failed.
-
+* TODO use boost::spirit to parse (U)CQs in the external atoms
+   fuse the dispatching code in AtomSeparator.cpp and QueryCtx.cpp 
 * TODO If the path to the owl file has a blank then there will be an error from the external atom.
 
 * TODO &dlDR and dlX in a rule will be pushed together
 Datatype roles are handled very weird in Racer: adding datatype
 support to (U)CQs should fix this problem.
-
-* TODO Testsuite is a mess!
 
 * TODO If there is a TBox with an absolute pathname as name, we dump "/" to std::cerr (see (all-tboxes))
 
@@ -45,8 +42,3 @@ support to (U)CQs should fix this problem.
 * TODO --kb-reload _always_ reloads the DL-KB.
 
 * TODO implement \neg R(a,b) in \uminus as { A(a), B(b), \exists R.A \sqsubseteq \neg B }
-
-* TODO use boost::spirit
-** to parse (U)CQs in the external atoms
-   fuse the dispatching code in AtomSeparator.cpp and QueryCtx.cpp 
-** to parse the answers from Racer?

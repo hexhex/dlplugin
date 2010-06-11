@@ -1,3 +1,18 @@
+2010-06-11  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* TODO: Update.
+
+	* include/RacerExtAtom.tcc: Improve error message.
+
+	* src/HexDLParser.ypp: Remove.
+	* src/HexDLScanner.lpp: Likewise.
+	* src/Makefile.am (MAINTAINERCLEANFILES, EXTRA_DIST): Likewise.
+
+	* src/DFProcessor.cpp: Add comment.
+
+	* include/DFProcessor.h: Fix Spirit.Classic deprecation warnings.
+	* src/DFConverter.cpp: Likewise.
+
 2010-06-10  Peter Schueller  <ps@kr.tuwien.ac.at>
 
 	* configure.ac: Disallowing boost 1.41 as it is broken.
