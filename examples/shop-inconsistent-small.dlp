@@ -1,0 +1,10 @@
+% -*- prolog -*-
+
+#namespace("shop","http://www.kr.tuwien.ac.at/staff/roman/shop#").
+
+minusShop("shop:Shop",S) :- &dlC["shop.owl",a,b,c,d,"shop:Shop"](S).
+
+consistent :- &dlConsistent["shop.owl",a,minusShop,c,d].
+inconsistent :- not &dlConsistent["shop.owl",a,minusShop,c,d].
+
+%shop(S) :- &dlC["shop.owl",a,minusShop,c,d,"shop:Shop"](S).

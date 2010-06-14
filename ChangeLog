@@ -1,3 +1,10 @@
+2010-06-14  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* examples/Makefile.am: Add shop-inconsistent-small test case.
+	* examples/tests/shop-inconsistent-small.out: Likewise.
+	* examples/shop-inconsistent-small.dlp: Likewise.
+	* examples/mytests.test: Likewise.
+
 2010-06-11  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* TODO: Update.
