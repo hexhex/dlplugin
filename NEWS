@@ -1,10 +1,36 @@
 dlvhex-dlplugin NEWS -- history of user-visible changes.
 
 
-Version 0.6.0
+* Version 1.7.0 (June 2010)
 
-* Add support for turtle syntax in URIs.
+** Add support for default logic over DL-KBs. 
 
-* New plugin parameters: --kb-reload and --dlsetup.
+    A detailed description of usage can be found in [1]. 
 
-* dlvhex-dlplugin is GPLed now.
+   [1] Minh Dao-Tran, Thomas Eiter, and Thomas Krennwallner. Realizing
+   Default Logic over Description Logic Knowledge Bases. In 10th
+   European Conference on Symbolic and Quantitative Approaches to
+   Reasoning with Uncertainty (ECSQARU 2009), volume 5590 of LNAI,
+   pages 602-613. Springer, July 2009.
+
+** Add support for turtle syntax in URIs.
+
+** New plugin parameters: --dlsetup.
+
+** Fix tickets #3, #9.
+
+
+
+
+* Version 0.6.0
+
+** New plugin parameter: --kb-reload.
+
+** dlvhex-racerplugin is GPLed now.
+
+
+Local variables:
+mode: outline
+paragraph-separate: "[ 	]*$"
+end:
+
