@@ -1,3 +1,8 @@
+2010-06-17  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* testsuite/run-tests.sh: Fixing make check and distcheck.
+	* testsuite/Makefile.am: Likewise.
+
 2010-06-15  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* configure.ac (BOOST_REQUIRE): Require boost >= 1.41.

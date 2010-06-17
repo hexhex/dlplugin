@@ -17,7 +17,9 @@ EXTRA_DIST = run-tests.sh compare_answersets_plain.py RacerRunner.sh
 
 TESTS = TestSuite run-tests.sh
 
-TESTS_ENVIRONMENT = EXAMPLES=$(CURDIR)/$(top_srcdir)/examples TESTDIR=$(CURDIR)/$(top_srcdir)/examples DLVHEX=dlvhex PARAMETERS="-s -a --keepnsprefix --plugindir=$(CURDIR)/$(top_builddir)/src/"
+DLVHEX_ABS_TOP_BUILDDIR = `readlink -f $(top_builddir)`
+DLVHEX_ABS_TOP_SRCDIR = `readlink -f $(top_srcdir)`
+TESTS_ENVIRONMENT = EXAMPLES=$(DLVHEX_ABS_TOP_SRCDIR)/examples DLVHEX=dlvhex PARAMETERS="-s -a --keepnsprefix --plugindir=$(DLVHEX_ABS_TOP_BUILDDIR)/src/"
 
 check_PROGRAMS = TestSuite
 

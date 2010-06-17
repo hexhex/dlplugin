@@ -38,9 +38,6 @@ do
     do
 	let ntests++
 
-	#HEXPROGRAM=$TESTDIR/$HEXPROGRAM
-	#ANSWERSETS=$TESTDIR/$ANSWERSETS
-
 	if [ ! -f $HEXPROGRAM ] || [ ! -f $ANSWERSETS ]; then
 	    test ! -f $HEXPROGRAM && echo WARN: Could not find program file $HEXPROGRAM
 	    test ! -f $ANSWERSETS && echo WARN: Could not find answer sets file $ANSWERSETS
@@ -51,7 +48,7 @@ do
 	# run dlvhex with specified parameters and program
 	$DLVHEX  $PARAMETERS $ADDPARM $HEXPROGRAM | egrep -v "^$" > $TMPFILE
 
-	if $TESTDIR/../testsuite/compare_answersets_plain.py $TMPFILE $ANSWERSETS; then
+	if ../testsuite/compare_answersets_plain.py $TMPFILE $ANSWERSETS; then
 		echo PASS: $HEXPROGRAM $ANSWERSETS
 	else
 		echo FAIL: $HEXPROGRAM $ANSWERSETS
