@@ -179,8 +179,8 @@ AtomSeparator::parse() throw (DLParsingError)
       // abbr. name by the corresponding fully-fledged
       // namespace which can be found in Term::namespaces
       //
-      for (std::vector<std::pair<std::string,std::string> >::iterator ns = Term::namespaces.begin();
-	   ns != Term::namespaces.end();
+      for (std::vector<std::pair<std::string,std::string> >::iterator ns = Term::getNameSpaces().begin();
+	   ns != Term::getNameSpaces().end();
 	   ++ns)
 	{
 	  boost::replace_all(atom, ns->second + ":", ns->first);

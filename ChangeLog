@@ -1,3 +1,8 @@
+2010-06-18  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/AtomSeparator.cpp: Use Term::getNameSpaces singleton
+	instance method.
+
 2010-06-17  Peter Schueller  <ps@kr.tuwien.ac.at>
 
 	* testsuite/run-tests.sh: Fixing make check and distcheck.
