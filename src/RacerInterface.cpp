@@ -253,14 +253,15 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
       out << " --dlopt=MOD[,MOD]*    Set optimization modifiers, where MOD may be" << std::endl;
       out << "                       -push    ... turn off pushing" << std::endl;
       out << "                       -dlcache ... turn off dl-cache" << std::endl;
-      out << " --dldebug=LEVEL       Set debug level to LEVEL." << std::endl;
-      out << " --dftrans=DFTRANS     Choose transformation from defaults to dl-rules. TRANS can be" << std::endl;
-      out << "                       -1: the old conclusion-based transformation." << std::endl;
-      out << "                       -2: the new conclusion-based transformation." << std::endl;
-      out << "                       -3: the justification-based transformation." << std::endl;
-      out << " --cq=CQMOD            Set DLAtoms' query options, where CQMOD may be" << std::endl;
-      out << "                       -on  ... use cq in DLAtoms' query" << std::endl;
-      out << "                       -off ... don't use cq in DLAtoms' query" << std::endl;
+      out << " --dldebug=LEVEL       Set debug level to LEVEL." << std::endl << std::endl;
+      out << "Default rewriter:" << std::endl << std::endl;
+      out << " --dftrans=TRANS       Choose transformation from defaults to dl-rules. TRANS can be" << std::endl;
+      out << "                       1: the old conclusion-based transformation." << std::endl;
+      out << "                       2: the new conclusion-based transformation." << std::endl;
+      out << "                       3: the justification-based transformation." << std::endl;
+      out << " --dfcq=CQMOD          Set DLAtoms' query options, where CQMOD may be" << std::endl;
+      out << "                       on  ... use cq in DLAtoms' query" << std::endl;
+      out << "                       off ... don't use cq in DLAtoms' query" << std::endl;
 
       return;
     }
@@ -271,7 +272,7 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
   const char *optimization = "--dlopt=";
   const char *dldebug      = "--dldebug=";
   const char *dftrans      = "--dftrans=";
-  const char *cqmode       = "--cq=";
+  const char *cqmode       = "--dfcq=";
 
   std::vector<std::string>::iterator it = argv.begin();
 
@@ -390,7 +391,8 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	  it = argv.erase(it);
 	  continue;
 	}
-		
+
+
       o = it->find(dftrans);
       if (o != std::string::npos)
 	{
@@ -399,16 +401,13 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	    {
 	      dfconverter->setDFTrans(1);
 	    }
+	  else if (trans_option.compare("3") == 0)
+	    {
+	      dfconverter->setDFTrans(3);
+	    }
 	  else
 	    {
-	      if (trans_option.compare("3") == 0)
-		{
-		  dfconverter->setDFTrans(3);
-		}
-	      else
-		{
-		  dfconverter->setDFTrans(2);
-		}
+	      dfconverter->setDFTrans(2);
 	    }
 	  it = argv.erase(it);
 	  continue;
