@@ -37,10 +37,9 @@ namespace dlvhex {
 namespace df {
 
   DFConverter::DFConverter()
-  {
-    cqmode = false;
-    dftrans = 3;
-  }
+    : cqmode(false),
+      dftrans(0) // default setting: don't rewrite
+  { }
 
   bool
   DFConverter::hasDefaults()
@@ -83,6 +82,12 @@ namespace df {
   void
   DFConverter::convert(std::istream& is, std::ostream& os)
   {
+    if (dftrans == 0) // rewriting turned off
+      {
+	os << is.rdbuf();
+	return;
+      }
+
     std::ostringstream inputcontent;
     std::string line;
     while (!is.eof())
