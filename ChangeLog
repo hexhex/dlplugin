@@ -1,3 +1,15 @@
+2010-06-19  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* NEWS: Update.
+
+	* src/RacerInterface.cpp: Renamed --cq parameter to --dfcq.
+
+	* src/HexDLConverter.cpp: Use @todo instead of TODO.
+	Add documentation.
+
+	* src/DFConverter.cpp (DFConverter::convert): Turn off default
+	rewriter by default (use --dftrans=N to turn it on).
+
 2010-06-18  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/AtomSeparator.cpp: Use Term::getNameSpaces singleton

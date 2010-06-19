@@ -5,7 +5,7 @@ dlvhex-dlplugin NEWS -- history of user-visible changes.
 
 ** Add support for default logic over DL-KBs. 
 
-    A detailed description of usage can be found in [1]. 
+   A detailed description of usage can be found in [1]. 
 
    [1] Minh Dao-Tran, Thomas Eiter, and Thomas Krennwallner. Realizing
    Default Logic over Description Logic Knowledge Bases. In 10th
@@ -13,9 +13,11 @@ dlvhex-dlplugin NEWS -- history of user-visible changes.
    Reasoning with Uncertainty (ECSQARU 2009), volume 5590 of LNAI,
    pages 602-613. Springer, July 2009.
 
+** New plugin parameters for the default rewriter: --dftrans and --dfcq.
+
 ** Add support for turtle syntax in URIs.
 
-** New plugin parameters: --dlsetup.
+** New plugin parameters for setting up DL reasoner: --dlsetup.
 
 ** Fix tickets #3, #9.
 
