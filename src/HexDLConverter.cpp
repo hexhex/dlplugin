@@ -1,11 +1,40 @@
-/**
- * TODO copyright etc.
+/* dlvhex-dlplugin -- Integration of Answer-Set Programming and Description Logics.
  *
- * This file contains the base converter used for DL syntactic sugar: the parser
- * detects DL syntactic sugar and passes it on to the DLAtomConverter for
- * rewriting, everything that is not DL syntactic sugar is simply streamed out
- * output unaltered.
+ * Copyright (C) 2005, 2006, 2007  Thomas Krennwallner
+ * 
+ * This file is part of dlvhex-dlplugin.
+ *
+ * dlvhex-dlplugin is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * dlvhex-dlplugin is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with dlvhex-dlplugin; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
+
+/**
+ * @file   HexDLConverter.cpp
+ * @author Peter Schueller
+ * @date   Sat Jun 19 07:17:33 CEST 2010
+ * 
+ * @brief Base converter used for DL syntactic sugar atoms DL[]
+ *
+ * This is a rewrite of the previous flex/bison parser
+ * (HexDLParser.ypp,HexDLScanner.lpp) to the boost spirit framework.
+ * The parser detects DL syntactic sugar and passes it on to the
+ * DLAtomConverter for rewriting, everything that is not DL syntactic
+ * sugar is simply streamed out output unaltered.
+ * 
+ */
+
 
 #include "HexDLConverter.h"
 #include "HexDLRewriter.h"
@@ -395,9 +424,10 @@ struct handle_output
   }
 };
 
-// TODO: write minimal testcase for rule r = (-tok.foo >> tok.bar) [handle()] where foo attribute
-// type is char and bar attribute type is string -> boost::optional is created, but string contains
-// initial \0 if foo token is absent
+///@todo write minimal testcase for rule r = (-tok.foo >> tok.bar)
+///[handle()] where foo attribute type is char and bar attribute type
+///is string -> boost::optional is created, but string contains
+///initial \0 if foo token is absent
 
 struct handle_atom
 {
@@ -490,7 +520,7 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
 
 } // anonymous namespace
 
-#include "HexDLConverter.h"
+
 
 dlvhex::dl::HexDLConverter::HexDLConverter()
 {
@@ -506,7 +536,9 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
   // setup iterators
   //
 
-  // TODO: use istreambuf_iterator/multi_pass/position_iterator as soon as lexer no longer requires random access iterator (on todolist of boost spirit team)
+  ///@todo use istreambuf_iterator/multi_pass/position_iterator as
+  ///soon as lexer no longer requires random access iterator (on
+  ///todolist of boost spirit team)
   #if 0
   // iterate over stream input
   typedef std::istreambuf_iterator<char> stream_iterator_type;
@@ -630,3 +662,7 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
 }
 
 // vim:ts=8:sw=2:tw=100:
+
+// Local Variables:
+// mode: C++
+// End:
