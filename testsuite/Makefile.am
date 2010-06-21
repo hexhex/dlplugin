@@ -17,8 +17,8 @@ EXTRA_DIST = run-tests.sh compare_answersets_plain.py RacerRunner.sh
 
 TESTS = TestSuite run-tests.sh
 
-DLVHEX_ABS_TOP_BUILDDIR = `readlink -f $(top_builddir)`
-DLVHEX_ABS_TOP_SRCDIR = `readlink -f $(top_srcdir)`
+DLVHEX_ABS_TOP_BUILDDIR=`readlink -f $(top_builddir)`
+DLVHEX_ABS_TOP_SRCDIR=`readlink -f $(top_srcdir)`
 TESTS_ENVIRONMENT = EXAMPLES=$(DLVHEX_ABS_TOP_SRCDIR)/examples DLVHEX=dlvhex PARAMETERS="-s -a --keepnsprefix --plugindir=$(DLVHEX_ABS_TOP_BUILDDIR)/src/"
 
 check_PROGRAMS = TestSuite
@@ -49,6 +49,9 @@ AM_CPPFLAGS = \
 
 TestSuite_CXXFLAGS = $(CPPUNIT_CFLAGS)
 
-TestSuite_LDFLAGS = $(CPPUNIT_LIBS) $(DLVHEX_LIBS)
+# the order is very important here!
+# libtool puts the path to the first library first, so
+# if you have an older version of the DLVHEX_LIBS where the CPPUNIT_LIBS are, the wrong one will be used
+TestSuite_LDFLAGS = $(DLVHEX_LIBS) $(CPPUNIT_LIBS)
 
 TestSuite_LDADD = $(top_builddir)/src/libdlvhexracer.la

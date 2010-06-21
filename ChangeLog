@@ -1,3 +1,8 @@
+2010-06-21  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* testsuite/Makefile.am: Changing order of libraries, such that
+	libtool will correctly order the -rpath directives.
+
 2010-06-19  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* NEWS: Update.
