@@ -1,3 +1,7 @@
+2010-06-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	Release version 1.7.0.
+
 2010-06-21  Peter Schueller  <ps@kr.tuwien.ac.at>
 
 	* testsuite/Makefile.am: Changing order of libraries, such that
