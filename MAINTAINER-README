@@ -1,18 +1,12 @@
 -*- org -*-
 
-This is the README file for maintainers and CVS users. Do not include
-this file in the distribution.
+This is the README file for maintainers and subversion users. Do not
+include this file in the distribution.
 
 
 * Dependencies
 
 ** Dependencies mentioned in README
-
-** flex
-http://flex.sourceforge.net/
-
-** bison
-http://www.gnu.org/software/bison/
 
 ** autoconf
 http://www.gnu.org/software/autoconf/
@@ -27,17 +21,10 @@ http://www.gnu.org/software/libtool/
 * Building, installing and testing dlvhex-dlplugin
 
 ** Prerequisites
-
 See README for all the basic tools and libraries needed in order to
 build dlvhex-dlplugin.
 
 The development tools include:
-
-*** flex + bison
-This plugin uses relatively new features of flex and bison, so install
-the newest versions of these tools. dlvhex-dlplugin was tested with
-flex 2.5.33 and bison 2.3. For installation instruction see the
-corresponding INSTALL files of the source packages.
 
 *** autotools
 The autotools include autoconf, automake and libtool. See the
@@ -45,7 +32,6 @@ installation instructions of the corresponding packages.
 
 
 ** Configuration
-
 The `configure' script is being built using the `bootstrap.sh'
 script. After its execution, follow the configuration instructions in
 the README file.
@@ -71,7 +57,6 @@ output. For even more pedantic compiler warnings, add `-Weffc++'.
 
 
 ** Build
-
 Invoke `make' to build the plugin. If you want to create a
 "self-contained" library with statically linked libraptor, use the
 following command:
@@ -83,29 +68,22 @@ to `libraptor.a'.
 
 
 ** Installation
-
 Invoke `make install'.
 
 
 ** Testsuite
-
 Execute `make check' to build an run the testsuite. Make sure there is
-no running `RacerPro' instance before you invoke the testsuite. Also
+a running `RacerPro' instance before you invoke the testsuite. Also
 make sure you installed the plugin such that `dlvhex' can find it.
 
 
 ** Cleanup
-
 To clean a build, you can choose from a bunch of cleanup targets of
 the automatically generated Makefile's:
 
 *** make clean
 Just removes the object files and the plugin, but does not remove the
 generated flex scanner and bison parser source code.
-
-*** make -C src maintainer-clean-generic
-Invoke this command in the toplevel build directory to remove the flex
-scanner and bison parser.
 
 *** make distclean
 This target removes the compiled objects and generated Makefiles from
@@ -116,7 +94,6 @@ This target removes almost everything in the build directory.
 
 
 * Distributing the plugin
-
 There are two targets for creating a dlvhex-dlplugin package:
 
 ** make distcheck

@@ -1,4 +1,4 @@
--*- outline -*-
+-*- org -*-
 
 This is dlvhex-dlplugin, a plugin for `dlvhex'.
 
@@ -10,7 +10,7 @@ dlvhex-dlplugin.
 dlvhex-dlplugin depends on following libraries and programs:
 
 ** dlvhex
-http://www.kr.tuwien.ac.at/staff/roman/dlvhex/
+http://www.kr.tuwien.ac.at/research/systems/dlvhex/
 
 ** RACER
 http://www.racer-systems.com/
@@ -32,40 +32,39 @@ http://cppunit.sourceforge.net/
 *** dlvhex
 See dlvhex installation instructions.
 
-
 *** Racer
 Download the Racer/RacerPro binary and install it into your favourite
 location accourding to the installation instructions of Racer. Add the
 installation path to the PATH environment variable. dlvhex-dlplugin
-has been tested with RacerPro 1.8 and 1.9.
-
+has been tested with RacerPro 1.8 and 1.9 and 1.9.2beta.
 
 *** boost
-Follow the instructions of the INSTALL file found in the distributions
-tarball. Popular Linux and Unix distributions such as Fedora, Debian,
-and NetBSD include pre-built Boost packages.
-
-If you need to build boost by yourself, I suggest using bjam and stow:
-
-$ bjam "--prefix=/install/to/this/dir" "-sTOOLS=gcc" stage
-$ bjam "--prefix=/install/to/this/dir/stow/boost-VERSION" "-sTOOLS=gcc" install
-$ cd /install/to/this/dir/stow
-$ stow boost-VERSION
-
+See the dlvhex installation instructions.
 
 *** libraptor
-Follow the instructions of the INSTALL file found in the distributions
-tarball. dlvhex-dlplugin needs at least libraptor 1.4.8 due to XML
-namespace parsing support.
+Popular Linux distributions provide raptor packages. On Debian/Ubuntu,
+just run
 
+ $ apt-get install libraptor-dev
+
+If you want to install raptor from the sources, just follow the
+instructions of the INSTALL file that can be found in the
+distributions tarball. dlvhex-dlplugin needs at least libraptor 1.4.8
+due to XML namespace parsing support.
 
 *** cppunit
-Follow the instructions of the INSTALL file found in the distributions
-tarball. dlvhex-dlplugin has been tested with cppunit 1.10.2 and
-1.12.0.
+See the dlvhex installation instructions.
 
 
 ** Configuration
+
+To install dlvhex-dlplugin in to global dlvhex plugin directory, just
+run
+
+ $ ./configure
+
+`make install' will then copy the plugin to a directory where dlvhex
+can find it. E.g., usually to /usr/local/lib/dlvhex/plugins.
 
 `configure --enable-userinstall' will adjust the installation-path to
 `~/.dlvhex/plugins', if the plugin should not be installed
@@ -77,12 +76,18 @@ Other influental environment variables include:
 *** PKG_CONFIG_PATH
 Set this environment variable to the absolute path of dlvhex pkgconfig
 directory. Usually, this directory can be found in
-`$prefix/lib/pkgconfig'.
+`$prefix/lib/pkgconfig'. E.g., run configure like
+
+ $ ./configure PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+
+if dlvhex was installed with a prefix of /usr/local.
 
 *** RACER
 `configure' searches for an executable called `RacerPro' during its
 execution. If PATH is not setup properly, you can set the RACER
-variable to the absolute path of `RacerPro'.
+variable to the absolute path of `RacerPro':
+
+ $ ./configure RACER=/path/to/racerpro
 
 
 ** Testing
@@ -109,7 +114,6 @@ divided in
 
 
 *** Command Line Options
-
 The dl-plugin accepts the following command line arguments:
 
 `--ontology=URI': In cq-programs `(L,P)', set the corresponding DL-KB
@@ -127,7 +131,6 @@ The dl-plugin accepts the following command line arguments:
 
 
 *** External Atoms
-
 The atoms of the first category support query answering to concept (C)
 and role (R and DR) queries, conjunctive queries (CQ), and union of
 conjunctive queries (UCQ).
@@ -169,7 +172,6 @@ for `Q', and the output list `X1,...,Xn' is now subject of the
 following subsections.
 
 *** Concept queries
-
 Queries to concepts can be stated using the external atom
 
  (3) &dlC[KB,a,b,c,d,Q](X),
@@ -253,7 +255,6 @@ Example 3: Similarly, we can increase the ABox of an ontology by role
 
 
 *** Role queries
-
 Role querying can be accomplished using the external atom
 
  (4) &dlR[KB,a,b,c,d,Q](X,Y),
@@ -282,7 +283,6 @@ Example 4:
 
 
 *** Conjunctive and Union of Conjunctive Queries
-
 The next two atoms provide support for conjunctive and union of
 conjunctive queries:
 
@@ -332,7 +332,6 @@ use similar input predicates as in the Examples 2-4.
 
 
 *** DL-KB consistency
-
 The last external atom is `&dlConsistent', which tests the given DL-KB
 for consistency under the specified extensions.
 
@@ -353,7 +352,6 @@ Example 7: The program
 
 
 *** cq-programs
-
 In order to process cq-programs with dlvhex, we can write DL-atoms as
 
  (11) DL[S1 op1 p1,...,Sm opm pm; q](X1,...,Xn)
@@ -381,3 +379,8 @@ Example 8: A simple example of a cq-program is (L,P), where L is the wine
 
   and get the same extensions in `wine' as in the HEX-rule, given that
   we call the dlvhex program in the same way as above.
+
+
+
+*** Default Logic over Description Logic Knowledge Bases
+TODO
