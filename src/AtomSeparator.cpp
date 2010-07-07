@@ -221,7 +221,8 @@ AtomSeparator::parse() throw (DLParsingError)
       // ap is always first-order, otherwise we would end up in a
       // higher-order atom if concept or role name is uppercase
       AtomPtr ap(new Atom(predicate, tup, isNegated));
-      ap->setAlwaysFO();
+      ///@todo: this could be a problem
+      //ap->setAlwaysFO();
       atoms.insert(ap);
     }
 }

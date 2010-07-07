@@ -414,7 +414,8 @@ ExtAtomRewriter::push(const std::auto_ptr<ExtAtomRewriter>& b) const
 	    }
 
 	  AtomPtr ap(new Atom(nargs, a1->isStronglyNegated()));
-	  ap->setAlwaysFO();
+    /// @todo: this could be a problem
+	  //ap->setAlwaysFO();
 	  cq3.insert(ap);
 	}
 
@@ -443,7 +444,8 @@ ExtAtomRewriter::push(const std::auto_ptr<ExtAtomRewriter>& b) const
 	    }
 
 	  AtomPtr ap(new Atom(nargs, a2->isStronglyNegated()));
-	  ap->setAlwaysFO();
+    /// @todo: this could be a problem
+	  //ap->setAlwaysFO();
 	  cq3.insert(ap);
 	}
 

@@ -1,3 +1,9 @@
+2010-07-07  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* src/AtomSeparator.cpp: No longer using setAlwaysFO because this
+	is no longer necessary (printing is no longer per default in HO mode).
+	* src/HexDLRewriter.cpp: Likewise.
+
 2010-06-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* README: Update.
