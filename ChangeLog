@@ -1,3 +1,9 @@
+2010-07-09  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* NEWS: Add list of user-visible changes.
+
+	* configure.ac (AC_INIT): Bump version to 1.7.1.
+
 2010-07-07  Peter Schueller  <ps@kr.tuwien.ac.at>
 
 	* src/AtomSeparator.cpp: No longer using setAlwaysFO because this
@@ -28,7 +34,7 @@
 	Add documentation.
 
 	* src/DFConverter.cpp (DFConverter::convert): Turn off default
-	rewriter by default (use --dftrans=N to turn it on).
+	rewriter by default (use --dftrans=N to turn it on) (ticket #5).
 
 2010-06-18  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
@@ -165,18 +171,14 @@
 
 	* include/RacerExtAtom.tcc (RacerRoleAtom<GetKBManager,GetCache>::getDirectors): Use
 	old-school queries with positive role queries, and CQs with
-	negative (not R) queries.
+	negative (not R) queries (ticket #3).
 	* src/QueryCtx.cpp: Likewise.
-
-	Closes ticket #3.
 
 2010-05-11  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* include/RacerExtAtom.tcc (setupRacer): Always turn on
 	data-substrate mirroring, as we have to issue a full reset after
-	every query due to a Racer bug.
-
-	Closes ticket #9.
+	every query due to a Racer bug (ticket #9).
 
 2010-04-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
