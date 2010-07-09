@@ -1,5 +1,9 @@
 dlvhex-dlplugin NEWS -- history of user-visible changes.
 
+* Version 1.7.1 (July 2010)
+
+** Adapt to interface changes in dlvhex 1.7.1.
+
 
 * Version 1.7.0 (June 2010)
 
@@ -19,7 +23,7 @@ dlvhex-dlplugin NEWS -- history of user-visible changes.
 
 ** New plugin parameters for setting up DL reasoner: --dlsetup.
 
-** Fix tickets #3, #9.
+** Fix tickets #3, #5, #9.
 
 
 
