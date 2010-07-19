@@ -1,3 +1,8 @@
+2010-07-19  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* racer_bugreport/README.txt: Add new racer bugreport.
+	* racer_bugreport/racer-bad-cmd-seq.racer: Likewise.
+
 2010-07-09  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* NEWS: Add list of user-visible changes.
