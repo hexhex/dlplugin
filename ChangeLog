@@ -1,3 +1,10 @@
+2010-07-19  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* testsuite/RacerStartOrRestart.sh: (Re)starting racer before each test
+	(it tends to become unstable with much input).
+	* testsuite/RacerRunner.sh: Likewise (old script/strange behavior removed).
+	* testsuite/Makefile.am: Likewise.
+
 2010-07-19  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* racer_bugreport/README.txt: Add new racer bugreport.

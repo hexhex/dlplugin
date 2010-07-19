@@ -13,9 +13,9 @@ noinst_HEADERS = \
                  TestRacerTypes.h \
                  TestSuite.h
 
-EXTRA_DIST = run-tests.sh compare_answersets_plain.py RacerRunner.sh
+EXTRA_DIST = run-tests.sh compare_answersets_plain.py RacerStartOrRestart.sh
 
-TESTS = TestSuite run-tests.sh
+TESTS = RacerStartOrRestart.sh TestSuite RacerStartOrRestart.sh run-tests.sh
 
 DLVHEX_ABS_TOP_BUILDDIR=$(realpath $(top_builddir))
 DLVHEX_ABS_TOP_SRCDIR=$(realpath $(top_srcdir))
