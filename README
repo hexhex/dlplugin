@@ -214,7 +214,7 @@ namespace declaration to the program. Take, for instance, the program
 in Example 1. Adding the XML namespace vin to it results in the
 program
 
-  #namespace(vin,"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#")
+  #namespace(vin,"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#").
   wine(X) :- &dlC["wine.rdf",a,b,c,d,"vin:Wine"](X).
 
 Note that we can define an arbitrary namespace prefix for the
@@ -314,13 +314,13 @@ Example 5: Consider the following rule issuing a conjunctive query
   over the wine ontology. As result, we retrieve all dry wines from
   the `Burgundy' region in predicate `bdw'.
 
-    #namespace(vin,"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#")
+    #namespace(vin,"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#").
     bdw(X) :- &dlCQ["wine.rdf",a,b,c,d,"Burgundy(X),hasSugar(X,vin:Dry)"](X).
 
 
 Example 6: UCQs can be expressed in the following manner.
 
-    #namespace(food,"http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#")
+    #namespace(food,"http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#").
     wp(X) :- &dlUCQ["wine.rdf",a,b,c,d,"WhiteWine(X) v food:Pasta(X)"](X).
 
   The above rule retrieves all white wines and pasta dishes.

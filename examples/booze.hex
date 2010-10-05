@@ -1,4 +1,4 @@
-#namespace("booze","http://potato.cs.man.ac.uk/ontologies/booze#")
+#namespace("booze","http://potato.cs.man.ac.uk/ontologies/booze#").
 
 url("http://oiled.man.ac.uk/ontologies/booze").
 

@@ -1,3 +1,8 @@
+2010-10-05  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* README: Fixed #namespace syntax (ticket #28).
+	* examples/booze.hex: Likewise.
+
 2010-07-19  Peter Schueller  <ps@kr.tuwien.ac.at>
 
 	* testsuite/RacerStartOrRestart.sh: (Re)starting racer before each test
