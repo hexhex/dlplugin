@@ -195,16 +195,16 @@ struct DLLexer: lex::lexer<Lexer>
       lex::token_def<>("[ \\t\\n]+");
   }
 
-  lex::token_def<>             iNewline, iBlank, iAny, iComment;
+  lex::token_def<std::string>  iNewline, iBlank, iAny, iComment;
   lex::token_def<std::string>  iDLAtom, iDLExtAtom;
-  lex::token_def<>             aiOr;
-  lex::token_def<>             aiMinus;
+  lex::token_def<std::string>  aiOr;
+  lex::token_def<char>         aiMinus;
   lex::token_def<std::string>  aiString, aiEquals, aiNEquals, aiPlusop, aiMinusop;
   lex::token_def<int>          aiNumber;
-  lex::token_def<>             aaiSentinel;
+  lex::token_def<char>         aaiSentinel;
   lex::token_def<std::string>  aoString;
   lex::token_def<int>          aoNumber;
-  lex::token_def<>             aoAnonymousVar;
+  lex::token_def<char>         aoAnonymousVar;
 };
 
 // state passed to grammar for parsing
@@ -432,7 +432,13 @@ struct handle_output
 struct handle_atom
 {
   template<typename Context, typename LexerTokenAttrib>
-  void operator()(boost::fusion::vector4<boost::optional<LexerTokenAttrib>, std::string, dlvhex::Term, boost::optional<dlvhex::Term> > const& tokens, Context& ctx, qi::unused_type) const
+  void operator()(
+      boost::fusion::vector4<
+        boost::optional<LexerTokenAttrib>,
+        std::string,
+        dlvhex::Term,
+        boost::optional<dlvhex::Term>
+      > const& tokens, Context& ctx, qi::unused_type) const
   {
     dlvhex::AtomPtr& ruleAttr = fusion::at_c<0>(ctx.attributes);
 
@@ -584,7 +590,7 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
 
   // This is the token type to return from the lexer iterator
   typedef lex::lexertl::token<iterator_type,
-    boost::mpl::vector<char, std::string> > token_type;
+    boost::mpl::vector<char, std::string, int> > token_type;
   //typedef lex::lexertl::token<iterator_type> token_type;
 
   // This is the lexer type to use to tokenize the input.
