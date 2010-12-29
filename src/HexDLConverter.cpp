@@ -55,8 +55,8 @@
 #undef DLPLUGIN_DEBUG_LEXER_TOKENIZATION
 #undef DLPLUGIN_USE_POSITION_ITERATOR
 
-//#define BOOST_SPIRIT_LEXERTL_DEBUG
-//#define BOOST_SPIRIT_DEBUG
+#undef BOOST_SPIRIT_LEXERTL_DEBUG
+#undef BOOST_SPIRIT_DEBUG
 
 using namespace boost::spirit;
 using namespace boost::spirit::ascii;
@@ -159,7 +159,7 @@ struct DLLexer: lex::lexer<Lexer>
     aiString  = "{STRING}|{QUOTEDSTRING}";
     aiNumber = "{NUMBER}";
     this->self("DLATOMINPUT") =
-        lex::token_def<>(']') [ set_lexer_state("DLATOMAFTERINPUT") ]
+        lex::token_def<char>(']') [ set_lexer_state("DLATOMAFTERINPUT") ]
       | '[' | ';' | ',' | '(' | ')'
      // | aiEquals | aiNEquals
       | aiPlusop | aiMinusop
@@ -173,7 +173,7 @@ struct DLLexer: lex::lexer<Lexer>
     aaiSentinel = "[,\\.]";
     this->self("DLATOMAFTERINPUT") =
       // continue with atom inputs
-        lex::token_def<>('(') [ set_lexer_state("DLATOMOUTPUT") ]
+        lex::token_def<char>('(') [ set_lexer_state("DLATOMOUTPUT") ]
       // continue with toplevel parsing (dl atom finished)
       | aaiSentinel [ set_lexer_state("INITIAL") ]
       | lex::token_def<lex::omit>("{BLANK}") [ _pass = lex::pass_flags::pass_ignore ] // do not pass this token to parser
@@ -183,7 +183,7 @@ struct DLLexer: lex::lexer<Lexer>
     aoNumber = "{NUMBER}";
     aoAnonymousVar = "\\_";
     this->self("DLATOMOUTPUT") =
-        lex::token_def<>(')') [ set_lexer_state("INITIAL") ]
+        lex::token_def<char>(')') [ set_lexer_state("INITIAL") ]
       | lex::token_def<lex::omit>(',') [ _pass = lex::pass_flags::pass_ignore ] // do not pass this token to parser
       | aoString
       | aoNumber
@@ -192,19 +192,19 @@ struct DLLexer: lex::lexer<Lexer>
       ;
 
     this->self("WS") =
-      lex::token_def<>("[ \\t\\n]+");
+      lex::token_def<char>("[ \\t\\n]+");
   }
 
   lex::token_def<std::string>  iNewline, iBlank, iAny, iComment;
   lex::token_def<std::string>  iDLAtom, iDLExtAtom;
-  lex::token_def<std::string>  aiOr;
+  lex::token_def<lex::omit>    aiOr;
   lex::token_def<char>         aiMinus;
   lex::token_def<std::string>  aiString, aiEquals, aiNEquals, aiPlusop, aiMinusop;
   lex::token_def<int>          aiNumber;
-  lex::token_def<char>         aaiSentinel;
+  lex::token_def<lex::omit>    aaiSentinel;
   lex::token_def<std::string>  aoString;
   lex::token_def<int>          aoNumber;
-  lex::token_def<char>         aoAnonymousVar;
+  lex::token_def<lex::omit>    aoAnonymousVar;
 };
 
 // state passed to grammar for parsing
@@ -250,7 +250,7 @@ struct handle_dlatom
     dlvhex::dl::HexDLRewriterBasePtr rewriter(
       new dlvhex::dl::DLAtomRewriter(
         state.ontology, state.dlinput,
-        ops, & fusion::at_c<1>(args), & fusion::at_c<2>(args)));
+        ops, &fusion::at_c<1>(args), &fusion::at_c<2>(args)));
 
     dlvhex::Literal* lit = rewriter->getLiteral();
     state.out << *lit;

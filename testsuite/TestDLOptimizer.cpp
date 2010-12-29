@@ -38,6 +38,7 @@
 #include <dlvhex/NodeGraph.h>
 #include <dlvhex/Error.h>
 #include <dlvhex/PluginContainer.h>
+#include <dlvhex/globals.h>
 
 #include <sstream>
 
@@ -51,6 +52,7 @@ void
 TestDLOptimizer::runDLOptimize()
 {
   // initialize the PluginContainer with our own plugin
+  dlvhex::Globals::Instance()->setOption("Verbose",15);
   PluginContainer* container = PluginContainer::instance("");
   container->importPlugins();
 
