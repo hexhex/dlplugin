@@ -457,6 +457,20 @@ struct handle_atom
   }
 };
 
+struct handle_optionalchar
+{
+  template<typename Context>
+  void operator()(boost::fusion::vector2<
+      boost::optional<char>, std::string> const& args, Context& ctx, qi::unused_type) const
+  {
+    std::string& out = fusion::at_c<0>(ctx.attributes);
+    if( !!fusion::at_c<0>(args) )
+      out.push_back(fusion::at_c<0>(args).get());
+    out += fusion::at_c<1>(args);
+  }
+};
+
+
 /**
  * This grammar uses the above lexer to pick DL atoms out of an incoming data stream, and to rewrite
  * just these atoms and passthrough the rest of the input.
@@ -487,8 +501,8 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
       (tok.aiString >> pmop >> tok.aiString) [ handle_op(state) ];
     pmop %=
       tok.aiPlusop | tok.aiMinusop;
-    dlquery %=
-      lexeme[-tok.aiMinus >> tok.aiString];
+    dlquery =
+      (-tok.aiMinus >> tok.aiString) [ handle_optionalchar() ];
     cq =
       (atom % ',') [ handle_atomset_from_atomptrs() ];
     ucq %=
@@ -653,7 +667,7 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
   // do the parsing
   lexer_iterator_type start = lexer.begin(first, last);
   lexer_iterator_type end = lexer.end();
-  bool r = qi::phrase_parse(start, end, parser, qi::in_state("WS")[lexer.self]);
+  qi::phrase_parse(start, end, parser, qi::in_state("WS")[lexer.self]);
   if( start != end )
     throw dlvhex::PluginError("could not parse complete input!");
 
