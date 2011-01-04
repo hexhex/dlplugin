@@ -431,10 +431,10 @@ struct handle_output
 
 struct handle_atom
 {
-  template<typename Context, typename LexerTokenAttrib>
+  template<typename Context>
   void operator()(
       boost::fusion::vector4<
-        boost::optional<LexerTokenAttrib>,
+        boost::optional<char>,
         std::string,
         dlvhex::Term,
         boost::optional<dlvhex::Term>
