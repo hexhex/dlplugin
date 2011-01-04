@@ -1,3 +1,12 @@
+2011-01-04  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* src/HexDLConverter.cpp: Fixing issues related to spirit's lexer
+	token attributes (if one attribute is specified, all have to be)
+	and to a bug arising from that (lexeme[-tok<char> >> tok<string>])
+	creates zero-bytes in a resulting synthesized string attribute.
+	* src/HexDLRewriter.cpp: Likewise.
+	* testsuite/TestDLOptimizer.cpp: Likewise.
+
 2010-10-05  Peter Schueller  <ps@kr.tuwien.ac.at>
 
 	* README: Fixed #namespace syntax (ticket #28).
