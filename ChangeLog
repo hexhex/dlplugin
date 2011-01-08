@@ -1,3 +1,8 @@
+2011-01-08  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* testsuite/TestDLOptimizer.cpp: Fixing search path of plugin
+	container for testsuite. This avoids LD_LIBRARY_PATH tricks.
+
 2011-01-04  Peter Schueller  <ps@kr.tuwien.ac.at>
 
 	* src/HexDLConverter.cpp: Fixing issues related to spirit's lexer

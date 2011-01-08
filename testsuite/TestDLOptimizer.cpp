@@ -53,7 +53,7 @@ TestDLOptimizer::runDLOptimize()
 {
   // initialize the PluginContainer with our own plugin
   dlvhex::Globals::Instance()->setOption("Verbose",15);
-  PluginContainer* container = PluginContainer::instance("");
+  PluginContainer* container = PluginContainer::instance("../src");
   container->importPlugins();
 
   AtomPtr h1(new Atom("p(X,Y)"));
