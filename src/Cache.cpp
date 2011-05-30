@@ -111,12 +111,12 @@ Cache::cacheHit(const QueryCtx::shared_pointer& query) const
   if (found)
     {
       p = isValid(query, *found);
-      if (p) stats.hits(1);
-      else   stats.miss(1);
+      if (p) stats->hits(1);
+      else   stats->miss(1);
     }
   else // nothing found
     {
-      stats.miss(1);
+      stats->miss(1);
     }
 
   return p;
@@ -230,7 +230,7 @@ Cache::insert(const QueryCtx::shared_pointer& query)
 	  found->erase(*it);
 	}
 
-      stats.qctxno(-remove.size());
+      stats->qctxno(-remove.size());
 
       //
       // after that, we can insert the new QueryCtx
@@ -241,7 +241,7 @@ Cache::insert(const QueryCtx::shared_pointer& query)
       // only update the statistics if we inserted a fresh QueryCtx
       if (p.second)
 	{
-	  stats.qctxno(1);
+	  stats->qctxno(1);
 	}
     }
   else // dl-query not found, insert a new entry in the map
@@ -254,8 +254,8 @@ Cache::insert(const QueryCtx::shared_pointer& query)
       // only update the statistics if we inserted a fresh QueryCtx
       if (p.second)
 	{
-	  stats.dlqno(1);
-	  stats.qctxno(1);
+	  stats->dlqno(1);
+	  stats->qctxno(1);
 	}
     }
 }
@@ -291,7 +291,7 @@ DebugCache::cacheHit(const QueryCtx::shared_pointer& query) const
       if (p)
 	{
 	  std::cerr << "===== cache-hit for a is " << *p << std::endl;
-	  stats.hits(1);
+	  stats->hits(1);
 	  return p;
 	}
       else
@@ -304,7 +304,7 @@ DebugCache::cacheHit(const QueryCtx::shared_pointer& query) const
       std::cerr << "===== NOT found in cache" << std::endl;
     }
 
-  stats.miss(1);
+  stats->miss(1);
 
   return QueryCtx::shared_pointer();
 }

@@ -137,10 +137,10 @@ namespace dlvhex {
       /// base class for transforming Atom objects to ABoxAssertion objects
       struct InterToAssertion : public std::unary_function<const Atom&, void>
       {
-	mutable std::ostream& stream;
+	mutable std::ostream* pstream;
 	mutable AtomSet::atomset_t::size_type count;
 	const Query& query;
-	mutable bool& empty;
+	mutable bool* empty;
 	bool abox;
 	
 	InterToAssertion(std::ostream& s,
@@ -148,13 +148,14 @@ namespace dlvhex {
 			 const Query& q,
 			 bool& isEmpty,
 			 bool withABox = false)
-	  : stream(s), count(c), query(q), empty(isEmpty), abox(withABox)
+	  : pstream(&s), count(c), query(q), empty(&isEmpty), abox(withABox)
 	{ }
 
 	void
 	operator() (const Atom& a) const
 	{
-	  this->empty = false;
+	  *(this->empty) = false;
+    std::ostream& stream = *pstream;
 	  
 	  std::string nspace = query.getDLQuery()->getOntology()->getNamespace();
 

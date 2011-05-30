@@ -121,13 +121,13 @@ namespace dl {
   {
   protected:
     /// cache statistics
-    mutable CacheStats& stats;
+    mutable CacheStats* stats;
 
   public:
     /// Ctor
     explicit
     BaseCache(CacheStats& s)
-      : stats(s)
+      : stats(&s)
     { }
 
     /// Dtor.

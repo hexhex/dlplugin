@@ -1,3 +1,10 @@
+2011-05-30  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* include/Cache.h: Fixing C++ problem with mutable references (forbidden in C++,
+	already forbidden in clang, will be forbidden in g++ 4.6).
+	* src/RacerNRQLBuilder.cpp: Likewise.
+	* src/Cache.cpp: Likewise.
+
 2011-01-08  Peter Schueller  <ps@kr.tuwien.ac.at>
 
 	* testsuite/TestDLOptimizer.cpp: Fixing search path of plugin
