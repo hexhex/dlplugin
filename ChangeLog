@@ -1,3 +1,8 @@
+2011-07-08  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* src/HexDLConverter.cpp: Removing "using namespace" as it seemed to trigger a
+	bug due to ambiguous namespace resolution.
+
 2011-05-30  Peter Schueller  <ps@kr.tuwien.ac.at>
 
 	* include/Cache.h: Fixing C++ problem with mutable references (forbidden in C++,

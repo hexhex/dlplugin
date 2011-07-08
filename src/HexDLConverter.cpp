@@ -58,8 +58,9 @@
 #undef BOOST_SPIRIT_LEXERTL_DEBUG
 #undef BOOST_SPIRIT_DEBUG
 
-using namespace boost::spirit;
-using namespace boost::spirit::ascii;
+namespace spirit = boost::spirit;
+namespace lex = boost::spirit::lex;
+namespace qi = boost::spirit::qi;
 namespace fusion = boost::fusion;
 namespace phoenix = boost::phoenix;
 
@@ -75,7 +76,7 @@ struct set_lexer_state
   // This is called by the semantic action handling code during the lexing
   template <typename Iterator, typename Context>
   void operator()(Iterator const&, Iterator const&,
-    BOOST_SCOPED_ENUM(boost::spirit::lex::pass_flags)&,
+    BOOST_SCOPED_ENUM(lex::pass_flags)&,
     std::size_t&, Context& ctx) const
   {
     ///std::cerr << "going to lexer state '" << state << "'" << std::endl;
@@ -89,7 +90,7 @@ struct lexer_start_atom
 {
   template<typename Iterator, typename Context, typename IdType>
   void operator()(Iterator& start, Iterator& end, 
-    BOOST_SCOPED_ENUM(boost::spirit::lex::pass_flags)&,
+    BOOST_SCOPED_ENUM(lex::pass_flags)&,
     IdType&, Context& ctx) const
   {
     // go to [ with iterator tmp
@@ -121,6 +122,7 @@ struct DLLexer: lex::lexer<Lexer>
   DLLexer():
     DLLexer::base_type(lex::match_flags::match_default)
   {
+    using boost::spirit::_pass;
     // macros
     this->self.add_pattern
       ("BLANK", "[ \\t]")
@@ -485,6 +487,8 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
     state(state)
   {
     using qi::lexeme;
+    using boost::spirit::_val;
+    using boost::spirit::_1;
     root =
      *( dlatom
       | passthrough [ handle_passthrough(state) ]
@@ -564,7 +568,7 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
   typedef std::istreambuf_iterator<char> stream_iterator_type;
   stream_iterator_type stream_begin(i);
 
-  // convert input iterator to forward iterator, usable by spirit::qi but not by spirit::lex
+  // convert input iterator to forward iterator, usable by spirit::qi but not by lex
   typedef multi_pass<base_iterator_type> base_iterator_type;
   base_iterator_type base_begin = make_default_multi_pass(in_begin);
   base_iterator_type base_end = make_default_multi_pass(stream_iterator_type());
