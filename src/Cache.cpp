@@ -62,8 +62,8 @@ Cache::isValid(const QueryCtx::shared_pointer& query, const Cache::CacheSet& fou
       const Query& q1 = query->getQuery();
       const Query& q2 = (*it)->getQuery();
 
-      const AtomSet& i = q1.getProjectedInterpretation();
-      const AtomSet& j = q2.getProjectedInterpretation();
+      const ComfortInterpretation& i = q1.getProjectedInterpretation();
+      const ComfortInterpretation& j = q2.getProjectedInterpretation();
 
       ///@todo support for cq missing
 
@@ -91,7 +91,7 @@ Cache::isValid(const QueryCtx::shared_pointer& query, const Cache::CacheSet& fou
       else // retrieval modes
 	{
 	  // is the set of ints in query equal to the set of ints in found?
-	  if (i == j)
+	  if (i.difference(j).size() == 0 && j.difference(i).size() == 0)
 	    {
 	      return *it;
 	    }
@@ -137,10 +137,10 @@ namespace dlvhex {
       bool
       operator() (const QueryCtx::shared_pointer& q2) const
       {
-	const AtomSet& i = q1->getQuery().getProjectedInterpretation();
-	const AtomSet& j = q2->getQuery().getProjectedInterpretation();
+	const ComfortInterpretation& i = q1->getQuery().getProjectedInterpretation();
+	const ComfortInterpretation& j = q2->getQuery().getProjectedInterpretation();
 	// does i include j and i != j, i.e. is j \subset i?
-	return i != j && std::includes(i.begin(), i.end(), j.begin(), j.end());
+	return (i.difference(j).size() != 0 || j.difference(i).size() == 0) && std::includes(i.begin(), i.end(), j.begin(), j.end());
       }
     };
 
@@ -155,10 +155,10 @@ namespace dlvhex {
       bool
       operator() (const QueryCtx::shared_pointer& q2) const
       {
-	const AtomSet& i = q1->getQuery().getProjectedInterpretation();
-	const AtomSet& j = q2->getQuery().getProjectedInterpretation();
+	const ComfortInterpretation& i = q1->getQuery().getProjectedInterpretation();
+	const ComfortInterpretation& j = q2->getQuery().getProjectedInterpretation();
 	// does j include i and i != j, i.e. is j \supset i?
-	return i != j && std::includes(j.begin(), j.end(), i.begin(), i.end());
+	return (i.difference(j).size() != 0 || j.difference(i).size() != 0) && std::includes(j.begin(), j.end(), i.begin(), i.end());
       }
     };
 

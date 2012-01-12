@@ -30,6 +30,8 @@
  * 
  */
 
+#if 0
+
 #include "HexDLRewriter.h"
 #include "AtomSeparator.h"
 #include "DLError.h"
@@ -868,3 +870,5 @@ DLAtomInput::getDLInputRules() const
 // Local Variables:
 // mode: C++
 // End:
+
+#endif

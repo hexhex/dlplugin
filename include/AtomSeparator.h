@@ -36,6 +36,8 @@
 
 #include "DLError.h"
 
+#include <dlvhex/ComfortPluginInterface.hpp>
+
 #include <string>
 #include <vector>
 
@@ -57,10 +59,10 @@ namespace dl {
   {
   private:
     const std::string& atomlist;
-    AtomSet& atoms;
+    ComfortInterpretation& atoms;
 
   public:
-    AtomSeparator(const std::string& al, AtomSet& as);
+    AtomSeparator(const std::string& al, ComfortInterpretation& as);
 
     void
     parse() throw (DLParsingError);
@@ -74,10 +76,10 @@ namespace dl {
   {
   private:
     const std::string& unionatomlist;
-    std::vector<AtomSet>& atoms;
+    std::vector<ComfortInterpretation>& atoms;
 
   public:
-    UnionAtomSeparator(const std::string& al, std::vector<AtomSet>& as);
+    UnionAtomSeparator(const std::string& al, std::vector<ComfortInterpretation>& as);
 
     void
     parse() throw (DLParsingError);

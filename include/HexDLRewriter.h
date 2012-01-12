@@ -30,6 +30,8 @@
  * 
  */
 
+#if 0
+
 #ifndef _HEXDLREWRITER_H
 #define _HEXDLREWRITER_H
 
@@ -41,11 +43,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_deque.hpp>
 
-#include <dlvhex/Atom.h>
-#include <dlvhex/AtomSet.h>
-#include <dlvhex/Literal.h>
-#include <dlvhex/Term.h>
-#include <dlvhex/Rule.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
+#include <dlvhex/Rule.hpp>
 
 namespace dlvhex {
 namespace dl {
@@ -95,7 +94,7 @@ namespace dl {
   class ExtAtomRewriter : public HexDLRewriterBase
   {
   protected:
-    AtomPtr extAtom;
+    ComfortAtom extAtom;
 
     ExtAtomRewriter(const ExtAtomRewriter& b);
 
@@ -103,12 +102,12 @@ namespace dl {
     getExtAtom() const;
 
     void
-    getCQ(const std::string& query, const Tuple& output, AtomSet& cq) const;
+    getCQ(const std::string& query, const ComfortTuple& output, ComfortInterpretation& cq) const;
 
-    virtual const Tuple&
+    virtual const ComfortTuple&
     getInputTuple() const;
 
-    virtual inline Tuple
+    virtual inline ComfortTuple
     getOutputTuple() const
     {
       return extAtom->getArguments();
@@ -116,7 +115,7 @@ namespace dl {
 
   public:
     explicit
-    ExtAtomRewriter(const AtomPtr& ea);
+    ExtAtomRewriter(const ComfortAtom& ea);
 
     virtual
     ~ExtAtomRewriter();
@@ -160,7 +159,7 @@ namespace dl {
   class DLAtomInput
   {
   private:
-    typedef std::map<AtomSet,unsigned> AtomSetMap;
+    typedef std::map<ComfortInterpretation,unsigned> AtomSetMap;
     AtomSetMap asmap;
 
     unsigned ncnt;
@@ -186,17 +185,17 @@ namespace dl {
     const Ontology::shared_pointer ontology;
     
     const std::string* const query;
-    const AtomSet* const cq;
-    const std::vector<AtomSet>* const ucq;
+    const std::vector<ID>* const cq;
+    const std::vector<std::vector<ID> >* const ucq;
 
     DLAtomInput& dlinput;
-    const Tuple* output;
-    mutable Tuple* input;
+    const ComfortTuple* output;
+    mutable ComfortTuple* input;
 
-    AtomSet pc;
-    AtomSet mc;
-    AtomSet pr;
-    AtomSet mr;
+    ComfortInterpretation pc;
+    ComfortInterpretation mc;
+    ComfortInterpretation pr;
+    ComfortInterpretation mr;
 
     /// private copy ctor
     DLAtomRewriter(const DLAtomRewriter&);
@@ -209,23 +208,23 @@ namespace dl {
     /// dl-atom ctor
     DLAtomRewriter(const Ontology::shared_pointer& onto,
 		   DLAtomInput& dlinput,
-		   const AtomSet& o,
+		   const ComfortInterpretation& o,
 		   const std::string* q,
-		   const Tuple* out);
+		   const ComfortTuple* out);
 
     /// cq-atom ctor
     DLAtomRewriter(const Ontology::shared_pointer& onto,
 		   DLAtomInput& dlinput,
-		   const AtomSet& o,
-		   const AtomSet* cq,
-		   const Tuple* out);
+		   const ComfortInterpretation& o,
+		   const std::vector<ID>* cq,
+		   const ComfortTuple* out);
 
     /// ucq-atom ctor
     DLAtomRewriter(const Ontology::shared_pointer& onto,
 		   DLAtomInput& dlinput,
-		   const AtomSet& o,
-		   const std::vector<AtomSet>* ucq,
-		   const Tuple* out);
+		   const ComfortInterpretation& o,
+		   const std::vector<std::vector<ID> >* ucq,
+		   const ComfortTuple* out);
 
     ~DLAtomRewriter();
 
@@ -249,3 +248,5 @@ namespace dl {
 // Local Variables:
 // mode: C++
 // End:
+
+#endif

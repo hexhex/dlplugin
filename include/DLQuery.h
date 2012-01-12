@@ -179,7 +179,7 @@ namespace dl {
 	const std::vector<ID>& cq = q.getConjQuery();
 	if (!cq.empty())
 	  {
-	    std::copy(cq.begin(), --cq.end(), std::ostream_iterator<Atom>(os, ", "));
+	    std::copy(cq.begin(), --cq.end(), std::ostream_iterator<ID>(os, ", "));
 	    os << *(--cq.end());
 	  }
 
@@ -201,7 +201,7 @@ namespace dl {
 	    if (!it->empty())
 	      {
 		os << '(';
-		std::copy(it->begin(), --it->end(), std::ostream_iterator<Atom>(os, ", "));
+		std::copy(it->begin(), --it->end(), std::ostream_iterator<ID>(os, ", "));
 		os << *(--it->end()) << ") v ";
 	      }
 	  }
@@ -211,7 +211,7 @@ namespace dl {
 	if (!last.empty())
 	  {
 	    os << '(';
-	    std::copy(last.begin(), --last.end(), std::ostream_iterator<Atom>(os, ", "));
+	    std::copy(last.begin(), --last.end(), std::ostream_iterator<ID>(os, ", "));
 	    os << *(--last.end()) << ')';
 	  }
 

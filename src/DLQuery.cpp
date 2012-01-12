@@ -216,7 +216,7 @@ DLQuery::isUnionConjQuery() const
 }
 
 
-const Term&
+const ID&
 DLQuery::getQuery() const
 {
   return this->query;
@@ -238,7 +238,7 @@ DLQuery::getUnionConjQuery() const
 
 
 void
-DLQuery::setPatternTuple(const Tuple& pattern)
+DLQuery::setPatternTuple(const ComfortTuple& pattern)
 {
   assert(pattern.size() < 8 * sizeof(typeFlags));
 
@@ -246,11 +246,12 @@ DLQuery::setPatternTuple(const Tuple& pattern)
   this->typeFlags = 0;
 
   unsigned long mask = 0x1;
-  for (Tuple::const_iterator it = pattern.begin();
+  for (ComfortTuple::const_iterator it = pattern.begin();
        it != pattern.end();
        ++it, mask <<= 1)
     {
       // for every ground term we set a flag in typeFlags
+// @TODO: What is isAnon()?
       if (!it->isVariable() && !it->isAnon())
 	{
 	  typeFlags |= mask;
@@ -259,7 +260,7 @@ DLQuery::setPatternTuple(const Tuple& pattern)
 }
 
 
-const Tuple&
+const ComfortTuple&
 DLQuery::getPatternTuple() const
 {
   return this->pattern;

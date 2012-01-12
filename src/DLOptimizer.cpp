@@ -30,11 +30,14 @@
  * 
  */
 
+#if 0
+
 #include "DLOptimizer.h"
 #include "HexDLRewriter.h"
 #include "Registry.h"
 #include "DLError.h"
 
+/*
 #include <dlvhex/Program.h>
 #include <dlvhex/GraphBuilder.h>
 #include <dlvhex/DependencyGraph.h>
@@ -42,6 +45,7 @@
 #include <dlvhex/BoostComponentFinder.h>
 #include <dlvhex/PrintVisitor.h>
 #include <dlvhex/PluginContainer.h>
+*/
 
 using namespace dlvhex::dl;
 
@@ -85,7 +89,7 @@ DLOptimizer::getRewriting()
 
 
 void
-DLOptimizer::optimize(NodeGraph& dg, AtomSet& edb)
+DLOptimizer::optimize(NodeGraph& dg, ComfortInterpretation& edb)
 {
   if (!getRewriting())
     {
@@ -157,3 +161,5 @@ DLOptimizer::optimize(NodeGraph& dg, AtomSet& edb)
 // Local Variables:
 // mode: C++
 // End:
+
+#endif

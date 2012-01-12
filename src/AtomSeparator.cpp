@@ -33,10 +33,6 @@
 
 #include "AtomSeparator.h"
 
-#include <dlvhex/AtomSet.h>
-#include <dlvhex/Atom.h>
-#include <dlvhex/Term.h>
-
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/replace.hpp>
@@ -152,7 +148,7 @@ namespace dl {
 
 
 
-AtomSeparator::AtomSeparator(const std::string& al, AtomSet& as)
+AtomSeparator::AtomSeparator(const std::string& al, ComfortInterpretation& as)
   : atomlist(al), atoms(as)
 { }
 
@@ -161,7 +157,7 @@ void
 AtomSeparator::parse() throw (DLParsingError)
 {
   std::string predicate;
-  Tuple tup;
+  ComfortTuple tup;
 
   // tokenize the atoms of the query string
   boost::tokenizer<AtomSeparatorFunc> tok(atomlist);
@@ -179,12 +175,15 @@ AtomSeparator::parse() throw (DLParsingError)
       // abbr. name by the corresponding fully-fledged
       // namespace which can be found in Term::namespaces
       //
-      for (std::vector<std::pair<std::string,std::string> >::iterator ns = Term::getNameSpaces().begin();
-	   ns != Term::getNameSpaces().end();
+/*
+@TODO: ComfortTerm does not have member getNameSpaces(). What is the purpose of this loop?
+      for (std::vector<std::pair<std::string,std::string> >::iterator ns = ComfortTerm::getNameSpaces().begin();
+	   ns != ComfortTerm::getNameSpaces().end();
 	   ++ns)
 	{
 	  boost::replace_all(atom, ns->second + ":", ns->first);
 	}
+*/
 
       std::string::size_type pred = atom.find('(');
       std::string::size_type t1 = atom.find(',');
@@ -194,12 +193,14 @@ AtomSeparator::parse() throw (DLParsingError)
       boost::trim(predicate);
 
       bool isNegated = (predicate[0] == '-');
-      
+/*
+@TODO: how to handle negation?
+
       if (isNegated) // remove '-' from predicate name
 	{
 	  predicate.erase(0, 1);
 	}
-
+*/
       if (t1 != std::string::npos)
 	{
 	  std::string a1 = atom.substr(pred + 1, t1 - pred - 1);
@@ -208,19 +209,24 @@ AtomSeparator::parse() throw (DLParsingError)
 	  boost::trim(a1);
 	  boost::trim(a2);
 	  
-	  tup.push_back(Term(a1));
-	  tup.push_back(Term(a2));
+	  tup.push_back(ComfortTerm::createConstant(a1));
+	  tup.push_back(ComfortTerm::createConstant(a2));
 	}
       else
 	{
 	  std::string a1 = atom.substr(pred + 1, t2 - pred - 1);
 	  boost::trim(a1);
-	  tup.push_back(Term(a1));
+	  tup.push_back(ComfortTerm::createConstant(a1));
 	}
 
       // ap is always first-order, otherwise we would end up in a
       // higher-order atom if concept or role name is uppercase
-      AtomPtr ap(new Atom(predicate, tup, isNegated));
+      ComfortAtom ap;
+      ap.tuple.push_back(ComfortTerm::createConstant(predicate));
+      BOOST_FOREACH (ComfortTerm t, tup){
+            ap.tuple.push_back(t);
+      }
+//, isNegated);
       ///@todo: this could be a problem
       //ap->setAlwaysFO();
       atoms.insert(ap);
@@ -228,7 +234,7 @@ AtomSeparator::parse() throw (DLParsingError)
 }
 
 
-UnionAtomSeparator::UnionAtomSeparator(const std::string& al, std::vector<AtomSet>& as)
+UnionAtomSeparator::UnionAtomSeparator(const std::string& al, std::vector<ComfortInterpretation>& as)
   : unionatomlist(al), atoms(as)
 { }
 
@@ -245,7 +251,7 @@ UnionAtomSeparator::parse() throw (DLParsingError)
       const std::string& q = unionatomlist.substr(i, off - i);
 
       // parse cq
-      AtomSet as;
+      ComfortInterpretation as;
       AtomSeparator asep(q, as);
       asep.parse();
       atoms.push_back(as);
@@ -257,7 +263,7 @@ UnionAtomSeparator::parse() throw (DLParsingError)
 
   const std::string& q = unionatomlist.substr(i);
 
-  AtomSet as;
+  ComfortInterpretation as;
   AtomSeparator asep(q, as);
   asep.parse();
   atoms.push_back(as);

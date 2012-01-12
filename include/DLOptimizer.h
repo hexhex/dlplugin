@@ -29,12 +29,13 @@
  * 
  */
 
+#if 0
 
 #ifndef _DLOPTIMIZER_H
 #define _DLOPTIMIZER_H
 
 
-#include <dlvhex/PluginInterface.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
 
 
 namespace dlvhex {
@@ -72,7 +73,7 @@ namespace dl {
     getRewriting();
 
     void
-    optimize(NodeGraph& dg, AtomSet& edb);
+    optimize(NodeGraph& dg, ComfortInterpretation& edb);
   };
 
 } // namespace dl
@@ -84,3 +85,5 @@ namespace dl {
 // Local Variables:
 // mode: C++
 // End:
+
+#endif

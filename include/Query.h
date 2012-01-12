@@ -151,7 +151,7 @@ namespace dl {
 
     if (!pint.empty())
       {
-	std::copy(pint.begin(), --pint.end(), std::ostream_iterator<Atom>(os, ", "));
+	std::copy(pint.begin(), --pint.end(), std::ostream_iterator<ComfortAtom>(os, ", "));
 	os << *(--pint.end());
       }
 

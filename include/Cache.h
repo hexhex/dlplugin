@@ -36,7 +36,7 @@
 
 #include "QueryCtx.h"
 
-#include <dlvhex/AtomSet.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
 
 #include <set>
 #include <iosfwd>
@@ -176,8 +176,8 @@ namespace dl {
       operator() (const QueryCtx::shared_pointer& q1,
 		  const QueryCtx::shared_pointer& q2) const
       {
-	const AtomSet& a1 = q1->getQuery().getProjectedInterpretation();
-	const AtomSet& a2 = q2->getQuery().getProjectedInterpretation();
+	const ComfortInterpretation& a1 = q1->getQuery().getProjectedInterpretation();
+	const ComfortInterpretation& a2 = q2->getQuery().getProjectedInterpretation();
 
 	// we don't have to consider the Query component, since all
 	// members in a CacheSet have the same DLQuery
