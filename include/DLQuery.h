@@ -35,8 +35,7 @@
 
 #include "Ontology.h"
 
-#include <dlvhex/AtomSet.h>
-#include <dlvhex/Term.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
 
 #include <iosfwd>
 #include <iterator>
@@ -58,23 +57,23 @@ namespace dl {
     Ontology::shared_pointer ontology;
 
     /// the query term
-    Term query;
+    ID query;
 
     /// conjunctive query
-    AtomSet cq;
+    std::vector<ID> cq;
 
     /// union of conjunctive query
-    std::vector<AtomSet> ucq;
+    std::vector<std::vector<ID> > ucq;
 
     /// tuple pattern
-    Tuple pattern;
+    ComfortTuple pattern;
 
     /// bitvector for quickly comparing the pattern tuple
     unsigned long typeFlags;
 
     /// setup #typeFlags and #pattern
     void
-    setPatternTuple(const Tuple& pattern);
+    setPatternTuple(const ComfortTuple& pattern);
 
   public:
     /** 
@@ -84,7 +83,7 @@ namespace dl {
      * @param q plain query
      * @param p output 
      */
-    DLQuery(Ontology::shared_pointer o, const Term& q, const Tuple& p);
+    DLQuery(Ontology::shared_pointer o, const ID& q, const ComfortTuple& p);
 
     /** 
      * Ctor for a cq-query.
@@ -93,7 +92,7 @@ namespace dl {
      * @param cq conjunctive query
      * @param p output
      */
-    DLQuery(Ontology::shared_pointer o, const AtomSet& cq, const Tuple& p);
+    DLQuery(Ontology::shared_pointer o, const std::vector<ID>& cq, const ComfortTuple& p);
 
     /** 
      * Ctor for a ucq-query.
@@ -102,7 +101,7 @@ namespace dl {
      * @param ucq union of conjunctive queries
      * @param p output
      */
-    DLQuery(Ontology::shared_pointer o, const std::vector<AtomSet>& ucq, const Tuple& p);
+    DLQuery(Ontology::shared_pointer o, const std::vector<std::vector<ID> >& ucq, const ComfortTuple& p);
 
     /// dtor.
     virtual
@@ -115,16 +114,16 @@ namespace dl {
     virtual unsigned long
     getTypeFlags() const;
 
-    virtual const Tuple&
+    virtual const ComfortTuple&
     getPatternTuple() const;
 
-    virtual const Term&
+    virtual const ID&
     getQuery() const;
 
-    virtual const AtomSet&
+    virtual const std::vector<ID>&
     getConjQuery() const;
 
-    virtual const std::vector<AtomSet>&
+    virtual const std::vector<std::vector<ID> >&
     getUnionConjQuery() const;
 
     virtual bool
@@ -173,10 +172,11 @@ namespace dl {
       {
 	os << *q.getOntology()
 	   << " {"
-	   << q.getPatternTuple()
+// @TODO: fix this
+//	   << q.getPatternTuple()
 	   << " | ";
 
-	const AtomSet& cq = q.getConjQuery();
+	const std::vector<ID>& cq = q.getConjQuery();
 	if (!cq.empty())
 	  {
 	    std::copy(cq.begin(), --cq.end(), std::ostream_iterator<Atom>(os, ", "));
@@ -189,12 +189,13 @@ namespace dl {
       {
 	os << *q.getOntology()
 	   << " {"
-	   << q.getPatternTuple()
+// @TODO: fix this
+//	   << q.getPatternTuple()
 	   << " | ";
 
-	const std::vector<AtomSet>& ucq = q.getUnionConjQuery();
+	const std::vector<std::vector<ID> >& ucq = q.getUnionConjQuery();
 
-	for (std::vector<AtomSet>::const_iterator it = ucq.begin();
+	for (std::vector<std::vector<ID> >::const_iterator it = ucq.begin();
 	     it != --ucq.end(); ++it)
 	  {
 	    if (!it->empty())
@@ -205,7 +206,7 @@ namespace dl {
 	      }
 	  }
 
-	const AtomSet& last = ucq.back();
+	const std::vector<ID>& last = ucq.back();
 
 	if (!last.empty())
 	  {
@@ -222,7 +223,8 @@ namespace dl {
 		  << ' '
 		  << q.getQuery()
 		  << '('
-		  << q.getPatternTuple()
+// @TODO: fix this
+//		  << q.getPatternTuple()
 		  << ')';
       }
   }

@@ -36,10 +36,6 @@
 
 #include "DLQuery.h"
 
-#include <dlvhex/Atom.h>
-#include <dlvhex/AtomSet.h>
-#include <dlvhex/Term.h>
-
 #include <iosfwd>
 #include <iterator>
 
@@ -65,18 +61,18 @@ namespace dl {
     KBManager& kbManager;
 
     /// the projected interpretation
-    AtomSet proj;
+    ComfortInterpretation proj;
 
     /// the dl-query
     DLQuery::shared_pointer query;
 
     /// setup projected interpretations #proj
     void
-    setInterpretation(const AtomSet& ints,
-		      const Term& pc,
-		      const Term& mc,
-		      const Term& pr,
-		      const Term& mr);
+    setInterpretation(const ComfortInterpretation& ints,
+		      const ComfortTerm& pc,
+		      const ComfortTerm& mc,
+		      const ComfortTerm& pr,
+		      const ComfortTerm& mr);
 
   public:
     /** 
@@ -92,11 +88,11 @@ namespace dl {
      */
     Query(KBManager& kb,
 	  const DLQuery::shared_pointer& q,
-	  const Term& pc,
-	  const Term& mc,
-	  const Term& pr,
-	  const Term& mr,
-	  const AtomSet& i);
+	  const ComfortTerm& pc,
+	  const ComfortTerm& mc,
+	  const ComfortTerm& pr,
+	  const ComfortTerm& mr,
+	  const ComfortInterpretation& i);
 
     /// dtor.
     virtual
@@ -109,7 +105,7 @@ namespace dl {
     virtual const DLQuery::shared_pointer&
     getDLQuery() const;
 
-    virtual const AtomSet&
+    virtual const ComfortInterpretation&
     getProjectedInterpretation() const;
 
     friend std::ostream&
@@ -151,7 +147,7 @@ namespace dl {
     os << *q.getDLQuery()
        << " {";
 
-    const AtomSet& pint = q.getProjectedInterpretation();
+    const ComfortInterpretation& pint = q.getProjectedInterpretation();
 
     if (!pint.empty())
       {

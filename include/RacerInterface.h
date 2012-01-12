@@ -33,8 +33,7 @@
 #ifndef _RACERINTERFACE_H
 #define _RACERINTERFACE_H
 
-#include <dlvhex/PluginInterface.h>
-#include <dlvhex/Term.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
 #include "Ontology.h"
 #include "DFConverter.h"
 #include "DFOutputBuilder.h"
@@ -65,7 +64,7 @@ namespace racer {
   /**
    * @brief Concrete factory for the Plugin infrastructure.
    */
-  class RacerInterface : public PluginInterface
+  class RacerInterface : public ComfortPluginInterface
   {
   private:
 

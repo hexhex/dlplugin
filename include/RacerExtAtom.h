@@ -51,7 +51,7 @@ namespace racer {
    * @brief Base class for RACER external atoms.
    */
   template <class GetKBManager>
-  class RacerExtAtom : public PluginAtom
+  class RacerExtAtom : public ComfortPluginAtom
   {
   protected:
     /// keep a reference to the iostream in order to create the
@@ -122,8 +122,8 @@ namespace racer {
      * @param answer
      */
     virtual void
-    retrieve(const PluginAtom::Query& query,
-	     PluginAtom::Answer& answer) throw(PluginError);
+    retrieve(const ComfortPluginAtom::ComfortQuery& query,
+	     ComfortPluginAtom::ComfortAnswer& answer) throw(PluginError);
   };
 
   /**

@@ -35,8 +35,7 @@
 #include "Query.h"
 #include "URI.h"
 
-#include <dlvhex/PluginInterface.h>
-#include <dlvhex/Term.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
 
 #include <string>
 #include <iterator>
@@ -62,18 +61,18 @@ namespace dlvhex {
 	}
       else
 	{
-	  boost::shared_ptr<std::vector<Tuple> > tuples = a.getTuples();
+	  boost::shared_ptr<std::vector<ComfortTuple> > tuples = a.getTuples();
 
 	  if (!tuples->empty())
 	    {
-	      for (std::vector<Tuple>::const_iterator it = tuples->begin();
+	      for (std::vector<ComfortTuple>::const_iterator it = tuples->begin();
 		   it != --tuples->end(); ++it)
 		{
 		  os.put('(');
 		  if (!it->empty())
 		    {
 		      std::copy(it->begin(), --it->end(),
-				std::ostream_iterator<Term>(os, ", "));
+				std::ostream_iterator<ComfortTerm>(os, ", "));
 		      os << it->back();
 		    }
 		  os << "), ";
@@ -83,7 +82,7 @@ namespace dlvhex {
 	      if (!tuples->back().empty())
 		{
 		  std::copy(tuples->back().begin(), --tuples->back().end(),
-			    std::ostream_iterator<Term>(os, ", "));
+			    std::ostream_iterator<ComfortTerm>(os, ", "));
 		  os << tuples->back().back();
 		}
 	      os.put(')');
@@ -98,7 +97,7 @@ namespace dlvhex {
 
 
 Answer::Answer(const Query* q)
-  : PluginAtom::Answer(),
+  : ComfortPluginAtom::ComfortAnswer(),
     errorMsg(),
     warningMsg(),
     isIncoherent(false),
@@ -108,7 +107,7 @@ Answer::Answer(const Query* q)
 
 
 Answer::Answer(const Answer& a)
-  : PluginAtom::Answer(a),
+  : ComfortPluginAtom::ComfortAnswer(a),
     errorMsg(a.errorMsg),
     warningMsg(a.warningMsg),
     isIncoherent(a.isIncoherent),
@@ -188,11 +187,11 @@ Answer::getAnswer() const
 }
 
 void
-Answer::addTuple(const Tuple& out)
+Answer::addTuple(const ComfortTuple& out)
 {
   if (query == 0) // just in case we don't have a corresponding query
     {
-      PluginAtom::Answer::addTuple(out);
+      ComfortPluginAtom::ComfortAnswer::addTuple(out);
     }
   else if (query->getDLQuery()->isConjQuery() ||
 	   query->getDLQuery()->isUnionConjQuery()) // in CQs and UCQs
@@ -206,13 +205,13 @@ Answer::addTuple(const Tuple& out)
 
       if (out.size() == pat.size())
 	{
-	  PluginAtom::Answer::addTuple(out);
+	  ComfortPluginAtom::ComfortAnswer::addTuple(out);
 	}
       else // take care of anonymous variables
 	{
-	  Tuple tmp;
-	  Tuple::const_iterator pit = pat.begin();
-	  Tuple::const_iterator oit = out.begin();
+	  ComfortTuple tmp;
+	  ComfortTuple::const_iterator pit = pat.begin();
+	  ComfortTuple::const_iterator oit = out.begin();
 
           assert(out.size() <= pat.size());
 
@@ -229,7 +228,7 @@ Answer::addTuple(const Tuple& out)
 	    {
 	      if (pit->isAnon())
 		{
-		  tmp.push_back(Term("", true));
+		  tmp.push_back(ComfortTerm("", true));
 		}
 	      else
 		{
@@ -239,60 +238,60 @@ Answer::addTuple(const Tuple& out)
 		}
 	    }
 
-	  PluginAtom::Answer::addTuple(tmp);
+	  ComfortPluginAtom::ComfortAnswer::addTuple(tmp);
 	}
     }
   else // a non-conjunctive query needs special treatment
     {
       const DLQuery::shared_pointer& dlq = query->getDLQuery();
-      const Tuple& pat = dlq->getPatternTuple();
+      const ComfortTuple& pat = dlq->getPatternTuple();
       unsigned long type = dlq->getTypeFlags() & std::numeric_limits<unsigned long>::max();
       const std::string& nspace = dlq->getOntology()->getNamespace();
 
       if (type == 0x2) // left retrieval
 	{
-	  Tuple tmp(out);
+	  ComfortTuple tmp(out);
 
 	  std::string p = pat[1].getUnquotedString();
 
 	  if (!URI::isValid(p))
 	    {
-	      tmp.push_back(Term(nspace + p, true));
+	      tmp.push_back(ComfortTerm(nspace + p, true));
 	    }
 	  else
 	    {
-	      tmp.push_back(Term(p, true));
+	      tmp.push_back(ComfortTerm(p, true));
 	    }
 
-	  PluginAtom::Answer::addTuple(tmp);
+	  ComfortPluginAtom::ComfortAnswer::addTuple(tmp);
 	}
       else if (type == 0x1) // right retrieval
 	{
-	  Tuple tmp;
+	  ComfortTuple tmp;
 
 	  std::string p = pat[0].getUnquotedString();
 
 	  if (!URI::isValid(p))
 	    {
-	      tmp.push_back(Term(nspace + p, true));
+	      tmp.push_back(ComfortTerm(nspace + p, true));
 	    }
 	  else
 	    {
-	      tmp.push_back(Term(p, true));
+	      tmp.push_back(ComfortTerm(p, true));
 	    }
 
 	  tmp.insert(tmp.end(), out.begin(), out.end());
 
-	  PluginAtom::Answer::addTuple(tmp);
+	  ComfortPluginAtom::ComfortAnswer::addTuple(tmp);
 	}
       else if (dlq->isBoolean()) // ground query
 	{
-	  PluginAtom::Answer::addTuple(pat);
+	  ComfortPluginAtom::ComfortAnswer::addTuple(pat);
 	}
       else // full retrieval query
 	{
           assert(pat.size() == out.size());
-	  PluginAtom::Answer::addTuple(out);
+	  ComfortPluginAtom::ComfortAnswer::addTuple(out);
 	}
     }
 }

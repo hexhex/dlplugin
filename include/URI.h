@@ -42,7 +42,7 @@ namespace dlvhex {
 //
 // forward declarations
 //
-class Term;
+class ComfortTerm;
 
 namespace dl {
 
@@ -64,7 +64,7 @@ namespace dl {
   public:
     URI(const std::string&, bool absolute = false);
 
-    URI(const Term&, bool absolute = false);
+    URI(const ComfortTerm&, bool absolute = false);
 
     /** 
      * @return #uri
@@ -116,7 +116,7 @@ namespace dl {
      * @return true if @a t is a valid URI term, otw. false
      */
     static bool
-    isValid(const Term& t);
+    isValid(const ComfortTerm& t);
 
 
     /**

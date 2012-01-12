@@ -32,9 +32,7 @@
 
 #include "DLQuery.h"
 
-#include <dlvhex/Atom.h>
-#include <dlvhex/AtomSet.h>
-#include <dlvhex/Term.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
 
 
 namespace dlvhex {
@@ -70,8 +68,8 @@ namespace dl {
 	// check equality on q1 and q2
 	bool eq = q1 == q2;
 
-	const Tuple& p1 = q1.getPatternTuple();
-	const Tuple& p2 = q2.getPatternTuple();
+	const ComfortTuple& p1 = q1.getPatternTuple();
+	const ComfortTuple& p2 = q2.getPatternTuple();
 	
 	// if query types are equal we have to distinguish between the
 	// actual pattern tuples in a component-wise fashion
@@ -81,8 +79,8 @@ namespace dl {
 	  {
 	    unsigned long type = q1.getTypeFlags();
 	    
-	    Tuple::const_iterator it1 = p1.begin();
-	    Tuple::const_iterator it2 = p2.begin();
+	    ComfortTuple::const_iterator it1 = p1.begin();
+	    ComfortTuple::const_iterator it2 = p2.begin();
 	    unsigned long mask = 0x1;
 
 	    for (;
@@ -122,7 +120,7 @@ namespace dl {
   }
 
 
-DLQuery::DLQuery(Ontology::shared_pointer o, const Term& q, const Tuple& p)
+DLQuery::DLQuery(Ontology::shared_pointer o, const ID& q, const ComfortTuple& p)
   : ontology(o),
     query(q),
     cq(),
@@ -134,7 +132,7 @@ DLQuery::DLQuery(Ontology::shared_pointer o, const Term& q, const Tuple& p)
 }
 
 
-DLQuery::DLQuery(Ontology::shared_pointer o, const AtomSet& c, const Tuple& p)
+DLQuery::DLQuery(Ontology::shared_pointer o, const std::vector<ID>& c, const ComfortTuple& p)
   : ontology(o),
     query(),
     cq(c),
@@ -146,7 +144,7 @@ DLQuery::DLQuery(Ontology::shared_pointer o, const AtomSet& c, const Tuple& p)
 }
 
 
-DLQuery::DLQuery(Ontology::shared_pointer o, const std::vector<AtomSet>& u, const Tuple& p)
+DLQuery::DLQuery(Ontology::shared_pointer o, const std::vector<std::vector<ID> >& u, const ComfortTuple& p)
   : ontology(o),
     query(),
     cq(),
@@ -225,14 +223,14 @@ DLQuery::getQuery() const
 }
 
 
-const AtomSet&
+const std::vector<ID>&
 DLQuery::getConjQuery() const
 {
   return this->cq;
 }
 
 
-const std::vector<AtomSet>&
+const std::vector<std::vector<ID> >&
 DLQuery::getUnionConjQuery() const
 {
   return this->ucq;

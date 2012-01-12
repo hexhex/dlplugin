@@ -33,8 +33,7 @@
 #ifndef _ANSWER_H
 #define _ANSWER_H
 
-#include <dlvhex/PluginInterface.h>
-#include <dlvhex/Term.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
 
 #include <string>
 #include <iosfwd>
@@ -52,7 +51,7 @@ namespace dl {
   /**
    * @brief The Answer to a Query.
    */
-  class Answer : public PluginAtom::Answer
+  class Answer : public ComfortPluginAtom::ComfortAnswer
   {
   private:
     /// a RACER error message 
@@ -112,7 +111,7 @@ namespace dl {
     getAnswer() const;
 
     virtual void
-    addTuple(const Tuple& out);
+    addTuple(const ComfortTuple& out);
 
     friend std::ostream&
     operator<< (std::ostream& os, const Answer& a);

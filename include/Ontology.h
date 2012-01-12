@@ -36,7 +36,7 @@
 
 #include "URI.h"
 
-#include <dlvhex/Term.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
 
 #include <iostream>
 #include <string>
@@ -54,7 +54,7 @@ namespace dl {
   class ABox
   {
   public:
-    typedef std::set<Term> Objects;
+    typedef std::set<ComfortTerm> Objects;
     typedef boost::shared_ptr<Objects> ObjectsPtr;
 
   private:
@@ -72,7 +72,7 @@ namespace dl {
     }
 
     inline void
-    addIndividual(const Term& t)
+    addIndividual(const ComfortTerm& t)
     {
       individuals->insert(t);
     }
@@ -85,7 +85,7 @@ namespace dl {
   class TBox
   {
   public:
-    typedef std::set<Term> Objects;
+    typedef std::set<ComfortTerm> Objects;
     typedef boost::shared_ptr<Objects> ObjectsPtr;
 
   private:
@@ -107,7 +107,7 @@ namespace dl {
     }
 
     inline void
-    addConcept(const Term& t)
+    addConcept(const ComfortTerm& t)
     {
       concepts->insert(t);
     }
@@ -119,7 +119,7 @@ namespace dl {
     }
 
     inline void
-    addRole(const Term& t)
+    addRole(const ComfortTerm& t)
     {
       roles->insert(t);
     }
@@ -131,7 +131,7 @@ namespace dl {
     }
 
     inline void
-    addDatatypeRole(const Term& t)
+    addDatatypeRole(const ComfortTerm& t)
     {
       datatypeRoles->insert(t);
     }
