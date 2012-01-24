@@ -61,7 +61,7 @@ QueryCtx::QueryCtx(Query* qq, Answer* aa)
 { }
 
 
-QueryCtx::QueryCtx(const ComfortPluginAtom::Query& query, KBManager& kb) throw (DLError)
+QueryCtx::QueryCtx(const ComfortPluginAtom::ComfortQuery& query, KBManager& kb) throw (DLError)
   : q(0), a(0)
 {
   const ComfortTuple& inputtuple = query.input;
@@ -87,7 +87,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::Query& query, KBManager& kb) throw (
     }
 
   DLQuery::shared_pointer dlq;
-  const ComfortTuple& outputlist = query.pattern();
+  const ComfortTuple& outputlist = query.pattern;
   std::string qstr;
 
   ///@todo exchange this whole crap by a proper boost spirit parser
@@ -115,7 +115,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::Query& query, KBManager& kb) throw (
 
       if (qstr.find(" v ") != std::string::npos) // parse union of conjunctive queries
 	{
-	  std::vector<AtomSet> as;
+	  std::vector<ComfortInterpretation> as;
 
 	  // separate union of atomlists
 	  UnionAtomSeparator(qstr, as).parse();
@@ -124,7 +124,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::Query& query, KBManager& kb) throw (
 	}
       else if (qstr.find('(') != std::string::npos) // parse conjunctive query
 	{
-	  AtomSet as;
+	  ComfortInterpretation as;
 
 	  // separate atomlist
 	  AtomSeparator(qstr, as).parse();
@@ -133,7 +133,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::Query& query, KBManager& kb) throw (
 	}
       else // this is a plain query
 	{
-	  qstr = inputtuple[5].getUnquotedString();
+	  qstr = inputtuple[5].strval();
 
 	  // no namespace in query
 	  if (!URI::isValid(qstr))
@@ -177,7 +177,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::Query& query, KBManager& kb) throw (
 		    std::ostringstream oss;
 		    oss << qstr << '(' << outputlist[0] << ',' << outputlist[1] << ')';
 		    
-		    AtomSet as;
+		    ComfortInterpretation as;
 		    
 		    // separate atomlist
 		    AtomSeparator(oss.str(), as).parse();
@@ -186,27 +186,26 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::Query& query, KBManager& kb) throw (
 		}
 	      else
 	        {
-		  Term qu;
-		  qu = Term(qstr, true);
+		  ComfortTerm qu = ComfortTerm::createConstant("\"" + qstr + "\"");
 		  // create a plain query (oldschool)
-		  dlq = DLQuery::shared_pointer(new DLQuery(onto, qu, query.getPatternTuple()));
+		  dlq = DLQuery::shared_pointer(new DLQuery(onto, qu, query.pattern));
 		}
 	    }
 	  else // (negated) concept query
 	    {
-	      Term qu;
+	      ComfortTerm qu = ComfortTerm::createConstant("");
 
 	      if (qstr[0] == '-') // keep the strong negation in front!
 		{
-		  qu = Term("-\"" + qstr.substr(1) + "\"");
+		  qu = ComfortTerm::createConstant("-\"" + qstr.substr(1) + "\"");
 		}
 	      else
 		{
-		  qu = Term(qstr, true);
+		  qu = ComfortTerm::createConstant("\"" + qstr + "\"");
 		}
 
 	      // create a plain query (oldschool)
-	      dlq = DLQuery::shared_pointer(new DLQuery(onto, qu, query.getPatternTuple()));
+	      dlq = DLQuery::shared_pointer(new DLQuery(onto, qu, query.pattern));
 	    }
 	}
     }
@@ -214,7 +213,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::Query& query, KBManager& kb) throw (
     {
       // use empty query
       //assert("No query term." == 0);
-      dlq = DLQuery::shared_pointer(new DLQuery(onto, Term(), query.getPatternTuple()));
+      dlq = DLQuery::shared_pointer(new DLQuery(onto, ComfortTerm::createConstant(""), query.pattern));
     }
 
   this->q = new Query(kb, dlq,
@@ -222,7 +221,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::Query& query, KBManager& kb) throw (
 		      inputtuple[2],
 		      inputtuple[3],
 		      inputtuple[4],
-		      query.getInterpretation()
+		      query.interpretation()
 		      );
 
   this->a = new Answer(this->q);

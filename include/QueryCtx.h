@@ -88,7 +88,7 @@ namespace dl {
      * @param query 
      * @param kb
      */
-    QueryCtx(const ComfortPluginAtom::Query& query, KBManager& kb) throw (DLError);
+    QueryCtx(const ComfortPluginAtom::ComfortQuery& query, KBManager& kb) throw (DLError);
 
 
     /** 

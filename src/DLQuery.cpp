@@ -132,7 +132,7 @@ DLQuery::DLQuery(Ontology::shared_pointer o, const ComfortTerm& q, const Comfort
 }
 
 
-DLQuery::DLQuery(Ontology::shared_pointer o, const std::vector<ComfortTerm>& c, const ComfortTuple& p)
+DLQuery::DLQuery(Ontology::shared_pointer o, const ComfortInterpretation& c, const ComfortTuple& p)
   : ontology(o),
     query(ComfortTerm::createConstant("")),
     cq(c),
@@ -144,7 +144,7 @@ DLQuery::DLQuery(Ontology::shared_pointer o, const std::vector<ComfortTerm>& c, 
 }
 
 
-DLQuery::DLQuery(Ontology::shared_pointer o, const std::vector<std::vector<ComfortTerm> >& u, const ComfortTuple& p)
+DLQuery::DLQuery(Ontology::shared_pointer o, const std::vector<ComfortInterpretation>& u, const ComfortTuple& p)
   : ontology(o),
     query(ComfortTerm::createConstant("")),
     cq(),
@@ -223,14 +223,14 @@ DLQuery::getQuery() const
 }
 
 
-const std::vector<ComfortTerm>&
+const ComfortInterpretation&
 DLQuery::getConjQuery() const
 {
   return this->cq;
 }
 
 
-const std::vector<std::vector<ComfortTerm> >&
+const std::vector<ComfortInterpretation>&
 DLQuery::getUnionConjQuery() const
 {
   return this->ucq;

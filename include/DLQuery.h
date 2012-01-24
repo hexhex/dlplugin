@@ -64,10 +64,10 @@ namespace dl {
     ComfortTerm query;
 
     /// conjunctive query
-    std::vector<ComfortTerm> cq;
+    ComfortInterpretation cq;
 
     /// union of conjunctive query
-    std::vector<std::vector<ComfortTerm> > ucq;
+    std::vector<ComfortInterpretation> ucq;
 
     /// tuple pattern
     ComfortTuple pattern;
@@ -96,7 +96,7 @@ namespace dl {
      * @param cq conjunctive query
      * @param p output
      */
-    DLQuery(Ontology::shared_pointer o, const std::vector<ComfortTerm>& cq, const ComfortTuple& p);
+    DLQuery(Ontology::shared_pointer o, const ComfortInterpretation& cq, const ComfortTuple& p);
 
     /** 
      * Ctor for a ucq-query.
@@ -105,7 +105,7 @@ namespace dl {
      * @param ucq union of conjunctive queries
      * @param p output
      */
-    DLQuery(Ontology::shared_pointer o, const std::vector<std::vector<ComfortTerm> >& ucq, const ComfortTuple& p);
+    DLQuery(Ontology::shared_pointer o, const std::vector<ComfortInterpretation>& ucq, const ComfortTuple& p);
 
     /// dtor.
     virtual
@@ -124,10 +124,10 @@ namespace dl {
     virtual const ComfortTerm&
     getQuery() const;
 
-    virtual const std::vector<ComfortTerm>&
+    virtual const ComfortInterpretation&
     getConjQuery() const;
 
-    virtual const std::vector<std::vector<ComfortTerm> >&
+    virtual const std::vector<ComfortInterpretation>&
     getUnionConjQuery() const;
 
     virtual bool
@@ -180,10 +180,10 @@ namespace dl {
 //	   << q.getPatternTuple()
 	   << " | ";
 
-	const std::vector<ComfortTerm>& cq = q.getConjQuery();
+	const ComfortInterpretation& cq = q.getConjQuery();
 	if (!cq.empty())
 	  {
-	    std::copy(cq.begin(), --cq.end(), std::ostream_iterator<ComfortTerm>(os, ", "));
+	    std::copy(cq.begin(), --cq.end(), std::ostream_iterator<ComfortAtom>(os, ", "));
 	    os << *(--cq.end());
 	  }
 
@@ -197,25 +197,25 @@ namespace dl {
 //	   << q.getPatternTuple()
 	   << " | ";
 
-	const std::vector<std::vector<ComfortTerm> >& ucq = q.getUnionConjQuery();
+	const std::vector<ComfortInterpretation>& ucq = q.getUnionConjQuery();
 
-	for (std::vector<std::vector<ComfortTerm> >::const_iterator it = ucq.begin();
+	for (std::vector<ComfortInterpretation>::const_iterator it = ucq.begin();
 	     it != --ucq.end(); ++it)
 	  {
 	    if (!it->empty())
 	      {
 		os << '(';
-		std::copy(it->begin(), --it->end(), std::ostream_iterator<ComfortTerm>(os, ", "));
+		std::copy(it->begin(), --it->end(), std::ostream_iterator<ComfortAtom>(os, ", "));
 		os << *(--it->end()) << ") v ";
 	      }
 	  }
 
-	const std::vector<ComfortTerm>& last = ucq.back();
+	const ComfortInterpretation& last = ucq.back();
 
 	if (!last.empty())
 	  {
 	    os << '(';
-	    std::copy(last.begin(), --last.end(), std::ostream_iterator<ComfortTerm>(os, ", "));
+	    std::copy(last.begin(), --last.end(), std::ostream_iterator<ComfortAtom>(os, ", "));
 	    os << *(--last.end()) << ')';
 	  }
 
