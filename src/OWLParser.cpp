@@ -118,31 +118,31 @@ namespace dlvhex {
 	{
 	  if (OWLParser::owlObjectProperty.compare(obj) == 0)
 	    {
-	      tbox->addRole(Term((const char*) statement->subject));
+	      tbox->addRole(ComfortTerm::createConstant((const char*) statement->subject));
 	    }
 	  else if (OWLParser::owlTransitiveProperty.compare(obj) == 0)
 	    {
-	      tbox->addRole(Term((const char*) statement->subject));
+	      tbox->addRole(ComfortTerm::createConstant((const char*) statement->subject));
 	    }
 	  else if (OWLParser::owlSymmetricProperty.compare(obj) == 0)
 	    {
-	      tbox->addRole(Term((const char*) statement->subject));
+	      tbox->addRole(ComfortTerm::createConstant((const char*) statement->subject));
 	    }
 	  else if (OWLParser::owlFunctionalProperty.compare(obj) == 0)
 	    {
-	      tbox->addRole(Term((const char*) statement->subject));
+	      tbox->addRole(ComfortTerm::createConstant((const char*) statement->subject));
 	    }
 	  else if (OWLParser::owlInverseFunctionalProperty.compare(obj) == 0)
 	    {
-	      tbox->addRole(Term((const char*) statement->subject));
+	      tbox->addRole(ComfortTerm::createConstant((const char*) statement->subject));
 	    }
 	  else if (OWLParser::owlDatatypeProperty.compare(obj) == 0)
 	    {
-	      tbox->addDatatypeRole(Term((const char*) statement->subject));
+	      tbox->addDatatypeRole(ComfortTerm::createConstant((const char*) statement->subject));
 	    }
 	  else if (OWLParser::owlClass.compare(obj) == 0)
 	    {
-	      tbox->addConcept(Term((const char*) statement->subject));
+	      tbox->addConcept(ComfortTerm::createConstant((const char*) statement->subject));
 	    }
 	}
     }
@@ -179,7 +179,7 @@ namespace dlvhex {
 	  )
 	{
 	  std::string subj = (const char*) statement->subject;
-	  abox->addIndividual(Term("<" + subj + ">", true));
+	  abox->addIndividual(ComfortTerm::createConstant("\"<" + subj + ">\""));
 	}
     }
 

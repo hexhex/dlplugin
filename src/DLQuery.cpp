@@ -59,7 +59,7 @@ namespace dl {
     // otw. the ontologies are equal and we have to consider the
     // actual queries
 
-    bool lessthan = q1.getQuery().getString() < q2.getQuery().getString();
+    bool lessthan = q1.getQuery().strval < q2.getQuery().strval;
 
     // if q1 >= q2 we have to look at the query types in order to
     // compute the < relation on them
@@ -120,7 +120,7 @@ namespace dl {
   }
 
 
-DLQuery::DLQuery(Ontology::shared_pointer o, const ID& q, const ComfortTuple& p)
+DLQuery::DLQuery(Ontology::shared_pointer o, const ComfortTerm& q, const ComfortTuple& p)
   : ontology(o),
     query(q),
     cq(),
@@ -132,9 +132,9 @@ DLQuery::DLQuery(Ontology::shared_pointer o, const ID& q, const ComfortTuple& p)
 }
 
 
-DLQuery::DLQuery(Ontology::shared_pointer o, const std::vector<ID>& c, const ComfortTuple& p)
+DLQuery::DLQuery(Ontology::shared_pointer o, const std::vector<ComfortTerm>& c, const ComfortTuple& p)
   : ontology(o),
-    query(),
+    query(ComfortTerm::createConstant("")),
     cq(c),
     ucq(),
     pattern(),
@@ -144,9 +144,9 @@ DLQuery::DLQuery(Ontology::shared_pointer o, const std::vector<ID>& c, const Com
 }
 
 
-DLQuery::DLQuery(Ontology::shared_pointer o, const std::vector<std::vector<ID> >& u, const ComfortTuple& p)
+DLQuery::DLQuery(Ontology::shared_pointer o, const std::vector<std::vector<ComfortTerm> >& u, const ComfortTuple& p)
   : ontology(o),
-    query(),
+    query(ComfortTerm::createConstant("")),
     cq(),
     ucq(u.begin(), u.end()),
     pattern(),
@@ -216,21 +216,21 @@ DLQuery::isUnionConjQuery() const
 }
 
 
-const ID&
+const ComfortTerm&
 DLQuery::getQuery() const
 {
   return this->query;
 }
 
 
-const std::vector<ID>&
+const std::vector<ComfortTerm>&
 DLQuery::getConjQuery() const
 {
   return this->cq;
 }
 
 
-const std::vector<std::vector<ID> >&
+const std::vector<std::vector<ComfortTerm> >&
 DLQuery::getUnionConjQuery() const
 {
   return this->ucq;
@@ -251,8 +251,7 @@ DLQuery::setPatternTuple(const ComfortTuple& pattern)
        ++it, mask <<= 1)
     {
       // for every ground term we set a flag in typeFlags
-// @TODO: What is isAnon()?
-      if (!it->isVariable() && !it->isAnon())
+      if (!it->isVariable() && !(getQuery().strval == "_"))
 	{
 	  typeFlags |= mask;
 	}

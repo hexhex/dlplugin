@@ -34,9 +34,9 @@
 #include "Query.h"
 #include "KBManager.h"
 
-#include <dlvhex/Atom.h>
-#include <dlvhex/AtomSet.h>
-#include <dlvhex/Term.h>
+#include <dlvhex/Atoms.hpp>
+//#include <dlvhex/AtomSet.h>
+#include <dlvhex/Term.hpp>
 
 namespace dlvhex {
   namespace dl {
@@ -44,11 +44,11 @@ namespace dlvhex {
 
 Query::Query(KBManager& kb,
 	     const DLQuery::shared_pointer& q,
-	     const Term& pc,
-	     const Term& mc,
-	     const Term& pr,
-	     const Term& mr,
-	     const AtomSet& i)
+	     const ComfortTerm& pc,
+	     const ComfortTerm& mc,
+	     const ComfortTerm& pr,
+	     const ComfortTerm& mr,
+	     const ComfortInterpretation& i)
   : kbManager(kb),
     proj(),
     query(q)
@@ -69,24 +69,24 @@ Query::getDLQuery() const
   return this->query;
 }
 
-const AtomSet&
+const ComfortInterpretation&
 Query::getProjectedInterpretation() const
 {
   return this->proj;
 }
 
 void
-Query::setInterpretation(const AtomSet& ints,
-			 const Term& pc, const Term& mc,
-			 const Term& pr, const Term& mr
+Query::setInterpretation(const ComfortInterpretation& ints,
+			 const ComfortTerm& pc, const ComfortTerm& mc,
+			 const ComfortTerm& pr, const ComfortTerm& mr
 			 )
 {
   // project out interpretation, i.e. compute I^\lambda
-  for (AtomSet::const_iterator it = ints.begin();
+  for (ComfortInterpretation::const_iterator it = ints.begin();
        it != ints.end(); ++it)
     {
-      const Term& p = it->getPredicate();
-      unsigned arity = it->getArity() - 1; // ignore the concept/role name parameter
+      const ComfortTerm& p = ComfortTerm::createConstant(it->getPredicate());
+      unsigned arity = it->tuple.size() - 1; // ignore the concept/role name parameter
 
       // we ignore atoms with wrong arity
       bool isPC = (p == pc) && (arity == 1);
@@ -95,11 +95,14 @@ Query::setInterpretation(const AtomSet& ints,
       bool isMR = (p == mr) && (arity == 2);
 
       // negate minusC and minusR atoms
-      AtomPtr ap(isPC || isMC || isPR || isMR ?
-		 new Atom(it->getArguments(), isMC || isMR) :
-		 0);
-
-      if (ap) proj.insert(ap);
+	if (isPC || isMC || isPR || isMR){
+		ComfortAtom ca;
+		ca.tuple = it->tuple;
+		if (isMC || isMR){
+			ca.tuple[0].strval = std::string("-") + ca.tuple[0].strval;
+		}
+		proj.insert(ca);
+	}
     }
 }
 

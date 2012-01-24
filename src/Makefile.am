@@ -3,10 +3,7 @@ libdlvhexracer_la_SOURCES = \
 Answer.cpp \
 AtomSeparator.cpp \
 Cache.cpp \
-DLOptimizer.cpp \
 DLQuery.cpp \
-HexDLConverter.cpp \
-HexDLRewriter.cpp \
 LogBuf.cpp \
 OWLParser.cpp \
 Ontology.cpp \
@@ -25,7 +22,6 @@ TCPStream.cpp \
 URI.cpp \
 Default.cpp \
 Defaults.cpp \
-DFConverter.cpp \
 DFProcessor.cpp \
 DFOutputBuilder.cpp \
 DLAtom.cpp \
@@ -41,6 +37,11 @@ MTerm.cpp \
 Terms.cpp \
 Update.cpp \
 Updates.cpp
+
+#DFConverter.cpp \
+#DLOptimizer.cpp \
+#HexDLConverter.cpp \
+#HexDLRewriter.cpp
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \

@@ -38,8 +38,8 @@
 #include "RacerInterface.h"
 #include "RacerExtAtom.h"
 #include "Ontology.h"
-#include "DLOptimizer.h"
-#include "HexDLConverter.h"
+//#include "DLOptimizer.h"
+//#include "HexDLConverter.h"
 #include "LogBuf.h"
 #include "Registry.h"
 #include "TCPStream.h"
@@ -65,10 +65,10 @@ RacerInterface::RacerInterface()
   : stream(new dlvhex::util::TCPIOStream("localhost", 8088)),
     stats(new CacheStats),
     cache(new Cache(*stats)),
-    dlconverter(new HexDLConverter),
-    dfconverter(new dlvhex::df::DFConverter),
+//    dlconverter(new HexDLConverter),
+//    dfconverter(new dlvhex::df::DFConverter),
     dfoutputbuilder(new dlvhex::df::DFOutputBuilder),
-    dloptimizer(new DLOptimizer),
+//    dloptimizer(new DLOptimizer),
     kbManager(new RacerKBManager(*stream))
 { }
 
@@ -119,9 +119,9 @@ RacerInterface::~RacerInterface()
     }
 
   delete kbManager;
-  delete dloptimizer;
-  delete dlconverter;
-  delete dfconverter;
+//  delete dloptimizer;
+//  delete dlconverter;
+//  delete dfconverter;
   //delete dfoutputbuilder;
   delete cache;
   delete stats;
@@ -136,7 +136,7 @@ RacerInterface::instance()
   return &ri;
 }
 
-
+/*
 std::vector<PluginConverter*>
 RacerInterface::createConverters()
 {
@@ -156,6 +156,7 @@ RacerInterface::createOptimizer()
 {
   return dloptimizer;
 }
+*/
 
 OutputBuilder*
 RacerInterface::createOutputBuilder()
@@ -202,6 +203,7 @@ struct GetKBManagerFun
 void
 RacerInterface::getAtoms(AtomFunctionMap& m)
 {
+
   // maybe we should provide the stream and the kbmanager as template
   // parameters similar to GetCache
 

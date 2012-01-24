@@ -61,10 +61,10 @@ QueryCtx::QueryCtx(Query* qq, Answer* aa)
 { }
 
 
-QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError)
+QueryCtx::QueryCtx(const ComfortPluginAtom::Query& query, KBManager& kb) throw (DLError)
   : q(0), a(0)
 {
-  const Tuple& inputtuple = query.getInputTuple();
+  const ComfortTuple& inputtuple = query.input;
 
   if (inputtuple.size() < 4)
     {
@@ -72,7 +72,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
     }
 
   // inputtuple[0] contains the KB URI constant
-  std::string ontostr = inputtuple[0].getUnquotedString();
+  std::string ontostr = inputtuple[0].strval;
 
   Ontology::shared_pointer onto;
 
@@ -87,7 +87,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
     }
 
   DLQuery::shared_pointer dlq;
-  const Tuple& outputlist = query.getPatternTuple();
+  const ComfortTuple& outputlist = query.pattern();
   std::string qstr;
 
   ///@todo exchange this whole crap by a proper boost spirit parser
@@ -97,7 +97,7 @@ QueryCtx::QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError
   // (union of) conjunctive query
   if (inputtuple.size() > 5)
     {
-      qstr = inputtuple[5].getUnquotedString();
+      qstr = inputtuple[5].strval;
 
       if (qstr.length() >= 2) ///@todo kludge: check for turtle syntax (this even breaks for negated uris)
 	{

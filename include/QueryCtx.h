@@ -37,7 +37,7 @@
 #include "DLError.h"
 #include "Query.h"
 
-#include <dlvhex/PluginInterface.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
 
 #include <boost/shared_ptr.hpp>
 
@@ -58,7 +58,7 @@ namespace dl {
    *
    * Used for wrapping a whole querying context into a handy
    * object. Also allows to instantiate Query and Answer objects from
-   * PluginAtom::Query.
+   * ComfortPluginAtom::Query.
    */
   class QueryCtx
   {
@@ -82,13 +82,13 @@ namespace dl {
 
   public:
     /** 
-     * Ctor which utilizes PluginAtom::Query to fill the members of #q
+     * Ctor which utilizes ComfortPluginAtom::Query to fill the members of #q
      * and creates #a with a reference to #q.
      * 
      * @param query 
      * @param kb
      */
-    QueryCtx(const PluginAtom::Query& query, KBManager& kb) throw (DLError);
+    QueryCtx(const ComfortPluginAtom::Query& query, KBManager& kb) throw (DLError);
 
 
     /** 

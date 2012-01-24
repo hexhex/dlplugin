@@ -36,6 +36,7 @@
 #include "Ontology.h"
 
 #include <dlvhex/ComfortPluginInterface.hpp>
+#include <dlvhex/Registry.hpp>
 
 #include <iosfwd>
 #include <iterator>
@@ -53,17 +54,20 @@ namespace dl {
   class DLQuery
   {
   private:
+    /// Registry
+    RegistryPtr reg;
+
     /// ontology uri + namespace
     Ontology::shared_pointer ontology;
 
     /// the query term
-    ID query;
+    ComfortTerm query;
 
     /// conjunctive query
-    std::vector<ID> cq;
+    std::vector<ComfortTerm> cq;
 
     /// union of conjunctive query
-    std::vector<std::vector<ID> > ucq;
+    std::vector<std::vector<ComfortTerm> > ucq;
 
     /// tuple pattern
     ComfortTuple pattern;
@@ -83,7 +87,7 @@ namespace dl {
      * @param q plain query
      * @param p output 
      */
-    DLQuery(Ontology::shared_pointer o, const ID& q, const ComfortTuple& p);
+    DLQuery(Ontology::shared_pointer o, const ComfortTerm& q, const ComfortTuple& p);
 
     /** 
      * Ctor for a cq-query.
@@ -92,7 +96,7 @@ namespace dl {
      * @param cq conjunctive query
      * @param p output
      */
-    DLQuery(Ontology::shared_pointer o, const std::vector<ID>& cq, const ComfortTuple& p);
+    DLQuery(Ontology::shared_pointer o, const std::vector<ComfortTerm>& cq, const ComfortTuple& p);
 
     /** 
      * Ctor for a ucq-query.
@@ -101,7 +105,7 @@ namespace dl {
      * @param ucq union of conjunctive queries
      * @param p output
      */
-    DLQuery(Ontology::shared_pointer o, const std::vector<std::vector<ID> >& ucq, const ComfortTuple& p);
+    DLQuery(Ontology::shared_pointer o, const std::vector<std::vector<ComfortTerm> >& ucq, const ComfortTuple& p);
 
     /// dtor.
     virtual
@@ -117,13 +121,13 @@ namespace dl {
     virtual const ComfortTuple&
     getPatternTuple() const;
 
-    virtual const ID&
+    virtual const ComfortTerm&
     getQuery() const;
 
-    virtual const std::vector<ID>&
+    virtual const std::vector<ComfortTerm>&
     getConjQuery() const;
 
-    virtual const std::vector<std::vector<ID> >&
+    virtual const std::vector<std::vector<ComfortTerm> >&
     getUnionConjQuery() const;
 
     virtual bool
@@ -176,10 +180,10 @@ namespace dl {
 //	   << q.getPatternTuple()
 	   << " | ";
 
-	const std::vector<ID>& cq = q.getConjQuery();
+	const std::vector<ComfortTerm>& cq = q.getConjQuery();
 	if (!cq.empty())
 	  {
-	    std::copy(cq.begin(), --cq.end(), std::ostream_iterator<ID>(os, ", "));
+	    std::copy(cq.begin(), --cq.end(), std::ostream_iterator<ComfortTerm>(os, ", "));
 	    os << *(--cq.end());
 	  }
 
@@ -193,25 +197,25 @@ namespace dl {
 //	   << q.getPatternTuple()
 	   << " | ";
 
-	const std::vector<std::vector<ID> >& ucq = q.getUnionConjQuery();
+	const std::vector<std::vector<ComfortTerm> >& ucq = q.getUnionConjQuery();
 
-	for (std::vector<std::vector<ID> >::const_iterator it = ucq.begin();
+	for (std::vector<std::vector<ComfortTerm> >::const_iterator it = ucq.begin();
 	     it != --ucq.end(); ++it)
 	  {
 	    if (!it->empty())
 	      {
 		os << '(';
-		std::copy(it->begin(), --it->end(), std::ostream_iterator<ID>(os, ", "));
+		std::copy(it->begin(), --it->end(), std::ostream_iterator<ComfortTerm>(os, ", "));
 		os << *(--it->end()) << ") v ";
 	      }
 	  }
 
-	const std::vector<ID>& last = ucq.back();
+	const std::vector<ComfortTerm>& last = ucq.back();
 
 	if (!last.empty())
 	  {
 	    os << '(';
-	    std::copy(last.begin(), --last.end(), std::ostream_iterator<ID>(os, ", "));
+	    std::copy(last.begin(), --last.end(), std::ostream_iterator<ComfortTerm>(os, ", "));
 	    os << *(--last.end()) << ')';
 	  }
 
