@@ -59,7 +59,7 @@ namespace dl {
     // otw. the ontologies are equal and we have to consider the
     // actual queries
 
-    bool lessthan = q1.getQuery().strval < q2.getQuery().strval;
+    bool lessthan = q1.getQuery().getUnquotedString() < q2.getQuery().getUnquotedString();
 
     // if q1 >= q2 we have to look at the query types in order to
     // compute the < relation on them
@@ -251,7 +251,7 @@ DLQuery::setPatternTuple(const ComfortTuple& pattern)
        ++it, mask <<= 1)
     {
       // for every ground term we set a flag in typeFlags
-      if (!it->isVariable() && !(getQuery().strval == "_"))
+      if (!it->isVariable() && !(getQuery().isAnon()))
 	{
 	  typeFlags |= mask;
 	}

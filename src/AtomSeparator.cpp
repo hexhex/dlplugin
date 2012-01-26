@@ -193,14 +193,11 @@ AtomSeparator::parse() throw (DLParsingError)
       boost::trim(predicate);
 
       bool isNegated = (predicate[0] == '-');
-/*
-@TODO: how to handle negation?
 
       if (isNegated) // remove '-' from predicate name
 	{
 	  predicate.erase(0, 1);
 	}
-*/
       if (t1 != std::string::npos)
 	{
 	  std::string a1 = atom.substr(pred + 1, t1 - pred - 1);

@@ -64,7 +64,7 @@ namespace dlvhex {
 	  if (a.size() > 0)
 	    {
 	      for (std::set<ComfortTuple>::const_iterator it = a.begin();
-		   it != --a.end(); ++it)
+		   it != a.end(); ++it)
 		{
 		  os.put('(');
 		  if (!it->empty())
@@ -73,19 +73,9 @@ namespace dlvhex {
 				std::ostream_iterator<ComfortTerm>(os, ", "));
 		      os << it->back();
 		    }
-		  os << "), ";
+		  os << ")";
+                  if (it != a.end()) os << ", ";
 		}
-
-	      os.put('(');
-/* @TODO: fix this: what is the purpose of this check? the tuples vector does not exist anymore, we have now a set which has no back()
-	      if (!tuples->back().empty())
-		{
-		  std::copy(tuples->back().begin(), --tuples->back().end(),
-			    std::ostream_iterator<ComfortTerm>(os, ", "));
-		  os << tuples->back().back();
-		}
-	      os.put(')');
-*/
 	    }
 	}
       
@@ -226,8 +216,6 @@ Answer::addTuple(const ComfortTuple& out)
 	  //
 	  for (; pit != pat.end(); ++pit)
 	    {
-/*
-@TODO: fix this: what does isAnon() mean?
 	      if (pit->isAnon())
 		{
 		  tmp.push_back(ComfortTerm::createConstant(""));
@@ -238,7 +226,6 @@ Answer::addTuple(const ComfortTuple& out)
 		  tmp.push_back(*oit);
 		  ++oit;
 		}
-*/
 	    }
 
 	  insert(tmp);
@@ -255,7 +242,7 @@ Answer::addTuple(const ComfortTuple& out)
 	{
 	  ComfortTuple tmp(out);
 
-	  std::string p = pat[1].strval;
+	  std::string p = pat[1].getUnquotedString();
 
 	  if (!URI::isValid(p))
 	    {
@@ -272,7 +259,7 @@ Answer::addTuple(const ComfortTuple& out)
 	{
 	  ComfortTuple tmp;
 
-	  std::string p = pat[0].strval;
+	  std::string p = pat[0].getUnquotedString();
 
 	  if (!URI::isValid(p))
 	    {

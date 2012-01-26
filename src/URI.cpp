@@ -59,7 +59,7 @@ URI::URI(const std::string& u, bool absolute)
 URI::URI(const ComfortTerm& t, bool absolute)
   : uri()
 {
-  std::string s = t.strval;
+  std::string s = t.getUnquotedString();
 
   if (s[0] == '-')
     {
@@ -208,7 +208,7 @@ URI::isValid(const ComfortTerm& t)
     }
   else // term is a symbol or string
     {
-      return URI::isValid(t.strval);
+      return URI::isValid(t.getUnquotedString());
     }
 }
 

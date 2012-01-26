@@ -93,7 +93,7 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
   const ComfortTerm& q = dlq->getQuery();
   const ComfortTuple& indv = dlq->getPatternTuple();
-  const std::string concept = q.strval;
+  const std::string concept = q.getUnquotedString();
   const std::string& nspace = dlq->getOntology()->getNamespace();
 
   if (!(dlq->isBoolean() && indv.size() == 1))
@@ -244,7 +244,7 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
   const ComfortTerm& q = dlq->getQuery();
-  const std::string concept = q.strval;
+  const std::string concept = q.getUnquotedString();
   const std::string& nspace = dlq->getOntology()->getNamespace();
 
   try

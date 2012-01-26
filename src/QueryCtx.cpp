@@ -72,7 +72,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::ComfortQuery& query, KBManager& kb) 
     }
 
   // inputtuple[0] contains the KB URI constant
-  std::string ontostr = inputtuple[0].strval;
+  std::string ontostr = inputtuple[0].getUnquotedString();
 
   Ontology::shared_pointer onto;
 
@@ -97,7 +97,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::ComfortQuery& query, KBManager& kb) 
   // (union of) conjunctive query
   if (inputtuple.size() > 5)
     {
-      qstr = inputtuple[5].strval;
+      qstr = inputtuple[5].getUnquotedString();
 
       if (qstr.length() >= 2) ///@todo kludge: check for turtle syntax (this even breaks for negated uris)
 	{
@@ -133,7 +133,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::ComfortQuery& query, KBManager& kb) 
 	}
       else // this is a plain query
 	{
-	  qstr = inputtuple[5].strval;
+	  qstr = inputtuple[5].getUnquotedString();
 
 	  // no namespace in query
 	  if (!URI::isValid(qstr))
@@ -193,7 +193,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::ComfortQuery& query, KBManager& kb) 
 	    }
 	  else // (negated) concept query
 	    {
-	      ComfortTerm qu = ComfortTerm::createConstant("");
+	      ComfortTerm qu = ComfortTerm::createConstant(" ");
 
 	      if (qstr[0] == '-') // keep the strong negation in front!
 		{

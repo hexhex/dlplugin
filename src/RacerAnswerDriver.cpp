@@ -301,8 +301,8 @@ struct RacerAnswerGrammar: qi::grammar<Iterator, ascii::space_type>
 
     individual =
         uri    [ handle_uri() ]
-      | int_   [ _val = dlvhex::ComfortTerm::createInteger(1) ]	
-      | string [ _val = dlvhex::ComfortTerm::createConstant("\"\"") ] // @TODO: How to convert _1 to std::string?
+      | int_   [ _val = phoenix::construct<dlvhex::ComfortTerm>(_1) ]	
+      | string [ _val = phoenix::construct<dlvhex::ComfortTerm>(_1, true) ]
       ;
 
     uri %=
