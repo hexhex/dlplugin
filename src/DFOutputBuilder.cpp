@@ -31,7 +31,7 @@
  */
 
 #include "DFOutputBuilder.h"
-#include "dlvhex/AnswerSet.h"
+#include "dlvhex/ComfortPluginInterface.hpp"
 
 namespace dlvhex {
 namespace df {
@@ -57,12 +57,12 @@ namespace df {
     std::list<std::string> cnames = DFProcessor::defaults.getConclusionsNames();
     for (dlvhex::ResultContainer::result_t::const_iterator rit = results.begin(); rit != results.end(); ++rit)
     {
-      dlvhex::AnswerSet new_as;
-      for (dlvhex::AnswerSet::const_iterator i = (*rit)->begin(); i != (*rit)->end(); ++i)
+      dlvhex::ComfortInterpretation new_as;
+      for (dlvhex::ComfortInterpretation::const_iterator i = (*rit)->begin(); i != (*rit)->end(); ++i)
 	{
 	  //std::cout << i->getPredicate().getString() << std::endl;
 	  //std::cout << i->getArguments() << std::endl;
-	  std::string pname = i->getPredicate().getString();
+	  std::string pname = i->getPredicate().strval;
 	  if (pname.find(p1) == 0)
 	    {
 	      std::string newname = pname.substr(p1.length());

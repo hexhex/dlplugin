@@ -36,8 +36,7 @@
 #include "RacerNRQLBuilder.h"
 #include "Query.h"
 
-#include <dlvhex/Atom.h>
-#include <dlvhex/Term.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
 
 #include <sstream>
 #include <iostream>
@@ -92,9 +91,9 @@ bool
 RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
-  const Term& q = dlq->getQuery();
-  const Tuple& indv = dlq->getPatternTuple();
-  const std::string concept = q.getUnquotedString();
+  const ComfortTerm& q = dlq->getQuery();
+  const ComfortTuple& indv = dlq->getPatternTuple();
+  const std::string concept = q.strval;
   const std::string& nspace = dlq->getOntology()->getNamespace();
 
   if (!(dlq->isBoolean() && indv.size() == 1))
@@ -112,7 +111,7 @@ RacerIsConceptMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 	}
       else
 	{
-	  Term tmp(concept.substr(1), true);
+	  ComfortTerm tmp = ComfortTerm::createConstant("\"" + concept.substr(1) + "\"");
 	  c.reset(new ABoxNegatedConcept(new ABoxQueryConcept(tmp, nspace)));
 	}
 
@@ -143,8 +142,8 @@ bool
 RacerIsRoleMemberBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
-  const Term& q = dlq->getQuery();
-  const Tuple& indv = dlq->getPatternTuple();
+  const ComfortTerm& q = dlq->getQuery();
+  const ComfortTuple& indv = dlq->getPatternTuple();
   const std::string& nspace = dlq->getOntology()->getNamespace();
 
   if (!(dlq->isBoolean() && indv.size() == 2))
@@ -186,8 +185,8 @@ RacerIndividualFillersBuilder::buildCommand(Query& query)
   throw (DLBuildingError)
 {
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
-  const Term& q = dlq->getQuery();
-  const Tuple& indv = dlq->getPatternTuple();
+  const ComfortTerm& q = dlq->getQuery();
+  const ComfortTuple& indv = dlq->getPatternTuple();
   const std::string& nspace = dlq->getOntology()->getNamespace();
   unsigned long type = dlq->getTypeFlags() & std::numeric_limits<unsigned long>::max();
 
@@ -244,8 +243,8 @@ bool
 RacerConceptInstancesBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
-  const Term& q = dlq->getQuery();
-  const std::string concept = q.getUnquotedString();
+  const ComfortTerm& q = dlq->getQuery();
+  const std::string concept = q.strval;
   const std::string& nspace = dlq->getOntology()->getNamespace();
 
   try
@@ -258,7 +257,7 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (DLBuildingError)
 	}
       else
 	{
-	  Term tmp(concept.substr(1), true);
+	  ComfortTerm tmp = ComfortTerm::createConstant("\"" + concept.substr(1) + "\"");
 	  c.reset(new ABoxNegatedConcept(new ABoxQueryConcept(tmp, nspace)));
 	}
 
@@ -287,7 +286,7 @@ bool
 RacerRoleIndividualsBuilder::buildCommand(Query& query) throw (DLBuildingError)
 {
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
-  const Term& q = dlq->getQuery();
+  const ComfortTerm& q = dlq->getQuery();
   const std::string& nspace = dlq->getOntology()->getNamespace();
 
   try

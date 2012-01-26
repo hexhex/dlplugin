@@ -136,7 +136,7 @@ RacerInterface::instance()
   return &ri;
 }
 
-/*
+/* // @TODO
 std::vector<PluginConverter*>
 RacerInterface::createConverters()
 {
@@ -156,7 +156,6 @@ RacerInterface::createOptimizer()
 {
   return dloptimizer;
 }
-*/
 
 OutputBuilder*
 RacerInterface::createOutputBuilder()
@@ -168,6 +167,7 @@ RacerInterface::createOutputBuilder()
   return 0;
 }
 
+*/
 
 /** 
  * We cannot rely on dlvhex calling RacerInterface::setOptions
@@ -199,47 +199,49 @@ struct GetKBManagerFun
   }
 };
 
-
-void
-RacerInterface::getAtoms(AtomFunctionMap& m)
+std::vector<PluginAtomPtr> RacerInterface::createAtoms(ProgramCtx& ctx) const
 {
+	std::vector<PluginAtomPtr> ret;
 
-  // maybe we should provide the stream and the kbmanager as template
-  // parameters similar to GetCache
+	// maybe we should provide the stream and the kbmanager as template
+	// parameters similar to GetCache
 
-  boost::shared_ptr<PluginAtom> dlC(new RacerConceptAtom<GetKBManagerFun,GetCacheFun>(*stream));
-  boost::shared_ptr<PluginAtom> dlR(new RacerRoleAtom<GetKBManagerFun,GetCacheFun>(*stream));
-  boost::shared_ptr<PluginAtom> dlConsistent(new RacerConsistentAtom<GetKBManagerFun>(*stream));
-  boost::shared_ptr<PluginAtom> dlDR(new RacerDatatypeRoleAtom<GetKBManagerFun,GetCacheFun>(*stream));
+	PluginAtomPtr dlC(new RacerConceptAtom<GetKBManagerFun,GetCacheFun>("dlC", *stream));
+	PluginAtomPtr dlR(new RacerRoleAtom<GetKBManagerFun,GetCacheFun>("dlR", *stream));
+	PluginAtomPtr dlConsistent(new RacerConsistentAtom<GetKBManagerFun>("dlConsistent", *stream));
+	PluginAtomPtr dlDR(new RacerDatatypeRoleAtom<GetKBManagerFun,GetCacheFun>("dlDR", *stream));
 
-  m["dlC"]          = dlC;
-  m["dlR"]          = dlR;
-  m["dlConsistent"] = dlConsistent;
-  m["dlDR"]         = dlDR;
+	ret.push_back(dlC);
+	ret.push_back(dlR);
+	ret.push_back(dlConsistent);
+	ret.push_back(dlDR);
 
-  // register for each arity in range 0 to 32 a dedicated RacerCQAtom
-  // external atom with specified arity
 
-  std::ostringstream oss;
+	// register for each arity in range 0 to 32 a dedicated RacerCQAtom
+	// external atom with specified arity
 
-  for (unsigned n = 0; n <= 32; ++n)
-    {
-      boost::shared_ptr<PluginAtom> dlCQ(new RacerCQAtom<GetKBManagerFun,GetCacheFun>(*stream, n));
-      oss << "dlCQ" << n;
-      m[oss.str()] = dlCQ;
-      oss.str("");
-    }
+	std::ostringstream oss;
 
-  // register for each arity in range 0 to 32 a dedicated RacerUCQAtom
-  // external atom with specified arity
+	for (unsigned n = 0; n <= 32; ++n)
+	{
+		oss << "dlCQ" << n;
+		PluginAtomPtr dlCQ(new RacerCQAtom<GetKBManagerFun,GetCacheFun>(oss.str(), *stream, n));
+		ret.push_back(dlCQ);
+		oss.str("");
+	}
 
-  for (unsigned n = 0; n <= 32; ++n)
-    {
-      boost::shared_ptr<PluginAtom> dlUCQ(new RacerUCQAtom<GetKBManagerFun,GetCacheFun>(*stream, n));
-      oss << "dlUCQ" << n;
-      m[oss.str()] = dlUCQ;
-      oss.str("");
-    }
+	// register for each arity in range 0 to 32 a dedicated RacerUCQAtom
+	// external atom with specified arity
+
+	for (unsigned n = 0; n <= 32; ++n)
+	{
+		oss << "dlUCQ" << n;
+		PluginAtomPtr dlUCQ(new RacerUCQAtom<GetKBManagerFun,GetCacheFun>(oss.str(), *stream, n));
+		ret.push_back(dlUCQ);
+		oss.str("");
+	}
+
+	return ret;
 }
 
 void
@@ -354,7 +356,8 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 	    {
 	      if (*tok_iter == "-push") // no rewriting at all
 		{
-		  dloptimizer->setRewriting(false);
+// @TODO
+//		  dloptimizer->setRewriting(false);
 		}
 	      else if (*tok_iter == "-dlcache") // no caching at all
 		{
@@ -444,10 +447,6 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
 extern "C" DLVHEX_NAMESPACE PluginInterface*
 PLUGINIMPORTFUNCTION()
 {
-  dlvhex::dl::racer::RacerInterface::instance()->setPluginName(PACKAGE_TARNAME);
-  dlvhex::dl::racer::RacerInterface::instance()->setVersion(DLPLUGIN_MAJOR,
-							    DLPLUGIN_MINOR,
-							    DLPLUGIN_MICRO);
   return dlvhex::dl::racer::RacerInterface::instance();
 }
 

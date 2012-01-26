@@ -116,12 +116,12 @@ RacerKBManager::updateOpenKB() throw (DLError)
       openKBs.clear();
       std::insert_iterator<KBSet> ii = std::inserter(openKBs, openKBs.begin());
 
-      for (std::vector<Tuple>::const_iterator it1 = a.getTuples()->begin();
-	   it1 != a.getTuples()->end(); ++it1)
+      for (std::set<ComfortTuple>::const_iterator it1 = a.begin();
+	   it1 != a.end(); ++it1)
 	{
-	  for (Tuple::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2, ++ii)
+	  for (ComfortTuple::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2, ++ii)
 	    {
-	      *ii = it2->getUnquotedString();
+	      *ii = it2->strval;
 	    }
 	}
     }

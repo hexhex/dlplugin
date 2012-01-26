@@ -62,7 +62,7 @@ namespace racer {
     GetKBManager getKBManager;
 
     /// protected ctor
-    RacerExtAtom(std::iostream&);
+    RacerExtAtom(std::string name, std::iostream&);
 
     /// dtor
     virtual
@@ -141,7 +141,7 @@ namespace racer {
     cacheQuery(QueryCompositeDirector::shared_pointer comp) const;
 
   public:
-    RacerCachingAtom(std::iostream&);
+    RacerCachingAtom(std::string name, std::iostream&);
   };
 
 
@@ -165,7 +165,7 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerConceptAtom(std::iostream&);
+    RacerConceptAtom(std::string name, std::iostream&);
   };
 
 
@@ -190,7 +190,7 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerRoleAtom(std::iostream&);
+    RacerRoleAtom(std::string name, std::iostream&);
   };
 
 
@@ -215,7 +215,7 @@ namespace racer {
 
   public:
     explicit
-    RacerConsistentAtom(std::iostream&);
+    RacerConsistentAtom(std::string name, std::iostream&);
   };
 
 
@@ -248,7 +248,7 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerDatatypeRoleAtom(std::iostream&);
+    RacerDatatypeRoleAtom(std::string name, std::iostream&);
   };
 
 
@@ -272,7 +272,7 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerCQAtom(std::iostream&, unsigned n);
+    RacerCQAtom(std::string name, std::iostream&, unsigned n);
   };
 
 
@@ -296,7 +296,7 @@ namespace racer {
     getDirectors(const dlvhex::dl::Query& query) const;
 
   public:
-    RacerUCQAtom(std::iostream&, unsigned n);
+    RacerUCQAtom(std::string name, std::iostream&, unsigned n);
   };
 
 

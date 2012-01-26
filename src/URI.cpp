@@ -33,7 +33,7 @@
 
 #include "URI.h"
 
-#include <dlvhex/Term.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
 
 #include <string>
 #include <algorithm>
@@ -56,10 +56,10 @@ URI::URI(const std::string& u, bool absolute)
 }
 
 
-URI::URI(const Term& t, bool absolute)
+URI::URI(const ComfortTerm& t, bool absolute)
   : uri()
 {
-  std::string s = t.getUnquotedString();
+  std::string s = t.strval;
 
   if (s[0] == '-')
     {
@@ -200,15 +200,15 @@ URI::isValid(const std::string& s)
 
 
 bool
-URI::isValid(const Term& t)
+URI::isValid(const ComfortTerm& t)
 {
-  if (t.isVariable() || t.isAnon() || t.isInt())
+  if (t.isVariable() || t.isAnon() || t.isInteger())
     {
       return false;
     }
   else // term is a symbol or string
     {
-      return URI::isValid(t.getUnquotedString());
+      return URI::isValid(t.strval);
     }
 }
 

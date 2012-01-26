@@ -45,11 +45,8 @@
 #include "RacerNRQL.h"
 #include "RacerNRQLBuilder.h"
 
-#include <dlvhex/Atom.h>
-#include <dlvhex/Term.h>
-#include <dlvhex/AtomSet.h>
 #include <dlvhex/Error.h>
-#include <dlvhex/PluginInterface.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -85,15 +82,15 @@ namespace racer {
 
   
   template<class GetKBManager>
-  RacerExtAtom<GetKBManager>::RacerExtAtom(std::iostream& s)
-    : stream(s), getKBManager()
+  RacerExtAtom<GetKBManager>::RacerExtAtom(std::string name, std::iostream& s)
+    : ComfortPluginAtom(name), stream(s), getKBManager()
   { }
 
 
   template<class GetKBManager>
   void
-  RacerExtAtom<GetKBManager>::retrieve(const PluginAtom::Query& query,
-				       PluginAtom::Answer& answer) throw(PluginError)
+  RacerExtAtom<GetKBManager>::retrieve(const ComfortPluginAtom::ComfortQuery& query,
+				       ComfortPluginAtom::ComfortAnswer& answer) throw(PluginError)
   {
     try
       {
@@ -112,12 +109,12 @@ namespace racer {
 	    boost::posix_time::time_duration diff = end - start;
 	    std::cerr << "Runtime: " << diff << ' ' << qctx->getQuery() << " = (" << qctx->getAnswer().getIncoherent() << ") {";
 
-	    boost::shared_ptr<std::vector<Tuple> > ans = qctx->getAnswer().getTuples();
+	    std::set<ComfortTuple>& ans = qctx->getAnswer();
 
-	    for (std::vector<Tuple>::const_iterator it = ans->begin(); it != ans->end(); ++it)
+	    for (std::set<ComfortTuple>::const_iterator it = ans.begin(); it != ans.end(); ++it)
 	      {
 		std::cerr << '(';
-		std::copy(it->begin(), it->end(), std::ostream_iterator<Term>(std::cerr,","));
+		std::copy(it->begin(), it->end(), std::ostream_iterator<ComfortTerm>(std::cerr,","));
 		std::cerr << "),";
 	      }
 
@@ -223,8 +220,8 @@ namespace racer {
 
 
   template <class GetKBManager, class GetCache>
-  RacerCachingAtom<GetKBManager,GetCache>::RacerCachingAtom(std::iostream& s)
-    : RacerExtAtom<GetKBManager>(s), getCache()
+  RacerCachingAtom<GetKBManager,GetCache>::RacerCachingAtom(std::string name, std::iostream& s)
+    : RacerExtAtom<GetKBManager>(name, s), getCache()
   { }
 
 
@@ -240,8 +237,8 @@ namespace racer {
 
 
   template <class GetKBManager>
-  RacerConsistentAtom<GetKBManager>::RacerConsistentAtom(std::iostream& s)
-    : RacerExtAtom<GetKBManager>(s)
+  RacerConsistentAtom<GetKBManager>::RacerConsistentAtom(std::string name, std::iostream& s)
+    : RacerExtAtom<GetKBManager>(name, s)
   {
     //
     // &dlConsistent[kb,plusC,minusC,plusR,minusR]()
@@ -278,8 +275,8 @@ namespace racer {
 
 
   template <class GetKBManager, class GetCache>
-  RacerConceptAtom<GetKBManager,GetCache>::RacerConceptAtom(std::iostream& s)
-    : RacerCachingAtom<GetKBManager,GetCache>(s)
+  RacerConceptAtom<GetKBManager,GetCache>::RacerConceptAtom(std::string name, std::iostream& s)
+    : RacerCachingAtom<GetKBManager,GetCache>(name, s)
   {
     //
     // &dlC[kb,plusC,minusC,plusR,minusR,query](X)
@@ -326,8 +323,8 @@ namespace racer {
 
 
   template <class GetKBManager, class GetCache>
-  RacerRoleAtom<GetKBManager,GetCache>::RacerRoleAtom(std::iostream& s)
-    : RacerCachingAtom<GetKBManager,GetCache>(s)
+  RacerRoleAtom<GetKBManager,GetCache>::RacerRoleAtom(std::string name, std::iostream& s)
+    : RacerCachingAtom<GetKBManager,GetCache>(name, s)
   {
     //
     // &dlR[kb,plusC,minusC,plusR,minusR,query](X,Y)
@@ -399,8 +396,8 @@ namespace racer {
 
 
   template <class GetKBManager, class GetCache>
-  RacerDatatypeRoleAtom<GetKBManager,GetCache>::RacerDatatypeRoleAtom(std::iostream& s)
-    : RacerCachingAtom<GetKBManager,GetCache>(s)
+  RacerDatatypeRoleAtom<GetKBManager,GetCache>::RacerDatatypeRoleAtom(std::string name, std::iostream& s)
+    : RacerCachingAtom<GetKBManager,GetCache>(name, s)
   {
     //
     // &dlDR[kb,plusC,minusC,plusR,minusR,query](X,Y)
@@ -473,8 +470,8 @@ namespace racer {
 
 
   template <class GetKBManager, class GetCache>
-  RacerCQAtom<GetKBManager,GetCache>::RacerCQAtom(std::iostream& s, unsigned n)
-    : RacerCachingAtom<GetKBManager,GetCache>(s)
+  RacerCQAtom<GetKBManager,GetCache>::RacerCQAtom(std::string name, std::iostream& s, unsigned n)
+    : RacerCachingAtom<GetKBManager,GetCache>(name, s)
   {
     //
     // &dlCQn[kb,plusC,minusC,plusR,minusR,query](X_1,...,X_n)
@@ -514,8 +511,8 @@ namespace racer {
 
 
   template <class GetKBManager, class GetCache>
-  RacerUCQAtom<GetKBManager,GetCache>::RacerUCQAtom(std::iostream& s, unsigned n)
-    : RacerCachingAtom<GetKBManager,GetCache>(s)
+  RacerUCQAtom<GetKBManager,GetCache>::RacerUCQAtom(std::string name, std::iostream& s, unsigned n)
+    : RacerCachingAtom<GetKBManager,GetCache>(name, s)
   {
     //
     // &dlUCQn[kb,plusC,minusC,plusR,minusR,query](X_1,...,X_n)

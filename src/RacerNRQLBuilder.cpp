@@ -59,28 +59,28 @@ NRQLBaseBuilder::createHead(std::ostream& stream, const Query& query) const
   throw(DLBuildingError)
 {
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
-  const Tuple& pat = dlq->getPatternTuple();
+  const ComfortTuple& pat = dlq->getPatternTuple();
   bool isEmpty = true;
 
   ///@todo injective variable calculation is incorrect, see file header
 
-  std::set<Term> injectiveVars;
+  std::set<ComfortTerm> injectiveVars;
 
   if (dlq->isConjQuery())
     {
       // get all inequalities
-      const AtomSet& as = dlq->getConjQuery();
-      AtomSet injCandidates;
+      const ComfortInterpretation& as = dlq->getConjQuery();
+      ComfortInterpretation injCandidates;
 
       as.matchPredicate("!=", injCandidates);
 
-      for (AtomSet::const_iterator it = injCandidates.begin(); it != injCandidates.end(); ++it)
+      for (ComfortInterpretation::const_iterator it = injCandidates.begin(); it != injCandidates.end(); ++it)
 	{
 	  if (it->getArity() == 2) // ignore malformed (in)equalities
 	    {
-	      const Tuple& t = it->getArguments();
-	      const Term& t0 = t[0];
-	      const Term& t1 = t[1];
+	      const ComfortTuple& t = it->getArguments();
+	      const ComfortTerm& t0 = t[0];
+	      const ComfortTerm& t1 = t[1];
 	      
 	      if (t0.isVariable())
 		injectiveVars.insert(t0);
@@ -98,7 +98,7 @@ NRQLBaseBuilder::createHead(std::ostream& stream, const Query& query) const
   // Iterate through the output list and build a nRQL head. Anonymous
   // variables are ignored, they are going to be taken care of when we
   // call Answer::addTuple().
-  for (Tuple::const_iterator it = pat.begin(); it != pat.end(); ++it)
+  for (ComfortTuple::const_iterator it = pat.begin(); it != pat.end(); ++it)
     {
       if (!isEmpty) // this skips the beginning of the output
 	{
@@ -135,16 +135,16 @@ namespace dlvhex {
     namespace racer {
 
       /// base class for transforming Atom objects to ABoxAssertion objects
-      struct InterToAssertion : public std::unary_function<const Atom&, void>
+      struct InterToAssertion : public std::unary_function<const ComfortAtom&, void>
       {
 	mutable std::ostream* pstream;
-	mutable AtomSet::atomset_t::size_type count;
+	mutable unsigned count; // @TODO was of type ComfortInterpretation::atomset_t::size_type
 	const Query& query;
 	mutable bool* empty;
 	bool abox;
 	
 	InterToAssertion(std::ostream& s,
-			 AtomSet::atomset_t::size_type c,
+			 unsigned c,
 			 const Query& q,
 			 bool& isEmpty,
 			 bool withABox = false)
@@ -152,7 +152,7 @@ namespace dlvhex {
 	{ }
 
 	void
-	operator() (const Atom& a) const
+	operator() (const ComfortAtom& a) const
 	{
 	  *(this->empty) = false;
     std::ostream& stream = *pstream;
@@ -168,7 +168,7 @@ namespace dlvhex {
 	      
 	      if (abox)
 		{
-		  stream << ABoxAddConceptAssertion(a.isStronglyNegated() ?
+		  stream << ABoxAddConceptAssertion(a.isStrongNegated() ?
 						    new ABoxNegatedConcept(c) : c,
 						    i,
 						    query.getKBManager().getKBName()
@@ -176,13 +176,13 @@ namespace dlvhex {
 		}
 	      else
 		{
-		  stream << ABoxInstanceAssertion(a.isStronglyNegated() ?
+		  stream << ABoxInstanceAssertion(a.isStrongNegated() ?
 						  new ABoxNegatedConcept(c) : c,
 						  i
 						  );
 		}
 	    }
-	  else if (a.getArity() == 2 && a.isStronglyNegated()) // negated role assertion
+	  else if (a.getArity() == 2 && a.isStrongNegated()) // negated role assertion
 	    {
 	      ABoxQueryRole::const_pointer r = 
 		new ABoxQueryRole(a.getArgument(0), nspace);
@@ -217,7 +217,7 @@ namespace dlvhex {
 						  );
 		}
 	    }
-	  else if (a.getArity() == 2 && !a.isStronglyNegated())
+	  else if (a.getArity() == 2 && !a.isStrongNegated())
 	    {
 	      ABoxQueryRole::const_pointer r = 
 		new ABoxQueryRole(a.getArgument(0), nspace);
@@ -261,7 +261,7 @@ NRQLBaseBuilder::createPremise(std::ostream& stream, const Query& query) const
 {
   bool isEmpty = true;
 
-  const AtomSet& ints = query.getProjectedInterpretation();
+  const ComfortInterpretation& ints = query.getProjectedInterpretation();
 
   if (!ints.empty())
     {
@@ -278,8 +278,8 @@ NRQLBaseBuilder::createPremise(std::ostream& stream, const Query& query) const
 
       stream << 
 	ABoxInstanceAssertion
-	(new ABoxQueryConcept(Term("foo")),
-	 new ABoxQueryIndividual(Term("bar"))
+	(new ABoxQueryConcept(ComfortTerm::createConstant("foo")),
+	 new ABoxQueryIndividual(ComfortTerm::createConstant("bar"))
 	 );
     }
 #endif
@@ -294,7 +294,7 @@ NRQLStateBuilder::createPremise(std::ostream& stream, const Query& query) const
 {
   bool isEmpty = true;
 
-  const AtomSet& ints = query.getProjectedInterpretation();
+  const ComfortInterpretation& ints = query.getProjectedInterpretation();
 
   if (!ints.empty())
     {
@@ -311,8 +311,8 @@ NRQLStateBuilder::createPremise(std::ostream& stream, const Query& query) const
 
       stream << 
 	ABoxAddConceptAssertion
-	(new ABoxQueryConcept(Term("foo")),
-	 new ABoxQueryIndividual(Term("bar")),
+	(new ABoxQueryConcept(ComfortTerm::createConstant("foo")),
+	 new ABoxQueryIndividual(ComfortTerm::createConstant("bar")),
 	 query.getKBManager().getKBName()
 	 );
     }
@@ -327,7 +327,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
   throw(DLBuildingError)
 {
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
-  const AtomSet& as = dlq->getConjQuery();
+  const ComfortInterpretation& as = dlq->getConjQuery();
   const std::string& nspace = dlq->getOntology()->getNamespace();
 
   NRQLConjunction body;
@@ -335,18 +335,18 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
   ///@todo injective variable calculation is incorrect, see file header
 
   // get all inequalities
-  AtomSet injCandidates;
+  ComfortInterpretation injCandidates;
   as.matchPredicate("!=", injCandidates);
 
-  std::set<Term> injectiveVars;
+  std::set<ComfortTerm> injectiveVars;
 
-  for (AtomSet::const_iterator it = injCandidates.begin(); it != injCandidates.end(); ++it)
+  for (ComfortInterpretation::const_iterator it = injCandidates.begin(); it != injCandidates.end(); ++it)
     {
       if (it->getArity() == 2) // ignore malformed (in)equalities
 	{
-	  const Tuple& t = it->getArguments();
-	  const Term& t0 = t[0];
-	  const Term& t1 = t[1];
+	  const ComfortTuple& t = it->getArguments();
+	  const ComfortTerm& t0 = t[0];
+	  const ComfortTerm& t1 = t[1];
 
 	  if (t0.isVariable())
 	    injectiveVars.insert(t0);
@@ -356,7 +356,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 	}
     }
 
-  for (AtomSet::const_iterator it = as.begin(); it != as.end(); ++it)
+  for (ComfortInterpretation::const_iterator it = as.begin(); it != as.end(); ++it)
     {
       // each member of this query has either arity 1 (concept) or
       // arity 2 (role/(in)equality
@@ -364,8 +364,8 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 	{
 	case 2: // role query or (in)equality
 	  {
-	    const Term& t1 = it->getArgument(1);
-	    const Term& t2 = it->getArgument(2);
+	    const ComfortTerm& t1 = it->getArgument(1);
+	    const ComfortTerm& t2 = it->getArgument(2);
 	    ABoxQueryObject* o1 = 0;
 	    ABoxQueryObject* o2 = 0;
 
@@ -401,13 +401,13 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 		o2 = new ABoxQueryIndividual(t2, nspace);
 	      }
 
-	    const Term& pred = it->getPredicate();
+	    const ComfortTerm& pred = ComfortTerm::createConstant(it->getPredicate());
 	    
-	    if (pred == Term("==")) // equality
+	    if (pred == ComfortTerm::createConstant("==")) // equality
 	      {
 		body.addAtom(new NRQLQueryAtom(new SameAsQuery(o1, o2)));
 	      }
-	    else if (pred == Term("!=")) // ignore inequalities -> use injective variables
+	    else if (pred == ComfortTerm::createConstant("!=")) // ignore inequalities -> use injective variables
 	      {
 		// body.addAtom(new NRQLQueryAtom(new NAFQuery(new SameAsQuery(o1, o2))));
 		delete o1;
@@ -415,7 +415,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 	      }
  	    else // role query
 	      {
-		if (it->isStronglyNegated()) // negated role
+		if (it->isStrongNegated()) // negated role
 		  {
 		    body.addAtom(new NRQLQueryAtom
 				 (new NegationQuery
@@ -439,7 +439,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 
 	case 1: // concept query
 	  {
-	    const Term& t1 = it->getArgument(1);
+	    const ComfortTerm& t1 = it->getArgument(1);
 	    ABoxQueryObject* o1 = 0;
 
 	    if (t1.isVariable())
@@ -458,12 +458,12 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 		o1 = new ABoxQueryIndividual(t1, nspace);
 	      }
 
-	    if (it->isStronglyNegated())
+	    if (it->isStrongNegated())
 	      {
 		body.addAtom(new NRQLQueryAtom
 			     (new ConceptQuery
 			      (new ABoxNegatedConcept
-			       (new ABoxQueryConcept(it->getPredicate(), nspace)), o1)
+			       (new ABoxQueryConcept(ComfortTerm::createConstant(it->getPredicate()), nspace)), o1)
 			      )
 			     );
 	      }
@@ -471,7 +471,7 @@ NRQLConjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 	      {
 		body.addAtom(new NRQLQueryAtom
 			     (new ConceptQuery
-			      (new ABoxQueryConcept(it->getPredicate(), nspace), o1)
+			      (new ABoxQueryConcept(ComfortTerm::createConstant(it->getPredicate()), nspace), o1)
 			      )
 			     );
 	      }
@@ -497,26 +497,26 @@ NRQLDisjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
   throw(DLBuildingError)
 {
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
-  const std::vector<AtomSet>& as = dlq->getUnionConjQuery();
+  const std::vector<ComfortInterpretation>& as = dlq->getUnionConjQuery();
   const std::string& nspace = dlq->getOntology()->getNamespace();
 
   ///@todo we don't handle (in)equalities here
-  std::set<Term> injectiveVars;
+  std::set<ComfortTerm> injectiveVars;
 
   NRQLUnion unbody;
 
-  for (std::vector<AtomSet>::const_iterator it = as.begin(); it != as.end(); ++it)
+  for (std::vector<ComfortInterpretation>::const_iterator it = as.begin(); it != as.end(); ++it)
     {
       NRQLConjunction* body = new NRQLConjunction;
 
-      for (AtomSet::const_iterator it2 = it->begin(); it2 != it->end(); ++it2)
+      for (ComfortInterpretation::const_iterator it2 = it->begin(); it2 != it->end(); ++it2)
 	{
 	  switch (it2->getArity())
 	    {
 	    case 2: // role query or (in)equality
 	      {
-		const Term& t1 = it2->getArgument(1);
-		const Term& t2 = it2->getArgument(2);
+		const ComfortTerm& t1 = it2->getArgument(1);
+		const ComfortTerm& t2 = it2->getArgument(2);
 		ABoxQueryObject* o1 = 0;
 		ABoxQueryObject* o2 = 0;
 		
@@ -552,13 +552,13 @@ NRQLDisjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 		    o2 = new ABoxQueryIndividual(t2, nspace);
 		  }
 		
-		const Term& pred = it2->getPredicate();
+		const ComfortTerm& pred = ComfortTerm::createConstant(it2->getPredicate());
 		
-		if (pred == Term("==")) // equality
+		if (pred == ComfortTerm::createConstant("==")) // equality
 		  {
 		    body->addAtom(new NRQLQueryAtom(new SameAsQuery(o1, o2)));
 		  }
-		else if (pred == Term("!=")) // ignore inequalities -> use injective variables
+		else if (pred == ComfortTerm::createConstant("!=")) // ignore inequalities -> use injective variables
 		  {
 		    // body.addAtom(new NRQLQueryAtom(new NAFQuery(new SameAsQuery(o1, o2))));
 		    delete o1;
@@ -566,7 +566,7 @@ NRQLDisjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 		  }
 		else // role query
 		  {
-		    if (it2->isStronglyNegated()) // negated role
+		    if (it2->isStrongNegated()) // negated role
 		      {
 			body->addAtom(new NRQLQueryAtom
 				      (new NegationQuery
@@ -590,7 +590,7 @@ NRQLDisjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 	      
 	    case 1: // concept query
 	      {
-		const Term& t1 = it2->getArgument(1);
+		const ComfortTerm& t1 = it2->getArgument(1);
 		ABoxQueryObject* o1 = 0;
 		
 		if (t1.isVariable())
@@ -609,12 +609,12 @@ NRQLDisjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 		    o1 = new ABoxQueryIndividual(t1, nspace);
 		  }
 		
-		if (it2->isStronglyNegated())
+		if (it2->isStrongNegated())
 		  {
 		    body->addAtom(new NRQLQueryAtom
 				  (new ConceptQuery
 				   (new ABoxNegatedConcept
-				    (new ABoxQueryConcept(it2->getPredicate(), nspace)), o1)
+				    (new ABoxQueryConcept(ComfortTerm::createConstant(it2->getPredicate()), nspace)), o1)
 				   )
 				  );
 		  }
@@ -622,7 +622,7 @@ NRQLDisjunctionBuilder::createBody(std::ostream& stream, const Query& query) con
 		  {
 		    body->addAtom(new NRQLQueryAtom
 				  (new ConceptQuery
-				   (new ABoxQueryConcept(it2->getPredicate(), nspace), o1)
+				   (new ABoxQueryConcept(ComfortTerm::createConstant(it2->getPredicate()), nspace), o1)
 				   )
 				  );
 		  }
@@ -649,7 +649,7 @@ NRQLDatatypeBuilder::createHead(std::ostream& stream, const Query& query) const
   throw(DLBuildingError)
 {
   const DLQuery::shared_pointer& dlq = query.getDLQuery();
-  const Tuple& pat = dlq->getPatternTuple();
+  const ComfortTuple& pat = dlq->getPatternTuple();
 
   unsigned long type = dlq->getTypeFlags() & std::numeric_limits<unsigned long>::max();
 
@@ -662,16 +662,16 @@ NRQLDatatypeBuilder::createHead(std::ostream& stream, const Query& query) const
     {
       // only retrieve the datatype, let Answer add the
       // corresponding individual
-      stream << ABoxQueryVariable(Term("Y"),
+      stream << ABoxQueryVariable(ComfortTerm::createConstant("Y"),
 				  ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate
 				  );
     }
   else if (type == 0x0) // (variable,variable) pattern
     {
-      stream << ABoxQueryVariable(Term("X"),
+      stream << ABoxQueryVariable(ComfortTerm::createConstant("X"),
 				  ABoxQueryVariable::VariableType::substrate)
 	     << ' '
-	     << ABoxQueryVariable(Term("Y"),
+	     << ABoxQueryVariable(ComfortTerm::createConstant("Y"),
 				  ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate
 				  );
     }
@@ -694,9 +694,9 @@ NRQLDatatypeBuilder::createBody(std::ostream& stream, const Query& query) const
   const Term& q = as.begin()->getPredicate();
   #endif // hack
 
-  const Term& q = dlq->getQuery();
+  const ComfortTerm& q = dlq->getQuery();
 
-  const Tuple& pat = dlq->getPatternTuple();
+  const ComfortTuple& pat = dlq->getPatternTuple();
   const std::string& nspace = dlq->getOntology()->getNamespace();
 
   unsigned long type = dlq->getTypeFlags() & std::numeric_limits<unsigned long>::max();
@@ -713,14 +713,14 @@ NRQLDatatypeBuilder::createBody(std::ostream& stream, const Query& query) const
       body.addAtom(new NRQLQueryAtom
 		   (new RoleQuery
 		    (new ABoxQueryRole(q, nspace, true),
-		     new ABoxQueryVariable(Term("X"), ABoxQueryVariable::VariableType::substrate),
-		     new ABoxQueryVariable(Term("Y"), ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
+		     new ABoxQueryVariable(ComfortTerm::createConstant("X"), ABoxQueryVariable::VariableType::substrate),
+		     new ABoxQueryVariable(ComfortTerm::createConstant("Y"), ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
 		     )
 		    )
 		   );
       body.addAtom(new NRQLQueryAtom
 		   (new SameAsQuery
-		    (new ABoxQueryVariable(Term("X")),
+		    (new ABoxQueryVariable(ComfortTerm::createConstant("X")),
 		     new ABoxQueryIndividual
 		     (pat[0], nspace)
 		     )
@@ -735,8 +735,8 @@ NRQLDatatypeBuilder::createBody(std::ostream& stream, const Query& query) const
 	NRQLQueryAtom
 	(new RoleQuery
 	 (new ABoxQueryRole(q, nspace, true),
-	  new ABoxQueryVariable(Term("X"), ABoxQueryVariable::VariableType::substrate),
-	  new ABoxQueryVariable(Term("Y"), ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
+	  new ABoxQueryVariable(ComfortTerm::createConstant("X"), ABoxQueryVariable::VariableType::substrate),
+	  new ABoxQueryVariable(ComfortTerm::createConstant("Y"), ABoxQueryVariable::VariableType::noninjective | ABoxQueryVariable::VariableType::substrate)
 	  )
 	 );
     }

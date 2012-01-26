@@ -179,15 +179,15 @@ struct handle_individuals
 {
   handle_individuals(AnswerState& state): state(state) {}
 
-  void operator()(std::vector<dlvhex::Term>& terms, qi::unused_type, qi::unused_type) const
+  void operator()(std::vector<dlvhex::ComfortTerm>& terms, qi::unused_type, qi::unused_type) const
   {
     dlvhex::dl::Answer& answer = state.answer;
 
     //std::cerr << "creating individuals" << std::endl;
-    BOOST_FOREACH(dlvhex::Term& t, terms)
+    BOOST_FOREACH(dlvhex::ComfortTerm& t, terms)
     {
       //std::cerr << "adding individual '" << t << "'!" << std::endl;
-      answer.addTuple(dlvhex::Tuple(1, t));
+      answer.insert(dlvhex::ComfortTuple(1, t));
     }
   }
 
@@ -198,14 +198,14 @@ struct handle_tuples
 {
   handle_tuples(AnswerState& state): state(state) {}
 
-  void operator()(std::vector<dlvhex::Tuple>& tuples, qi::unused_type, qi::unused_type) const
+  void operator()(std::vector<dlvhex::ComfortTuple>& tuples, qi::unused_type, qi::unused_type) const
   {
     dlvhex::dl::Answer& answer = state.answer;
 
-    BOOST_FOREACH(dlvhex::Tuple& t, tuples)
+    BOOST_FOREACH(dlvhex::ComfortTuple& t, tuples)
     {
       //std::cerr << "adding individual '" << t << "'!" << std::endl;
-      answer.addTuple(t);
+      answer.insert(t);
     }
   }
 
@@ -223,7 +223,7 @@ struct handle_boolean
     //std::cerr << "created boolean " << val << std::endl;
     answer.setAnswer(val);
     if( val )
-      answer.addTuple(dlvhex::Tuple());
+      answer.insert(dlvhex::ComfortTuple());
   }
 
   AnswerState& state;
@@ -235,9 +235,9 @@ struct handle_uri
   template <typename Context>
   void operator()(std::string& s, Context& ctx, qi::unused_type) const
   {
-    dlvhex::Term& ruleAttr = fusion::at_c<0>(ctx.attributes);
+    dlvhex::ComfortTerm& ruleAttr = fusion::at_c<0>(ctx.attributes);
 
-    ruleAttr = dlvhex::Term("<" + s + ">", true);
+    ruleAttr = dlvhex::ComfortTerm::createConstant("\"<" + s + ">\"");
     //std::cerr << "created uri '<" << s << ">'" << std::endl;
   }
 };
@@ -301,8 +301,8 @@ struct RacerAnswerGrammar: qi::grammar<Iterator, ascii::space_type>
 
     individual =
         uri    [ handle_uri() ]
-      | int_   [ _val = phoenix::construct<dlvhex::Term>(_1) ]
-      | string [ _val = phoenix::construct<dlvhex::Term>(_1, true) ]
+      | int_   [ _val = dlvhex::ComfortTerm::createInteger(1) ]	
+      | string [ _val = dlvhex::ComfortTerm::createConstant("\"\"") ] // @TODO: How to convert _1 to std::string?
       ;
 
     uri %=
@@ -328,8 +328,8 @@ struct RacerAnswerGrammar: qi::grammar<Iterator, ascii::space_type>
   }
 
   qi::rule<Iterator, ascii::space_type> answer, boolean, list, status, variable;
-  qi::rule<Iterator, dlvhex::Tuple(), ascii::space_type> tuple, pair;
-  qi::rule<Iterator, dlvhex::Term(), ascii::space_type> individual;
+  qi::rule<Iterator, dlvhex::ComfortTuple(), ascii::space_type> tuple, pair;
+  qi::rule<Iterator, dlvhex::ComfortTerm(), ascii::space_type> individual;
   qi::rule<Iterator, std::string(), ascii::space_type> uri, string;
 
   AnswerState state;

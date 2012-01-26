@@ -33,7 +33,8 @@
 #ifndef _RACERQUERYEXPR_H
 #define _RACERQUERYEXPR_H
 
-#include <dlvhex/Term.h>
+#include <dlvhex/Term.hpp>
+#include <dlvhex/ComfortPluginInterface.hpp>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
@@ -88,7 +89,7 @@ namespace racer {
   {
   protected:
     /// symbol term
-    const Term symbol;
+    const ComfortTerm symbol;
     /// namespace identifier
     const std::string nsid;
 
@@ -113,7 +114,7 @@ namespace racer {
      * @param s symbol term
      * @param n namespace identifier
      */
-    ABoxQueryExpr(const Term& s, const std::string& n)
+    ABoxQueryExpr(const ComfortTerm& s, const std::string& n)
       : symbol(s), nsid(n)
     { }
 
@@ -132,7 +133,7 @@ namespace racer {
   {
   protected:
     /// protected ctor
-    ABoxQueryObject(const Term& s, const std::string& n)
+    ABoxQueryObject(const ComfortTerm& s, const std::string& n)
       : ABoxQueryExpr(s, n)
     { }
 
@@ -167,7 +168,7 @@ namespace racer {
 
    public:
     explicit
-    ABoxQueryVariable(const Term& name, unsigned tf = 0)
+    ABoxQueryVariable(const ComfortTerm& name, unsigned tf = 0)
       : ABoxQueryObject(name, std::string()), typeFlags(tf)
     { }
   };
@@ -180,7 +181,7 @@ namespace racer {
   {
   public:
     explicit
-    ABoxQueryIndividual(const Term& name,
+    ABoxQueryIndividual(const ComfortTerm& name,
 			const std::string& nsid = std::string())
       : ABoxQueryObject(name, nsid)
     { }
@@ -203,7 +204,7 @@ namespace racer {
     { }
 
     /// protected ctor
-    ABoxConceptDescrExpr(const Term& s, const std::string& n)
+    ABoxConceptDescrExpr(const ComfortTerm& s, const std::string& n)
       : ABoxQueryExpr(s, n)
     { }
 
@@ -225,7 +226,7 @@ namespace racer {
     { }
 
     /// protected ctor
-    ABoxRoleDescrExpr(const Term& s, const std::string& n)
+    ABoxRoleDescrExpr(const ComfortTerm& s, const std::string& n)
       : ABoxQueryExpr(s, n)
     { }
 
@@ -243,7 +244,7 @@ namespace racer {
   {
   public:
     explicit
-    ABoxQueryConcept(const Term& name,
+    ABoxQueryConcept(const ComfortTerm& name,
 		     const std::string& nsid = std::string())
       : ABoxConceptDescrExpr(name, nsid)
     { }
@@ -324,7 +325,7 @@ namespace racer {
 
   public:
     explicit
-    ABoxQueryRole(const Term& name,
+    ABoxQueryRole(const ComfortTerm& name,
 		  const std::string& nsid = std::string(),
 		  bool d = false)
       : ABoxRoleDescrExpr(name, nsid),

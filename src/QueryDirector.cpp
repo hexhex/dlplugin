@@ -92,17 +92,17 @@ namespace dlvhex {
     class Grounder
     {
     private:
-      std::vector<Tuple>& tuples;
-      Tuple tuple;
+      std::vector<ComfortTuple>& tuples;
+      ComfortTuple tuple;
       ABox::Objects::const_iterator ubeg;
       ABox::Objects::const_iterator uend;
-      Tuple::const_iterator pbeg;
-      Tuple::const_iterator pend;
+      ComfortTuple::const_iterator pbeg;
+      ComfortTuple::const_iterator pend;
       
 
       /// recursively grounding
       void
-      ground(Tuple::const_iterator p, Tuple::iterator ins)
+      ground(ComfortTuple::const_iterator p, ComfortTuple::iterator ins)
       {
 	if (p == pend)
 	  { 
@@ -138,11 +138,11 @@ namespace dlvhex {
        * @param pb begin of the output list
        * @param pe end of the output list
        */
-      Grounder(std::vector<Tuple>& t,
+      Grounder(std::vector<ComfortTuple>& t,
 	       ABox::Objects::const_iterator ub,
 	       ABox::Objects::const_iterator ue,
-	       Tuple::const_iterator pb,
-	       Tuple::const_iterator pe)
+	       ComfortTuple::const_iterator pb,
+	       ComfortTuple::const_iterator pe)
 	: tuples(t),
 	  tuple(pe - pb), // we reserve exactly the length of the output list
 	  ubeg(ub),
@@ -174,7 +174,7 @@ QueryCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
     {
       // querying is trivial now -> true
       qctx->getAnswer().setAnswer(true);
-      qctx->getAnswer().setTuples(std::vector<Tuple>());
+//      qctx->getAnswer().setTuples(std::vector<Tuple>());
     }
   else // retrieval modes
     {
@@ -190,18 +190,18 @@ QueryCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
 
       std::insert_iterator<ABox::Objects> ii = std::inserter(*universe, universe->begin());
 
-      for (AtomSet::const_iterator it1 = qctx->getQuery().getProjectedInterpretation().begin();
+      for (ComfortInterpretation::const_iterator it1 = qctx->getQuery().getProjectedInterpretation().begin();
 	   it1 != qctx->getQuery().getProjectedInterpretation().end();
 	   ++it1)
 	{
 	  // get the arguments of each atom in the interpretation and
 	  // insert it into the universe
-	  const Tuple& args = it1->getArguments();
+	  const ComfortTuple& args = it1->getArguments();
 	  std::copy(args.begin(), args.end(), ii);
 	}
 
-      std::vector<Tuple> tuples;
-      const Tuple& pat = dlq->getPatternTuple();
+      std::vector<ComfortTuple> tuples;
+      const ComfortTuple& pat = dlq->getPatternTuple();
 
       Grounder g(tuples,
 		 universe->begin(),
@@ -210,7 +210,7 @@ QueryCompositeDirector::handleInconsistency(QueryCtx::shared_pointer qctx)
 		 pat.end());
       g.ground();
 
-      qctx->getAnswer().setTuples(tuples);
+      qctx->getAnswer().insert(tuples.begin(), tuples.end());
     }
 
   return qctx;

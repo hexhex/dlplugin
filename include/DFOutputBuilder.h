@@ -35,9 +35,9 @@
 
 #include <iostream>
 
-#include "dlvhex/OutputBuilder.h"
-#include "dlvhex/PrintVisitor.h"
-#include "dlvhex/ResultContainer.h"
+//#include "dlvhex/OutputBuilder.h"
+//#include "dlvhex/PrintVisitor.h"
+//#include "dlvhex/ResultContainer.h"
 
 #include "DFProcessor.h"
 
@@ -48,7 +48,7 @@ class ResultContainer;
 namespace df {
 
 
-  class DLVHEX_EXPORT DFOutputBuilder : public dlvhex::OutputBuilder
+  class DLVHEX_EXPORT DFOutputBuilder // @TODO:      : public dlvhex::OutputBuilder
     {
     public:
       virtual

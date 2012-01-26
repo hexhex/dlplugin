@@ -64,7 +64,7 @@ namespace racer {
   /**
    * @brief Concrete factory for the Plugin infrastructure.
    */
-  class RacerInterface : public ComfortPluginInterface
+  class RacerInterface : public PluginInterface
   {
   private:
 
@@ -141,16 +141,17 @@ namespace racer {
     /**
      * @return the DL optimizer.
      */
+/* @TODO
     virtual PluginOptimizer* 
     createOptimizer();
+*/
 
     /**
      * Add new RACER external atoms with the according names to m.
      *
      * @param m
      */
-    virtual void
-    getAtoms(AtomFunctionMap& m);
+    virtual std::vector<PluginAtomPtr> createAtoms(ProgramCtx& ctx) const;
 
     /**
      * Set the command line arguments here.
@@ -166,8 +167,10 @@ namespace racer {
      *  Refine output if default rules are in the input
      *
      */
+/* @TODO
     virtual OutputBuilder*
     createOutputBuilder();
+*/
 
   };
 

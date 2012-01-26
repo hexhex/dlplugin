@@ -133,7 +133,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::ComfortQuery& query, KBManager& kb) 
 	}
       else // this is a plain query
 	{
-	  qstr = inputtuple[5].strval();
+	  qstr = inputtuple[5].strval;
 
 	  // no namespace in query
 	  if (!URI::isValid(qstr))
@@ -221,7 +221,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::ComfortQuery& query, KBManager& kb) 
 		      inputtuple[2],
 		      inputtuple[3],
 		      inputtuple[4],
-		      query.interpretation()
+		      query.interpretation
 		      );
 
   this->a = new Answer(this->q);

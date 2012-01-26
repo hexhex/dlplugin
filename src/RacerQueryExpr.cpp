@@ -32,7 +32,8 @@
 #include "RacerQueryExpr.h"
 #include "URI.h"
 
-#include <dlvhex/Term.h>
+#include <dlvhex/Term.hpp>
+#include <dlvhex/ComfortPluginInterface.hpp>
 
 #include <iosfwd>
 #include <string>
@@ -46,9 +47,9 @@ ABoxQueryExpr::output(std::ostream& s) const
 {
   std::string sym;
 
-  if (symbol.isString() || symbol.isSymbol())
+  if (symbol.isConstant())
     {
-      sym = symbol.getUnquotedString();
+      sym = symbol.strval;
 
       if (sym[0] == '-')
 	{
