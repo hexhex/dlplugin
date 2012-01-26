@@ -1,7 +1,7 @@
 #ifndef _DLVHEX_DF_DFCONVERTER_H_
 #define _DLVHEX_DF_DFCONVERTER_H_
 
-#include <dlvhex/PluginInterface.h>
+#include <dlvhex/ComfortPluginInterface.hpp>
 #include "Ontology.h"
 #include "DFProcessor.h"
 #include "Registry.h"

@@ -30,8 +30,6 @@
  * 
  */
 
-#if 0
-
 #ifndef _HEXDLREWRITER_H
 #define _HEXDLREWRITER_H
 
@@ -149,7 +147,7 @@ namespace dl {
     add(ExtAtomRewriter* atom);
 
     void
-    bodyOptimizer(RuleBody_t&) const;
+    bodyOptimizer(Tuple& body) const;
   };
 
 
@@ -168,9 +166,9 @@ namespace dl {
     DLAtomInput();
 
     unsigned
-    getInputNo(const AtomSet& as);
+    getInputNo(const ComfortInterpretation& as);
 
-    std::vector<Rule*>
+    std::vector<ID>
     getDLInputRules() const;
   };
 
@@ -231,7 +229,7 @@ namespace dl {
     virtual Literal*
     getLiteral() const;
 
-    const Tuple&
+    const ComfortTuple&
     getInputTuple() const;
 
     std::string
@@ -249,4 +247,3 @@ namespace dl {
 // mode: C++
 // End:
 
-#endif

@@ -40,6 +40,7 @@
 //#include "dlvhex/ResultContainer.h"
 
 #include "DFProcessor.h"
+#include "dlvhex/ComfortPluginInterface.hpp"
 
 namespace dlvhex {
 
@@ -57,7 +58,7 @@ namespace df {
       DFOutputBuilder();
 
       virtual void
-	buildResult(std::ostream&, const dlvhex::ResultContainer&);
+	buildResult(std::ostream&, const std::set<ComfortInterpretation>&);
     };
 
 } // namespace df

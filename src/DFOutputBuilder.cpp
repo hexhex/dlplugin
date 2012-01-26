@@ -31,7 +31,6 @@
  */
 
 #include "DFOutputBuilder.h"
-#include "dlvhex/ComfortPluginInterface.hpp"
 
 namespace dlvhex {
 namespace df {
@@ -43,10 +42,8 @@ namespace df {
   { }  
 
   void
-  DFOutputBuilder::buildResult(std::ostream& stream, const dlvhex::ResultContainer& facts)
+  DFOutputBuilder::buildResult(std::ostream& stream, const std::set<ComfortInterpretation>& results)
   {
-    const dlvhex::ResultContainer::result_t& results = facts.getAnswerSets();
-
     if (results.empty())
       {
 	return;
@@ -55,19 +52,19 @@ namespace df {
     std::string p1 = std::string(PREFIX_IN) + std::string(PREFIX_NEG);
     std::string p2 = PREFIX_IN;
     std::list<std::string> cnames = DFProcessor::defaults.getConclusionsNames();
-    for (dlvhex::ResultContainer::result_t::const_iterator rit = results.begin(); rit != results.end(); ++rit)
+    for (std::set<ComfortInterpretation>::const_iterator rit = results.begin(); rit != results.end(); ++rit)
     {
       dlvhex::ComfortInterpretation new_as;
-      for (dlvhex::ComfortInterpretation::const_iterator i = (*rit)->begin(); i != (*rit)->end(); ++i)
+      for (dlvhex::ComfortInterpretation::const_iterator i = rit->begin(); i != rit->end(); ++i)
 	{
 	  //std::cout << i->getPredicate().getString() << std::endl;
 	  //std::cout << i->getArguments() << std::endl;
-	  std::string pname = i->getPredicate().strval;
+	  std::string pname = i->getPredicate();
 	  if (pname.find(p1) == 0)
 	    {
 	      std::string newname = pname.substr(p1.length());
 	      //std::cout << newname << std::endl;
-	      dlvhex::AtomPtr ap(new Atom(newname, i->getArguments(), true));
+              dlvhex::ComfortAtom ap(newname, i->getArguments(), true);
 	      new_as.insert(ap);
 	    }
 	  else
@@ -76,13 +73,12 @@ namespace df {
 		{
 		  std::string newname = pname.substr(p2.length());
 		  //std::cout << newname << std::endl;
-		  dlvhex::AtomPtr ap(new Atom(newname, i->getArguments()));
+		  ComfortAtom ap(newname, i->getArguments());
 		  new_as.insert(ap);
 		}
 	    }
 	}
-      dlvhex::RawPrintVisitor rpv(stream);
-      new_as.accept(rpv);
+      new_as.print(stream);
       stream << std::endl;      
     }
   }

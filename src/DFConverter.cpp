@@ -72,7 +72,7 @@ namespace df {
     dlvhex::dl::ABox abox = o->getABox();
     dlvhex::dl::ABox::ObjectsPtr inds = abox.getIndividuals();
     
-    for (std::set<Term>::iterator pos = inds->begin(); pos != inds->end(); ++pos) 
+    for (std::set<ComfortTerm>::iterator pos = inds->begin(); pos != inds->end(); ++pos) 
       {
 	const std::string& ind = pos->getString();
 	individuals.push_back(ind);

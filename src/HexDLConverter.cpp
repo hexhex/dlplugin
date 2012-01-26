@@ -242,7 +242,7 @@ struct handle_dlatom
   // cq: Query = dlvhex::AtomSet
   // ucq: Query = std::vector<dlvhex::AtomSet>
   template<typename Context, typename Query>
-  void operator()(boost::fusion::vector3<boost::optional<dlvhex::AtomSet>, Query, dlvhex::Tuple> const& args,
+  void operator()(boost::fusion::vector3<boost::optional<dlvhex::AtomSet>, Query, dlvhex::ComfortTuple> const& args,
       Context& ctx, qi::unused_type) const
   {
     dlvhex::AtomSet ops;
@@ -268,14 +268,14 @@ struct handle_dlextatom
 
   template<typename Context>
   void operator()(boost::fusion::vector3<
-      std::string, std::vector<dlvhex::Term>, dlvhex::Tuple> const& args,
+      std::string, std::vector<dlvhex::ComfortTerm>, dlvhex::ComfortTuple> const& args,
       Context& ctx, qi::unused_type) const
   {
     std::string atom = fusion::at_c<0>(args);
     atom.erase(atom.begin());
 
-    const dlvhex::Tuple& inputs = fusion::at_c<1>(args);
-    const dlvhex::Tuple& outputs = fusion::at_c<2>(args);
+    const dlvhex::ComfortTuple& inputs = fusion::at_c<1>(args);
+    const dlvhex::ComfortTuple& outputs = fusion::at_c<2>(args);
 
     if( atom == "&dlCQ" || atom == "&dlUCQ" )
     {
@@ -350,11 +350,11 @@ struct handle_op
 	  tmp = ontology->getNamespace() + arg1;
 	}
 
-      DLVHEX_NAMESPACE Tuple t;
-      t.push_back(DLVHEX_NAMESPACE Term(tmp, true));
-      t.push_back(DLVHEX_NAMESPACE Term(arg2));
+      DLVHEX_NAMESPACE ComfortTuple t;
+      t.push_back(DLVHEX_NAMESPACE ComfortTerm(tmp, true));
+      t.push_back(DLVHEX_NAMESPACE ComfortTerm(arg2));
 
-      DLVHEX_NAMESPACE Term q(tmp);
+      DLVHEX_NAMESPACE ComfortTerm q(tmp);
 
       dlvhex::dl::TBox::ObjectsPtr concepts = ontology->getTBox().getConcepts();
       dlvhex::dl::TBox::ObjectsPtr roles = ontology->getTBox().getRoles();
@@ -412,13 +412,13 @@ struct handle_op
 struct handle_output
 {
   template<typename Context>
-  void operator()(boost::optional<std::vector<dlvhex::Term> > const& output, Context& ctx, qi::unused_type) const
+  void operator()(boost::optional<std::vector<dlvhex::ComfortTerm> > const& output, Context& ctx, qi::unused_type) const
   {
-    dlvhex::Tuple& ruleAttr = boost::fusion::at_c<0>(ctx.attributes);
-    dlvhex::Tuple t;
+    dlvhex::ComfortTuple& ruleAttr = boost::fusion::at_c<0>(ctx.attributes);
+    dlvhex::ComfortTuple t;
     if( boost::none != output && !output.get().empty() )
     {
-      for(std::vector<dlvhex::Term>::const_iterator it = output.get().begin();
+      for(std::vector<dlvhex::ComfortTerm>::const_iterator it = output.get().begin();
           it != output.get().end(); ++it)
         t.push_back(*it);
     }
@@ -438,8 +438,8 @@ struct handle_atom
       boost::fusion::vector4<
         boost::optional<char>,
         std::string,
-        dlvhex::Term,
-        boost::optional<dlvhex::Term>
+        dlvhex::ComfortTerm,
+        boost::optional<dlvhex::ComfortTerm>
       > const& tokens, Context& ctx, qi::unused_type) const
   {
     dlvhex::AtomPtr& ruleAttr = fusion::at_c<0>(ctx.attributes);
@@ -449,7 +449,7 @@ struct handle_atom
 
     const std::string& predicate = fusion::at_c<1>(tokens);
 
-    dlvhex::Tuple arguments;
+    dlvhex::ComfortTuple arguments;
     arguments.push_back( fusion::at_c<2>(tokens) );
     if( boost::none != fusion::at_c<3>(tokens) )
       arguments.push_back( fusion::at_c<3>(tokens).get() );
@@ -514,14 +514,14 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
     atom =
       (-tok.aiMinus >> tok.aiString >> '(' >> iterm >> -(',' >> iterm) >> ')') [ handle_atom() ];
     iterm =
-        tok.aiString [ _val = phoenix::construct<dlvhex::Term>(_1) ]
-      | tok.aiNumber [ _val = phoenix::construct<dlvhex::Term>(_1) ];
+        tok.aiString [ _val = phoenix::construct<dlvhex::ComfortTerm>(_1) ]
+      | tok.aiNumber [ _val = phoenix::construct<dlvhex::ComfortTerm>(_1) ];
     output =
       -('(' >> *oterm >> ')') [ handle_output() ];
     oterm =
-        tok.aoString [ _val = phoenix::construct<dlvhex::Term>(_1) ]
-      | tok.aoNumber [ _val = phoenix::construct<dlvhex::Term>(_1) ]
-      | tok.aoAnonymousVar [ _val = phoenix::construct<dlvhex::Term>() ];
+        tok.aoString [ _val = phoenix::construct<dlvhex::ComfortTerm>(_1) ]
+      | tok.aoNumber [ _val = phoenix::construct<dlvhex::ComfortTerm>(_1) ]
+      | tok.aoAnonymousVar [ _val = phoenix::construct<dlvhex::ComfortTerm>() ];
     passthrough %=
         tok.iComment
       | tok.iBlank
@@ -536,8 +536,8 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
   qi::rule<Iterator, dlvhex::AtomSet(), Skipper> ops, cq;
   #warning originally, the ucq was a boost::ptr_vector<AtomSet>, perhaps AtomSet needs to be improved to allow this new usage
   qi::rule<Iterator, std::vector<dlvhex::AtomSet>(), Skipper> ucq;
-  qi::rule<Iterator, dlvhex::Term(), Skipper> iterm, oterm;
-  qi::rule<Iterator, dlvhex::Tuple(), Skipper> output;
+  qi::rule<Iterator, dlvhex::ComfortTerm(), Skipper> iterm, oterm;
+  qi::rule<Iterator, dlvhex::ComfortTuple(), Skipper> output;
 
   ConverterState& state;
 };

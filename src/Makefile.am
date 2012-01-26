@@ -36,12 +36,12 @@ Prefixes.cpp \
 MTerm.cpp \
 Terms.cpp \
 Update.cpp \
-Updates.cpp
+Updates.cpp \
+DFConverter.cpp \
+DLOptimizer.cpp
 
-#DFConverter.cpp \
-#DLOptimizer.cpp \
-#HexDLConverter.cpp \
 #HexDLRewriter.cpp
+#HexDLConverter.cpp
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \

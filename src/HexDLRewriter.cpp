@@ -30,8 +30,6 @@
  * 
  */
 
-#if 0
-
 #include "HexDLRewriter.h"
 #include "AtomSeparator.h"
 #include "DLError.h"
@@ -75,7 +73,7 @@ BodyRewriter::add(ExtAtomRewriter* atom)
 
 
 void
-BodyRewriter::bodyOptimizer(RuleBody_t& body) const
+BodyRewriter::bodyOptimizer(Tuple& body) const
 {
   typedef boost::ptr_deque<ExtAtomRewriter> ExtAtomDeque;
 
@@ -253,16 +251,16 @@ ExtAtomRewriter::push(const std::auto_ptr<ExtAtomRewriter>& b) const
       //
       // create output tuple
       //
-      std::set<Term> termset(output1.begin(), output1.end());
+      std::set<ComfortTerm> termset(output1.begin(), output1.end());
       termset.insert(output2.begin(), output2.end());
-      Tuple output3 = Tuple(termset.begin(), termset.end());
+      ComfortTuple output3 = ComfortTuple(termset.begin(), termset.end());
 
       //
       // create input tuple
       //
 
       // add the lambda components to input3
-      Tuple input3 = Tuple(input1.begin(), input1.end() - 1);
+      ComfortTuple input3 = ComfortTuple(input1.begin(), input1.end() - 1);
 
       //
       // parse both queries to an AtomSet
@@ -271,8 +269,8 @@ ExtAtomRewriter::push(const std::auto_ptr<ExtAtomRewriter>& b) const
       const std::string& query1 = input1.back().getUnquotedString();
       const std::string& query2 = input2.back().getUnquotedString();
 
-      AtomSet cq1;
-      AtomSet cq2;
+      ComfortInterpretation cq1;
+      ComfortInterpretation cq2;
 
       getCQ(query1, output1, cq1);
       getCQ(query2, output2, cq2);
@@ -281,14 +279,14 @@ ExtAtomRewriter::push(const std::auto_ptr<ExtAtomRewriter>& b) const
       // get the variables of cq1 and cq2
       //
 
-      std::set<Term> X1; // variables of cq1
-      std::set<Term> X2; // variables of cq2
+      std::set<ComfortTerm> X1; // variables of cq1
+      std::set<ComfortTerm> X2; // variables of cq2
 
       // get variables of cq1
-      for (AtomSet::const_iterator it = cq1.begin(); it != cq1.end(); ++it)
+      for (ComfortInterpretation::const_iterator it = cq1.begin(); it != cq1.end(); ++it)
 	{
-	  const Tuple& args = it->getArguments();
-	  for (Tuple::const_iterator a = args.begin(); a != args.end(); ++a)
+	  const ComfortTuple& args = it->getArguments();
+	  for (ComfortTuple::const_iterator a = args.begin(); a != args.end(); ++a)
 	    {
 	      if (a->isVariable())
 		X1.insert(*a);
@@ -296,10 +294,10 @@ ExtAtomRewriter::push(const std::auto_ptr<ExtAtomRewriter>& b) const
 	}
 
       // get variables of cq2
-      for (AtomSet::const_iterator it = cq2.begin(); it != cq2.end(); ++it)
+      for (ComfortInterpretation::const_iterator it = cq2.begin(); it != cq2.end(); ++it)
 	{
-	  const Tuple& args = it->getArguments();
-	  for (Tuple::const_iterator a = args.begin(); a != args.end(); ++a)
+	  const ComfortTuple& args = it->getArguments();
+	  for (ComfortTuple::const_iterator a = args.begin(); a != args.end(); ++a)
 	    {
 	      if (a->isVariable())
 		X2.insert(*a);
@@ -311,30 +309,30 @@ ExtAtomRewriter::push(const std::auto_ptr<ExtAtomRewriter>& b) const
       //
 
       // get output variables and constants of cq1
-      std::set<Term> Y1(output1.begin(), output1.end());
+      std::set<ComfortTerm> Y1(output1.begin(), output1.end());
       // get output variables and constants of cq2
-      std::set<Term> Y2(output2.begin(), output2.end());
+      std::set<ComfortTerm> Y2(output2.begin(), output2.end());
 
       // Z1 = X1 \ Y1 , i.e. Z1 contains only existential variables of cq1
-      std::set<Term> Z1;
+      std::set<ComfortTerm> Z1;
       std::set_difference(X1.begin(), X1.end(), Y1.begin(), Y1.end(),
 			  std::inserter(Z1, Z1.begin())
 			  );
       // Z2 = X2 \ Y2 , i.e. Z2 contains only existential variables of cq2
-      std::set<Term> Z2;
+      std::set<ComfortTerm> Z2;
       std::set_difference(X2.begin(), X2.end(), Y2.begin(), Y2.end(),
 			  std::inserter(Z2, Z2.begin())
 			  );
 
       // this is the variable mapping for cq1
-      std::map<Term,Term> vm1;
+      std::map<ComfortTerm,ComfortTerm> vm1;
       // this is the variable mapping for cq2
-      std::map<Term,Term> vm2;
+      std::map<ComfortTerm,ComfortTerm> vm2;
 
       if (!Z1.empty() || !Z2.empty())
 	{
 	  // the set of all possible variables of cq1 and cq2
-	  std::set<Term> vars(X1.begin(), X1.end());
+	  std::set<ComfortTerm> vars(X1.begin(), X1.end());
 	  vars.insert(X2.begin(), X2.end());
       
 	  // we append a counter to the last variable of vars, so whatever
@@ -362,48 +360,48 @@ ExtAtomRewriter::push(const std::auto_ptr<ExtAtomRewriter>& b) const
 	  //
 	  // for each ex. variable z of Z1 : if z \in X2 then rename z in cq1
 	  //
-	  for (std::set<Term>::const_iterator z = Z1.begin(); z != Z1.end(); ++z)
+	  for (std::set<ComfortTerm>::const_iterator z = Z1.begin(); z != Z1.end(); ++z)
 	    {
 	      if (X2.find(*z) != X2.end())
 		{
 		  // rename variable z to lastvar+n and increase n
 		  nvar.str("");
 		  nvar << lastvar << n++;
-		  vm1[*z] = Term(nvar.str());
+		  vm1[*z] = ComfortTerm(nvar.str());
 		}
 	    }
 
 	  //
 	  // for each ex. variable z of Z2 : if z \in X1 then rename z in cq2
 	  //
-	  for (std::set<Term>::const_iterator z = Z2.begin(); z != Z2.end(); ++z)
+	  for (std::set<ComfortTerm>::const_iterator z = Z2.begin(); z != Z2.end(); ++z)
 	    {
 	      if (X1.find(*z) != X1.end())
 		{
 		  // rename variable z to lastvar+n and increase n
 		  nvar.str("");
 		  nvar << lastvar << n++;
-		  vm2[*z] = Term(nvar.str());
+		  vm2[*z] = ComfortTerm(nvar.str());
 		}
 	    }
 	}
 
       // the new pushed conjunctive query
-      AtomSet cq3;
+      ComfortInterpretation cq3;
 
       //
       // insert variablemapped cq1 into cq3
       //
-      for (AtomSet::const_iterator a1 = cq1.begin(); a1 != cq1.end(); ++a1)
+      for (ComfortInterpretation::const_iterator a1 = cq1.begin(); a1 != cq1.end(); ++a1)
 	{
-	  Tuple nargs(1, a1->getPredicate()); // a1's predicate + new arguments
+	  ComfortTuple nargs(1, a1->getPredicate()); // a1's predicate + new arguments
 
-	  const Tuple& args = a1->getArguments();
+	  const ComfortTuple& args = a1->getArguments();
 
 	  // rename variables of a1
-	  for (Tuple::const_iterator it = args.begin(); it != args.end(); ++it)
+	  for (ComfortTuple::const_iterator it = args.begin(); it != args.end(); ++it)
 	    {
-	      std::map<Term,Term>::const_iterator var = vm1.find(*it);
+	      std::map<ComfortTerm,ComfortTerm>::const_iterator var = vm1.find(*it);
 
 	      if (var != vm1.end()) // rename it to var
 		{
@@ -415,7 +413,7 @@ ExtAtomRewriter::push(const std::auto_ptr<ExtAtomRewriter>& b) const
 		}
 	    }
 
-	  AtomPtr ap(new Atom(nargs, a1->isStronglyNegated()));
+	  ComfortAtom ap(nargs, a1->isStronglyNegated());
     /// @todo: this could be a problem
 	  //ap->setAlwaysFO();
 	  cq3.insert(ap);
@@ -424,16 +422,16 @@ ExtAtomRewriter::push(const std::auto_ptr<ExtAtomRewriter>& b) const
       //
       // insert variablemapped cq2 into cq3
       //
-      for (AtomSet::const_iterator a2 = cq2.begin(); a2 != cq2.end(); ++a2)
+      for (ComfortInterpretation::const_iterator a2 = cq2.begin(); a2 != cq2.end(); ++a2)
 	{
-	  Tuple nargs(1, a2->getPredicate()); // a2's predicate + new arguments
+	  ComfortTuple nargs(1, a2->getPredicate()); // a2's predicate + new arguments
 
-	  const Tuple& args = a2->getArguments();
+	  const ComfortTuple& args = a2->getArguments();
 
 	  // rename variables of a2
-	  for (Tuple::const_iterator it = args.begin(); it != args.end(); ++it)
+	  for (ComfortTuple::const_iterator it = args.begin(); it != args.end(); ++it)
 	    {
-	      std::map<Term,Term>::const_iterator var = vm2.find(*it);
+	      std::map<ComfortTerm,ComfortTerm>::const_iterator var = vm2.find(*it);
 
 	      if (var != vm2.end()) // rename it to var
 		{
@@ -445,7 +443,7 @@ ExtAtomRewriter::push(const std::auto_ptr<ExtAtomRewriter>& b) const
 		}
 	    }
 
-	  AtomPtr ap(new Atom(nargs, a2->isStronglyNegated()));
+	  ComfortAtom ap(nargs, a2->isStronglyNegated());
     /// @todo: this could be a problem
 	  //ap->setAlwaysFO();
 	  cq3.insert(ap);
@@ -483,9 +481,9 @@ ExtAtomRewriter::push(const std::auto_ptr<ExtAtomRewriter>& b) const
 
 DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
 			       DLAtomInput& d,
-			       const AtomSet& ops,
+			       const ComfortInterpretation& ops,
 			       const std::string* q,
-			       const Tuple* o)
+			       const ComfortTuple* o)
   : HexDLRewriterBase(),
     ontology(onto),
     query(q),
@@ -517,9 +515,9 @@ DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
 
 DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
 			       DLAtomInput& d,
-			       const AtomSet& ops,
-			       const AtomSet* c,
-			       const Tuple* o)
+			       const ComfortInterpretation& ops,
+			       const ComfortInterpretation* c,
+			       const ComfortTuple* o)
   : HexDLRewriterBase(),
     ontology(onto),
     query(0),
@@ -546,9 +544,9 @@ DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
 
 DLAtomRewriter::DLAtomRewriter(const Ontology::shared_pointer& onto,
 			       DLAtomInput& d,
-			       const AtomSet& ops,
-			       const std::vector<AtomSet>* u,
-			       const Tuple* o)
+			       const ComfortInterpretation& ops,
+			       const std::vector<ComfortInterpretation>* u,
+			       const ComfortTuple* o)
   : HexDLRewriterBase(),
     ontology(onto),
     query(0),
@@ -651,7 +649,7 @@ DLAtomRewriter::getInputTuple() const
       return *this->input;
     }
 
-  this->input = new Tuple;
+  this->input = new ComfortTuple;
 
   input->push_back(Term(ontology->getRealURI().getString(), true));
 
@@ -683,7 +681,7 @@ DLAtomRewriter::getInputTuple() const
 	  tmpquery = "-" + tmpquery;
 	}
       
-      input->push_back(Term(tmpquery, true));
+      input->push_back(ComfortTerm(tmpquery, true));
     }
   else if (query == 0 && cq != 0 && ucq == 0) // cq-atom
     {
@@ -702,7 +700,7 @@ DLAtomRewriter::getInputTuple() const
     {
       std::ostringstream oss;
       
-      for(std::vector<AtomSet>::const_iterator it = ucq->begin();
+      for(std::vector<ComfortInterpretation>::const_iterator it = ucq->begin();
 	   it != --ucq->end(); ++it)
 	{
 	  if (it->size() > 1)
@@ -713,7 +711,7 @@ DLAtomRewriter::getInputTuple() const
 	  oss << *(--it->end()) << " v ";
 	}
       
-      const AtomSet& last = *(--ucq->end());
+      const ComfortInterpretation& last = *(--ucq->end());
       
       if (last.size() > 1)
 	{
@@ -722,7 +720,7 @@ DLAtomRewriter::getInputTuple() const
       
       oss << *(--last.end());
       
-      input->push_back(Term(oss.str(), true));
+      input->push_back(ComfortTerm(oss.str(), true));
     }
   else // programming error
     {
@@ -743,7 +741,7 @@ DLAtomRewriter::getName() const
       TBox::ObjectsPtr datatypeRoles = ontology->getTBox().getDatatypeRoles();
 
       std::string tmpquery = dlvhex::dl::toURIReference(ontology, *query);
-      Term q(tmpquery);
+      ComfortTerm q(tmpquery);
 
       if (concepts->find(q) != concepts->end())
 	{
@@ -788,7 +786,7 @@ DLAtomInput::DLAtomInput()
 
 
 unsigned
-DLAtomInput::getInputNo(const AtomSet& as)
+DLAtomInput::getInputNo(const ComfortInterpretation& as)
 {
   if (as.empty())
     {
@@ -806,27 +804,27 @@ DLAtomInput::getInputNo(const AtomSet& as)
 }
 
 
-std::vector<Rule*>
+std::vector<ID>
 DLAtomInput::getDLInputRules() const
 {
-  std::vector<Rule*> rules;
+  std::vector<ID> rules;
 
   std::ostringstream oss;
   std::string aux;
 
   // temp. variable and predicate names
-  const Term x("X");
-  const Term y("Y");
-  const Term pr("pr");
-  const Term mr("mr");
+  const ComfortTerm x("X");
+  const ComfortTerm y("Y");
+  const ComfortTerm pr("pr");
+  const ComfortTerm mr("mr");
 
   for (AtomSetMap::const_iterator it = asmap.begin(); it != asmap.end(); ++it)
     {
-      for (AtomSet::atomset_t::const_iterator a = it->first.atoms.begin();
+      for (ComfortInterpretation::atomset_t::const_iterator a = it->first.atoms.begin();
 	   a != it->first.atoms.end(); ++a)
 	{
 	  // pred \in { pc,mc,pr,mr }
-	  Term pred = (*a)->getPredicate();
+	  ComfortTerm pred = (*a)->getPredicate();
 
 	  // register aux. predicate names, we don't want them to
 	  // occur in the answer sets
@@ -834,29 +832,30 @@ DLAtomInput::getDLInputRules() const
 	  oss.str("");
 	  oss << "dl_" << pred << '_' << it->second;
 	  aux = oss.str();
-	  Term::registerAuxiliaryName(aux);
+	  ComfortTerm::registerAuxiliaryName(aux);
 
 	  // create output variables 
 
-	  Tuple t;
+	  ComfortTuple t;
 	  t.push_back(x);
 	  if (pred == pr || pred == mr)
 	    {
 	      t.push_back(y);
 	    }
 
-	  RuleBody_t body;
-	  AtomPtr b(new Atom((*a)->getArgument(2).getString(), t));
+	  Tuple body;
+	  ComfortAtom((*a)->getArgument(2).getString(), t);
 	  body.insert(new Literal(b));
 
 	  // add concept or role to the front of t
 	  t.insert(t.begin(), (*a)->getArgument(1));
 
-	  RuleHead_t head;
-	  AtomPtr h(new Atom(aux, t));
+	  Tuple head;
+	  ComfortAtom haux, t);
 	  head.insert(h);
 	  
-	  rules.push_back(new Rule(head, body));
+          Rule r(head, body);
+	  rules.push_back(reg->storeRule(r));
  	}
     }
 
@@ -871,4 +870,3 @@ DLAtomInput::getDLInputRules() const
 // mode: C++
 // End:
 
-#endif
