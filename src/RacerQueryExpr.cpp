@@ -49,7 +49,7 @@ ABoxQueryExpr::output(std::ostream& s) const
 
   if (symbol.isConstant())
     {
-      sym = symbol.strval;
+      sym = symbol.getUnquotedString();
 
       if (sym[0] == '-')
 	{

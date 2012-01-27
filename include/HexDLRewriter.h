@@ -183,8 +183,8 @@ namespace dl {
     const Ontology::shared_pointer ontology;
     
     const std::string* const query;
-    const std::vector<ID>* const cq;
-    const std::vector<std::vector<ID> >* const ucq;
+    const ComfortInterpretation* const cq;
+    const std::vector<ComfortInterpretation>* const ucq;
 
     DLAtomInput& dlinput;
     const ComfortTuple* output;

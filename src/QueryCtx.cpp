@@ -213,7 +213,7 @@ QueryCtx::QueryCtx(const ComfortPluginAtom::ComfortQuery& query, KBManager& kb) 
     {
       // use empty query
       //assert("No query term." == 0);
-      dlq = DLQuery::shared_pointer(new DLQuery(onto, ComfortTerm::createConstant(""), query.pattern));
+      dlq = DLQuery::shared_pointer(new DLQuery(onto, ComfortTerm::createConstant(" "), query.pattern));
     }
 
   this->q = new Query(kb, dlq,

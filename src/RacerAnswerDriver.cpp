@@ -375,6 +375,7 @@ RacerAnswerDriver::RacerAnswerDriver(std::istream& i)
 { }
 
 
+
 void
 RacerAnswerDriver::parse(Answer &a) throw (DLParsingError)
 {

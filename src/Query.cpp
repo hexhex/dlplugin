@@ -75,6 +75,7 @@ Query::getProjectedInterpretation() const
   return this->proj;
 }
 
+
 void
 Query::setInterpretation(const ComfortInterpretation& ints,
 			 const ComfortTerm& pc, const ComfortTerm& mc,
@@ -86,7 +87,7 @@ Query::setInterpretation(const ComfortInterpretation& ints,
        it != ints.end(); ++it)
     {
       const ComfortTerm& p = ComfortTerm::createConstant(it->getPredicate());
-      unsigned arity = it->tuple.size() - 1; // ignore the concept/role name parameter
+      unsigned arity = it->getArity() - 1; // ignore the concept/role name parameter
 
       // we ignore atoms with wrong arity
       bool isPC = (p == pc) && (arity == 1);
@@ -97,7 +98,7 @@ Query::setInterpretation(const ComfortInterpretation& ints,
       // negate minusC and minusR atoms
 	if (isPC || isMC || isPR || isMR){
 		ComfortAtom ca;
-		ca.tuple = it->tuple;
+		ca.tuple = it->getArguments();
 		if (isMC || isMR){
 			ca.tuple[0].strval = std::string("-") + ca.tuple[0].strval;
 		}
