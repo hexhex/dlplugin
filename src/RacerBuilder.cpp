@@ -257,7 +257,7 @@ RacerConceptInstancesBuilder::buildCommand(Query& query) throw (DLBuildingError)
 	}
       else
 	{
-	  ComfortTerm tmp = ComfortTerm::createConstant("\"" + concept.substr(1) + "\"");
+	  ComfortTerm tmp = ComfortTerm(concept.substr(1), true);
 	  c.reset(new ABoxNegatedConcept(new ABoxQueryConcept(tmp, nspace)));
 	}
 

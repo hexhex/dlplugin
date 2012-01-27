@@ -121,7 +121,7 @@ RacerKBManager::updateOpenKB() throw (DLError)
 	{
 	  for (ComfortTuple::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2, ++ii)
 	    {
-	      *ii = it2->strval;
+	      *ii = it2->getUnquotedString();
 	    }
 	}
     }

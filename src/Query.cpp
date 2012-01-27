@@ -100,7 +100,7 @@ Query::setInterpretation(const ComfortInterpretation& ints,
 		ComfortAtom ca;
 		ca.tuple = it->getArguments();
 		if (isMC || isMR){
-			ca.tuple[0].strval = std::string("-") + ca.tuple[0].strval;
+			ca.tuple[0].strval = std::string("-") + ca.tuple[0].getUnquotedString();
 		}
 		proj.insert(ca);
 	}
