@@ -216,6 +216,7 @@ struct ConverterState
       dlvhex::dl::DLAtomInput& dlinput):
     out(out), ontology(ontology), dlinput(dlinput) {}
 
+  dlvhex::RegistryPtr reg;
   std::ostream& out;
   dlvhex::dl::Ontology::shared_pointer ontology;
   dlvhex::dl::DLAtomInput& dlinput;
@@ -233,6 +234,9 @@ struct handle_passthrough
 
   ConverterState state;
 };
+
+#if 0
+// @TODO
 
 struct handle_dlatom
 {
@@ -254,7 +258,7 @@ struct handle_dlatom
         state.ontology, state.dlinput,
         ops, &fusion::at_c<1>(args), &fusion::at_c<2>(args)));
 
-    dlvhex::Literal* lit = rewriter->getLiteral();
+    dlvhex::ID lit = rewriter->getLiteral();
     state.out << *lit;
     delete lit;
   }
@@ -546,7 +550,7 @@ struct DLGrammar: qi::grammar<Iterator, qi::in_state_skipper<Lexer> >
 
 
 
-dlvhex::dl::HexDLConverter::HexDLConverter()
+dlvhex::dl::HexDLConverter::HexDLConverter(RegistryPtr reg) : reg(reg)
 {
 }
 
@@ -663,7 +667,7 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
 
   // setup converter state passed to parser
   dlvhex::dl::DLAtomInput dlinput;
-  ConverterState state(o, ontology, dlinput);
+  ConverterState state(reg, o, ontology, dlinput);
 
   // setup parser
   ConcreteParser parser(lexer, state);
@@ -683,6 +687,7 @@ void dlvhex::dl::HexDLConverter::convert(std::istream& i, std::ostream& o)
     o << *(*it) << std::endl;
     delete *it;
   }
+#endif
 }
 
 // vim:ts=8:sw=2:tw=100:

@@ -46,6 +46,8 @@
 namespace dlvhex {
   namespace dl {
 
+#if 0
+// @TODO
 
 HexDLRewriterBase::HexDLRewriterBase()
   : naf(false)
@@ -157,7 +159,7 @@ ExtAtomRewriter::getExtAtom() const
 }
 
 
-Literal*
+ID
 ExtAtomRewriter::getLiteral() const
 {
   const std::string& query = getInputTuple().back().getUnquotedString();
@@ -601,7 +603,7 @@ DLAtomRewriter::~DLAtomRewriter()
 }
 
 
-Literal*
+ID
 DLAtomRewriter::getLiteral() const
 {
   AtomPtr ap(new ExternalAtom(getName(), *output, getInputTuple(), 0));
@@ -861,7 +863,7 @@ DLAtomInput::getDLInputRules() const
 
   return rules;
 }
-
+#endif
 
   } // namespace dl
 } // namespace dlvhex

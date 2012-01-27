@@ -77,10 +77,10 @@ namespace dl {
       return this->naf;
     }
     
-    virtual Literal*
+    virtual ID
     getLiteral() const
     {
-      return 0;
+      return ID_FAIL;
     }
   };
   typedef boost::shared_ptr<HexDLRewriterBase> HexDLRewriterBasePtr;
@@ -92,7 +92,7 @@ namespace dl {
   class ExtAtomRewriter : public HexDLRewriterBase
   {
   protected:
-    ComfortAtom extAtom;
+    ID extAtom;
 
     ExtAtomRewriter(const ExtAtomRewriter& b);
 
@@ -102,13 +102,13 @@ namespace dl {
     void
     getCQ(const std::string& query, const ComfortTuple& output, ComfortInterpretation& cq) const;
 
-    virtual const ComfortTuple&
+    virtual const Tuple&
     getInputTuple() const;
 
-    virtual inline ComfortTuple
+    virtual inline Tuple
     getOutputTuple() const
     {
-      return extAtom->getArguments();
+      //return extAtom->getArguments();
     }
 
   public:
@@ -122,7 +122,7 @@ namespace dl {
     std::auto_ptr<ExtAtomRewriter>
     push(const std::auto_ptr<ExtAtomRewriter>& b) const;
 
-    virtual Literal*
+    virtual ID
     getLiteral() const;
   };
 
@@ -226,10 +226,10 @@ namespace dl {
 
     ~DLAtomRewriter();
 
-    virtual Literal*
+    virtual ID
     getLiteral() const;
 
-    const ComfortTuple&
+    const Tuple&
     getInputTuple() const;
 
     std::string

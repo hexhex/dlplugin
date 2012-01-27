@@ -38,10 +38,9 @@ Terms.cpp \
 Update.cpp \
 Updates.cpp \
 DFConverter.cpp \
-DLOptimizer.cpp
-
-#HexDLRewriter.cpp
-#HexDLConverter.cpp
+DLOptimizer.cpp \
+HexDLConverter.cpp \
+HexDLRewriter.cpp
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \

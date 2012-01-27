@@ -65,9 +65,11 @@ RacerInterface::RacerInterface()
   : stream(new dlvhex::util::TCPIOStream("localhost", 8088)),
     stats(new CacheStats),
     cache(new Cache(*stats)),
+// @TODO
 //    dlconverter(new HexDLConverter),
-//    dfconverter(new dlvhex::df::DFConverter),
+    dfconverter(new dlvhex::df::DFConverter),
     dfoutputbuilder(new dlvhex::df::DFOutputBuilder),
+// @TODO
 //    dloptimizer(new DLOptimizer),
     kbManager(new RacerKBManager(*stream))
 { }
@@ -119,10 +121,11 @@ RacerInterface::~RacerInterface()
     }
 
   delete kbManager;
+// @TODO
 //  delete dloptimizer;
 //  delete dlconverter;
-//  delete dfconverter;
-  //delete dfoutputbuilder;
+  delete dfconverter;
+  delete dfoutputbuilder;
   delete cache;
   delete stats;
   delete stream;

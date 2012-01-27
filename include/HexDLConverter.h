@@ -11,6 +11,7 @@
 
 #include "Ontology.h"
 
+#include <dlvhex/Registry.hpp>
 #include <dlvhex/ComfortPluginInterface.hpp>
 
 namespace dlvhex {
@@ -18,8 +19,11 @@ namespace dl {
 
 class HexDLConverter : public PluginConverter
 {
+private:
+  RegistryPtr reg;
+
 public:
-  HexDLConverter();
+  HexDLConverter(RegistryPtr reg);
   virtual ~HexDLConverter();
 
   void convert(std::istream& i, std::ostream& o);

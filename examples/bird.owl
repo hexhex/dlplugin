@@ -21,11 +21,11 @@
     <rdfs:subClassOf rdf:resource="#NonFlier" />
   </owl:Class>
 
-	<Bird rdf:ID="Tweety"/> 
+	<Penguin rdf:ID="Joan"/> 
 <!--	<Penguin rdf:ID="Joe"/> 
+	<Bird rdf:ID="Tweety"/> 
 	<Penguin rdf:ID="Jin"/> 
 	<Bird rdf:ID="John"/>
-	<Penguin rdf:ID="Joan"/> 
 	<Bird rdf:ID="Min"/>
 	<Penguin rdf:ID="Thomas"/>
 	<Bird rdf:ID="Mush"/>
