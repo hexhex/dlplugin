@@ -7,7 +7,7 @@ fi
 
 # $5: configurations
 if [ $# -le 4 ]; then
-	confstr=";--internalsolver;--internalsolver --extlearn"
+	confstr=";--solver=genuineii;--solver=genuineii --extlearn"
 else
 	confstr=$5
 fi
