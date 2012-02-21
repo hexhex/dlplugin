@@ -45,8 +45,8 @@
 #include "RacerNRQL.h"
 #include "RacerNRQLBuilder.h"
 
-#include <dlvhex/Error.h>
-#include <dlvhex/ComfortPluginInterface.hpp>
+#include <dlvhex2/Error.h>
+#include <dlvhex2/ComfortPluginInterface.h>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>

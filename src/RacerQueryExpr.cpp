@@ -32,8 +32,8 @@
 #include "RacerQueryExpr.h"
 #include "URI.h"
 
-#include <dlvhex/Term.hpp>
-#include <dlvhex/ComfortPluginInterface.hpp>
+#include <dlvhex2/Term.h>
+#include <dlvhex2/ComfortPluginInterface.h>
 
 #include <iosfwd>
 #include <string>

@@ -33,8 +33,8 @@
 #ifndef _RACERQUERYEXPR_H
 #define _RACERQUERYEXPR_H
 
-#include <dlvhex/Term.hpp>
-#include <dlvhex/ComfortPluginInterface.hpp>
+#include <dlvhex2/Term.h>
+#include <dlvhex2/ComfortPluginInterface.h>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>

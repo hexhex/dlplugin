@@ -11,8 +11,8 @@
 
 #include "Ontology.h"
 
-#include <dlvhex/Registry.hpp>
-#include <dlvhex/ComfortPluginInterface.hpp>
+#include <dlvhex2/Registry.h>
+#include <dlvhex2/ComfortPluginInterface.h>
 
 namespace dlvhex {
 namespace dl {

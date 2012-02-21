@@ -33,7 +33,7 @@
 #define _DLVHEX_DF_DEFAULT_H_ 
 
 #include <list>
-#include <dlvhex/PluginInterface.h>
+#include <dlvhex2/PluginInterface.h>
 #include "Defaults.h"
 #include "DLRules.h"
 #include "Pred2Dim.h"

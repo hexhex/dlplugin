@@ -39,7 +39,7 @@
 #include "HexDLConverter.h"
 #include "HexDLRewriter.h"
 #include "Ontology.h"
-#include <dlvhex/Error.h>
+#include <dlvhex2/Error.h>
 
 #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/lex_lexertl.hpp>

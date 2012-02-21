@@ -37,7 +37,7 @@
 #include "DLError.h"
 #include "Query.h"
 
-#include <dlvhex/ComfortPluginInterface.hpp>
+#include <dlvhex2/ComfortPluginInterface.h>
 
 #include <boost/shared_ptr.hpp>
 

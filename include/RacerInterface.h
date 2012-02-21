@@ -33,7 +33,7 @@
 #ifndef _RACERINTERFACE_H
 #define _RACERINTERFACE_H
 
-#include <dlvhex/ComfortPluginInterface.hpp>
+#include <dlvhex2/ComfortPluginInterface.h>
 #include "Ontology.h"
 #include "DFConverter.h"
 #include "DFOutputBuilder.h"

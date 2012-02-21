@@ -41,8 +41,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_deque.hpp>
 
-#include <dlvhex/ComfortPluginInterface.hpp>
-#include <dlvhex/Rule.hpp>
+#include <dlvhex2/ComfortPluginInterface.h>
+#include <dlvhex2/Rule.h>
 
 namespace dlvhex {
 namespace dl {

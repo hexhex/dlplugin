@@ -38,7 +38,7 @@
 #include "Ontology.h"
 #include "DLError.h"
 
-#include <dlvhex/PluginInterface.h>
+#include <dlvhex2/PluginInterface.h>
 
 #include <iosfwd>
 #include <string>

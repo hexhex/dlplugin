@@ -32,7 +32,7 @@
 
 #include "DLQuery.h"
 
-#include <dlvhex/ComfortPluginInterface.hpp>
+#include <dlvhex2/ComfortPluginInterface.h>
 
 
 namespace dlvhex {

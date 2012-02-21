@@ -33,7 +33,7 @@
 
 #include "URI.h"
 
-#include <dlvhex/ComfortPluginInterface.hpp>
+#include <dlvhex2/ComfortPluginInterface.h>
 
 #include <string>
 #include <algorithm>

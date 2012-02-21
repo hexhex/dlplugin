@@ -35,8 +35,8 @@
 
 #include "Ontology.h"
 
-#include <dlvhex/ComfortPluginInterface.hpp>
-#include <dlvhex/Registry.hpp>
+#include <dlvhex2/ComfortPluginInterface.h>
+#include <dlvhex2/Registry.h>
 
 #include <iosfwd>
 #include <iterator>

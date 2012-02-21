@@ -36,7 +36,7 @@
 
 #include "QueryCtx.h"
 
-#include <dlvhex/ComfortPluginInterface.hpp>
+#include <dlvhex2/ComfortPluginInterface.h>
 
 #include <set>
 #include <iosfwd>

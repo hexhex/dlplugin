@@ -34,9 +34,9 @@
 #include "Query.h"
 #include "KBManager.h"
 
-#include <dlvhex/Atoms.hpp>
+#include <dlvhex2/Atoms.h>
 //#include <dlvhex/AtomSet.h>
-#include <dlvhex/Term.hpp>
+#include <dlvhex2/Term.h>
 
 namespace dlvhex {
   namespace dl {

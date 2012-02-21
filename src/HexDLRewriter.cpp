@@ -34,7 +34,7 @@
 #include "AtomSeparator.h"
 #include "DLError.h"
 
-#include <dlvhex/Error.h>
+#include <dlvhex2/Error.h>
 
 #include <iosfwd>
 #include <iterator>

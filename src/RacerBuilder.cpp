@@ -36,7 +36,7 @@
 #include "RacerNRQLBuilder.h"
 #include "Query.h"
 
-#include <dlvhex/ComfortPluginInterface.hpp>
+#include <dlvhex2/ComfortPluginInterface.h>
 
 #include <sstream>
 #include <iostream>
