@@ -1,15 +1,13 @@
-AC_PREREQ([2.61])
-AC_INIT([dlvhex-dlplugin],[1.7.1],[tkren@kr.tuwien.ac.at])
+AC_PREREQ([2.68])
+AC_INIT([dlvhex-dlplugin],[2.0.0],[tkren@kr.tuwien.ac.at])
 AC_CONFIG_SRCDIR([src/RacerInterface.cpp])
-AC_CONFIG_HEADER([src/config.h])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_HEADERS([src/config.h])
 
-MAJOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\)\.\([[0-9]]*\)\.\([[0-9]]*\).*,\1,"`
-MINOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\)\.\([[0-9]]*\)\.\([[0-9]]*\).*,\2,"`
-MICRO=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\)\.\([[0-9]]*\)\.\([[0-9]]*\).*,\3,"`
-
-AC_DEFINE_UNQUOTED([DLPLUGIN_MAJOR], [$MAJOR], [Major version number of the dl-plugin])
-AC_DEFINE_UNQUOTED([DLPLUGIN_MINOR], [$MINOR], [Minor version number of the dl-plugin])
-AC_DEFINE_UNQUOTED([DLPLUGIN_MICRO], [$MICRO], [Micro version number of the dl-plugin])
+# for documentation of the versioning scheme see
+# https://sourceforge.net/apps/trac/dlvhex/wiki/LibraryVersions
+DLVHEX_DEFINE_VERSION([DLPLUGIN],[$PACKAGE_VERSION])
+DLVHEX_DEFINE_VERSION([DLVHEX_ABI],[7.0.0])
 
 #
 # the user didn't supply a path for Racer
@@ -33,6 +31,8 @@ fi
 
 AM_INIT_AUTOMAKE
 
+AC_CANONICAL_HOST
+
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_CXX
@@ -50,11 +50,22 @@ AC_HEADER_STAT
 AC_HEADER_STDC
 AC_HEADER_TIME
 
+# Checks for programs.
+AC_PROG_CXX
+AC_LANG([C++])
+
+# Checks for header files.
+AC_HEADER_DIRENT
+AC_CHECK_HEADERS([sys/param.h])
+
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
 AC_C_CONST
 
 # Checks for libtool library functions.
+_LT_SET_OPTION([LT_INIT],[dlopen])
+AC_DIAGNOSE([obsolete],[AC_LIBTOOL_DLOPEN: Remove this warning and the call to _LT_SET_OPTION when you
+put the `dlopen' option into LT_INIT's first parameter.])
 AC_LIBTOOL_WIN32_DLL # enable win32 dll-building support
 AC_LIBTOOL_DLOPEN # we build a module library
 AC_DISABLE_STATIC # we don't need a static library
@@ -79,7 +90,7 @@ DX_INIT_DOXYGEN([dlvhex-racerplugin], [doxygen.cfg], [doc])
 
 
 # we want dlvhex
-PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 1.7])
+DLVHEX_REQUIRE([2.0.0])
 
 # cppunit is optional -> give warning in ACTION-IF-NOT-FOUND
 PKG_CHECK_MODULES([CPPUNIT], [cppunit >= 1.12.0], [have_cppunit=true], [have_cppunit=false])
@@ -117,8 +128,8 @@ PKG_CHECK_MODULES([RAPTOR], [raptor >= 1.4.8])
 
 AC_ARG_ENABLE(userinstall, 
              [  --enable-userinstall    Install plugin into home directory],
-             [dlvhexlibdir=$HOME/`pkg-config dlvhex --variable=userplugindir`],
-             [dlvhexlibdir=`pkg-config dlvhex --variable=sysplugindir`]
+             [dlvhexlibdir=$HOME/$DLVHEX_USERPLUGINDIR],
+             [dlvhexlibdir=$DLVHEX_SYSPLUGINDIR]
              )
 AC_SUBST([dlvhexlibdir])
 

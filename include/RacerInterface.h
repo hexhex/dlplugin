@@ -185,9 +185,10 @@ namespace racer {
  * instantiates the RacerInterface singleton. Used as import function
  * when loading the plugin as shared library.
  */
-extern "C" DLVHEX_NAMESPACE PluginInterface*
-PLUGINIMPORTFUNCTION();
-
+//extern "C" DLVHEX_NAMESPACE PluginInterface*
+//PLUGINIMPORTFUNCTION();
+extern "C"
+void * PLUGINIMPORTFUNCTION();
 
 #endif /* _RACERINTERFACE_H */
 

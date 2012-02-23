@@ -1,5 +1,5 @@
-dlvhexlib_LTLIBRARIES = libdlvhexracer.la
-libdlvhexracer_la_SOURCES = \
+dlvhexlib_LTLIBRARIES = libdlvhexplugin_racer.la
+libdlvhexplugin_racer_la_SOURCES = \
 Answer.cpp \
 AtomSeparator.cpp \
 Cache.cpp \
@@ -49,11 +49,11 @@ AM_CPPFLAGS = \
 	$(RAPTOR_CFLAGS) \
 	$(DLVHEX_CFLAGS)
 
-# -avoid-version: only create libdlvhexracer.so
+# -avoid-version: only create libdlvhexplugin_racer.so
 # -module: library will be dlopened
 # -no-undefined: windows dlls don't allow undefined external symbols
 #libdlvhexracer_la_LDFLAGS = -avoid-version -module -no-undefined $(RAPTOR_LIBS)
-libdlvhexracer_la_LDFLAGS = -avoid-version -module $(RAPTOR_LIBS)
+libdlvhexplugin_racer_la_LDFLAGS = -avoid-version -module $(RAPTOR_LIBS)
 
 #
 # adapt path and dependency libraries as needed
@@ -61,11 +61,11 @@ libdlvhexracer_la_LDFLAGS = -avoid-version -module $(RAPTOR_LIBS)
 RAPTOR_PATH = $(HOME)/local/lib
 RAPTOR_STATIC_LIBS =  -lxml2 -lxslt -lcurl $(RAPTOR_PATH)/libraptor.a
 
-libdlvhexracer-static.la: $(libdlvhexracer_la_OBJECTS)
-	$(CXXLINK) -avoid-version -module -rpath $(dlvhexlibdir) $(libdlvhexracer_la_OBJECTS) $(RAPTOR_STATIC_LIBS)
+libdlvhexplugin_racer-static.la: $(libdlvhexplugin_racer_la_OBJECTS)
+	$(CXXLINK) -avoid-version -module -rpath $(dlvhexlibdir) $(libdlvhexplugin_racer_la_OBJECTS) $(RAPTOR_STATIC_LIBS)
 
-install-static: libdlvhexracer-static.la
-	$(LIBTOOL) --mode=install $(INSTALL) -s libdlvhexracer-static.la $(DESTDIR)$(dlvhexlibdir)/libdlvhexracer-static.la
+install-static: libdlvhexplugin_racer-static.la
+	$(LIBTOOL) --mode=install $(INSTALL) -s libdlvhexplugin_racer-static.la $(DESTDIR)$(dlvhexlibdir)/libdlvhexplugin_racer-static.la
 
 uninstall-static:
-	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(dlvhexlibdir)/libdlvhexracer-static.la
+	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(dlvhexlibdir)/libdlvhexplugin_racer-static.la

@@ -446,13 +446,22 @@ RacerInterface::setOptions(bool doHelp, std::vector<std::string>& argv, std::ost
   } // namespace dl
 } // namespace dlvhex
 
+//
+// let it be loaded by dlvhex!
+//
 
-extern "C" DLVHEX_NAMESPACE PluginInterface*
-PLUGINIMPORTFUNCTION()
+IMPLEMENT_PLUGINABIVERSIONFUNCTION
+
+//extern "C" DLVHEX_NAMESPACE PluginInterface*
+//PLUGINIMPORTFUNCTION()
+//{
+//  return dlvhex::dl::racer::RacerInterface::instance();
+//}
+extern "C"
+void * PLUGINIMPORTFUNCTION()
 {
-  return dlvhex::dl::racer::RacerInterface::instance();
+	return reinterpret_cast<void*>(dlvhex::dl::racer::RacerInterface::instance());
 }
-
 
 // Local Variables:
 // mode: C++
