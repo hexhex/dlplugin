@@ -35,6 +35,8 @@
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#include "dlvhex2/ProgramCtx.h"
+
 #include "RacerInterface.h"
 #include "RacerExtAtom.h"
 #include "Ontology.h"
@@ -66,8 +68,8 @@ RacerInterface::RacerInterface()
     stats(new CacheStats),
     cache(new Cache(*stats)),
 // @TODO
-//    dlconverter(new HexDLConverter),
-    dfconverter(new dlvhex::df::DFConverter),
+    dlconverter(0),
+    dfconverter(0),
     dfoutputbuilder(new dlvhex::df::DFOutputBuilder),
 // @TODO
 //    dloptimizer(new DLOptimizer),
@@ -123,8 +125,8 @@ RacerInterface::~RacerInterface()
   delete kbManager;
 // @TODO
 //  delete dloptimizer;
-//  delete dlconverter;
-  delete dfconverter;
+  if (dlconverter) delete dlconverter;
+  if (dfconverter) delete dfconverter;
   delete dfoutputbuilder;
   delete cache;
   delete stats;
@@ -139,21 +141,25 @@ RacerInterface::instance()
   return &ri;
 }
 
-/* // @TODO
-std::vector<PluginConverter*>
-RacerInterface::createConverters()
+ // @TODO
+//std::vector<PluginConverter*>
+//RacerInterface::createConverters()
+std::vector<PluginConverterPtr> RacerInterface::createConverters(ProgramCtx& ctx)
 {
-  std::vector<PluginConverter*> cvts;
+//  dlconverter = new HexDLConverter(ctx.registry());
+//  dfconverter = new dlvhex::df::DFConverter();
+
+  std::vector<PluginConverterPtr> cvts;
 
   // always push the dfconverter since default rules
   // and dl-/HEX-rules are now can live in the same input
-  cvts.push_back(dfconverter);
-  cvts.push_back(dlconverter);
+//  cvts.push_back(PluginConverterPtr(dfconverter));
+//  cvts.push_back(PluginConverterPtr(dlconverter));
 
   return cvts;
 }
 
-
+/*
 PluginOptimizer*
 RacerInterface::createOptimizer()
 {

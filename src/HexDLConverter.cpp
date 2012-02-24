@@ -235,9 +235,6 @@ struct handle_passthrough
   ConverterState state;
 };
 
-#if 0
-// @TODO
-
 struct handle_dlatom
 {
   handle_dlatom(ConverterState& state): state(state) {}
@@ -246,10 +243,10 @@ struct handle_dlatom
   // cq: Query = dlvhex::AtomSet
   // ucq: Query = std::vector<dlvhex::AtomSet>
   template<typename Context, typename Query>
-  void operator()(boost::fusion::vector3<boost::optional<dlvhex::AtomSet>, Query, dlvhex::ComfortTuple> const& args,
+  void operator()(boost::fusion::vector3<boost::optional<dlvhex::ComfortInterpretation>, Query, dlvhex::ComfortTuple> const& args,
       Context& ctx, qi::unused_type) const
   {
-    dlvhex::AtomSet ops;
+    dlvhex::ComfortInterpretation ops;
     if( boost::none != fusion::at_c<0>(args) )
       ops = fusion::at_c<0>(args).get();
 
@@ -258,7 +255,7 @@ struct handle_dlatom
         state.ontology, state.dlinput,
         ops, &fusion::at_c<1>(args), &fusion::at_c<2>(args)));
 
-    dlvhex::ID lit = rewriter->getLiteral();
+    dlvhex::ComfortLiteral* lit = rewriter->getLiteral();
     state.out << *lit;
     delete lit;
   }
@@ -266,6 +263,8 @@ struct handle_dlatom
   ConverterState& state;
 };
 
+#if 0
+// @TODO
 struct handle_dlextatom
 {
   handle_dlextatom(ConverterState& state): state(state) {}
@@ -289,13 +288,14 @@ struct handle_dlextatom
       atom = oss.str();
     }
 
-    dlvhex::ExternalAtomPtr extAtom(
-        new dlvhex::ExternalAtom(atom, outputs, inputs, 0));
+    boost::shared_ptr<dlvhex::ExternalAtom> extAtom(
+        new dlvhex::ExternalAtom(ID::MAINKIND_ATOM | ID::SUBKIND_ATOM_EXTERNAL));
+    extAtomatom, outputs, inputs, 0));
 
     dlvhex::dl::HexDLRewriterBasePtr rewriter(
       new dlvhex::dl::ExtAtomRewriter(extAtom));
 
-    dlvhex::Literal* lit = rewriter->getLiteral();
+    dlvhex::ComfortLiteral* lit = rewriter->getLiteral();
     state.out << *lit;
     delete lit;
   }

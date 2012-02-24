@@ -135,10 +135,8 @@ namespace racer {
     /**
      * @return the DL converter.
      */
-/* @TODO
-    virtual std::vector<PluginConverter*>
-    createConverters();
-*/
+    virtual std::vector<PluginConverterPtr>
+    createConverters(ProgramCtx& ctx);
 
     /**
      * @return the DL optimizer.

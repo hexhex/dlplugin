@@ -77,10 +77,10 @@ namespace dl {
       return this->naf;
     }
     
-    virtual ID
+    virtual ComfortLiteral*
     getLiteral() const
     {
-      return ID_FAIL;
+	return 0;
     }
   };
   typedef boost::shared_ptr<HexDLRewriterBase> HexDLRewriterBasePtr;
@@ -102,10 +102,10 @@ namespace dl {
     void
     getCQ(const std::string& query, const ComfortTuple& output, ComfortInterpretation& cq) const;
 
-    virtual const Tuple&
+    virtual const ComfortTuple&
     getInputTuple() const;
 
-    virtual inline Tuple
+    virtual inline ComfortTuple
     getOutputTuple() const
     {
       //return extAtom->getArguments();
@@ -113,7 +113,7 @@ namespace dl {
 
   public:
     explicit
-    ExtAtomRewriter(const ComfortAtom& ea);
+    ExtAtomRewriter(const boost::shared_ptr<dlvhex::ExternalAtom> ea);
 
     virtual
     ~ExtAtomRewriter();
@@ -122,7 +122,7 @@ namespace dl {
     std::auto_ptr<ExtAtomRewriter>
     push(const std::auto_ptr<ExtAtomRewriter>& b) const;
 
-    virtual ID
+    virtual ComfortLiteral*
     getLiteral() const;
   };
 
@@ -214,22 +214,22 @@ namespace dl {
     DLAtomRewriter(const Ontology::shared_pointer& onto,
 		   DLAtomInput& dlinput,
 		   const ComfortInterpretation& o,
-		   const std::vector<ID>* cq,
+		   const ComfortInterpretation* cq,
 		   const ComfortTuple* out);
 
     /// ucq-atom ctor
     DLAtomRewriter(const Ontology::shared_pointer& onto,
 		   DLAtomInput& dlinput,
 		   const ComfortInterpretation& o,
-		   const std::vector<std::vector<ID> >* ucq,
+		   const std::vector<ComfortInterpretation>* ucq,
 		   const ComfortTuple* out);
 
     ~DLAtomRewriter();
 
-    virtual ID
+    virtual ComfortLiteral*
     getLiteral() const;
 
-    const Tuple&
+    const ComfortTuple&
     getInputTuple() const;
 
     std::string
