@@ -11,11 +11,12 @@ do
 	#maxint=1000.
 
 	wine(X) :- &dlC[\"wine.rdf\", pcwine, mcwine, prwine, mrwine, \"$category\"](X).
-	cnt(\"$category\", C) :- C = #count{ X : wine(X) }.
+	dry(X) :- &dlC[\"wine.rdf\", pcwine, mcwine, prwine, mrwine, \"DryWine\"](X), wine(X).
+	cnt(\"$category\", CW, CD) :- CW = #count{ W : wine(W) }, CD = #count{ D : dry(D) }.
 
 " > $wd/prog.hex
 
-	dlvhex2 --silent $wd/prog.hex
+	dlvhex2 --silent --plugindir=../src/.libs/ $wd/prog.hex
 done
 
 # cleanup

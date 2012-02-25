@@ -45,7 +45,7 @@ do
 	notdry(X) :- wine(X), not dry(X).
 
 	% Single out the dry wines under default assumption:
-	mcdry(\"Dry\", X) :- notdry(X).
+	mcdry(\"DryWine\", X) :- notdry(X).
 	dry(X) :- wine(X), &dlC[\"wine.rdf\", pcdry, mcdry, prdry, mrdry, \"DryWine\"](X)<fullylinear>.
 " > $wd/prog.hex
 
