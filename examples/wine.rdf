@@ -18,11 +18,7 @@
 
   <owl:Ontology rdf:about="">
     <rdfs:comment>An example OWL ontology</rdfs:comment>
-    <owl:priorVersion>
-      <owl:Ontology rdf:about="http://www.w3.org/TR/2003/CR-owl-guide-20030818/wine"/>
-    </owl:priorVersion>
     <!-- owl:imports rdf:resource="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food"/ -->
-    <owl:imports rdf:resource="food.rdf"/>
     <rdfs:comment>Derived from the DAML Wine ontology at 
       http://ontolingua.stanford.edu/doc/chimaera/ontologies/wines.daml
       Substantially changed, in particular the Region based relations.

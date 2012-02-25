@@ -15,7 +15,7 @@ do
 
 " > $wd/prog.hex
 
-	dlvhex2 --silent --plugindir=../src/.libs/ $wd/prog.hex
+	dlvhex2 --silent $wd/prog.hex
 done
 
 # cleanup
