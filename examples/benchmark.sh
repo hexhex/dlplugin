@@ -74,7 +74,7 @@ do
 	for c in "${confs[@]}"
 	do
 		if [ ${timeout[$i]} -eq 0 ]; then
-			/usr/bin/time -o time.txt -f %e dlvhex $c $1 2>/dev/null >/dev/null
+			/usr/bin/time -o time.txt -f %e dlvhex2 $c $1 2>/dev/null >/dev/null
 			output=`cat time.txt`
 			timeout[$i]=`echo "$output > $4" | bc`
 			if [ ${timeout[$i]} -eq 1 ]; then
