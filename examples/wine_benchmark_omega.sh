@@ -40,9 +40,10 @@ for category in ${categories[@]}
 do
 
 	echo "
+	wine(X) :- &dlC[\"wine.rdf\", empty, empty, empty, empty, \"$category\"](X).
 
 	mcdry(\"DryWine\", X) :- in_not_dry(X).
-	in_not_dry(X) :- &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"$category\"](X), not &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"DryWine\"](X).
+	in_not_dry(X) :- wine(X), &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"$category\"](X)<fullylinear>, not &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"DryWine\"](X)<fullylinear>.
 
 " > $wd/prog.hex
 

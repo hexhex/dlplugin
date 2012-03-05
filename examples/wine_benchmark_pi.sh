@@ -43,20 +43,20 @@ do
 	wine(X) :- &dlC[\"wine.rdf\", empty, empty, empty, empty, \"$category\"](X).
 
 	% 1. guess the extension
-	in_dry(X) :- wine(X), not out_dry(X).
-	out_dry(X) :- wine(X), not in_dry(X).
+	in_not_dry(X) :- wine(X), not out_not_dry(X).
+	out_not_dry(X) :- wine(X), not in_not_dry(X).
 
 	% 2. check compliance of the guess with the ontology
-	mcdry(\"DryWine\", X) :- in_dry(X).
-	:- &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"DryWine\"](X)<fullylinear>, out_dry(X).
+	mcdry(\"DryWine\", X) :- in_not_dry(X).
+	:- &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"-DryWine\"](X)<fullylinear>, out_not_dry(X).
 
 	% 3. apply the default
-	mcdry2(\"DryWine\", X) :- p_dry(X).
-	p_dry(X) :- wine(X), not &dlC[\"wine.rdf\", empty, mcdry2, empty, empty, \"DryWine\"](X)<fullylinear>.
+	mcdry2(\"DryWine\", X) :- p_not_dry(X).
+	p_not_dry(X) :- wine(X), &dlC[\"wine.rdf\", empty, mcdry2, empty, empty, \"$category\"](X), not &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"DryWine\"](X)<fullylinear>.
 
 	% 4. check compliance of the extension
-	:- not &dlC[\"wine.rdf\", empty, empty, empty, empty, \"DryWine\"](X)<fullylinear>, in_dry(X).
-	:- &dlC[\"wine.rdf\", empty, empty, empty, empty, \"DryWine\"](X)<fullylinear>, out_dry(X).
+	:- not &dlC[\"wine.rdf\", empty, mcdry2, empty, empty, \"-DryWine\"](X)<fullylinear>, in_not_dry(X).
+	:- &dlC[\"wine.rdf\", empty, mcdry2, empty, empty, \"-DryWine\"](X)<fullylinear>, out_not_dry(X).
 
 " > $wd/prog.hex
 
