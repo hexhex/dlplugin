@@ -40,13 +40,15 @@ for category in ${categories[@]}
 do
 
 	echo "
-	% By default, a wine is not dry:
-	wine(X) :- &dlC[\"wine.rdf\", pcwine, mcwine, prwine, mrwine, \"$category\"](X).
-	notdry(X) :- wine(X), not dry(X).
 
-	% Single out the dry wines under default assumption:
-	mcdry(\"DryWine\", X) :- notdry(X).
-	dry(X) :- wine(X), &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"DryWine\"](X)<fullylinear>.
+	cons_not_dry(X) :- &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"$category\"](X), not out_cons_not_dry(X).
+	out_cons_not_dry(X) :- &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"$category\"](X), not cons_not_dry(X).
+
+	mcdry(\"DryWine\", X) :- in_not_dry(X).
+	in_not_dry(X) :- &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"$category\"](X), cons_not_dry(X).
+	
+	:- &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"DryWine\"](X), cons_not_dry(X).
+	:- not &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"DryWine\"](X), out_cons_not_dry(X).
 " > $wd/prog.hex
 
 	line="$category"

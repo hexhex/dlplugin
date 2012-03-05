@@ -40,13 +40,24 @@ for category in ${categories[@]}
 do
 
 	echo "
-	% By default, a wine is not dry:
-	wine(X) :- &dlC[\"wine.rdf\", pcwine, mcwine, prwine, mrwine, \"$category\"](X).
-	notdry(X) :- wine(X), not dry(X).
+	wine(X) :- &dlC[\"wine.rdf\", empty, empty, empty, empty, \"$category\"](X).
 
-	% Single out the dry wines under default assumption:
-	mcdry(\"DryWine\", X) :- notdry(X).
-	dry(X) :- wine(X), &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"DryWine\"](X)<fullylinear>.
+	% 1. guess the extension
+	in_dry(X) :- wine(X), not out_dry(X).
+	out_dry(X) :- wine(X), not in_dry(X).
+
+	% 2. check compliance of the guess with the ontology
+	mcdry(\"DryWine\", X) :- in_dry(X).
+	:- &dlC[\"wine.rdf\", empty, mcdry, empty, empty, \"DryWine\"](X)<fullylinear>, out_dry(X).
+
+	% 3. apply the default
+	mcdry2(\"DryWine\", X) :- p_dry(X).
+	p_dry(X) :- wine(X), not &dlC[\"wine.rdf\", empty, mcdry2, empty, empty, \"DryWine\"](X)<fullylinear>.
+
+	% 4. check compliance of the extension
+	:- not &dlC[\"wine.rdf\", empty, empty, empty, empty, \"DryWine\"](X)<fullylinear>, in_dry(X).
+	:- &dlC[\"wine.rdf\", empty, empty, empty, empty, \"DryWine\"](X)<fullylinear>, out_dry(X).
+
 " > $wd/prog.hex
 
 	line="$category"
