@@ -1,9 +1,9 @@
-Executable = wine_benchmark.sh
+Executable = /mnt/lion/home/redl/dlvhex/dlvhex-dlplugin/branches/release2x/examples/wine/wine_benchmark.sh
 Universe = vanilla
 output = y.out
 error = y.error
 Log = y.log
-Requirements = machine == "node3.kr.tuwien.ac.at"
+Requirements = machine == "node2.kr.tuwien.ac.at"
 request_memory = 2048
 Initialdir = /mnt/lion/home/redl/dlvhex/dlvhex-dlplugin/branches/release2x/examples/wine/
 

@@ -1,4 +1,4 @@
-Executable = wine_benchmark.sh
+Executable = /mnt/lion/home/redl/dlvhex/dlvhex-dlplugin/branches/release2x/examples/wine/wine_benchmark.sh
 Universe = vanilla
 output = pi.out
 error = pi.error
