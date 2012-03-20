@@ -9,15 +9,15 @@ timeout=$2
 cntruns=$3
 
 # set pathes
-##export PATH=$PATH:/mnt/lion/home/redl/local/bin/:/mnt/lion/home/redl/RacerPro-1-9-0-Linux32-ACL/
-##export LD_LIBRARY_PATH=$PATH:/mnt/lion/home/redl/local/lib/
-export PATH=$PATH:$HOME/RacerPro-1-9-0-Linux32-ACL/
+export PATH=$PATH:/mnt/lion/home/redl/local/bin/:/mnt/lion/home/redl/RacerPro-1-9-0-Linux32-ACL/
+export LD_LIBRARY_PATH=$PATH:/mnt/lion/home/redl/local/lib/
+##export PATH=$PATH:$HOME/RacerPro-1-9-0-Linux32-ACL/
 
 # create working directory
 wd=`mktemp -d $PWD/tmp.XXXXXXXXXX`
 
 # configurations: without and with external learning
-confstr="--solver=genuinegc --plugindir=../../src/.libs/;--solver=genuinegc --extlearn --plugindir=../../src/.libs/"
+confstr="--solver=genuinegc --plugindir=../../../src/.libs/;--solver=genuinegc --extlearn --plugindir=../../../src/.libs/"
 IFS=';' read -ra confs <<< "$confstr"
 header="#instance"
 for (( r = 0; r < $cntruns; r++ ))
@@ -37,7 +37,7 @@ do
 	echo "Instance: $instance"
 
 	# write ontology
-	cp ontologies/$instance $wd/wine.rdf
+	cp $instance $wd/wine.rdf
 
 	# prepare category instances
 	categories=(AlsatianWine AmericanWine Beaujolais Bordeaux Burgundy CabernetFranc CabernetSauvignon CaliforniaWine Chardonnay CheninBlanc DessertWine DryWine EarlyHarvest FrenchWine FullBodiedWine Gamay GermanWine ItalianWine LateHarvest Loire Meritage Merlot PetiteSyrah PinotBlanc PinorNoir RedWine Riesling RoseWine SemillonOrSauvignonBlanc SweetWine TableWine TexasWine WhiteWine Zinfandel)
@@ -64,7 +64,7 @@ do
 				alarm $timeout /usr/bin/time -o time.txt -f %e dlvhex2 $c prog.hex 2>/dev/null >/dev/null
 				cd ..
 
-				output=`cat time.txt`
+				output=`cat $wd/time.txt`
 				if [ "$output" = "" ]; then
 					output="TO"
 				fi

@@ -5,7 +5,7 @@ error = pi.error
 Log = pi.log
 Requirements = machine == "lion.kr.tuwien.ac.at"
 request_memory = 2048
-Initialdir = /mnt/lion/home/redl/dlvhex/dlvhex-dlplugin/branches/release2x/examples/wine/
+Initialdir = /mnt/lion/home/redl/dlvhex/dlvhex-dlplugin/branches/release2x/examples/wine_all/
 
 # queue
 request_cpus = 2
