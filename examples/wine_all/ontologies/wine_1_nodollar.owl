@@ -1640,55 +1640,55 @@
     <owl:inverseOf rdf:resource="#hasMaker"/>
 </owl:ObjectProperty>
 
-<Region rdf:ID="AlsaceRegion">
+<a:Region rdf:ID="AlsaceRegion">
     <rdf:type rdf:resource="#__nom13"/>
-    <locatedIn rdf:resource="#FrenchRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion"/>
+</a:Region>
 
-<Region rdf:ID="AlsaceRegion__0">
+<a:Region rdf:ID="AlsaceRegion__0">
     <rdf:type rdf:resource="#__nom13"/>
-    <locatedIn rdf:resource="#FrenchRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="AlsaceRegion__1">
+<a:Region rdf:ID="AlsaceRegion__1">
     <rdf:type rdf:resource="#__nom13"/>
-    <locatedIn rdf:resource="#FrenchRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion__1"/>
+</a:Region>
 
-<Region rdf:ID="AnjouRegion">
+<a:Region rdf:ID="AnjouRegion">
     <rdf:type rdf:resource="#__nom14"/>
-    <locatedIn rdf:resource="#LoireRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#LoireRegion"/>
+</a:Region>
 
-<Region rdf:ID="AnjouRegion__0">
+<a:Region rdf:ID="AnjouRegion__0">
     <rdf:type rdf:resource="#__nom14"/>
-    <locatedIn rdf:resource="#LoireRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#LoireRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="AnjouRegion__1">
+<a:Region rdf:ID="AnjouRegion__1">
     <rdf:type rdf:resource="#__nom14"/>
-    <locatedIn rdf:resource="#LoireRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#LoireRegion__1"/>
+</a:Region>
 
-<Region rdf:ID="ArroyoGrandeRegion">
-    <locatedIn rdf:resource="#CaliforniaRegion"/>
-</Region>
+<a:Region rdf:ID="ArroyoGrandeRegion">
+    <a:locatedIn rdf:resource="#CaliforniaRegion"/>
+</a:Region>
 
-<Region rdf:ID="ArroyoGrandeRegion__0">
-    <locatedIn rdf:resource="#CaliforniaRegion__0"/>
-</Region>
+<a:Region rdf:ID="ArroyoGrandeRegion__0">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="ArroyoGrandeRegion__1">
-    <locatedIn rdf:resource="#CaliforniaRegion__1"/>
-</Region>
+<a:Region rdf:ID="ArroyoGrandeRegion__1">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__1"/>
+</a:Region>
 
-<Region rdf:ID="AustralianRegion"/>
+<a:Region rdf:ID="AustralianRegion"/>
 
-<Region rdf:ID="AustralianRegion__0"/>
+<a:Region rdf:ID="AustralianRegion__0"/>
 
-<Region rdf:ID="AustralianRegion__1"/>
+<a:Region rdf:ID="AustralianRegion__1"/>
 
-<Winery rdf:ID="Bancroft"/>
+<a:Winery rdf:ID="Bancroft"/>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Bancroft"/>
@@ -1735,7 +1735,7 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<Winery rdf:ID="Bancroft__0"/>
+<a:Winery rdf:ID="Bancroft__0"/>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Bancroft__0"/>
@@ -1782,7 +1782,7 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<Winery rdf:ID="Bancroft__1"/>
+<a:Winery rdf:ID="Bancroft__1"/>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Bancroft__1"/>
@@ -1829,554 +1829,554 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<Chardonnay rdf:ID="BancroftChardonnay">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Bancroft"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#NapaRegion"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="BancroftChardonnay">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Bancroft"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#NapaRegion"/>
+</a:Chardonnay>
 
-<Chardonnay rdf:ID="BancroftChardonnay__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Bancroft__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#NapaRegion__0"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="BancroftChardonnay__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Bancroft__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#NapaRegion__0"/>
+</a:Chardonnay>
 
-<Chardonnay rdf:ID="BancroftChardonnay__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Bancroft__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#NapaRegion__1"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="BancroftChardonnay__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Bancroft__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#NapaRegion__1"/>
+</a:Chardonnay>
 
-<Region rdf:ID="BeaujolaisRegion">
+<a:Region rdf:ID="BeaujolaisRegion">
     <rdf:type rdf:resource="#__nom26"/>
-    <locatedIn rdf:resource="#FrenchRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion"/>
+</a:Region>
 
-<Region rdf:ID="BeaujolaisRegion__0">
+<a:Region rdf:ID="BeaujolaisRegion__0">
     <rdf:type rdf:resource="#__nom26"/>
-    <locatedIn rdf:resource="#FrenchRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="BeaujolaisRegion__1">
+<a:Region rdf:ID="BeaujolaisRegion__1">
     <rdf:type rdf:resource="#__nom26"/>
-    <locatedIn rdf:resource="#FrenchRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion__1"/>
+</a:Region>
 
-<Winery rdf:ID="Beringer"/>
+<a:Winery rdf:ID="Beringer"/>
 
-<Winery rdf:ID="Beringer__0"/>
+<a:Winery rdf:ID="Beringer__0"/>
 
-<Winery rdf:ID="Beringer__1"/>
+<a:Winery rdf:ID="Beringer__1"/>
 
-<Region rdf:ID="BordeauxRegion">
+<a:Region rdf:ID="BordeauxRegion">
     <rdf:type rdf:resource="#__nom23"/>
-    <locatedIn rdf:resource="#FrenchRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion"/>
+</a:Region>
 
-<Region rdf:ID="BordeauxRegion__0">
+<a:Region rdf:ID="BordeauxRegion__0">
     <rdf:type rdf:resource="#__nom23"/>
-    <locatedIn rdf:resource="#FrenchRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="BordeauxRegion__1">
+<a:Region rdf:ID="BordeauxRegion__1">
     <rdf:type rdf:resource="#__nom23"/>
-    <locatedIn rdf:resource="#FrenchRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion__1"/>
+</a:Region>
 
-<Region rdf:ID="BourgogneRegion">
+<a:Region rdf:ID="BourgogneRegion">
     <rdf:type rdf:resource="#__nom44"/>
-    <locatedIn rdf:resource="#FrenchRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion"/>
+</a:Region>
 
-<Region rdf:ID="BourgogneRegion__0">
+<a:Region rdf:ID="BourgogneRegion__0">
     <rdf:type rdf:resource="#__nom44"/>
-    <locatedIn rdf:resource="#FrenchRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="BourgogneRegion__1">
+<a:Region rdf:ID="BourgogneRegion__1">
     <rdf:type rdf:resource="#__nom44"/>
-    <locatedIn rdf:resource="#FrenchRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion__1"/>
+</a:Region>
 
-<WineGrape rdf:ID="CabernetFrancGrape">
+<a:WineGrape rdf:ID="CabernetFrancGrape">
     <rdf:type rdf:resource="#__nom3"/>
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="CabernetFrancGrape__0">
+<a:WineGrape rdf:ID="CabernetFrancGrape__0">
     <rdf:type rdf:resource="#__nom3"/>
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="CabernetFrancGrape__1">
+<a:WineGrape rdf:ID="CabernetFrancGrape__1">
     <rdf:type rdf:resource="#__nom3"/>
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="CabernetSauvignonGrape">
+<a:WineGrape rdf:ID="CabernetSauvignonGrape">
     <rdf:type rdf:resource="#__nom29"/>
     <rdf:type rdf:resource="#__nom62"/>
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="CabernetSauvignonGrape__0">
+<a:WineGrape rdf:ID="CabernetSauvignonGrape__0">
     <rdf:type rdf:resource="#__nom29"/>
     <rdf:type rdf:resource="#__nom62"/>
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="CabernetSauvignonGrape__1">
+<a:WineGrape rdf:ID="CabernetSauvignonGrape__1">
     <rdf:type rdf:resource="#__nom29"/>
     <rdf:type rdf:resource="#__nom62"/>
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<Region rdf:ID="CaliforniaRegion">
+<a:Region rdf:ID="CaliforniaRegion">
     <rdf:type rdf:resource="#__nom15"/>
-    <locatedIn rdf:resource="#USRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#USRegion"/>
+</a:Region>
 
-<Region rdf:ID="CaliforniaRegion__0">
+<a:Region rdf:ID="CaliforniaRegion__0">
     <rdf:type rdf:resource="#__nom15"/>
-    <locatedIn rdf:resource="#USRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#USRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="CaliforniaRegion__1">
+<a:Region rdf:ID="CaliforniaRegion__1">
     <rdf:type rdf:resource="#__nom15"/>
-    <locatedIn rdf:resource="#USRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#USRegion__1"/>
+</a:Region>
 
-<Region rdf:ID="CentralCoastRegion">
-    <locatedIn rdf:resource="#CaliforniaRegion"/>
-</Region>
+<a:Region rdf:ID="CentralCoastRegion">
+    <a:locatedIn rdf:resource="#CaliforniaRegion"/>
+</a:Region>
 
-<Region rdf:ID="CentralCoastRegion__0">
-    <locatedIn rdf:resource="#CaliforniaRegion__0"/>
-</Region>
+<a:Region rdf:ID="CentralCoastRegion__0">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="CentralCoastRegion__1">
-    <locatedIn rdf:resource="#CaliforniaRegion__1"/>
-</Region>
+<a:Region rdf:ID="CentralCoastRegion__1">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__1"/>
+</a:Region>
 
-<Region rdf:ID="CentralTexasRegion">
-    <locatedIn rdf:resource="#TexasRegion"/>
-</Region>
+<a:Region rdf:ID="CentralTexasRegion">
+    <a:locatedIn rdf:resource="#TexasRegion"/>
+</a:Region>
 
-<Region rdf:ID="CentralTexasRegion__0">
-    <locatedIn rdf:resource="#TexasRegion__0"/>
-</Region>
+<a:Region rdf:ID="CentralTexasRegion__0">
+    <a:locatedIn rdf:resource="#TexasRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="CentralTexasRegion__1">
-    <locatedIn rdf:resource="#TexasRegion__1"/>
-</Region>
+<a:Region rdf:ID="CentralTexasRegion__1">
+    <a:locatedIn rdf:resource="#TexasRegion__1"/>
+</a:Region>
 
-<WineGrape rdf:ID="ChardonnayGrape">
+<a:WineGrape rdf:ID="ChardonnayGrape">
     <rdf:type rdf:resource="#__nom24"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="ChardonnayGrape__0">
+<a:WineGrape rdf:ID="ChardonnayGrape__0">
     <rdf:type rdf:resource="#__nom24"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="ChardonnayGrape__1">
+<a:WineGrape rdf:ID="ChardonnayGrape__1">
     <rdf:type rdf:resource="#__nom24"/>
-</WineGrape>
+</a:WineGrape>
 
-<Winery rdf:ID="ChateauChevalBlanc"/>
+<a:Winery rdf:ID="ChateauChevalBlanc"/>
 
-<Winery rdf:ID="ChateauChevalBlanc__0"/>
+<a:Winery rdf:ID="ChateauChevalBlanc__0"/>
 
-<Winery rdf:ID="ChateauChevalBlanc__1"/>
+<a:Winery rdf:ID="ChateauChevalBlanc__1"/>
 
-<StEmilion rdf:ID="ChateauChevalBlancStEmilion">
-    <hasMaker rdf:resource="#ChateauChevalBlanc"/>
-</StEmilion>
+<a:StEmilion rdf:ID="ChateauChevalBlancStEmilion">
+    <a:hasMaker rdf:resource="#ChateauChevalBlanc"/>
+</a:StEmilion>
 
-<StEmilion rdf:ID="ChateauChevalBlancStEmilion__0">
-    <hasMaker rdf:resource="#ChateauChevalBlanc__0"/>
-</StEmilion>
+<a:StEmilion rdf:ID="ChateauChevalBlancStEmilion__0">
+    <a:hasMaker rdf:resource="#ChateauChevalBlanc__0"/>
+</a:StEmilion>
 
-<StEmilion rdf:ID="ChateauChevalBlancStEmilion__1">
-    <hasMaker rdf:resource="#ChateauChevalBlanc__1"/>
-</StEmilion>
+<a:StEmilion rdf:ID="ChateauChevalBlancStEmilion__1">
+    <a:hasMaker rdf:resource="#ChateauChevalBlanc__1"/>
+</a:StEmilion>
 
-<Winery rdf:ID="ChateauDYchem"/>
+<a:Winery rdf:ID="ChateauDYchem"/>
 
-<Winery rdf:ID="ChateauDYchem__0"/>
+<a:Winery rdf:ID="ChateauDYchem__0"/>
 
-<Winery rdf:ID="ChateauDYchem__1"/>
+<a:Winery rdf:ID="ChateauDYchem__1"/>
 
-<Sauternes rdf:ID="ChateauDYchemSauterne">
-    <hasFlavor rdf:resource="#Strong"/>
-    <hasMaker rdf:resource="#ChateauDYchem"/>
-    <madeFromGrape rdf:resource="#SauvignonBlancGrape"/>
-    <madeFromGrape rdf:resource="#SemillonGrape"/>
-</Sauternes>
+<a:Sauternes rdf:ID="ChateauDYchemSauterne">
+    <a:hasFlavor rdf:resource="#Strong"/>
+    <a:hasMaker rdf:resource="#ChateauDYchem"/>
+    <a:madeFromGrape rdf:resource="#SauvignonBlancGrape"/>
+    <a:madeFromGrape rdf:resource="#SemillonGrape"/>
+</a:Sauternes>
 
-<Sauternes rdf:ID="ChateauDYchemSauterne__0">
-    <hasFlavor rdf:resource="#Strong__0"/>
-    <hasMaker rdf:resource="#ChateauDYchem__0"/>
-    <madeFromGrape rdf:resource="#SauvignonBlancGrape__0"/>
-    <madeFromGrape rdf:resource="#SemillonGrape__0"/>
-</Sauternes>
+<a:Sauternes rdf:ID="ChateauDYchemSauterne__0">
+    <a:hasFlavor rdf:resource="#Strong__0"/>
+    <a:hasMaker rdf:resource="#ChateauDYchem__0"/>
+    <a:madeFromGrape rdf:resource="#SauvignonBlancGrape__0"/>
+    <a:madeFromGrape rdf:resource="#SemillonGrape__0"/>
+</a:Sauternes>
 
-<Sauternes rdf:ID="ChateauDYchemSauterne__1">
-    <hasFlavor rdf:resource="#Strong__1"/>
-    <hasMaker rdf:resource="#ChateauDYchem__1"/>
-    <madeFromGrape rdf:resource="#SauvignonBlancGrape__1"/>
-    <madeFromGrape rdf:resource="#SemillonGrape__1"/>
-</Sauternes>
+<a:Sauternes rdf:ID="ChateauDYchemSauterne__1">
+    <a:hasFlavor rdf:resource="#Strong__1"/>
+    <a:hasMaker rdf:resource="#ChateauDYchem__1"/>
+    <a:madeFromGrape rdf:resource="#SauvignonBlancGrape__1"/>
+    <a:madeFromGrape rdf:resource="#SemillonGrape__1"/>
+</a:Sauternes>
 
-<Winery rdf:ID="ChateauDeMeursault"/>
+<a:Winery rdf:ID="ChateauDeMeursault"/>
 
-<Winery rdf:ID="ChateauDeMeursault__0"/>
+<a:Winery rdf:ID="ChateauDeMeursault__0"/>
 
-<Winery rdf:ID="ChateauDeMeursault__1"/>
+<a:Winery rdf:ID="ChateauDeMeursault__1"/>
 
-<Meursault rdf:ID="ChateauDeMeursaultMeursault">
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#ChateauDeMeursault"/>
-</Meursault>
+<a:Meursault rdf:ID="ChateauDeMeursaultMeursault">
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#ChateauDeMeursault"/>
+</a:Meursault>
 
-<Meursault rdf:ID="ChateauDeMeursaultMeursault__0">
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#ChateauDeMeursault__0"/>
-</Meursault>
+<a:Meursault rdf:ID="ChateauDeMeursaultMeursault__0">
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#ChateauDeMeursault__0"/>
+</a:Meursault>
 
-<Meursault rdf:ID="ChateauDeMeursaultMeursault__1">
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#ChateauDeMeursault__1"/>
-</Meursault>
+<a:Meursault rdf:ID="ChateauDeMeursaultMeursault__1">
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#ChateauDeMeursault__1"/>
+</a:Meursault>
 
-<Winery rdf:ID="ChateauLafiteRothschild"/>
+<a:Winery rdf:ID="ChateauLafiteRothschild"/>
 
-<Winery rdf:ID="ChateauLafiteRothschild__0"/>
+<a:Winery rdf:ID="ChateauLafiteRothschild__0"/>
 
-<Winery rdf:ID="ChateauLafiteRothschild__1"/>
+<a:Winery rdf:ID="ChateauLafiteRothschild__1"/>
 
-<Pauillac rdf:ID="ChateauLafiteRothschildPauillac">
-    <hasMaker rdf:resource="#ChateauLafiteRothschild"/>
-</Pauillac>
+<a:Pauillac rdf:ID="ChateauLafiteRothschildPauillac">
+    <a:hasMaker rdf:resource="#ChateauLafiteRothschild"/>
+</a:Pauillac>
 
-<Pauillac rdf:ID="ChateauLafiteRothschildPauillac__0">
-    <hasMaker rdf:resource="#ChateauLafiteRothschild__0"/>
-</Pauillac>
+<a:Pauillac rdf:ID="ChateauLafiteRothschildPauillac__0">
+    <a:hasMaker rdf:resource="#ChateauLafiteRothschild__0"/>
+</a:Pauillac>
 
-<Pauillac rdf:ID="ChateauLafiteRothschildPauillac__1">
-    <hasMaker rdf:resource="#ChateauLafiteRothschild__1"/>
-</Pauillac>
+<a:Pauillac rdf:ID="ChateauLafiteRothschildPauillac__1">
+    <a:hasMaker rdf:resource="#ChateauLafiteRothschild__1"/>
+</a:Pauillac>
 
-<Margaux rdf:ID="ChateauMargaux">
-    <hasMaker rdf:resource="#ChateauMargauxWinery"/>
-</Margaux>
+<a:Margaux rdf:ID="ChateauMargaux">
+    <a:hasMaker rdf:resource="#ChateauMargauxWinery"/>
+</a:Margaux>
 
-<Margaux rdf:ID="ChateauMargaux__0">
-    <hasMaker rdf:resource="#ChateauMargauxWinery__0"/>
-</Margaux>
+<a:Margaux rdf:ID="ChateauMargaux__0">
+    <a:hasMaker rdf:resource="#ChateauMargauxWinery__0"/>
+</a:Margaux>
 
-<Margaux rdf:ID="ChateauMargaux__1">
-    <hasMaker rdf:resource="#ChateauMargauxWinery__1"/>
-</Margaux>
+<a:Margaux rdf:ID="ChateauMargaux__1">
+    <a:hasMaker rdf:resource="#ChateauMargauxWinery__1"/>
+</a:Margaux>
 
-<Winery rdf:ID="ChateauMargauxWinery"/>
+<a:Winery rdf:ID="ChateauMargauxWinery"/>
 
-<Winery rdf:ID="ChateauMargauxWinery__0"/>
+<a:Winery rdf:ID="ChateauMargauxWinery__0"/>
 
-<Winery rdf:ID="ChateauMargauxWinery__1"/>
+<a:Winery rdf:ID="ChateauMargauxWinery__1"/>
 
-<Winery rdf:ID="ChateauMorgon"/>
+<a:Winery rdf:ID="ChateauMorgon"/>
 
-<Winery rdf:ID="ChateauMorgon__0"/>
+<a:Winery rdf:ID="ChateauMorgon__0"/>
 
-<Winery rdf:ID="ChateauMorgon__1"/>
+<a:Winery rdf:ID="ChateauMorgon__1"/>
 
-<Beaujolais rdf:ID="ChateauMorgonBeaujolais">
-    <hasMaker rdf:resource="#ChateauMorgon"/>
-</Beaujolais>
+<a:Beaujolais rdf:ID="ChateauMorgonBeaujolais">
+    <a:hasMaker rdf:resource="#ChateauMorgon"/>
+</a:Beaujolais>
 
-<Beaujolais rdf:ID="ChateauMorgonBeaujolais__0">
-    <hasMaker rdf:resource="#ChateauMorgon__0"/>
-</Beaujolais>
+<a:Beaujolais rdf:ID="ChateauMorgonBeaujolais__0">
+    <a:hasMaker rdf:resource="#ChateauMorgon__0"/>
+</a:Beaujolais>
 
-<Beaujolais rdf:ID="ChateauMorgonBeaujolais__1">
-    <hasMaker rdf:resource="#ChateauMorgon__1"/>
-</Beaujolais>
+<a:Beaujolais rdf:ID="ChateauMorgonBeaujolais__1">
+    <a:hasMaker rdf:resource="#ChateauMorgon__1"/>
+</a:Beaujolais>
 
-<WineGrape rdf:ID="CheninBlancGrape">
+<a:WineGrape rdf:ID="CheninBlancGrape">
     <rdf:type rdf:resource="#__nom34"/>
     <rdf:type rdf:resource="#__nom63"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="CheninBlancGrape__0">
+<a:WineGrape rdf:ID="CheninBlancGrape__0">
     <rdf:type rdf:resource="#__nom34"/>
     <rdf:type rdf:resource="#__nom63"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="CheninBlancGrape__1">
+<a:WineGrape rdf:ID="CheninBlancGrape__1">
     <rdf:type rdf:resource="#__nom34"/>
     <rdf:type rdf:resource="#__nom63"/>
-</WineGrape>
+</a:WineGrape>
 
-<Chianti rdf:ID="ChiantiClassico">
-    <hasBody rdf:resource="#Medium"/>
-    <hasMaker rdf:resource="#McGuinnesso"/>
-</Chianti>
+<a:Chianti rdf:ID="ChiantiClassico">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasMaker rdf:resource="#McGuinnesso"/>
+</a:Chianti>
 
-<Chianti rdf:ID="ChiantiClassico__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasMaker rdf:resource="#McGuinnesso__0"/>
-</Chianti>
+<a:Chianti rdf:ID="ChiantiClassico__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasMaker rdf:resource="#McGuinnesso__0"/>
+</a:Chianti>
 
-<Chianti rdf:ID="ChiantiClassico__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasMaker rdf:resource="#McGuinnesso__1"/>
-</Chianti>
+<a:Chianti rdf:ID="ChiantiClassico__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasMaker rdf:resource="#McGuinnesso__1"/>
+</a:Chianti>
 
-<Region rdf:ID="ChiantiRegion">
+<a:Region rdf:ID="ChiantiRegion">
     <rdf:type rdf:resource="#__nom61"/>
-    <locatedIn rdf:resource="#ItalianRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#ItalianRegion"/>
+</a:Region>
 
-<Region rdf:ID="ChiantiRegion__0">
+<a:Region rdf:ID="ChiantiRegion__0">
     <rdf:type rdf:resource="#__nom61"/>
-    <locatedIn rdf:resource="#ItalianRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#ItalianRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="ChiantiRegion__1">
+<a:Region rdf:ID="ChiantiRegion__1">
     <rdf:type rdf:resource="#__nom61"/>
-    <locatedIn rdf:resource="#ItalianRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#ItalianRegion__1"/>
+</a:Region>
 
-<Winery rdf:ID="ClosDeLaPoussie"/>
+<a:Winery rdf:ID="ClosDeLaPoussie"/>
 
-<Winery rdf:ID="ClosDeLaPoussie__0"/>
+<a:Winery rdf:ID="ClosDeLaPoussie__0"/>
 
-<Winery rdf:ID="ClosDeLaPoussie__1"/>
+<a:Winery rdf:ID="ClosDeLaPoussie__1"/>
 
-<Sancerre rdf:ID="ClosDeLaPoussieSancerre">
-    <hasMaker rdf:resource="#ClosDeLaPoussie"/>
-</Sancerre>
+<a:Sancerre rdf:ID="ClosDeLaPoussieSancerre">
+    <a:hasMaker rdf:resource="#ClosDeLaPoussie"/>
+</a:Sancerre>
 
-<Sancerre rdf:ID="ClosDeLaPoussieSancerre__0">
-    <hasMaker rdf:resource="#ClosDeLaPoussie__0"/>
-</Sancerre>
+<a:Sancerre rdf:ID="ClosDeLaPoussieSancerre__0">
+    <a:hasMaker rdf:resource="#ClosDeLaPoussie__0"/>
+</a:Sancerre>
 
-<Sancerre rdf:ID="ClosDeLaPoussieSancerre__1">
-    <hasMaker rdf:resource="#ClosDeLaPoussie__1"/>
-</Sancerre>
+<a:Sancerre rdf:ID="ClosDeLaPoussieSancerre__1">
+    <a:hasMaker rdf:resource="#ClosDeLaPoussie__1"/>
+</a:Sancerre>
 
-<Winery rdf:ID="ClosDeVougeot"/>
+<a:Winery rdf:ID="ClosDeVougeot"/>
 
-<Winery rdf:ID="ClosDeVougeot__0"/>
+<a:Winery rdf:ID="ClosDeVougeot__0"/>
 
-<Winery rdf:ID="ClosDeVougeot__1"/>
+<a:Winery rdf:ID="ClosDeVougeot__1"/>
 
-<CotesDOr rdf:ID="ClosDeVougeotCotesDOr">
-    <hasMaker rdf:resource="#ClosDeVougeot"/>
-</CotesDOr>
+<a:CotesDOr rdf:ID="ClosDeVougeotCotesDOr">
+    <a:hasMaker rdf:resource="#ClosDeVougeot"/>
+</a:CotesDOr>
 
-<CotesDOr rdf:ID="ClosDeVougeotCotesDOr__0">
-    <hasMaker rdf:resource="#ClosDeVougeot__0"/>
-</CotesDOr>
+<a:CotesDOr rdf:ID="ClosDeVougeotCotesDOr__0">
+    <a:hasMaker rdf:resource="#ClosDeVougeot__0"/>
+</a:CotesDOr>
 
-<CotesDOr rdf:ID="ClosDeVougeotCotesDOr__1">
-    <hasMaker rdf:resource="#ClosDeVougeot__1"/>
-</CotesDOr>
+<a:CotesDOr rdf:ID="ClosDeVougeotCotesDOr__1">
+    <a:hasMaker rdf:resource="#ClosDeVougeot__1"/>
+</a:CotesDOr>
 
-<Winery rdf:ID="CongressSprings"/>
+<a:Winery rdf:ID="CongressSprings"/>
 
-<Winery rdf:ID="CongressSprings__0"/>
+<a:Winery rdf:ID="CongressSprings__0"/>
 
-<Winery rdf:ID="CongressSprings__1"/>
+<a:Winery rdf:ID="CongressSprings__1"/>
 
-<Semillon rdf:ID="CongressSpringsSemillon">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#CongressSprings"/>
-    <hasSugar rdf:resource="#Dry"/>
-</Semillon>
+<a:Semillon rdf:ID="CongressSpringsSemillon">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#CongressSprings"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+</a:Semillon>
 
-<Semillon rdf:ID="CongressSpringsSemillon__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#CongressSprings__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-</Semillon>
+<a:Semillon rdf:ID="CongressSpringsSemillon__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#CongressSprings__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+</a:Semillon>
 
-<Semillon rdf:ID="CongressSpringsSemillon__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#CongressSprings__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-</Semillon>
+<a:Semillon rdf:ID="CongressSpringsSemillon__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#CongressSprings__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+</a:Semillon>
 
-<Winery rdf:ID="Corbans"/>
+<a:Winery rdf:ID="Corbans"/>
 
-<Winery rdf:ID="Corbans__0"/>
+<a:Winery rdf:ID="Corbans__0"/>
 
-<Winery rdf:ID="Corbans__1"/>
+<a:Winery rdf:ID="Corbans__1"/>
 
-<Riesling rdf:ID="CorbansDryWhiteRiesling">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Corbans"/>
-    <hasSugar rdf:resource="#OffDry"/>
-    <locatedIn rdf:resource="#NewZealandRegion"/>
-</Riesling>
+<a:Riesling rdf:ID="CorbansDryWhiteRiesling">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Corbans"/>
+    <a:hasSugar rdf:resource="#OffDry"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion"/>
+</a:Riesling>
 
-<Riesling rdf:ID="CorbansDryWhiteRiesling__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Corbans__0"/>
-    <hasSugar rdf:resource="#OffDry__0"/>
-    <locatedIn rdf:resource="#NewZealandRegion__0"/>
-</Riesling>
+<a:Riesling rdf:ID="CorbansDryWhiteRiesling__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Corbans__0"/>
+    <a:hasSugar rdf:resource="#OffDry__0"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__0"/>
+</a:Riesling>
 
-<Riesling rdf:ID="CorbansDryWhiteRiesling__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Corbans__1"/>
-    <hasSugar rdf:resource="#OffDry__1"/>
-    <locatedIn rdf:resource="#NewZealandRegion__1"/>
-</Riesling>
+<a:Riesling rdf:ID="CorbansDryWhiteRiesling__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Corbans__1"/>
+    <a:hasSugar rdf:resource="#OffDry__1"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__1"/>
+</a:Riesling>
 
-<SauvignonBlanc rdf:ID="CorbansPrivateBinSauvignonBlanc">
-    <hasBody rdf:resource="#Full"/>
-    <hasFlavor rdf:resource="#Strong"/>
-    <hasMaker rdf:resource="#Corbans"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#NewZealandRegion"/>
-</SauvignonBlanc>
+<a:SauvignonBlanc rdf:ID="CorbansPrivateBinSauvignonBlanc">
+    <a:hasBody rdf:resource="#Full"/>
+    <a:hasFlavor rdf:resource="#Strong"/>
+    <a:hasMaker rdf:resource="#Corbans"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion"/>
+</a:SauvignonBlanc>
 
-<SauvignonBlanc rdf:ID="CorbansPrivateBinSauvignonBlanc__0">
-    <hasBody rdf:resource="#Full__0"/>
-    <hasFlavor rdf:resource="#Strong__0"/>
-    <hasMaker rdf:resource="#Corbans__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#NewZealandRegion__0"/>
-</SauvignonBlanc>
+<a:SauvignonBlanc rdf:ID="CorbansPrivateBinSauvignonBlanc__0">
+    <a:hasBody rdf:resource="#Full__0"/>
+    <a:hasFlavor rdf:resource="#Strong__0"/>
+    <a:hasMaker rdf:resource="#Corbans__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__0"/>
+</a:SauvignonBlanc>
 
-<SauvignonBlanc rdf:ID="CorbansPrivateBinSauvignonBlanc__1">
-    <hasBody rdf:resource="#Full__1"/>
-    <hasFlavor rdf:resource="#Strong__1"/>
-    <hasMaker rdf:resource="#Corbans__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#NewZealandRegion__1"/>
-</SauvignonBlanc>
+<a:SauvignonBlanc rdf:ID="CorbansPrivateBinSauvignonBlanc__1">
+    <a:hasBody rdf:resource="#Full__1"/>
+    <a:hasFlavor rdf:resource="#Strong__1"/>
+    <a:hasMaker rdf:resource="#Corbans__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__1"/>
+</a:SauvignonBlanc>
 
-<SauvignonBlanc rdf:ID="CorbansSauvignonBlanc">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Strong"/>
-    <hasMaker rdf:resource="#Corbans"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#NewZealandRegion"/>
-</SauvignonBlanc>
+<a:SauvignonBlanc rdf:ID="CorbansSauvignonBlanc">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Strong"/>
+    <a:hasMaker rdf:resource="#Corbans"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion"/>
+</a:SauvignonBlanc>
 
-<SauvignonBlanc rdf:ID="CorbansSauvignonBlanc__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Strong__0"/>
-    <hasMaker rdf:resource="#Corbans__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#NewZealandRegion__0"/>
-</SauvignonBlanc>
+<a:SauvignonBlanc rdf:ID="CorbansSauvignonBlanc__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Strong__0"/>
+    <a:hasMaker rdf:resource="#Corbans__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__0"/>
+</a:SauvignonBlanc>
 
-<SauvignonBlanc rdf:ID="CorbansSauvignonBlanc__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Strong__1"/>
-    <hasMaker rdf:resource="#Corbans__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#NewZealandRegion__1"/>
-</SauvignonBlanc>
+<a:SauvignonBlanc rdf:ID="CorbansSauvignonBlanc__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Strong__1"/>
+    <a:hasMaker rdf:resource="#Corbans__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__1"/>
+</a:SauvignonBlanc>
 
-<Winery rdf:ID="CortonMontrachet"/>
+<a:Winery rdf:ID="CortonMontrachet"/>
 
-<Winery rdf:ID="CortonMontrachet__0"/>
+<a:Winery rdf:ID="CortonMontrachet__0"/>
 
-<Winery rdf:ID="CortonMontrachet__1"/>
+<a:Winery rdf:ID="CortonMontrachet__1"/>
 
-<WhiteBurgundy rdf:ID="CortonMontrachetWhiteBurgundy">
-    <hasBody rdf:resource="#Full"/>
-    <hasFlavor rdf:resource="#Strong"/>
-    <hasMaker rdf:resource="#CortonMontrachet"/>
-    <hasSugar rdf:resource="#Dry"/>
-</WhiteBurgundy>
+<a:WhiteBurgundy rdf:ID="CortonMontrachetWhiteBurgundy">
+    <a:hasBody rdf:resource="#Full"/>
+    <a:hasFlavor rdf:resource="#Strong"/>
+    <a:hasMaker rdf:resource="#CortonMontrachet"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+</a:WhiteBurgundy>
 
-<WhiteBurgundy rdf:ID="CortonMontrachetWhiteBurgundy__0">
-    <hasBody rdf:resource="#Full__0"/>
-    <hasFlavor rdf:resource="#Strong__0"/>
-    <hasMaker rdf:resource="#CortonMontrachet__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-</WhiteBurgundy>
+<a:WhiteBurgundy rdf:ID="CortonMontrachetWhiteBurgundy__0">
+    <a:hasBody rdf:resource="#Full__0"/>
+    <a:hasFlavor rdf:resource="#Strong__0"/>
+    <a:hasMaker rdf:resource="#CortonMontrachet__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+</a:WhiteBurgundy>
 
-<WhiteBurgundy rdf:ID="CortonMontrachetWhiteBurgundy__1">
-    <hasBody rdf:resource="#Full__1"/>
-    <hasFlavor rdf:resource="#Strong__1"/>
-    <hasMaker rdf:resource="#CortonMontrachet__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-</WhiteBurgundy>
+<a:WhiteBurgundy rdf:ID="CortonMontrachetWhiteBurgundy__1">
+    <a:hasBody rdf:resource="#Full__1"/>
+    <a:hasFlavor rdf:resource="#Strong__1"/>
+    <a:hasMaker rdf:resource="#CortonMontrachet__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+</a:WhiteBurgundy>
 
-<Region rdf:ID="CotesDOrRegion">
+<a:Region rdf:ID="CotesDOrRegion">
     <rdf:type rdf:resource="#__nom42"/>
-    <locatedIn rdf:resource="#BourgogneRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#BourgogneRegion"/>
+</a:Region>
 
-<Region rdf:ID="CotesDOrRegion__0">
+<a:Region rdf:ID="CotesDOrRegion__0">
     <rdf:type rdf:resource="#__nom42"/>
-    <locatedIn rdf:resource="#BourgogneRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#BourgogneRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="CotesDOrRegion__1">
+<a:Region rdf:ID="CotesDOrRegion__1">
     <rdf:type rdf:resource="#__nom42"/>
-    <locatedIn rdf:resource="#BourgogneRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#BourgogneRegion__1"/>
+</a:Region>
 
-<Winery rdf:ID="Cotturi"/>
+<a:Winery rdf:ID="Cotturi"/>
 
-<Winery rdf:ID="Cotturi__0"/>
+<a:Winery rdf:ID="Cotturi__0"/>
 
-<Winery rdf:ID="Cotturi__1"/>
+<a:Winery rdf:ID="Cotturi__1"/>
 
-<Zinfandel rdf:ID="CotturiZinfandel">
-    <hasBody rdf:resource="#Full"/>
-    <hasFlavor rdf:resource="#Strong"/>
-    <hasMaker rdf:resource="#Cotturi"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#SonomaRegion"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="CotturiZinfandel">
+    <a:hasBody rdf:resource="#Full"/>
+    <a:hasFlavor rdf:resource="#Strong"/>
+    <a:hasMaker rdf:resource="#Cotturi"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#SonomaRegion"/>
+</a:Zinfandel>
 
-<Zinfandel rdf:ID="CotturiZinfandel__0">
-    <hasBody rdf:resource="#Full__0"/>
-    <hasFlavor rdf:resource="#Strong__0"/>
-    <hasMaker rdf:resource="#Cotturi__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#SonomaRegion__0"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="CotturiZinfandel__0">
+    <a:hasBody rdf:resource="#Full__0"/>
+    <a:hasFlavor rdf:resource="#Strong__0"/>
+    <a:hasMaker rdf:resource="#Cotturi__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__0"/>
+</a:Zinfandel>
 
-<Zinfandel rdf:ID="CotturiZinfandel__1">
-    <hasBody rdf:resource="#Full__1"/>
-    <hasFlavor rdf:resource="#Strong__1"/>
-    <hasMaker rdf:resource="#Cotturi__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#SonomaRegion__1"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="CotturiZinfandel__1">
+    <a:hasBody rdf:resource="#Full__1"/>
+    <a:hasFlavor rdf:resource="#Strong__1"/>
+    <a:hasMaker rdf:resource="#Cotturi__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__1"/>
+</a:Zinfandel>
 
-<Winery rdf:ID="DAnjou"/>
+<a:Winery rdf:ID="DAnjou"/>
 
-<Winery rdf:ID="DAnjou__0"/>
+<a:Winery rdf:ID="DAnjou__0"/>
 
-<Winery rdf:ID="DAnjou__1"/>
+<a:Winery rdf:ID="DAnjou__1"/>
 
-<WineFlavor rdf:ID="Delicate">
+<a:WineFlavor rdf:ID="Delicate">
     <rdf:type rdf:resource="#__nom35"/>
     <rdf:type rdf:resource="#__nom55"/>
     <rdf:type rdf:resource="#__nom64"/>
-</WineFlavor>
+</a:WineFlavor>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Delicate"/>
@@ -2385,11 +2385,11 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<WineFlavor rdf:ID="Delicate__0">
+<a:WineFlavor rdf:ID="Delicate__0">
     <rdf:type rdf:resource="#__nom35"/>
     <rdf:type rdf:resource="#__nom55"/>
     <rdf:type rdf:resource="#__nom64"/>
-</WineFlavor>
+</a:WineFlavor>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Delicate__0"/>
@@ -2398,11 +2398,11 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<WineFlavor rdf:ID="Delicate__1">
+<a:WineFlavor rdf:ID="Delicate__1">
     <rdf:type rdf:resource="#__nom35"/>
     <rdf:type rdf:resource="#__nom55"/>
     <rdf:type rdf:resource="#__nom64"/>
-</WineFlavor>
+</a:WineFlavor>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Delicate__1"/>
@@ -2411,13 +2411,13 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<WineSugar rdf:ID="Dry">
+<a:WineSugar rdf:ID="Dry">
     <rdf:type rdf:resource="#__nom12"/>
     <rdf:type rdf:resource="#__nom18"/>
     <rdf:type rdf:resource="#__nom7"/>
     <owl:differentFrom rdf:resource="#OffDry"/>
     <owl:differentFrom rdf:resource="#Sweet"/>
-</WineSugar>
+</a:WineSugar>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Sweet"/>
@@ -2426,13 +2426,13 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<WineSugar rdf:ID="Dry__0">
+<a:WineSugar rdf:ID="Dry__0">
     <rdf:type rdf:resource="#__nom12"/>
     <rdf:type rdf:resource="#__nom18"/>
     <rdf:type rdf:resource="#__nom7"/>
     <owl:differentFrom rdf:resource="#OffDry__0"/>
     <owl:differentFrom rdf:resource="#Sweet__0"/>
-</WineSugar>
+</a:WineSugar>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Sweet__0"/>
@@ -2441,13 +2441,13 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<WineSugar rdf:ID="Dry__1">
+<a:WineSugar rdf:ID="Dry__1">
     <rdf:type rdf:resource="#__nom12"/>
     <rdf:type rdf:resource="#__nom18"/>
     <rdf:type rdf:resource="#__nom7"/>
     <owl:differentFrom rdf:resource="#OffDry__1"/>
     <owl:differentFrom rdf:resource="#Sweet__1"/>
-</WineSugar>
+</a:WineSugar>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Sweet__1"/>
@@ -2456,149 +2456,149 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<Region rdf:ID="EdnaValleyRegion">
-    <locatedIn rdf:resource="#CaliforniaRegion"/>
-</Region>
+<a:Region rdf:ID="EdnaValleyRegion">
+    <a:locatedIn rdf:resource="#CaliforniaRegion"/>
+</a:Region>
 
-<Region rdf:ID="EdnaValleyRegion__0">
-    <locatedIn rdf:resource="#CaliforniaRegion__0"/>
-</Region>
+<a:Region rdf:ID="EdnaValleyRegion__0">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="EdnaValleyRegion__1">
-    <locatedIn rdf:resource="#CaliforniaRegion__1"/>
-</Region>
+<a:Region rdf:ID="EdnaValleyRegion__1">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__1"/>
+</a:Region>
 
-<Winery rdf:ID="Elyse"/>
+<a:Winery rdf:ID="Elyse"/>
 
-<Winery rdf:ID="Elyse__0"/>
+<a:Winery rdf:ID="Elyse__0"/>
 
-<Winery rdf:ID="Elyse__1"/>
+<a:Winery rdf:ID="Elyse__1"/>
 
-<Zinfandel rdf:ID="ElyseZinfandel">
-    <hasBody rdf:resource="#Full"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Elyse"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#NapaRegion"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="ElyseZinfandel">
+    <a:hasBody rdf:resource="#Full"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Elyse"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#NapaRegion"/>
+</a:Zinfandel>
 
-<Zinfandel rdf:ID="ElyseZinfandel__0">
-    <hasBody rdf:resource="#Full__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Elyse__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#NapaRegion__0"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="ElyseZinfandel__0">
+    <a:hasBody rdf:resource="#Full__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Elyse__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#NapaRegion__0"/>
+</a:Zinfandel>
 
-<Zinfandel rdf:ID="ElyseZinfandel__1">
-    <hasBody rdf:resource="#Full__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Elyse__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#NapaRegion__1"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="ElyseZinfandel__1">
+    <a:hasBody rdf:resource="#Full__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Elyse__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#NapaRegion__1"/>
+</a:Zinfandel>
 
-<Winery rdf:ID="Forman"/>
+<a:Winery rdf:ID="Forman"/>
 
-<Winery rdf:ID="Forman__0"/>
+<a:Winery rdf:ID="Forman__0"/>
 
-<Winery rdf:ID="Forman__1"/>
+<a:Winery rdf:ID="Forman__1"/>
 
-<CabernetSauvignon rdf:ID="FormanCabernetSauvignon">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Strong"/>
-    <hasMaker rdf:resource="#Forman"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#NapaRegion"/>
-</CabernetSauvignon>
+<a:CabernetSauvignon rdf:ID="FormanCabernetSauvignon">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Strong"/>
+    <a:hasMaker rdf:resource="#Forman"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#NapaRegion"/>
+</a:CabernetSauvignon>
 
-<CabernetSauvignon rdf:ID="FormanCabernetSauvignon__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Strong__0"/>
-    <hasMaker rdf:resource="#Forman__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#NapaRegion__0"/>
-</CabernetSauvignon>
+<a:CabernetSauvignon rdf:ID="FormanCabernetSauvignon__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Strong__0"/>
+    <a:hasMaker rdf:resource="#Forman__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#NapaRegion__0"/>
+</a:CabernetSauvignon>
 
-<CabernetSauvignon rdf:ID="FormanCabernetSauvignon__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Strong__1"/>
-    <hasMaker rdf:resource="#Forman__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#NapaRegion__1"/>
-</CabernetSauvignon>
+<a:CabernetSauvignon rdf:ID="FormanCabernetSauvignon__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Strong__1"/>
+    <a:hasMaker rdf:resource="#Forman__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#NapaRegion__1"/>
+</a:CabernetSauvignon>
 
-<Chardonnay rdf:ID="FormanChardonnay">
-    <hasBody rdf:resource="#Full"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Forman"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#NapaRegion"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="FormanChardonnay">
+    <a:hasBody rdf:resource="#Full"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Forman"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#NapaRegion"/>
+</a:Chardonnay>
 
-<Chardonnay rdf:ID="FormanChardonnay__0">
-    <hasBody rdf:resource="#Full__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Forman__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#NapaRegion__0"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="FormanChardonnay__0">
+    <a:hasBody rdf:resource="#Full__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Forman__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#NapaRegion__0"/>
+</a:Chardonnay>
 
-<Chardonnay rdf:ID="FormanChardonnay__1">
-    <hasBody rdf:resource="#Full__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Forman__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#NapaRegion__1"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="FormanChardonnay__1">
+    <a:hasBody rdf:resource="#Full__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Forman__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#NapaRegion__1"/>
+</a:Chardonnay>
 
-<Winery rdf:ID="Foxen"/>
+<a:Winery rdf:ID="Foxen"/>
 
-<Winery rdf:ID="Foxen__0"/>
+<a:Winery rdf:ID="Foxen__0"/>
 
-<Winery rdf:ID="Foxen__1"/>
+<a:Winery rdf:ID="Foxen__1"/>
 
-<CheninBlanc rdf:ID="FoxenCheninBlanc">
-    <hasBody rdf:resource="#Full"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Foxen"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#SantaBarbaraRegion"/>
-</CheninBlanc>
+<a:CheninBlanc rdf:ID="FoxenCheninBlanc">
+    <a:hasBody rdf:resource="#Full"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Foxen"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#SantaBarbaraRegion"/>
+</a:CheninBlanc>
 
-<CheninBlanc rdf:ID="FoxenCheninBlanc__0">
-    <hasBody rdf:resource="#Full__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Foxen__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#SantaBarbaraRegion__0"/>
-</CheninBlanc>
+<a:CheninBlanc rdf:ID="FoxenCheninBlanc__0">
+    <a:hasBody rdf:resource="#Full__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Foxen__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#SantaBarbaraRegion__0"/>
+</a:CheninBlanc>
 
-<CheninBlanc rdf:ID="FoxenCheninBlanc__1">
-    <hasBody rdf:resource="#Full__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Foxen__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#SantaBarbaraRegion__1"/>
-</CheninBlanc>
+<a:CheninBlanc rdf:ID="FoxenCheninBlanc__1">
+    <a:hasBody rdf:resource="#Full__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Foxen__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#SantaBarbaraRegion__1"/>
+</a:CheninBlanc>
 
-<Region rdf:ID="FrenchRegion">
+<a:Region rdf:ID="FrenchRegion">
     <rdf:type rdf:resource="#__nom41"/>
-</Region>
+</a:Region>
 
-<Region rdf:ID="FrenchRegion__0">
+<a:Region rdf:ID="FrenchRegion__0">
     <rdf:type rdf:resource="#__nom41"/>
-</Region>
+</a:Region>
 
-<Region rdf:ID="FrenchRegion__1">
+<a:Region rdf:ID="FrenchRegion__1">
     <rdf:type rdf:resource="#__nom41"/>
-</Region>
+</a:Region>
 
-<WineBody rdf:ID="Full">
+<a:WineBody rdf:ID="Full">
     <rdf:type rdf:resource="#__nom40"/>
     <rdf:type rdf:resource="#__nom45"/>
     <rdf:type rdf:resource="#__nom51"/>
-</WineBody>
+</a:WineBody>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Light"/>
@@ -2607,11 +2607,11 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<WineBody rdf:ID="Full__0">
+<a:WineBody rdf:ID="Full__0">
     <rdf:type rdf:resource="#__nom40"/>
     <rdf:type rdf:resource="#__nom45"/>
     <rdf:type rdf:resource="#__nom51"/>
-</WineBody>
+</a:WineBody>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Light__0"/>
@@ -2620,11 +2620,11 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<WineBody rdf:ID="Full__1">
+<a:WineBody rdf:ID="Full__1">
     <rdf:type rdf:resource="#__nom40"/>
     <rdf:type rdf:resource="#__nom45"/>
     <rdf:type rdf:resource="#__nom51"/>
-</WineBody>
+</a:WineBody>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Light__1"/>
@@ -2633,823 +2633,823 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<WineGrape rdf:ID="GamayGrape">
+<a:WineGrape rdf:ID="GamayGrape">
     <rdf:type rdf:resource="#__nom33"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="GamayGrape__0">
+<a:WineGrape rdf:ID="GamayGrape__0">
     <rdf:type rdf:resource="#__nom33"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="GamayGrape__1">
+<a:WineGrape rdf:ID="GamayGrape__1">
     <rdf:type rdf:resource="#__nom33"/>
-</WineGrape>
+</a:WineGrape>
 
-<Winery rdf:ID="GaryFarrell"/>
+<a:Winery rdf:ID="GaryFarrell"/>
 
-<Winery rdf:ID="GaryFarrell__0"/>
+<a:Winery rdf:ID="GaryFarrell__0"/>
 
-<Winery rdf:ID="GaryFarrell__1"/>
+<a:Winery rdf:ID="GaryFarrell__1"/>
 
-<Merlot rdf:ID="GaryFarrellMerlot">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#GaryFarrell"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#SonomaRegion"/>
-</Merlot>
+<a:Merlot rdf:ID="GaryFarrellMerlot">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#GaryFarrell"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#SonomaRegion"/>
+</a:Merlot>
 
-<Merlot rdf:ID="GaryFarrellMerlot__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#GaryFarrell__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#SonomaRegion__0"/>
-</Merlot>
+<a:Merlot rdf:ID="GaryFarrellMerlot__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#GaryFarrell__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__0"/>
+</a:Merlot>
 
-<Merlot rdf:ID="GaryFarrellMerlot__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#GaryFarrell__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#SonomaRegion__1"/>
-</Merlot>
+<a:Merlot rdf:ID="GaryFarrellMerlot__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#GaryFarrell__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__1"/>
+</a:Merlot>
 
-<Region rdf:ID="GermanyRegion">
+<a:Region rdf:ID="GermanyRegion">
     <rdf:type rdf:resource="#__nom17"/>
-</Region>
+</a:Region>
 
-<Region rdf:ID="GermanyRegion__0">
+<a:Region rdf:ID="GermanyRegion__0">
     <rdf:type rdf:resource="#__nom17"/>
-</Region>
+</a:Region>
 
-<Region rdf:ID="GermanyRegion__1">
+<a:Region rdf:ID="GermanyRegion__1">
     <rdf:type rdf:resource="#__nom17"/>
-</Region>
+</a:Region>
 
-<Winery rdf:ID="Handley"/>
+<a:Winery rdf:ID="Handley"/>
 
-<Winery rdf:ID="Handley__0"/>
+<a:Winery rdf:ID="Handley__0"/>
 
-<Winery rdf:ID="Handley__1"/>
+<a:Winery rdf:ID="Handley__1"/>
 
-<Region rdf:ID="ItalianRegion">
+<a:Region rdf:ID="ItalianRegion">
     <rdf:type rdf:resource="#__nom47"/>
-</Region>
+</a:Region>
 
-<Region rdf:ID="ItalianRegion__0">
+<a:Region rdf:ID="ItalianRegion__0">
     <rdf:type rdf:resource="#__nom47"/>
-</Region>
+</a:Region>
 
-<Region rdf:ID="ItalianRegion__1">
+<a:Region rdf:ID="ItalianRegion__1">
     <rdf:type rdf:resource="#__nom47"/>
-</Region>
+</a:Region>
 
-<Winery rdf:ID="KalinCellars"/>
+<a:Winery rdf:ID="KalinCellars"/>
 
-<Winery rdf:ID="KalinCellars__0"/>
+<a:Winery rdf:ID="KalinCellars__0"/>
 
-<Winery rdf:ID="KalinCellars__1"/>
+<a:Winery rdf:ID="KalinCellars__1"/>
 
-<Semillon rdf:ID="KalinCellarsSemillon">
-    <hasBody rdf:resource="#Full"/>
-    <hasFlavor rdf:resource="#Strong"/>
-    <hasMaker rdf:resource="#KalinCellars"/>
-    <hasSugar rdf:resource="#Dry"/>
-</Semillon>
+<a:Semillon rdf:ID="KalinCellarsSemillon">
+    <a:hasBody rdf:resource="#Full"/>
+    <a:hasFlavor rdf:resource="#Strong"/>
+    <a:hasMaker rdf:resource="#KalinCellars"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+</a:Semillon>
 
-<Semillon rdf:ID="KalinCellarsSemillon__0">
-    <hasBody rdf:resource="#Full__0"/>
-    <hasFlavor rdf:resource="#Strong__0"/>
-    <hasMaker rdf:resource="#KalinCellars__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-</Semillon>
+<a:Semillon rdf:ID="KalinCellarsSemillon__0">
+    <a:hasBody rdf:resource="#Full__0"/>
+    <a:hasFlavor rdf:resource="#Strong__0"/>
+    <a:hasMaker rdf:resource="#KalinCellars__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+</a:Semillon>
 
-<Semillon rdf:ID="KalinCellarsSemillon__1">
-    <hasBody rdf:resource="#Full__1"/>
-    <hasFlavor rdf:resource="#Strong__1"/>
-    <hasMaker rdf:resource="#KalinCellars__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-</Semillon>
+<a:Semillon rdf:ID="KalinCellarsSemillon__1">
+    <a:hasBody rdf:resource="#Full__1"/>
+    <a:hasFlavor rdf:resource="#Strong__1"/>
+    <a:hasMaker rdf:resource="#KalinCellars__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+</a:Semillon>
 
-<Winery rdf:ID="KathrynKennedy"/>
+<a:Winery rdf:ID="KathrynKennedy"/>
 
-<Winery rdf:ID="KathrynKennedy__0"/>
+<a:Winery rdf:ID="KathrynKennedy__0"/>
 
-<Winery rdf:ID="KathrynKennedy__1"/>
+<a:Winery rdf:ID="KathrynKennedy__1"/>
 
-<Meritage rdf:ID="KathrynKennedyLateral">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Delicate"/>
-    <hasMaker rdf:resource="#KathrynKennedy"/>
-    <hasSugar rdf:resource="#Dry"/>
-</Meritage>
+<a:Meritage rdf:ID="KathrynKennedyLateral">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Delicate"/>
+    <a:hasMaker rdf:resource="#KathrynKennedy"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+</a:Meritage>
 
-<Meritage rdf:ID="KathrynKennedyLateral__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Delicate__0"/>
-    <hasMaker rdf:resource="#KathrynKennedy__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-</Meritage>
+<a:Meritage rdf:ID="KathrynKennedyLateral__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Delicate__0"/>
+    <a:hasMaker rdf:resource="#KathrynKennedy__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+</a:Meritage>
 
-<Meritage rdf:ID="KathrynKennedyLateral__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Delicate__1"/>
-    <hasMaker rdf:resource="#KathrynKennedy__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-</Meritage>
+<a:Meritage rdf:ID="KathrynKennedyLateral__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Delicate__1"/>
+    <a:hasMaker rdf:resource="#KathrynKennedy__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+</a:Meritage>
 
-<Winery rdf:ID="LaneTanner"/>
+<a:Winery rdf:ID="LaneTanner"/>
 
-<Winery rdf:ID="LaneTanner__0"/>
+<a:Winery rdf:ID="LaneTanner__0"/>
 
-<Winery rdf:ID="LaneTanner__1"/>
+<a:Winery rdf:ID="LaneTanner__1"/>
 
-<PinotNoir rdf:ID="LaneTannerPinotNoir">
-    <hasBody rdf:resource="#Light"/>
-    <hasFlavor rdf:resource="#Delicate"/>
-    <hasMaker rdf:resource="#LaneTanner"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#SantaBarbaraRegion"/>
-</PinotNoir>
+<a:PinotNoir rdf:ID="LaneTannerPinotNoir">
+    <a:hasBody rdf:resource="#Light"/>
+    <a:hasFlavor rdf:resource="#Delicate"/>
+    <a:hasMaker rdf:resource="#LaneTanner"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#SantaBarbaraRegion"/>
+</a:PinotNoir>
 
-<PinotNoir rdf:ID="LaneTannerPinotNoir__0">
-    <hasBody rdf:resource="#Light__0"/>
-    <hasFlavor rdf:resource="#Delicate__0"/>
-    <hasMaker rdf:resource="#LaneTanner__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#SantaBarbaraRegion__0"/>
-</PinotNoir>
+<a:PinotNoir rdf:ID="LaneTannerPinotNoir__0">
+    <a:hasBody rdf:resource="#Light__0"/>
+    <a:hasFlavor rdf:resource="#Delicate__0"/>
+    <a:hasMaker rdf:resource="#LaneTanner__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#SantaBarbaraRegion__0"/>
+</a:PinotNoir>
 
-<PinotNoir rdf:ID="LaneTannerPinotNoir__1">
-    <hasBody rdf:resource="#Light__1"/>
-    <hasFlavor rdf:resource="#Delicate__1"/>
-    <hasMaker rdf:resource="#LaneTanner__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#SantaBarbaraRegion__1"/>
-</PinotNoir>
+<a:PinotNoir rdf:ID="LaneTannerPinotNoir__1">
+    <a:hasBody rdf:resource="#Light__1"/>
+    <a:hasFlavor rdf:resource="#Delicate__1"/>
+    <a:hasMaker rdf:resource="#LaneTanner__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#SantaBarbaraRegion__1"/>
+</a:PinotNoir>
 
-<WineBody rdf:ID="Light">
+<a:WineBody rdf:ID="Light">
     <rdf:type rdf:resource="#__nom40"/>
     <rdf:type rdf:resource="#__nom56"/>
     <rdf:type rdf:resource="#__nom59"/>
-</WineBody>
+</a:WineBody>
 
-<WineBody rdf:ID="Light__0">
+<a:WineBody rdf:ID="Light__0">
     <rdf:type rdf:resource="#__nom40"/>
     <rdf:type rdf:resource="#__nom56"/>
     <rdf:type rdf:resource="#__nom59"/>
-</WineBody>
+</a:WineBody>
 
-<WineBody rdf:ID="Light__1">
+<a:WineBody rdf:ID="Light__1">
     <rdf:type rdf:resource="#__nom40"/>
     <rdf:type rdf:resource="#__nom56"/>
     <rdf:type rdf:resource="#__nom59"/>
-</WineBody>
+</a:WineBody>
 
-<Region rdf:ID="LoireRegion">
+<a:Region rdf:ID="LoireRegion">
     <rdf:type rdf:resource="#__nom19"/>
-    <locatedIn rdf:resource="#FrenchRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion"/>
+</a:Region>
 
-<Region rdf:ID="LoireRegion__0">
+<a:Region rdf:ID="LoireRegion__0">
     <rdf:type rdf:resource="#__nom19"/>
-    <locatedIn rdf:resource="#FrenchRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="LoireRegion__1">
+<a:Region rdf:ID="LoireRegion__1">
     <rdf:type rdf:resource="#__nom19"/>
-    <locatedIn rdf:resource="#FrenchRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#FrenchRegion__1"/>
+</a:Region>
 
-<Winery rdf:ID="Longridge"/>
+<a:Winery rdf:ID="Longridge"/>
 
-<Winery rdf:ID="Longridge__0"/>
+<a:Winery rdf:ID="Longridge__0"/>
 
-<Winery rdf:ID="Longridge__1"/>
+<a:Winery rdf:ID="Longridge__1"/>
 
-<Merlot rdf:ID="LongridgeMerlot">
-    <hasBody rdf:resource="#Light"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Longridge"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#NewZealandRegion"/>
-</Merlot>
+<a:Merlot rdf:ID="LongridgeMerlot">
+    <a:hasBody rdf:resource="#Light"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Longridge"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion"/>
+</a:Merlot>
 
-<Merlot rdf:ID="LongridgeMerlot__0">
-    <hasBody rdf:resource="#Light__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Longridge__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#NewZealandRegion__0"/>
-</Merlot>
+<a:Merlot rdf:ID="LongridgeMerlot__0">
+    <a:hasBody rdf:resource="#Light__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Longridge__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__0"/>
+</a:Merlot>
 
-<Merlot rdf:ID="LongridgeMerlot__1">
-    <hasBody rdf:resource="#Light__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Longridge__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#NewZealandRegion__1"/>
-</Merlot>
+<a:Merlot rdf:ID="LongridgeMerlot__1">
+    <a:hasBody rdf:resource="#Light__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Longridge__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__1"/>
+</a:Merlot>
 
-<WineGrape rdf:ID="MalbecGrape">
+<a:WineGrape rdf:ID="MalbecGrape">
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="MalbecGrape__0">
+<a:WineGrape rdf:ID="MalbecGrape__0">
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="MalbecGrape__1">
+<a:WineGrape rdf:ID="MalbecGrape__1">
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<Region rdf:ID="MargauxRegion">
+<a:Region rdf:ID="MargauxRegion">
     <rdf:type rdf:resource="#__nom22"/>
-    <locatedIn rdf:resource="#MedocRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#MedocRegion"/>
+</a:Region>
 
-<Region rdf:ID="MargauxRegion__0">
+<a:Region rdf:ID="MargauxRegion__0">
     <rdf:type rdf:resource="#__nom22"/>
-    <locatedIn rdf:resource="#MedocRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#MedocRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="MargauxRegion__1">
+<a:Region rdf:ID="MargauxRegion__1">
     <rdf:type rdf:resource="#__nom22"/>
-    <locatedIn rdf:resource="#MedocRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#MedocRegion__1"/>
+</a:Region>
 
-<Winery rdf:ID="Marietta"/>
+<a:Winery rdf:ID="Marietta"/>
 
-<Winery rdf:ID="Marietta__0"/>
+<a:Winery rdf:ID="Marietta__0"/>
 
-<Winery rdf:ID="Marietta__1"/>
+<a:Winery rdf:ID="Marietta__1"/>
 
-<CabernetSauvignon rdf:ID="MariettaCabernetSauvignon">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Marietta"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#SonomaRegion"/>
-</CabernetSauvignon>
+<a:CabernetSauvignon rdf:ID="MariettaCabernetSauvignon">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Marietta"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#SonomaRegion"/>
+</a:CabernetSauvignon>
 
-<CabernetSauvignon rdf:ID="MariettaCabernetSauvignon__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Marietta__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#SonomaRegion__0"/>
-</CabernetSauvignon>
+<a:CabernetSauvignon rdf:ID="MariettaCabernetSauvignon__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Marietta__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__0"/>
+</a:CabernetSauvignon>
 
-<CabernetSauvignon rdf:ID="MariettaCabernetSauvignon__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Marietta__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#SonomaRegion__1"/>
-</CabernetSauvignon>
+<a:CabernetSauvignon rdf:ID="MariettaCabernetSauvignon__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Marietta__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__1"/>
+</a:CabernetSauvignon>
 
-<RedTableWine rdf:ID="MariettaOldVinesRed">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Marietta"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#SonomaRegion"/>
-</RedTableWine>
+<a:RedTableWine rdf:ID="MariettaOldVinesRed">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Marietta"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#SonomaRegion"/>
+</a:RedTableWine>
 
-<RedTableWine rdf:ID="MariettaOldVinesRed__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Marietta__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#SonomaRegion__0"/>
-</RedTableWine>
+<a:RedTableWine rdf:ID="MariettaOldVinesRed__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Marietta__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__0"/>
+</a:RedTableWine>
 
-<RedTableWine rdf:ID="MariettaOldVinesRed__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Marietta__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#SonomaRegion__1"/>
-</RedTableWine>
+<a:RedTableWine rdf:ID="MariettaOldVinesRed__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Marietta__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__1"/>
+</a:RedTableWine>
 
-<PetiteSyrah rdf:ID="MariettaPetiteSyrah">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Marietta"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#SonomaRegion"/>
-</PetiteSyrah>
+<a:PetiteSyrah rdf:ID="MariettaPetiteSyrah">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Marietta"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#SonomaRegion"/>
+</a:PetiteSyrah>
 
-<PetiteSyrah rdf:ID="MariettaPetiteSyrah__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Marietta__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#SonomaRegion__0"/>
-</PetiteSyrah>
+<a:PetiteSyrah rdf:ID="MariettaPetiteSyrah__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Marietta__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__0"/>
+</a:PetiteSyrah>
 
-<PetiteSyrah rdf:ID="MariettaPetiteSyrah__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Marietta__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#SonomaRegion__1"/>
-</PetiteSyrah>
+<a:PetiteSyrah rdf:ID="MariettaPetiteSyrah__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Marietta__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__1"/>
+</a:PetiteSyrah>
 
-<Zinfandel rdf:ID="MariettaZinfandel">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Marietta"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#SonomaRegion"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="MariettaZinfandel">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Marietta"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#SonomaRegion"/>
+</a:Zinfandel>
 
-<Zinfandel rdf:ID="MariettaZinfandel__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Marietta__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#SonomaRegion__0"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="MariettaZinfandel__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Marietta__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__0"/>
+</a:Zinfandel>
 
-<Zinfandel rdf:ID="MariettaZinfandel__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Marietta__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#SonomaRegion__1"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="MariettaZinfandel__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Marietta__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__1"/>
+</a:Zinfandel>
 
-<Winery rdf:ID="McGuinnesso"/>
+<a:Winery rdf:ID="McGuinnesso"/>
 
-<Winery rdf:ID="McGuinnesso__0"/>
+<a:Winery rdf:ID="McGuinnesso__0"/>
 
-<Winery rdf:ID="McGuinnesso__1"/>
+<a:Winery rdf:ID="McGuinnesso__1"/>
 
-<WineBody rdf:ID="Medium">
+<a:WineBody rdf:ID="Medium">
     <rdf:type rdf:resource="#__nom40"/>
     <rdf:type rdf:resource="#__nom49"/>
     <rdf:type rdf:resource="#__nom51"/>
     <rdf:type rdf:resource="#__nom59"/>
-</WineBody>
+</a:WineBody>
 
-<WineBody rdf:ID="Medium__0">
+<a:WineBody rdf:ID="Medium__0">
     <rdf:type rdf:resource="#__nom40"/>
     <rdf:type rdf:resource="#__nom49"/>
     <rdf:type rdf:resource="#__nom51"/>
     <rdf:type rdf:resource="#__nom59"/>
-</WineBody>
+</a:WineBody>
 
-<WineBody rdf:ID="Medium__1">
+<a:WineBody rdf:ID="Medium__1">
     <rdf:type rdf:resource="#__nom40"/>
     <rdf:type rdf:resource="#__nom49"/>
     <rdf:type rdf:resource="#__nom51"/>
     <rdf:type rdf:resource="#__nom59"/>
-</WineBody>
+</a:WineBody>
 
-<Region rdf:ID="MedocRegion">
+<a:Region rdf:ID="MedocRegion">
     <rdf:type rdf:resource="#__nom2"/>
-    <locatedIn rdf:resource="#BordeauxRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#BordeauxRegion"/>
+</a:Region>
 
-<Region rdf:ID="MedocRegion__0">
+<a:Region rdf:ID="MedocRegion__0">
     <rdf:type rdf:resource="#__nom2"/>
-    <locatedIn rdf:resource="#BordeauxRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#BordeauxRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="MedocRegion__1">
+<a:Region rdf:ID="MedocRegion__1">
     <rdf:type rdf:resource="#__nom2"/>
-    <locatedIn rdf:resource="#BordeauxRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#BordeauxRegion__1"/>
+</a:Region>
 
-<Region rdf:ID="MendocinoRegion">
-    <adjacentRegion rdf:resource="#SonomaRegion"/>
-    <locatedIn rdf:resource="#CaliforniaRegion"/>
-</Region>
+<a:Region rdf:ID="MendocinoRegion">
+    <a:adjacentRegion rdf:resource="#SonomaRegion"/>
+    <a:locatedIn rdf:resource="#CaliforniaRegion"/>
+</a:Region>
 
-<Region rdf:ID="MendocinoRegion__0">
-    <adjacentRegion rdf:resource="#SonomaRegion__0"/>
-    <locatedIn rdf:resource="#CaliforniaRegion__0"/>
-</Region>
+<a:Region rdf:ID="MendocinoRegion__0">
+    <a:adjacentRegion rdf:resource="#SonomaRegion__0"/>
+    <a:locatedIn rdf:resource="#CaliforniaRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="MendocinoRegion__1">
-    <adjacentRegion rdf:resource="#SonomaRegion__1"/>
-    <locatedIn rdf:resource="#CaliforniaRegion__1"/>
-</Region>
+<a:Region rdf:ID="MendocinoRegion__1">
+    <a:adjacentRegion rdf:resource="#SonomaRegion__1"/>
+    <a:locatedIn rdf:resource="#CaliforniaRegion__1"/>
+</a:Region>
 
-<WineGrape rdf:ID="MerlotGrape">
+<a:WineGrape rdf:ID="MerlotGrape">
     <rdf:type rdf:resource="#__nom43"/>
     <rdf:type rdf:resource="#__nom62"/>
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="MerlotGrape__0">
+<a:WineGrape rdf:ID="MerlotGrape__0">
     <rdf:type rdf:resource="#__nom43"/>
     <rdf:type rdf:resource="#__nom62"/>
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="MerlotGrape__1">
+<a:WineGrape rdf:ID="MerlotGrape__1">
     <rdf:type rdf:resource="#__nom43"/>
     <rdf:type rdf:resource="#__nom62"/>
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<Region rdf:ID="MeursaultRegion">
+<a:Region rdf:ID="MeursaultRegion">
     <rdf:type rdf:resource="#__nom31"/>
-    <locatedIn rdf:resource="#BourgogneRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#BourgogneRegion"/>
+</a:Region>
 
-<Region rdf:ID="MeursaultRegion__0">
+<a:Region rdf:ID="MeursaultRegion__0">
     <rdf:type rdf:resource="#__nom31"/>
-    <locatedIn rdf:resource="#BourgogneRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#BourgogneRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="MeursaultRegion__1">
+<a:Region rdf:ID="MeursaultRegion__1">
     <rdf:type rdf:resource="#__nom31"/>
-    <locatedIn rdf:resource="#BourgogneRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#BourgogneRegion__1"/>
+</a:Region>
 
-<WineFlavor rdf:ID="Moderate">
+<a:WineFlavor rdf:ID="Moderate">
     <rdf:type rdf:resource="#__nom35"/>
     <rdf:type rdf:resource="#__nom48"/>
     <rdf:type rdf:resource="#__nom50"/>
     <rdf:type rdf:resource="#__nom64"/>
-</WineFlavor>
+</a:WineFlavor>
 
-<WineFlavor rdf:ID="Moderate__0">
+<a:WineFlavor rdf:ID="Moderate__0">
     <rdf:type rdf:resource="#__nom35"/>
     <rdf:type rdf:resource="#__nom48"/>
     <rdf:type rdf:resource="#__nom50"/>
     <rdf:type rdf:resource="#__nom64"/>
-</WineFlavor>
+</a:WineFlavor>
 
-<WineFlavor rdf:ID="Moderate__1">
+<a:WineFlavor rdf:ID="Moderate__1">
     <rdf:type rdf:resource="#__nom35"/>
     <rdf:type rdf:resource="#__nom48"/>
     <rdf:type rdf:resource="#__nom50"/>
     <rdf:type rdf:resource="#__nom64"/>
-</WineFlavor>
+</a:WineFlavor>
 
-<Winery rdf:ID="MountEdenVineyard"/>
+<a:Winery rdf:ID="MountEdenVineyard"/>
 
-<Winery rdf:ID="MountEdenVineyard__0"/>
+<a:Winery rdf:ID="MountEdenVineyard__0"/>
 
-<Winery rdf:ID="MountEdenVineyard__1"/>
+<a:Winery rdf:ID="MountEdenVineyard__1"/>
 
-<Chardonnay rdf:ID="MountEdenVineyardEdnaValleyChardonnay">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#MountEdenVineyard"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#EdnaValleyRegion"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="MountEdenVineyardEdnaValleyChardonnay">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#MountEdenVineyard"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#EdnaValleyRegion"/>
+</a:Chardonnay>
 
-<Chardonnay rdf:ID="MountEdenVineyardEdnaValleyChardonnay__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#MountEdenVineyard__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#EdnaValleyRegion__0"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="MountEdenVineyardEdnaValleyChardonnay__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#MountEdenVineyard__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#EdnaValleyRegion__0"/>
+</a:Chardonnay>
 
-<Chardonnay rdf:ID="MountEdenVineyardEdnaValleyChardonnay__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#MountEdenVineyard__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#EdnaValleyRegion__1"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="MountEdenVineyardEdnaValleyChardonnay__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#MountEdenVineyard__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#EdnaValleyRegion__1"/>
+</a:Chardonnay>
 
-<PinotNoir rdf:ID="MountEdenVineyardEstatePinotNoir">
-    <hasBody rdf:resource="#Full"/>
-    <hasFlavor rdf:resource="#Strong"/>
-    <hasMaker rdf:resource="#MountEdenVineyard"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#EdnaValleyRegion"/>
-</PinotNoir>
+<a:PinotNoir rdf:ID="MountEdenVineyardEstatePinotNoir">
+    <a:hasBody rdf:resource="#Full"/>
+    <a:hasFlavor rdf:resource="#Strong"/>
+    <a:hasMaker rdf:resource="#MountEdenVineyard"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#EdnaValleyRegion"/>
+</a:PinotNoir>
 
-<PinotNoir rdf:ID="MountEdenVineyardEstatePinotNoir__0">
-    <hasBody rdf:resource="#Full__0"/>
-    <hasFlavor rdf:resource="#Strong__0"/>
-    <hasMaker rdf:resource="#MountEdenVineyard__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#EdnaValleyRegion__0"/>
-</PinotNoir>
+<a:PinotNoir rdf:ID="MountEdenVineyardEstatePinotNoir__0">
+    <a:hasBody rdf:resource="#Full__0"/>
+    <a:hasFlavor rdf:resource="#Strong__0"/>
+    <a:hasMaker rdf:resource="#MountEdenVineyard__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#EdnaValleyRegion__0"/>
+</a:PinotNoir>
 
-<PinotNoir rdf:ID="MountEdenVineyardEstatePinotNoir__1">
-    <hasBody rdf:resource="#Full__1"/>
-    <hasFlavor rdf:resource="#Strong__1"/>
-    <hasMaker rdf:resource="#MountEdenVineyard__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#EdnaValleyRegion__1"/>
-</PinotNoir>
+<a:PinotNoir rdf:ID="MountEdenVineyardEstatePinotNoir__1">
+    <a:hasBody rdf:resource="#Full__1"/>
+    <a:hasFlavor rdf:resource="#Strong__1"/>
+    <a:hasMaker rdf:resource="#MountEdenVineyard__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#EdnaValleyRegion__1"/>
+</a:PinotNoir>
 
-<Winery rdf:ID="Mountadam"/>
+<a:Winery rdf:ID="Mountadam"/>
 
-<Winery rdf:ID="Mountadam__0"/>
+<a:Winery rdf:ID="Mountadam__0"/>
 
-<Winery rdf:ID="Mountadam__1"/>
+<a:Winery rdf:ID="Mountadam__1"/>
 
-<Chardonnay rdf:ID="MountadamChardonnay">
-    <hasBody rdf:resource="#Full"/>
-    <hasFlavor rdf:resource="#Strong"/>
-    <hasMaker rdf:resource="#Mountadam"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#SouthAustraliaRegion"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="MountadamChardonnay">
+    <a:hasBody rdf:resource="#Full"/>
+    <a:hasFlavor rdf:resource="#Strong"/>
+    <a:hasMaker rdf:resource="#Mountadam"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#SouthAustraliaRegion"/>
+</a:Chardonnay>
 
-<Chardonnay rdf:ID="MountadamChardonnay__0">
-    <hasBody rdf:resource="#Full__0"/>
-    <hasFlavor rdf:resource="#Strong__0"/>
-    <hasMaker rdf:resource="#Mountadam__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#SouthAustraliaRegion__0"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="MountadamChardonnay__0">
+    <a:hasBody rdf:resource="#Full__0"/>
+    <a:hasFlavor rdf:resource="#Strong__0"/>
+    <a:hasMaker rdf:resource="#Mountadam__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#SouthAustraliaRegion__0"/>
+</a:Chardonnay>
 
-<Chardonnay rdf:ID="MountadamChardonnay__1">
-    <hasBody rdf:resource="#Full__1"/>
-    <hasFlavor rdf:resource="#Strong__1"/>
-    <hasMaker rdf:resource="#Mountadam__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#SouthAustraliaRegion__1"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="MountadamChardonnay__1">
+    <a:hasBody rdf:resource="#Full__1"/>
+    <a:hasFlavor rdf:resource="#Strong__1"/>
+    <a:hasMaker rdf:resource="#Mountadam__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#SouthAustraliaRegion__1"/>
+</a:Chardonnay>
 
-<PinotNoir rdf:ID="MountadamPinotNoir">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Mountadam"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#SouthAustraliaRegion"/>
-</PinotNoir>
+<a:PinotNoir rdf:ID="MountadamPinotNoir">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Mountadam"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#SouthAustraliaRegion"/>
+</a:PinotNoir>
 
-<PinotNoir rdf:ID="MountadamPinotNoir__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Mountadam__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#SouthAustraliaRegion__0"/>
-</PinotNoir>
+<a:PinotNoir rdf:ID="MountadamPinotNoir__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Mountadam__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#SouthAustraliaRegion__0"/>
+</a:PinotNoir>
 
-<PinotNoir rdf:ID="MountadamPinotNoir__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Mountadam__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#SouthAustraliaRegion__1"/>
-</PinotNoir>
+<a:PinotNoir rdf:ID="MountadamPinotNoir__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Mountadam__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#SouthAustraliaRegion__1"/>
+</a:PinotNoir>
 
-<DryRiesling rdf:ID="MountadamRiesling">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Delicate"/>
-    <hasMaker rdf:resource="#Mountadam"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#SouthAustraliaRegion"/>
-</DryRiesling>
+<a:DryRiesling rdf:ID="MountadamRiesling">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Delicate"/>
+    <a:hasMaker rdf:resource="#Mountadam"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#SouthAustraliaRegion"/>
+</a:DryRiesling>
 
-<DryRiesling rdf:ID="MountadamRiesling__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Delicate__0"/>
-    <hasMaker rdf:resource="#Mountadam__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#SouthAustraliaRegion__0"/>
-</DryRiesling>
+<a:DryRiesling rdf:ID="MountadamRiesling__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Delicate__0"/>
+    <a:hasMaker rdf:resource="#Mountadam__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#SouthAustraliaRegion__0"/>
+</a:DryRiesling>
 
-<DryRiesling rdf:ID="MountadamRiesling__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Delicate__1"/>
-    <hasMaker rdf:resource="#Mountadam__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#SouthAustraliaRegion__1"/>
-</DryRiesling>
+<a:DryRiesling rdf:ID="MountadamRiesling__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Delicate__1"/>
+    <a:hasMaker rdf:resource="#Mountadam__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#SouthAustraliaRegion__1"/>
+</a:DryRiesling>
 
-<Region rdf:ID="MuscadetRegion">
+<a:Region rdf:ID="MuscadetRegion">
     <rdf:type rdf:resource="#__nom16"/>
-    <locatedIn rdf:resource="#LoireRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#LoireRegion"/>
+</a:Region>
 
-<Region rdf:ID="MuscadetRegion__0">
+<a:Region rdf:ID="MuscadetRegion__0">
     <rdf:type rdf:resource="#__nom16"/>
-    <locatedIn rdf:resource="#LoireRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#LoireRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="MuscadetRegion__1">
+<a:Region rdf:ID="MuscadetRegion__1">
     <rdf:type rdf:resource="#__nom16"/>
-    <locatedIn rdf:resource="#LoireRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#LoireRegion__1"/>
+</a:Region>
 
-<Region rdf:ID="NapaRegion">
-    <locatedIn rdf:resource="#CaliforniaRegion"/>
-</Region>
+<a:Region rdf:ID="NapaRegion">
+    <a:locatedIn rdf:resource="#CaliforniaRegion"/>
+</a:Region>
 
-<Region rdf:ID="NapaRegion__0">
-    <locatedIn rdf:resource="#CaliforniaRegion__0"/>
-</Region>
+<a:Region rdf:ID="NapaRegion__0">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="NapaRegion__1">
-    <locatedIn rdf:resource="#CaliforniaRegion__1"/>
-</Region>
+<a:Region rdf:ID="NapaRegion__1">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__1"/>
+</a:Region>
 
-<Region rdf:ID="NewZealandRegion"/>
+<a:Region rdf:ID="NewZealandRegion"/>
 
-<Region rdf:ID="NewZealandRegion__0"/>
+<a:Region rdf:ID="NewZealandRegion__0"/>
 
-<Region rdf:ID="NewZealandRegion__1"/>
+<a:Region rdf:ID="NewZealandRegion__1"/>
 
-<WineSugar rdf:ID="OffDry">
+<a:WineSugar rdf:ID="OffDry">
     <rdf:type rdf:resource="#__nom18"/>
     <rdf:type rdf:resource="#__nom53"/>
     <rdf:type rdf:resource="#__nom54"/>
     <rdf:type rdf:resource="#__nom7"/>
     <owl:differentFrom rdf:resource="#Sweet"/>
-</WineSugar>
+</a:WineSugar>
 
-<WineSugar rdf:ID="OffDry__0">
+<a:WineSugar rdf:ID="OffDry__0">
     <rdf:type rdf:resource="#__nom18"/>
     <rdf:type rdf:resource="#__nom53"/>
     <rdf:type rdf:resource="#__nom54"/>
     <rdf:type rdf:resource="#__nom7"/>
     <owl:differentFrom rdf:resource="#Sweet__0"/>
-</WineSugar>
+</a:WineSugar>
 
-<WineSugar rdf:ID="OffDry__1">
+<a:WineSugar rdf:ID="OffDry__1">
     <rdf:type rdf:resource="#__nom18"/>
     <rdf:type rdf:resource="#__nom53"/>
     <rdf:type rdf:resource="#__nom54"/>
     <rdf:type rdf:resource="#__nom7"/>
     <owl:differentFrom rdf:resource="#Sweet__1"/>
-</WineSugar>
+</a:WineSugar>
 
-<Winery rdf:ID="PageMillWinery"/>
+<a:Winery rdf:ID="PageMillWinery"/>
 
-<Winery rdf:ID="PageMillWinery__0"/>
+<a:Winery rdf:ID="PageMillWinery__0"/>
 
-<Winery rdf:ID="PageMillWinery__1"/>
+<a:Winery rdf:ID="PageMillWinery__1"/>
 
-<CabernetSauvignon rdf:ID="PageMillWineryCabernetSauvignon">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#PageMillWinery"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#NapaRegion"/>
-</CabernetSauvignon>
+<a:CabernetSauvignon rdf:ID="PageMillWineryCabernetSauvignon">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#PageMillWinery"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#NapaRegion"/>
+</a:CabernetSauvignon>
 
-<CabernetSauvignon rdf:ID="PageMillWineryCabernetSauvignon__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#PageMillWinery__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#NapaRegion__0"/>
-</CabernetSauvignon>
+<a:CabernetSauvignon rdf:ID="PageMillWineryCabernetSauvignon__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#PageMillWinery__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#NapaRegion__0"/>
+</a:CabernetSauvignon>
 
-<CabernetSauvignon rdf:ID="PageMillWineryCabernetSauvignon__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#PageMillWinery__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#NapaRegion__1"/>
-</CabernetSauvignon>
+<a:CabernetSauvignon rdf:ID="PageMillWineryCabernetSauvignon__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#PageMillWinery__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#NapaRegion__1"/>
+</a:CabernetSauvignon>
 
-<Region rdf:ID="PauillacRegion">
+<a:Region rdf:ID="PauillacRegion">
     <rdf:type rdf:resource="#__nom46"/>
-    <locatedIn rdf:resource="#MedocRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#MedocRegion"/>
+</a:Region>
 
-<Region rdf:ID="PauillacRegion__0">
+<a:Region rdf:ID="PauillacRegion__0">
     <rdf:type rdf:resource="#__nom46"/>
-    <locatedIn rdf:resource="#MedocRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#MedocRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="PauillacRegion__1">
+<a:Region rdf:ID="PauillacRegion__1">
     <rdf:type rdf:resource="#__nom46"/>
-    <locatedIn rdf:resource="#MedocRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#MedocRegion__1"/>
+</a:Region>
 
-<Winery rdf:ID="PeterMccoy"/>
+<a:Winery rdf:ID="PeterMccoy"/>
 
-<Winery rdf:ID="PeterMccoy__0"/>
+<a:Winery rdf:ID="PeterMccoy__0"/>
 
-<Winery rdf:ID="PeterMccoy__1"/>
+<a:Winery rdf:ID="PeterMccoy__1"/>
 
-<Chardonnay rdf:ID="PeterMccoyChardonnay">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#PeterMccoy"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#SonomaRegion"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="PeterMccoyChardonnay">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#PeterMccoy"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#SonomaRegion"/>
+</a:Chardonnay>
 
-<Chardonnay rdf:ID="PeterMccoyChardonnay__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#PeterMccoy__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#SonomaRegion__0"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="PeterMccoyChardonnay__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#PeterMccoy__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__0"/>
+</a:Chardonnay>
 
-<Chardonnay rdf:ID="PeterMccoyChardonnay__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#PeterMccoy__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#SonomaRegion__1"/>
-</Chardonnay>
+<a:Chardonnay rdf:ID="PeterMccoyChardonnay__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#PeterMccoy__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#SonomaRegion__1"/>
+</a:Chardonnay>
 
-<WineGrape rdf:ID="PetiteSyrahGrape">
+<a:WineGrape rdf:ID="PetiteSyrahGrape">
     <rdf:type rdf:resource="#__nom25"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="PetiteSyrahGrape__0">
+<a:WineGrape rdf:ID="PetiteSyrahGrape__0">
     <rdf:type rdf:resource="#__nom25"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="PetiteSyrahGrape__1">
+<a:WineGrape rdf:ID="PetiteSyrahGrape__1">
     <rdf:type rdf:resource="#__nom25"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="PetiteVerdotGrape">
+<a:WineGrape rdf:ID="PetiteVerdotGrape">
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="PetiteVerdotGrape__0">
+<a:WineGrape rdf:ID="PetiteVerdotGrape__0">
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="PetiteVerdotGrape__1">
+<a:WineGrape rdf:ID="PetiteVerdotGrape__1">
     <rdf:type rdf:resource="#__nom8"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="PinotBlancGrape">
+<a:WineGrape rdf:ID="PinotBlancGrape">
     <rdf:type rdf:resource="#__nom21"/>
     <rdf:type rdf:resource="#__nom63"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="PinotBlancGrape__0">
+<a:WineGrape rdf:ID="PinotBlancGrape__0">
     <rdf:type rdf:resource="#__nom21"/>
     <rdf:type rdf:resource="#__nom63"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="PinotBlancGrape__1">
+<a:WineGrape rdf:ID="PinotBlancGrape__1">
     <rdf:type rdf:resource="#__nom21"/>
     <rdf:type rdf:resource="#__nom63"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="PinotNoirGrape">
+<a:WineGrape rdf:ID="PinotNoirGrape">
     <rdf:type rdf:resource="#__nom39"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="PinotNoirGrape__0">
+<a:WineGrape rdf:ID="PinotNoirGrape__0">
     <rdf:type rdf:resource="#__nom39"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="PinotNoirGrape__1">
+<a:WineGrape rdf:ID="PinotNoirGrape__1">
     <rdf:type rdf:resource="#__nom39"/>
-</WineGrape>
+</a:WineGrape>
 
-<Region rdf:ID="PortugalRegion">
+<a:Region rdf:ID="PortugalRegion">
     <rdf:type rdf:resource="#__nom57"/>
-</Region>
+</a:Region>
 
-<Region rdf:ID="PortugalRegion__0">
+<a:Region rdf:ID="PortugalRegion__0">
     <rdf:type rdf:resource="#__nom57"/>
-</Region>
+</a:Region>
 
-<Region rdf:ID="PortugalRegion__1">
+<a:Region rdf:ID="PortugalRegion__1">
     <rdf:type rdf:resource="#__nom57"/>
-</Region>
+</a:Region>
 
-<Winery rdf:ID="PulignyMontrachet"/>
+<a:Winery rdf:ID="PulignyMontrachet"/>
 
-<Winery rdf:ID="PulignyMontrachet__0"/>
+<a:Winery rdf:ID="PulignyMontrachet__0"/>
 
-<Winery rdf:ID="PulignyMontrachet__1"/>
+<a:Winery rdf:ID="PulignyMontrachet__1"/>
 
-<WhiteBurgundy rdf:ID="PulignyMontrachetWhiteBurgundy">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#PulignyMontrachet"/>
-    <hasSugar rdf:resource="#Dry"/>
-</WhiteBurgundy>
+<a:WhiteBurgundy rdf:ID="PulignyMontrachetWhiteBurgundy">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#PulignyMontrachet"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+</a:WhiteBurgundy>
 
-<WhiteBurgundy rdf:ID="PulignyMontrachetWhiteBurgundy__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#PulignyMontrachet__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-</WhiteBurgundy>
+<a:WhiteBurgundy rdf:ID="PulignyMontrachetWhiteBurgundy__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#PulignyMontrachet__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+</a:WhiteBurgundy>
 
-<WhiteBurgundy rdf:ID="PulignyMontrachetWhiteBurgundy__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#PulignyMontrachet__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-</WhiteBurgundy>
+<a:WhiteBurgundy rdf:ID="PulignyMontrachetWhiteBurgundy__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#PulignyMontrachet__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+</a:WhiteBurgundy>
 
-<WineColor rdf:ID="Red">
+<a:WineColor rdf:ID="Red">
     <rdf:type rdf:resource="#__nom28"/>
     <rdf:type rdf:resource="#__nom9"/>
-</WineColor>
+</a:WineColor>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Red"/>
@@ -3458,10 +3458,10 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<WineColor rdf:ID="Red__0">
+<a:WineColor rdf:ID="Red__0">
     <rdf:type rdf:resource="#__nom28"/>
     <rdf:type rdf:resource="#__nom9"/>
-</WineColor>
+</a:WineColor>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Red__0"/>
@@ -3470,10 +3470,10 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<WineColor rdf:ID="Red__1">
+<a:WineColor rdf:ID="Red__1">
     <rdf:type rdf:resource="#__nom28"/>
     <rdf:type rdf:resource="#__nom9"/>
-</WineColor>
+</a:WineColor>
 <owl:AllDifferent>
     <owl:distinctMembers rdf:parseType="Collection">
         <owl:Thing rdf:about="#Red__1"/>
@@ -3482,698 +3482,698 @@
     </owl:distinctMembers>
 </owl:AllDifferent>
 
-<WineGrape rdf:ID="RieslingGrape">
+<a:WineGrape rdf:ID="RieslingGrape">
     <rdf:type rdf:resource="#__nom37"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="RieslingGrape__0">
+<a:WineGrape rdf:ID="RieslingGrape__0">
     <rdf:type rdf:resource="#__nom37"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="RieslingGrape__1">
+<a:WineGrape rdf:ID="RieslingGrape__1">
     <rdf:type rdf:resource="#__nom37"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineColor rdf:ID="Rose">
+<a:WineColor rdf:ID="Rose">
     <rdf:type rdf:resource="#__nom32"/>
     <rdf:type rdf:resource="#__nom9"/>
-</WineColor>
+</a:WineColor>
 
-<WineColor rdf:ID="Rose__0">
+<a:WineColor rdf:ID="Rose__0">
     <rdf:type rdf:resource="#__nom32"/>
     <rdf:type rdf:resource="#__nom9"/>
-</WineColor>
+</a:WineColor>
 
-<WineColor rdf:ID="Rose__1">
+<a:WineColor rdf:ID="Rose__1">
     <rdf:type rdf:resource="#__nom32"/>
     <rdf:type rdf:resource="#__nom9"/>
-</WineColor>
+</a:WineColor>
 
-<Anjou rdf:ID="RoseDAnjou">
-    <hasMaker rdf:resource="#DAnjou"/>
-</Anjou>
+<a:Anjou rdf:ID="RoseDAnjou">
+    <a:hasMaker rdf:resource="#DAnjou"/>
+</a:Anjou>
 
-<Anjou rdf:ID="RoseDAnjou__0">
-    <hasMaker rdf:resource="#DAnjou__0"/>
-</Anjou>
+<a:Anjou rdf:ID="RoseDAnjou__0">
+    <a:hasMaker rdf:resource="#DAnjou__0"/>
+</a:Anjou>
 
-<Anjou rdf:ID="RoseDAnjou__1">
-    <hasMaker rdf:resource="#DAnjou__1"/>
-</Anjou>
+<a:Anjou rdf:ID="RoseDAnjou__1">
+    <a:hasMaker rdf:resource="#DAnjou__1"/>
+</a:Anjou>
 
-<Region rdf:ID="SancerreRegion">
+<a:Region rdf:ID="SancerreRegion">
     <rdf:type rdf:resource="#__nom30"/>
-    <locatedIn rdf:resource="#LoireRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#LoireRegion"/>
+</a:Region>
 
-<Region rdf:ID="SancerreRegion__0">
+<a:Region rdf:ID="SancerreRegion__0">
     <rdf:type rdf:resource="#__nom30"/>
-    <locatedIn rdf:resource="#LoireRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#LoireRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="SancerreRegion__1">
+<a:Region rdf:ID="SancerreRegion__1">
     <rdf:type rdf:resource="#__nom30"/>
-    <locatedIn rdf:resource="#LoireRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#LoireRegion__1"/>
+</a:Region>
 
-<WineGrape rdf:ID="SangioveseGrape">
+<a:WineGrape rdf:ID="SangioveseGrape">
     <rdf:type rdf:resource="#__nom60"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="SangioveseGrape__0">
+<a:WineGrape rdf:ID="SangioveseGrape__0">
     <rdf:type rdf:resource="#__nom60"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="SangioveseGrape__1">
+<a:WineGrape rdf:ID="SangioveseGrape__1">
     <rdf:type rdf:resource="#__nom60"/>
-</WineGrape>
+</a:WineGrape>
 
-<Region rdf:ID="SantaBarbaraRegion">
-    <locatedIn rdf:resource="#CaliforniaRegion"/>
-</Region>
+<a:Region rdf:ID="SantaBarbaraRegion">
+    <a:locatedIn rdf:resource="#CaliforniaRegion"/>
+</a:Region>
 
-<Region rdf:ID="SantaBarbaraRegion__0">
-    <locatedIn rdf:resource="#CaliforniaRegion__0"/>
-</Region>
+<a:Region rdf:ID="SantaBarbaraRegion__0">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="SantaBarbaraRegion__1">
-    <locatedIn rdf:resource="#CaliforniaRegion__1"/>
-</Region>
+<a:Region rdf:ID="SantaBarbaraRegion__1">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__1"/>
+</a:Region>
 
-<Winery rdf:ID="SantaCruzMountainVineyard"/>
+<a:Winery rdf:ID="SantaCruzMountainVineyard"/>
 
-<Winery rdf:ID="SantaCruzMountainVineyard__0"/>
+<a:Winery rdf:ID="SantaCruzMountainVineyard__0"/>
 
-<Winery rdf:ID="SantaCruzMountainVineyard__1"/>
+<a:Winery rdf:ID="SantaCruzMountainVineyard__1"/>
 
-<CabernetSauvignon rdf:ID="SantaCruzMountainVineyardCabernetSauvignon">
-    <hasBody rdf:resource="#Full"/>
-    <hasFlavor rdf:resource="#Strong"/>
-    <hasMaker rdf:resource="#SantaCruzMountainVineyard"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#SantaCruzMountainsRegion"/>
-</CabernetSauvignon>
+<a:CabernetSauvignon rdf:ID="SantaCruzMountainVineyardCabernetSauvignon">
+    <a:hasBody rdf:resource="#Full"/>
+    <a:hasFlavor rdf:resource="#Strong"/>
+    <a:hasMaker rdf:resource="#SantaCruzMountainVineyard"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#SantaCruzMountainsRegion"/>
+</a:CabernetSauvignon>
 
-<CabernetSauvignon rdf:ID="SantaCruzMountainVineyardCabernetSauvignon__0">
-    <hasBody rdf:resource="#Full__0"/>
-    <hasFlavor rdf:resource="#Strong__0"/>
-    <hasMaker rdf:resource="#SantaCruzMountainVineyard__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#SantaCruzMountainsRegion__0"/>
-</CabernetSauvignon>
+<a:CabernetSauvignon rdf:ID="SantaCruzMountainVineyardCabernetSauvignon__0">
+    <a:hasBody rdf:resource="#Full__0"/>
+    <a:hasFlavor rdf:resource="#Strong__0"/>
+    <a:hasMaker rdf:resource="#SantaCruzMountainVineyard__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#SantaCruzMountainsRegion__0"/>
+</a:CabernetSauvignon>
 
-<CabernetSauvignon rdf:ID="SantaCruzMountainVineyardCabernetSauvignon__1">
-    <hasBody rdf:resource="#Full__1"/>
-    <hasFlavor rdf:resource="#Strong__1"/>
-    <hasMaker rdf:resource="#SantaCruzMountainVineyard__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#SantaCruzMountainsRegion__1"/>
-</CabernetSauvignon>
+<a:CabernetSauvignon rdf:ID="SantaCruzMountainVineyardCabernetSauvignon__1">
+    <a:hasBody rdf:resource="#Full__1"/>
+    <a:hasFlavor rdf:resource="#Strong__1"/>
+    <a:hasMaker rdf:resource="#SantaCruzMountainVineyard__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#SantaCruzMountainsRegion__1"/>
+</a:CabernetSauvignon>
 
-<Region rdf:ID="SantaCruzMountainsRegion">
-    <locatedIn rdf:resource="#CaliforniaRegion"/>
-</Region>
+<a:Region rdf:ID="SantaCruzMountainsRegion">
+    <a:locatedIn rdf:resource="#CaliforniaRegion"/>
+</a:Region>
 
-<Region rdf:ID="SantaCruzMountainsRegion__0">
-    <locatedIn rdf:resource="#CaliforniaRegion__0"/>
-</Region>
+<a:Region rdf:ID="SantaCruzMountainsRegion__0">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="SantaCruzMountainsRegion__1">
-    <locatedIn rdf:resource="#CaliforniaRegion__1"/>
-</Region>
+<a:Region rdf:ID="SantaCruzMountainsRegion__1">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__1"/>
+</a:Region>
 
-<Winery rdf:ID="SaucelitoCanyon"/>
+<a:Winery rdf:ID="SaucelitoCanyon"/>
 
-<Winery rdf:ID="SaucelitoCanyon__0"/>
+<a:Winery rdf:ID="SaucelitoCanyon__0"/>
 
-<Winery rdf:ID="SaucelitoCanyon__1"/>
+<a:Winery rdf:ID="SaucelitoCanyon__1"/>
 
-<Zinfandel rdf:ID="SaucelitoCanyonZinfandel">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#SaucelitoCanyon"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#ArroyoGrandeRegion"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="SaucelitoCanyonZinfandel">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#SaucelitoCanyon"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#ArroyoGrandeRegion"/>
+</a:Zinfandel>
 
-<Zinfandel rdf:ID="SaucelitoCanyonZinfandel__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#SaucelitoCanyon__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#ArroyoGrandeRegion__0"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="SaucelitoCanyonZinfandel__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#SaucelitoCanyon__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#ArroyoGrandeRegion__0"/>
+</a:Zinfandel>
 
-<Zinfandel rdf:ID="SaucelitoCanyonZinfandel__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#SaucelitoCanyon__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#ArroyoGrandeRegion__1"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="SaucelitoCanyonZinfandel__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#SaucelitoCanyon__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#ArroyoGrandeRegion__1"/>
+</a:Zinfandel>
 
-<Zinfandel rdf:ID="SaucelitoCanyonZinfandel1998">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#SaucelitoCanyon"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <hasVintageYear rdf:resource="#Year1998"/>
-    <locatedIn rdf:resource="#ArroyoGrandeRegion"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="SaucelitoCanyonZinfandel1998">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#SaucelitoCanyon"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:hasVintageYear rdf:resource="#Year1998"/>
+    <a:locatedIn rdf:resource="#ArroyoGrandeRegion"/>
+</a:Zinfandel>
 
-<Zinfandel rdf:ID="SaucelitoCanyonZinfandel1998__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#SaucelitoCanyon__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <hasVintageYear rdf:resource="#Year1998__0"/>
-    <locatedIn rdf:resource="#ArroyoGrandeRegion__0"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="SaucelitoCanyonZinfandel1998__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#SaucelitoCanyon__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:hasVintageYear rdf:resource="#Year1998__0"/>
+    <a:locatedIn rdf:resource="#ArroyoGrandeRegion__0"/>
+</a:Zinfandel>
 
-<Zinfandel rdf:ID="SaucelitoCanyonZinfandel1998__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#SaucelitoCanyon__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <hasVintageYear rdf:resource="#Year1998__1"/>
-    <locatedIn rdf:resource="#ArroyoGrandeRegion__1"/>
-</Zinfandel>
+<a:Zinfandel rdf:ID="SaucelitoCanyonZinfandel1998__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#SaucelitoCanyon__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:hasVintageYear rdf:resource="#Year1998__1"/>
+    <a:locatedIn rdf:resource="#ArroyoGrandeRegion__1"/>
+</a:Zinfandel>
 
-<Region rdf:ID="SauterneRegion">
+<a:Region rdf:ID="SauterneRegion">
     <rdf:type rdf:resource="#__nom52"/>
-    <locatedIn rdf:resource="#BordeauxRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#BordeauxRegion"/>
+</a:Region>
 
-<Region rdf:ID="SauterneRegion__0">
+<a:Region rdf:ID="SauterneRegion__0">
     <rdf:type rdf:resource="#__nom52"/>
-    <locatedIn rdf:resource="#BordeauxRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#BordeauxRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="SauterneRegion__1">
+<a:Region rdf:ID="SauterneRegion__1">
     <rdf:type rdf:resource="#__nom52"/>
-    <locatedIn rdf:resource="#BordeauxRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#BordeauxRegion__1"/>
+</a:Region>
 
-<WineGrape rdf:ID="SauvignonBlancGrape">
+<a:WineGrape rdf:ID="SauvignonBlancGrape">
     <rdf:type rdf:resource="#__nom11"/>
     <rdf:type rdf:resource="#__nom6"/>
     <rdf:type rdf:resource="#__nom63"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="SauvignonBlancGrape__0">
+<a:WineGrape rdf:ID="SauvignonBlancGrape__0">
     <rdf:type rdf:resource="#__nom11"/>
     <rdf:type rdf:resource="#__nom6"/>
     <rdf:type rdf:resource="#__nom63"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="SauvignonBlancGrape__1">
+<a:WineGrape rdf:ID="SauvignonBlancGrape__1">
     <rdf:type rdf:resource="#__nom11"/>
     <rdf:type rdf:resource="#__nom6"/>
     <rdf:type rdf:resource="#__nom63"/>
-</WineGrape>
+</a:WineGrape>
 
-<Winery rdf:ID="SchlossRothermel"/>
+<a:Winery rdf:ID="SchlossRothermel"/>
 
-<Winery rdf:ID="SchlossRothermel__0"/>
+<a:Winery rdf:ID="SchlossRothermel__0"/>
 
-<Winery rdf:ID="SchlossRothermel__1"/>
+<a:Winery rdf:ID="SchlossRothermel__1"/>
 
-<SweetRiesling rdf:ID="SchlossRothermelTrochenbierenausleseRiesling">
-    <hasBody rdf:resource="#Full"/>
-    <hasFlavor rdf:resource="#Strong"/>
-    <hasMaker rdf:resource="#SchlossRothermel"/>
-    <hasSugar rdf:resource="#Sweet"/>
-    <locatedIn rdf:resource="#GermanyRegion"/>
-</SweetRiesling>
+<a:SweetRiesling rdf:ID="SchlossRothermelTrochenbierenausleseRiesling">
+    <a:hasBody rdf:resource="#Full"/>
+    <a:hasFlavor rdf:resource="#Strong"/>
+    <a:hasMaker rdf:resource="#SchlossRothermel"/>
+    <a:hasSugar rdf:resource="#Sweet"/>
+    <a:locatedIn rdf:resource="#GermanyRegion"/>
+</a:SweetRiesling>
 
-<SweetRiesling rdf:ID="SchlossRothermelTrochenbierenausleseRiesling__0">
-    <hasBody rdf:resource="#Full__0"/>
-    <hasFlavor rdf:resource="#Strong__0"/>
-    <hasMaker rdf:resource="#SchlossRothermel__0"/>
-    <hasSugar rdf:resource="#Sweet__0"/>
-    <locatedIn rdf:resource="#GermanyRegion__0"/>
-</SweetRiesling>
+<a:SweetRiesling rdf:ID="SchlossRothermelTrochenbierenausleseRiesling__0">
+    <a:hasBody rdf:resource="#Full__0"/>
+    <a:hasFlavor rdf:resource="#Strong__0"/>
+    <a:hasMaker rdf:resource="#SchlossRothermel__0"/>
+    <a:hasSugar rdf:resource="#Sweet__0"/>
+    <a:locatedIn rdf:resource="#GermanyRegion__0"/>
+</a:SweetRiesling>
 
-<SweetRiesling rdf:ID="SchlossRothermelTrochenbierenausleseRiesling__1">
-    <hasBody rdf:resource="#Full__1"/>
-    <hasFlavor rdf:resource="#Strong__1"/>
-    <hasMaker rdf:resource="#SchlossRothermel__1"/>
-    <hasSugar rdf:resource="#Sweet__1"/>
-    <locatedIn rdf:resource="#GermanyRegion__1"/>
-</SweetRiesling>
+<a:SweetRiesling rdf:ID="SchlossRothermelTrochenbierenausleseRiesling__1">
+    <a:hasBody rdf:resource="#Full__1"/>
+    <a:hasFlavor rdf:resource="#Strong__1"/>
+    <a:hasMaker rdf:resource="#SchlossRothermel__1"/>
+    <a:hasSugar rdf:resource="#Sweet__1"/>
+    <a:locatedIn rdf:resource="#GermanyRegion__1"/>
+</a:SweetRiesling>
 
-<Winery rdf:ID="SchlossVolrad"/>
+<a:Winery rdf:ID="SchlossVolrad"/>
 
-<Winery rdf:ID="SchlossVolrad__0"/>
+<a:Winery rdf:ID="SchlossVolrad__0"/>
 
-<Winery rdf:ID="SchlossVolrad__1"/>
+<a:Winery rdf:ID="SchlossVolrad__1"/>
 
-<SweetRiesling rdf:ID="SchlossVolradTrochenbierenausleseRiesling">
-    <hasBody rdf:resource="#Full"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#SchlossVolrad"/>
-    <hasSugar rdf:resource="#Sweet"/>
-    <locatedIn rdf:resource="#GermanyRegion"/>
-</SweetRiesling>
+<a:SweetRiesling rdf:ID="SchlossVolradTrochenbierenausleseRiesling">
+    <a:hasBody rdf:resource="#Full"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#SchlossVolrad"/>
+    <a:hasSugar rdf:resource="#Sweet"/>
+    <a:locatedIn rdf:resource="#GermanyRegion"/>
+</a:SweetRiesling>
 
-<SweetRiesling rdf:ID="SchlossVolradTrochenbierenausleseRiesling__0">
-    <hasBody rdf:resource="#Full__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#SchlossVolrad__0"/>
-    <hasSugar rdf:resource="#Sweet__0"/>
-    <locatedIn rdf:resource="#GermanyRegion__0"/>
-</SweetRiesling>
+<a:SweetRiesling rdf:ID="SchlossVolradTrochenbierenausleseRiesling__0">
+    <a:hasBody rdf:resource="#Full__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#SchlossVolrad__0"/>
+    <a:hasSugar rdf:resource="#Sweet__0"/>
+    <a:locatedIn rdf:resource="#GermanyRegion__0"/>
+</a:SweetRiesling>
 
-<SweetRiesling rdf:ID="SchlossVolradTrochenbierenausleseRiesling__1">
-    <hasBody rdf:resource="#Full__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#SchlossVolrad__1"/>
-    <hasSugar rdf:resource="#Sweet__1"/>
-    <locatedIn rdf:resource="#GermanyRegion__1"/>
-</SweetRiesling>
+<a:SweetRiesling rdf:ID="SchlossVolradTrochenbierenausleseRiesling__1">
+    <a:hasBody rdf:resource="#Full__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#SchlossVolrad__1"/>
+    <a:hasSugar rdf:resource="#Sweet__1"/>
+    <a:locatedIn rdf:resource="#GermanyRegion__1"/>
+</a:SweetRiesling>
 
-<Winery rdf:ID="SeanThackrey"/>
+<a:Winery rdf:ID="SeanThackrey"/>
 
-<Winery rdf:ID="SeanThackrey__0"/>
+<a:Winery rdf:ID="SeanThackrey__0"/>
 
-<Winery rdf:ID="SeanThackrey__1"/>
+<a:Winery rdf:ID="SeanThackrey__1"/>
 
-<PetiteSyrah rdf:ID="SeanThackreySiriusPetiteSyrah">
-    <hasBody rdf:resource="#Full"/>
-    <hasFlavor rdf:resource="#Strong"/>
-    <hasMaker rdf:resource="#SeanThackrey"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#NapaRegion"/>
-</PetiteSyrah>
+<a:PetiteSyrah rdf:ID="SeanThackreySiriusPetiteSyrah">
+    <a:hasBody rdf:resource="#Full"/>
+    <a:hasFlavor rdf:resource="#Strong"/>
+    <a:hasMaker rdf:resource="#SeanThackrey"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#NapaRegion"/>
+</a:PetiteSyrah>
 
-<PetiteSyrah rdf:ID="SeanThackreySiriusPetiteSyrah__0">
-    <hasBody rdf:resource="#Full__0"/>
-    <hasFlavor rdf:resource="#Strong__0"/>
-    <hasMaker rdf:resource="#SeanThackrey__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#NapaRegion__0"/>
-</PetiteSyrah>
+<a:PetiteSyrah rdf:ID="SeanThackreySiriusPetiteSyrah__0">
+    <a:hasBody rdf:resource="#Full__0"/>
+    <a:hasFlavor rdf:resource="#Strong__0"/>
+    <a:hasMaker rdf:resource="#SeanThackrey__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#NapaRegion__0"/>
+</a:PetiteSyrah>
 
-<PetiteSyrah rdf:ID="SeanThackreySiriusPetiteSyrah__1">
-    <hasBody rdf:resource="#Full__1"/>
-    <hasFlavor rdf:resource="#Strong__1"/>
-    <hasMaker rdf:resource="#SeanThackrey__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#NapaRegion__1"/>
-</PetiteSyrah>
+<a:PetiteSyrah rdf:ID="SeanThackreySiriusPetiteSyrah__1">
+    <a:hasBody rdf:resource="#Full__1"/>
+    <a:hasFlavor rdf:resource="#Strong__1"/>
+    <a:hasMaker rdf:resource="#SeanThackrey__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#NapaRegion__1"/>
+</a:PetiteSyrah>
 
-<Winery rdf:ID="Selaks"/>
+<a:Winery rdf:ID="Selaks"/>
 
-<Winery rdf:ID="Selaks__0"/>
+<a:Winery rdf:ID="Selaks__0"/>
 
-<Winery rdf:ID="Selaks__1"/>
+<a:Winery rdf:ID="Selaks__1"/>
 
-<IceWine rdf:ID="SelaksIceWine">
-    <hasBody rdf:resource="#Medium"/>
-    <hasColor rdf:resource="#White"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Selaks"/>
-    <locatedIn rdf:resource="#NewZealandRegion"/>
-</IceWine>
+<a:IceWine rdf:ID="SelaksIceWine">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasColor rdf:resource="#White"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Selaks"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion"/>
+</a:IceWine>
 
-<IceWine rdf:ID="SelaksIceWine__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasColor rdf:resource="#White__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Selaks__0"/>
-    <locatedIn rdf:resource="#NewZealandRegion__0"/>
-</IceWine>
+<a:IceWine rdf:ID="SelaksIceWine__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasColor rdf:resource="#White__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Selaks__0"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__0"/>
+</a:IceWine>
 
-<IceWine rdf:ID="SelaksIceWine__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasColor rdf:resource="#White__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Selaks__1"/>
-    <locatedIn rdf:resource="#NewZealandRegion__1"/>
-</IceWine>
+<a:IceWine rdf:ID="SelaksIceWine__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasColor rdf:resource="#White__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Selaks__1"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__1"/>
+</a:IceWine>
 
-<SauvignonBlanc rdf:ID="SelaksSauvignonBlanc">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Selaks"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#NewZealandRegion"/>
-</SauvignonBlanc>
+<a:SauvignonBlanc rdf:ID="SelaksSauvignonBlanc">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Selaks"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion"/>
+</a:SauvignonBlanc>
 
-<SauvignonBlanc rdf:ID="SelaksSauvignonBlanc__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Selaks__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#NewZealandRegion__0"/>
-</SauvignonBlanc>
+<a:SauvignonBlanc rdf:ID="SelaksSauvignonBlanc__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Selaks__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__0"/>
+</a:SauvignonBlanc>
 
-<SauvignonBlanc rdf:ID="SelaksSauvignonBlanc__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Selaks__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#NewZealandRegion__1"/>
-</SauvignonBlanc>
+<a:SauvignonBlanc rdf:ID="SelaksSauvignonBlanc__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Selaks__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__1"/>
+</a:SauvignonBlanc>
 
-<WineGrape rdf:ID="SemillonGrape">
+<a:WineGrape rdf:ID="SemillonGrape">
     <rdf:type rdf:resource="#__nom27"/>
     <rdf:type rdf:resource="#__nom6"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="SemillonGrape__0">
+<a:WineGrape rdf:ID="SemillonGrape__0">
     <rdf:type rdf:resource="#__nom27"/>
     <rdf:type rdf:resource="#__nom6"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="SemillonGrape__1">
+<a:WineGrape rdf:ID="SemillonGrape__1">
     <rdf:type rdf:resource="#__nom27"/>
     <rdf:type rdf:resource="#__nom6"/>
-</WineGrape>
+</a:WineGrape>
 
-<Winery rdf:ID="SevreEtMaine"/>
+<a:Winery rdf:ID="SevreEtMaine"/>
 
-<Winery rdf:ID="SevreEtMaine__0"/>
+<a:Winery rdf:ID="SevreEtMaine__0"/>
 
-<Winery rdf:ID="SevreEtMaine__1"/>
+<a:Winery rdf:ID="SevreEtMaine__1"/>
 
-<Muscadet rdf:ID="SevreEtMaineMuscadet">
-    <hasMaker rdf:resource="#SevreEtMaine"/>
-</Muscadet>
+<a:Muscadet rdf:ID="SevreEtMaineMuscadet">
+    <a:hasMaker rdf:resource="#SevreEtMaine"/>
+</a:Muscadet>
 
-<Muscadet rdf:ID="SevreEtMaineMuscadet__0">
-    <hasMaker rdf:resource="#SevreEtMaine__0"/>
-</Muscadet>
+<a:Muscadet rdf:ID="SevreEtMaineMuscadet__0">
+    <a:hasMaker rdf:resource="#SevreEtMaine__0"/>
+</a:Muscadet>
 
-<Muscadet rdf:ID="SevreEtMaineMuscadet__1">
-    <hasMaker rdf:resource="#SevreEtMaine__1"/>
-</Muscadet>
+<a:Muscadet rdf:ID="SevreEtMaineMuscadet__1">
+    <a:hasMaker rdf:resource="#SevreEtMaine__1"/>
+</a:Muscadet>
 
-<Region rdf:ID="SonomaRegion">
-    <locatedIn rdf:resource="#CaliforniaRegion"/>
-</Region>
+<a:Region rdf:ID="SonomaRegion">
+    <a:locatedIn rdf:resource="#CaliforniaRegion"/>
+</a:Region>
 
-<Region rdf:ID="SonomaRegion__0">
-    <locatedIn rdf:resource="#CaliforniaRegion__0"/>
-</Region>
+<a:Region rdf:ID="SonomaRegion__0">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="SonomaRegion__1">
-    <locatedIn rdf:resource="#CaliforniaRegion__1"/>
-</Region>
+<a:Region rdf:ID="SonomaRegion__1">
+    <a:locatedIn rdf:resource="#CaliforniaRegion__1"/>
+</a:Region>
 
-<Region rdf:ID="SouthAustraliaRegion">
-    <locatedIn rdf:resource="#AustralianRegion"/>
-</Region>
+<a:Region rdf:ID="SouthAustraliaRegion">
+    <a:locatedIn rdf:resource="#AustralianRegion"/>
+</a:Region>
 
-<Region rdf:ID="SouthAustraliaRegion__0">
-    <locatedIn rdf:resource="#AustralianRegion__0"/>
-</Region>
+<a:Region rdf:ID="SouthAustraliaRegion__0">
+    <a:locatedIn rdf:resource="#AustralianRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="SouthAustraliaRegion__1">
-    <locatedIn rdf:resource="#AustralianRegion__1"/>
-</Region>
+<a:Region rdf:ID="SouthAustraliaRegion__1">
+    <a:locatedIn rdf:resource="#AustralianRegion__1"/>
+</a:Region>
 
-<Region rdf:ID="StEmilionRegion">
+<a:Region rdf:ID="StEmilionRegion">
     <rdf:type rdf:resource="#__nom36"/>
-    <locatedIn rdf:resource="#BordeauxRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#BordeauxRegion"/>
+</a:Region>
 
-<Region rdf:ID="StEmilionRegion__0">
+<a:Region rdf:ID="StEmilionRegion__0">
     <rdf:type rdf:resource="#__nom36"/>
-    <locatedIn rdf:resource="#BordeauxRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#BordeauxRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="StEmilionRegion__1">
+<a:Region rdf:ID="StEmilionRegion__1">
     <rdf:type rdf:resource="#__nom36"/>
-    <locatedIn rdf:resource="#BordeauxRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#BordeauxRegion__1"/>
+</a:Region>
 
-<Winery rdf:ID="StGenevieve"/>
+<a:Winery rdf:ID="StGenevieve"/>
 
-<Winery rdf:ID="StGenevieve__0"/>
+<a:Winery rdf:ID="StGenevieve__0"/>
 
-<Winery rdf:ID="StGenevieve__1"/>
+<a:Winery rdf:ID="StGenevieve__1"/>
 
-<WhiteWine rdf:ID="StGenevieveTexasWhite">
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#StGenevieve"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#CentralTexasRegion"/>
-</WhiteWine>
+<a:WhiteWine rdf:ID="StGenevieveTexasWhite">
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#StGenevieve"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#CentralTexasRegion"/>
+</a:WhiteWine>
 
-<WhiteWine rdf:ID="StGenevieveTexasWhite__0">
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#StGenevieve__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#CentralTexasRegion__0"/>
-</WhiteWine>
+<a:WhiteWine rdf:ID="StGenevieveTexasWhite__0">
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#StGenevieve__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#CentralTexasRegion__0"/>
+</a:WhiteWine>
 
-<WhiteWine rdf:ID="StGenevieveTexasWhite__1">
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#StGenevieve__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#CentralTexasRegion__1"/>
-</WhiteWine>
+<a:WhiteWine rdf:ID="StGenevieveTexasWhite__1">
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#StGenevieve__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#CentralTexasRegion__1"/>
+</a:WhiteWine>
 
-<Winery rdf:ID="Stonleigh"/>
+<a:Winery rdf:ID="Stonleigh"/>
 
-<Winery rdf:ID="Stonleigh__0"/>
+<a:Winery rdf:ID="Stonleigh__0"/>
 
-<Winery rdf:ID="Stonleigh__1"/>
+<a:Winery rdf:ID="Stonleigh__1"/>
 
-<SauvignonBlanc rdf:ID="StonleighSauvignonBlanc">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Delicate"/>
-    <hasMaker rdf:resource="#Stonleigh"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#NewZealandRegion"/>
-</SauvignonBlanc>
+<a:SauvignonBlanc rdf:ID="StonleighSauvignonBlanc">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Delicate"/>
+    <a:hasMaker rdf:resource="#Stonleigh"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion"/>
+</a:SauvignonBlanc>
 
-<SauvignonBlanc rdf:ID="StonleighSauvignonBlanc__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Delicate__0"/>
-    <hasMaker rdf:resource="#Stonleigh__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#NewZealandRegion__0"/>
-</SauvignonBlanc>
+<a:SauvignonBlanc rdf:ID="StonleighSauvignonBlanc__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Delicate__0"/>
+    <a:hasMaker rdf:resource="#Stonleigh__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__0"/>
+</a:SauvignonBlanc>
 
-<SauvignonBlanc rdf:ID="StonleighSauvignonBlanc__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Delicate__1"/>
-    <hasMaker rdf:resource="#Stonleigh__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#NewZealandRegion__1"/>
-</SauvignonBlanc>
+<a:SauvignonBlanc rdf:ID="StonleighSauvignonBlanc__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Delicate__1"/>
+    <a:hasMaker rdf:resource="#Stonleigh__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#NewZealandRegion__1"/>
+</a:SauvignonBlanc>
 
-<WineFlavor rdf:ID="Strong">
+<a:WineFlavor rdf:ID="Strong">
     <rdf:type rdf:resource="#__nom35"/>
     <rdf:type rdf:resource="#__nom50"/>
     <rdf:type rdf:resource="#__nom58"/>
-</WineFlavor>
+</a:WineFlavor>
 
-<WineFlavor rdf:ID="Strong__0">
+<a:WineFlavor rdf:ID="Strong__0">
     <rdf:type rdf:resource="#__nom35"/>
     <rdf:type rdf:resource="#__nom50"/>
     <rdf:type rdf:resource="#__nom58"/>
-</WineFlavor>
+</a:WineFlavor>
 
-<WineFlavor rdf:ID="Strong__1">
+<a:WineFlavor rdf:ID="Strong__1">
     <rdf:type rdf:resource="#__nom35"/>
     <rdf:type rdf:resource="#__nom50"/>
     <rdf:type rdf:resource="#__nom58"/>
-</WineFlavor>
+</a:WineFlavor>
 
-<WineSugar rdf:ID="Sweet">
+<a:WineSugar rdf:ID="Sweet">
     <rdf:type rdf:resource="#__nom1"/>
     <rdf:type rdf:resource="#__nom18"/>
     <rdf:type rdf:resource="#__nom53"/>
-</WineSugar>
+</a:WineSugar>
 
-<WineSugar rdf:ID="Sweet__0">
+<a:WineSugar rdf:ID="Sweet__0">
     <rdf:type rdf:resource="#__nom1"/>
     <rdf:type rdf:resource="#__nom18"/>
     <rdf:type rdf:resource="#__nom53"/>
-</WineSugar>
+</a:WineSugar>
 
-<WineSugar rdf:ID="Sweet__1">
+<a:WineSugar rdf:ID="Sweet__1">
     <rdf:type rdf:resource="#__nom1"/>
     <rdf:type rdf:resource="#__nom18"/>
     <rdf:type rdf:resource="#__nom53"/>
-</WineSugar>
+</a:WineSugar>
 
-<Winery rdf:ID="Taylor"/>
+<a:Winery rdf:ID="Taylor"/>
 
-<Winery rdf:ID="Taylor__0"/>
+<a:Winery rdf:ID="Taylor__0"/>
 
-<Winery rdf:ID="Taylor__1"/>
+<a:Winery rdf:ID="Taylor__1"/>
 
-<Port rdf:ID="TaylorPort">
-    <hasMaker rdf:resource="#Taylor"/>
-</Port>
+<a:Port rdf:ID="TaylorPort">
+    <a:hasMaker rdf:resource="#Taylor"/>
+</a:Port>
 
-<Port rdf:ID="TaylorPort__0">
-    <hasMaker rdf:resource="#Taylor__0"/>
-</Port>
+<a:Port rdf:ID="TaylorPort__0">
+    <a:hasMaker rdf:resource="#Taylor__0"/>
+</a:Port>
 
-<Port rdf:ID="TaylorPort__1">
-    <hasMaker rdf:resource="#Taylor__1"/>
-</Port>
+<a:Port rdf:ID="TaylorPort__1">
+    <a:hasMaker rdf:resource="#Taylor__1"/>
+</a:Port>
 
-<Region rdf:ID="TexasRegion">
+<a:Region rdf:ID="TexasRegion">
     <rdf:type rdf:resource="#__nom10"/>
-    <locatedIn rdf:resource="#USRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#USRegion"/>
+</a:Region>
 
-<Region rdf:ID="TexasRegion__0">
+<a:Region rdf:ID="TexasRegion__0">
     <rdf:type rdf:resource="#__nom10"/>
-    <locatedIn rdf:resource="#USRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#USRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="TexasRegion__1">
+<a:Region rdf:ID="TexasRegion__1">
     <rdf:type rdf:resource="#__nom10"/>
-    <locatedIn rdf:resource="#USRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#USRegion__1"/>
+</a:Region>
 
-<Region rdf:ID="ToursRegion">
+<a:Region rdf:ID="ToursRegion">
     <rdf:type rdf:resource="#__nom4"/>
-    <locatedIn rdf:resource="#LoireRegion"/>
-</Region>
+    <a:locatedIn rdf:resource="#LoireRegion"/>
+</a:Region>
 
-<Region rdf:ID="ToursRegion__0">
+<a:Region rdf:ID="ToursRegion__0">
     <rdf:type rdf:resource="#__nom4"/>
-    <locatedIn rdf:resource="#LoireRegion__0"/>
-</Region>
+    <a:locatedIn rdf:resource="#LoireRegion__0"/>
+</a:Region>
 
-<Region rdf:ID="ToursRegion__1">
+<a:Region rdf:ID="ToursRegion__1">
     <rdf:type rdf:resource="#__nom4"/>
-    <locatedIn rdf:resource="#LoireRegion__1"/>
-</Region>
+    <a:locatedIn rdf:resource="#LoireRegion__1"/>
+</a:Region>
 
-<Region rdf:ID="USRegion">
+<a:Region rdf:ID="USRegion">
     <rdf:type rdf:resource="#__nom38"/>
-</Region>
+</a:Region>
 
-<Region rdf:ID="USRegion__0">
+<a:Region rdf:ID="USRegion__0">
     <rdf:type rdf:resource="#__nom38"/>
-</Region>
+</a:Region>
 
-<Region rdf:ID="USRegion__1">
+<a:Region rdf:ID="USRegion__1">
     <rdf:type rdf:resource="#__nom38"/>
-</Region>
+</a:Region>
 
-<Winery rdf:ID="Ventana"/>
+<a:Winery rdf:ID="Ventana"/>
 
-<Winery rdf:ID="Ventana__0"/>
+<a:Winery rdf:ID="Ventana__0"/>
 
-<Winery rdf:ID="Ventana__1"/>
+<a:Winery rdf:ID="Ventana__1"/>
 
-<CheninBlanc rdf:ID="VentanaCheninBlanc">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#Ventana"/>
-    <hasSugar rdf:resource="#OffDry"/>
-    <locatedIn rdf:resource="#CentralCoastRegion"/>
-</CheninBlanc>
+<a:CheninBlanc rdf:ID="VentanaCheninBlanc">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#Ventana"/>
+    <a:hasSugar rdf:resource="#OffDry"/>
+    <a:locatedIn rdf:resource="#CentralCoastRegion"/>
+</a:CheninBlanc>
 
-<CheninBlanc rdf:ID="VentanaCheninBlanc__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#Ventana__0"/>
-    <hasSugar rdf:resource="#OffDry__0"/>
-    <locatedIn rdf:resource="#CentralCoastRegion__0"/>
-</CheninBlanc>
+<a:CheninBlanc rdf:ID="VentanaCheninBlanc__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#Ventana__0"/>
+    <a:hasSugar rdf:resource="#OffDry__0"/>
+    <a:locatedIn rdf:resource="#CentralCoastRegion__0"/>
+</a:CheninBlanc>
 
-<CheninBlanc rdf:ID="VentanaCheninBlanc__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#Ventana__1"/>
-    <hasSugar rdf:resource="#OffDry__1"/>
-    <locatedIn rdf:resource="#CentralCoastRegion__1"/>
-</CheninBlanc>
+<a:CheninBlanc rdf:ID="VentanaCheninBlanc__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#Ventana__1"/>
+    <a:hasSugar rdf:resource="#OffDry__1"/>
+    <a:locatedIn rdf:resource="#CentralCoastRegion__1"/>
+</a:CheninBlanc>
 
-<WineColor rdf:ID="White">
+<a:WineColor rdf:ID="White">
     <rdf:type rdf:resource="#__nom5"/>
     <rdf:type rdf:resource="#__nom9"/>
-</WineColor>
+</a:WineColor>
 
-<WineColor rdf:ID="White__0">
+<a:WineColor rdf:ID="White__0">
     <rdf:type rdf:resource="#__nom5"/>
     <rdf:type rdf:resource="#__nom9"/>
-</WineColor>
+</a:WineColor>
 
-<WineColor rdf:ID="White__1">
+<a:WineColor rdf:ID="White__1">
     <rdf:type rdf:resource="#__nom5"/>
     <rdf:type rdf:resource="#__nom9"/>
-</WineColor>
+</a:WineColor>
 
-<Winery rdf:ID="WhitehallLane"/>
+<a:Winery rdf:ID="WhitehallLane"/>
 
-<Winery rdf:ID="WhitehallLane__0"/>
+<a:Winery rdf:ID="WhitehallLane__0"/>
 
-<Winery rdf:ID="WhitehallLane__1"/>
+<a:Winery rdf:ID="WhitehallLane__1"/>
 
-<CabernetFranc rdf:ID="WhitehallLaneCabernetFranc">
-    <hasBody rdf:resource="#Medium"/>
-    <hasFlavor rdf:resource="#Moderate"/>
-    <hasMaker rdf:resource="#WhitehallLane"/>
-    <hasSugar rdf:resource="#Dry"/>
-    <locatedIn rdf:resource="#NapaRegion"/>
-</CabernetFranc>
+<a:CabernetFranc rdf:ID="WhitehallLaneCabernetFranc">
+    <a:hasBody rdf:resource="#Medium"/>
+    <a:hasFlavor rdf:resource="#Moderate"/>
+    <a:hasMaker rdf:resource="#WhitehallLane"/>
+    <a:hasSugar rdf:resource="#Dry"/>
+    <a:locatedIn rdf:resource="#NapaRegion"/>
+</a:CabernetFranc>
 
-<CabernetFranc rdf:ID="WhitehallLaneCabernetFranc__0">
-    <hasBody rdf:resource="#Medium__0"/>
-    <hasFlavor rdf:resource="#Moderate__0"/>
-    <hasMaker rdf:resource="#WhitehallLane__0"/>
-    <hasSugar rdf:resource="#Dry__0"/>
-    <locatedIn rdf:resource="#NapaRegion__0"/>
-</CabernetFranc>
+<a:CabernetFranc rdf:ID="WhitehallLaneCabernetFranc__0">
+    <a:hasBody rdf:resource="#Medium__0"/>
+    <a:hasFlavor rdf:resource="#Moderate__0"/>
+    <a:hasMaker rdf:resource="#WhitehallLane__0"/>
+    <a:hasSugar rdf:resource="#Dry__0"/>
+    <a:locatedIn rdf:resource="#NapaRegion__0"/>
+</a:CabernetFranc>
 
-<CabernetFranc rdf:ID="WhitehallLaneCabernetFranc__1">
-    <hasBody rdf:resource="#Medium__1"/>
-    <hasFlavor rdf:resource="#Moderate__1"/>
-    <hasMaker rdf:resource="#WhitehallLane__1"/>
-    <hasSugar rdf:resource="#Dry__1"/>
-    <locatedIn rdf:resource="#NapaRegion__1"/>
-</CabernetFranc>
+<a:CabernetFranc rdf:ID="WhitehallLaneCabernetFranc__1">
+    <a:hasBody rdf:resource="#Medium__1"/>
+    <a:hasFlavor rdf:resource="#Moderate__1"/>
+    <a:hasMaker rdf:resource="#WhitehallLane__1"/>
+    <a:hasSugar rdf:resource="#Dry__1"/>
+    <a:locatedIn rdf:resource="#NapaRegion__1"/>
+</a:CabernetFranc>
 
-<DessertWine rdf:ID="WhitehallLanePrimavera">
-    <hasBody rdf:resource="#Light"/>
-    <hasFlavor rdf:resource="#Delicate"/>
-    <hasSugar rdf:resource="#Sweet"/>
-    <locatedIn rdf:resource="#NapaRegion"/>
-</DessertWine>
+<a:DessertWine rdf:ID="WhitehallLanePrimavera">
+    <a:hasBody rdf:resource="#Light"/>
+    <a:hasFlavor rdf:resource="#Delicate"/>
+    <a:hasSugar rdf:resource="#Sweet"/>
+    <a:locatedIn rdf:resource="#NapaRegion"/>
+</a:DessertWine>
 
-<DessertWine rdf:ID="WhitehallLanePrimavera__0">
-    <hasBody rdf:resource="#Light__0"/>
-    <hasFlavor rdf:resource="#Delicate__0"/>
-    <hasSugar rdf:resource="#Sweet__0"/>
-    <locatedIn rdf:resource="#NapaRegion__0"/>
-</DessertWine>
+<a:DessertWine rdf:ID="WhitehallLanePrimavera__0">
+    <a:hasBody rdf:resource="#Light__0"/>
+    <a:hasFlavor rdf:resource="#Delicate__0"/>
+    <a:hasSugar rdf:resource="#Sweet__0"/>
+    <a:locatedIn rdf:resource="#NapaRegion__0"/>
+</a:DessertWine>
 
-<DessertWine rdf:ID="WhitehallLanePrimavera__1">
-    <hasBody rdf:resource="#Light__1"/>
-    <hasFlavor rdf:resource="#Delicate__1"/>
-    <hasSugar rdf:resource="#Sweet__1"/>
-    <locatedIn rdf:resource="#NapaRegion__1"/>
-</DessertWine>
+<a:DessertWine rdf:ID="WhitehallLanePrimavera__1">
+    <a:hasBody rdf:resource="#Light__1"/>
+    <a:hasFlavor rdf:resource="#Delicate__1"/>
+    <a:hasSugar rdf:resource="#Sweet__1"/>
+    <a:locatedIn rdf:resource="#NapaRegion__1"/>
+</a:DessertWine>
 
-<VintageYear rdf:ID="Year1998"/>
+<a:VintageYear rdf:ID="Year1998"/>
 
-<VintageYear rdf:ID="Year1998__0"/>
+<a:VintageYear rdf:ID="Year1998__0"/>
 
-<VintageYear rdf:ID="Year1998__1"/>
+<a:VintageYear rdf:ID="Year1998__1"/>
 
-<WineGrape rdf:ID="ZinfandelGrape">
+<a:WineGrape rdf:ID="ZinfandelGrape">
     <rdf:type rdf:resource="#__nom20"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="ZinfandelGrape__0">
+<a:WineGrape rdf:ID="ZinfandelGrape__0">
     <rdf:type rdf:resource="#__nom20"/>
-</WineGrape>
+</a:WineGrape>
 
-<WineGrape rdf:ID="ZinfandelGrape__1">
+<a:WineGrape rdf:ID="ZinfandelGrape__1">
     <rdf:type rdf:resource="#__nom20"/>
-</WineGrape>
+</a:WineGrape>
 
 
 
