@@ -1,0 +1,13 @@
+Executable = wine_benchmark.sh
+Universe = vanilla
+output = omega.out
+error = omega.error
+Log = omega.log
+Requirements = machine == "node2.kr.tuwien.ac.at"
+request_memory = 2048
+Initialdir = /mnt/lion/home/redl/dlvhex/dlvhex-dlplugin/branches/release2x/examples/wine/
+
+# queue
+request_cpus = 2
+Arguments = omega.sh 300 5
+Queue 1
