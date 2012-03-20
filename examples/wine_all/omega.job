@@ -9,5 +9,5 @@ Initialdir = /mnt/lion/home/redl/dlvhex/dlvhex-dlplugin/branches/release2x/examp
 
 # queue
 request_cpus = 2
-Arguments = omega.sh 300 5
+Arguments = omega.sh 300 3
 Queue 1

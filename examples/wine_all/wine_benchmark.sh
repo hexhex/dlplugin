@@ -14,7 +14,7 @@ export LD_LIBRARY_PATH=$PATH:/mnt/lion/home/redl/local/lib/
 ##export PATH=$PATH:$HOME/RacerPro-1-9-0-Linux32-ACL/
 
 # create working directory
-wd=`mktemp -d $PWD/tmp.XXXXXXXXXX`
+wd=`mktemp -d tmp.XXXXXXXXXX`
 
 # configurations: without and with external learning
 confstr="--solver=genuinegc --plugindir=../../../src/.libs/;--solver=genuinegc --extlearn --plugindir=../../../src/.libs/"
