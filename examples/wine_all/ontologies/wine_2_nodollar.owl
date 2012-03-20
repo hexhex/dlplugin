@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE rdf:RDF [
-     <!ENTITY vin  "http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#" >
-     <!ENTITY food "http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#" >
-     <!ENTITY owl  "http://www.w3.org/2002/07/owl#" >
-     <!ENTITY xsd  "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl 'http://www.w3.org/2002/07/owl#'>
 ]>
 
 <rdf:RDF
+    xmlns     = "http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#"
     xml:base="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine"
     xmlns:a="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
