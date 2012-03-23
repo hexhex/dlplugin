@@ -72,6 +72,7 @@ do
 
 				# stop racer
 				pkill -9 RacerPro
+				pkill -9 dlvhex2
 			done
 		done
 		echo $line
