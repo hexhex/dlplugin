@@ -27,10 +27,6 @@ do
 done
 echo $header
 
-# run racer
-RacerPro >/dev/null &
-rpid=$!
-
 # for all domain sizes
 for (( size = 1; size <= $maxsize; size++ ))
 do
@@ -116,6 +112,9 @@ do
 		echo -ne -e " "
 		# if a configuration timed out, then it can be skipped for larger instances
 		if [ ${timeout[$i]} -eq 0 ]; then
+			# run racer
+			RacerPro >/dev/null &
+			rpid=$!
 
 			# run dlvhex
 			output=$(timeout $to time -f %e dlvhex2 $c --plugindir=../../src/ prog.hex 2>&1 >/dev/null)
@@ -123,6 +122,9 @@ do
 				output="---"
 				timeout[$i]=1
 			fi
+
+			# kill racer
+			pkill $rpid
 		else
 			output="---"
 		fi
@@ -131,9 +133,6 @@ do
 	done
 	echo -e -ne "\n"
 done
-
-# kill racer
-pkill $rpid
 
 rm prog.hex
 rm b.owl
