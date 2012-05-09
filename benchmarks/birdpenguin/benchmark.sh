@@ -58,7 +58,7 @@ do
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-		% By default, a bird does not fly:
+		% By default, a bird flies:
 		birds(X) :- &dlC[\"b.owl\", pcbird, mcbird, prbird, mrbird, \"Bird\"](X).
 		flies(X) :- birds(X), not neg_flies(X).
 
