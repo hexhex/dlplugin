@@ -46,16 +46,16 @@ do
 
 		# write HEX program
 		echo "
-		wine(X) :- &dlC[\"wine.rdf\", empty, empty, empty, empty, \"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#$category\"](X).
+		wine(X) :- &dlC[\"wine.rdf\", empty, empty, empty, empty, \"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#$category\"](X)<fullylinear>.
 
-		% By default, a wine is white:
-		whitewine(\"WhiteWine\", X) :- wine(X), not redwine(X).
+		cons_whitewine(X) :- wine(X), not out_cons_whitewine(X).
+		out_cons_whitewine(X) :- wine(X), not cons_whitewine(X).
 
-		% Single out the red wines under default assumption:
-		redwine(X) :- wine(X), &dlC[\"wine.rdf\", whitewine, empty, empty, empty, \"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine\"](X)<fullylinear>.
+		whitewine(\"WhiteWine\", X) :- in_whitewine(X).
+		in_whitewine(X) :- wine(X), &dlC[\"wine.rdf\", whitewine, empty, empty, empty, \"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#$category\"](X)<fullylinear>, cons_whitewine(X).
 
-		inconsistent :- not &dlConsistent[\"wine.rdf\", whitewine, empty, empty, empty]().
-		:- inconsistent.
+		:- wine(X), &dlC[\"wine.rdf\", whitewine, empty, empty, empty, \"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine\"](X)<fullylinear>, cons_whitewine(X).
+		:- wine(X), not &dlC[\"wine.rdf\", whitewine, empty, empty, empty, \"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine\"](X)<fullylinear>, out_cons_whitewine(X).
 		" > prog.hex
 
 		for c in "${confs[@]}"

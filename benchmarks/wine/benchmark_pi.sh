@@ -48,14 +48,21 @@ do
 		echo "
 		wine(X) :- &dlC[\"wine.rdf\", empty, empty, empty, empty, \"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#$category\"](X).
 
-		% By default, a wine is white:
-		whitewine(\"WhiteWine\", X) :- wine(X), not redwine(X).
+		% 1. guess the extension
+		in_whitewine(X) :- wine(X), not out_whitewine(X).
+		out_whitewine(X) :- wine(X), not in_whitewine(X).
 
-		% Single out the red wines under default assumption:
-		redwine(X) :- wine(X), &dlC[\"wine.rdf\", whitewine, empty, empty, empty, \"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine\"](X)<fullylinear>.
+		% 2. check compliance of the guess with the ontology
+		whitewine(\"WhiteWine\", X) :- in_whitewine(X).
+		:- &dlC[\"wine.rdf\", whitewine, empty, empty, empty, \"-http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine\"](X)<fullylinear>, out_whitewine(X).
 
-		inconsistent :- not &dlConsistent[\"wine.rdf\", whitewine, empty, empty, empty]().
-		:- inconsistent.
+		% 3. apply the default
+		whitewine2(\"WhiteWine\", X) :- p_whitewine(X).
+		p_whitewine(X) :- wine(X), &dlC[\"wine.rdf\", whitewine2, empty, empty, empty, \"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#$category\"](X), not &dlC[\"wine.rdf\", whitewine, empty, empty, empty, \"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine\"](X)<fullylinear>.
+
+		% 4. check compliance of the extension
+		:- not &dlC[\"wine.rdf\", whitewine2, empty, empty, empty, \"-http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine\"](X)<fullylinear>, in_whitewine(X).
+		:- &dlC[\"wine.rdf\", whitewine2, empty, empty, empty, \"-http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine\"](X)<fullylinear>, out_whitewine(X).
 		" > prog.hex
 
 		for c in "${confs[@]}"
