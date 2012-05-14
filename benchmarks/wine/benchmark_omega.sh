@@ -75,6 +75,11 @@ do
 			# kill racer
 			pkill $rpid
 
+			# kill dlvhex and dlv
+			pkill -9 -u $USER dlvhex2
+			pkill -9 -u $USER dlv
+
+
 			echo -ne $output
 			let i=i+1
 		done
