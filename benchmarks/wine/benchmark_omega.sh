@@ -49,12 +49,12 @@ do
 		wine(X) :- &dlC[\"wine.rdf\", empty, empty, empty, empty, \"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#$category\"](X).
 
 		% By default, a wine is white:
-		drywine(\"DryWine\", X) :- wine(X), not sweetwine(X).
+		whitewine(\"WhiteWine\", X) :- wine(X), not redwine(X).
 
 		% Single out the red wines under default assumption:
-		sweetwine(X) :- wine(X), &dlC[\"wine.rdf\", drywine, empty, empty, empty, \"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SweetWine\"](X)<fullylinear>.
+		redwine(X) :- wine(X), &dlC[\"wine.rdf\", whitewine, empty, empty, empty, \"http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine\"](X)<fullylinear>.
 
-		inconsistent :- not &dlConsistent[\"wine.rdf\", drywine, empty, empty, empty]().
+		inconsistent :- not &dlConsistent[\"wine.rdf\", whitewine, empty, empty, empty]().
 		:- inconsistent.
 		" > prog.hex
 
