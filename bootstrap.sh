@@ -1,2 +1,1 @@
-#!/bin/sh
-autoreconf -i -s -W all
+dlvhex-common/bootstrap.sh
