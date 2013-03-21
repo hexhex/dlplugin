@@ -28,7 +28,7 @@ flies(X) :- birds(X), not neg_flies(X).
 
 % Single out the non-fliers under default assumption:
 pcflier("Flier", X) :- flies(X).
-neg_flies(X) :- birds(X), &dlC["b.owl", pcflier, mcflier, prflier, mrflier, "-Flier"](X)<fullylinear>.
+neg_flies(X) :- birds(X), &dlC["b.owl", pcflier, mcflier, prflier, mrflier, "-Flier"](X)<fullylinear,finitedomain 0>.
 
 % Is the description logic KB inconsistent? 
 inconsistent :- not &dlConsistent["b.owl", pcflier, mcflier, prflier, mrflier]().
