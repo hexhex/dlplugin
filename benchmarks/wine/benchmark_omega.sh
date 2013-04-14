@@ -1,5 +1,5 @@
 export LD_LIBRARY_PATH=/mnt/lion/home/redl/local/lib
-export PATH=$PATH:/mnt/lion/home/redl/local/bin
+export PATH=$PATH:/mnt/lion/home/redl/local/bin:/mnt/lion/home/redl/local/bin:/mnt/lion/home/redl/RacerPro-1-9-0-Linux32-ACL
 
 # default parameters
 if [ $# -le 0 ]; then
