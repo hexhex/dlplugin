@@ -4,7 +4,7 @@ confstr="--flpcheck=explicit;--flpcheck=explicit --extlearn;--flpcheck=ufsm --no
 export PATH=$1
 export LD_LIBRARY_PATH=$2
 to=$3
-
+echo "timeout -------------- $to"
 # split configurations
 IFS=';' read -ra confs <<< "$confstr"
 header="#size"

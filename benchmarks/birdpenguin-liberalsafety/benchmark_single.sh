@@ -163,7 +163,6 @@ do
 		else
 			output="---"
 		fi
-		echo -ne $output
 		let i=i+1
 	done
 	echo -e -ne "\n"

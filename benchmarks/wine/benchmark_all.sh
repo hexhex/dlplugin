@@ -12,14 +12,14 @@ fi
 		output = wine.out
 		error = wine.error
 		Log = wine.log
-		Requirements = machine == \"node5.kr.tuwien.ac.at\"
+		Requirements = machine == \"lion.kr.tuwien.ac.at\"
 		request_memory = 8192
 		Initialdir = $PWD
 		notification = never
 
 		# queue
 		request_cpus = 1 
-		Arguments = $PATH $LD_LIBARY_PATH 300
+		Arguments = $PATH $LD_LIBRARY_PATH $to
 		Queue 1
 	     " > p.job
 	condor_submit p.job

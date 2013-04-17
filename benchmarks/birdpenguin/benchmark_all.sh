@@ -12,14 +12,14 @@ fi
 		output = birdpenguin.out
 		error = birdpenguin.error
 		Log = birdpenguin.log
-		Requirements = machine == \"node5.kr.tuwien.ac.at\"
+		Requirements = machine == \"lion.kr.tuwien.ac.at\"
 		request_memory = 8192 
 		Initialdir = $PWD
 		notification = never
 
 		# queue
 		request_cpus = 1 
-		Arguments = $PATH $LD_LIBRARY_PATH 20 300
+		Arguments = $PATH $LD_LIBRARY_PATH 20 $to
 		Queue 1
 	     " > p.job
 	condor_submit p.job
