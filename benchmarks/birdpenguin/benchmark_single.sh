@@ -106,8 +106,6 @@ do
 	for c in "${confs[@]}"
 	do
 		echo -ne -e " "
-		# if a configuration timed out, then it can be skipped for larger instances
-		if [ ${timeout[$i]} -eq 0 ]; then
 			# run racer
 			RacerPro >/dev/null &
 			rpid=$!
@@ -116,14 +114,10 @@ do
 			output=$(timeout $to time -f %e dlvhex2 --verbose=0 $c --plugindir=../../src/ prog.hex 2>&1 >/dev/null)
 			if [[ $? == 124 ]]; then
 				output="---"
-				timeout[$i]=1
 			fi
 
 			# kill racer
 			pkill $rpid
-		else
-			output="---"
-		fi
 		echo -ne $output
 		let i=i+1
 	done
