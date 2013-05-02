@@ -111,13 +111,17 @@ do
 			rpid=$!
 
 			# run dlvhex
-			output=$(timeout $to time -f %e dlvhex2 --verbose=0 $c --plugindir=../../src/ prog.hex 2>&1 >/dev/null)
-			if [[ $? == 124 ]]; then
+			$(timeout $to time -o time.dat -f %e dlvhex2 --verbose=0 $c --plugindir=../../src/ prog.hex 2>/dev/null >/dev/null)
+			ret=$?
+			output=$(cat time.dat)
+			if [[ $ret == 124 ]]; then
 				output="---"
 			fi
 
 			# kill racer
 			pkill $rpid
+
+			rm time.dat
 		echo -ne $output
 		let i=i+1
 	done

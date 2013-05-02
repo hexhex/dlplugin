@@ -8,7 +8,7 @@ fi
 export PATH=$1
 export LD_LIBRARY_PATH=$2
 to=$3
-echo "timeout -------------- $to"
+
 # split configurations
 IFS=';' read -ra confs <<< "$confstr"
 header="#size"
@@ -36,7 +36,7 @@ do
 	for category in ${categories[@]}
 	do
 
-		echo -ne "$category: "
+		echo -ne "$category:"
 
 		# write HEX program
 		echo "
@@ -60,8 +60,10 @@ do
 			rpid=$!
 
 			# run dlvhex
-			output=$(timeout $to time -f %e dlvhex2 $c --plugindir=../../src/ prog.hex 2>&1 >/dev/null)
-			if [[ $? == 124 ]]; then
+			$(timeout $to time -o time.dat -f %e dlvhex2 $c --plugindir=../../src/ prog.hex 2>/dev/null >/dev/null)
+			ret=$?
+			output=$(cat time.dat)
+			if [[ $ret == 124 ]]; then
 				output="---"
 				timeout[$i]=1
 			fi
@@ -71,6 +73,8 @@ do
 
 			echo -ne $output
 			let i=i+1
+
+			rm time.dat
 		done
 		echo ""
 	done
