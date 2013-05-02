@@ -111,9 +111,12 @@ do
 			rpid=$!
 
 			# run dlvhex
-			$(timeout $to time -o time.dat -f %e dlvhex2 --verbose=0 $c --plugindir=../../src/ prog.hex 2>/dev/null >/dev/null)
+			$(timeout $to time --quiet -o time.dat -f %e dlvhex2 --verbose=0 $c --plugindir=../../src/ prog.hex 2>/dev/null >/dev/null)
 			ret=$?
 			output=$(cat time.dat)
+			if [[ $ret != 0 ]]; then
+				output="xxx"
+			fi
 			if [[ $ret == 124 ]]; then
 				output="---"
 			fi
