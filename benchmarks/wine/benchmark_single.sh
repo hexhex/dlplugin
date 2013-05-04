@@ -24,8 +24,6 @@ echo $header
 # for all ontologies
 for instance in ontologies/*.owl
 do
-	echo "Instance: $instance"
-
 	# write ontology
 	cp $instance wine.rdf
 
@@ -36,7 +34,7 @@ do
 	for category in ${categories[@]}
 	do
 
-		echo -ne "$category:"
+		echo -ne "$instance:$category"
 
 		# write HEX program
 		echo "
