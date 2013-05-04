@@ -26,7 +26,7 @@ echo $header
 # for all domain sizes
 for (( size = 1; size <= $maxsize; size++ ))
 do
-	echo -ne "$size:"
+	echo -ne "$size"
 
 	# write HEX program
 	echo "
