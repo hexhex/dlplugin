@@ -107,6 +107,7 @@ do
 	do
 		echo -ne -e " "
 			# run racer
+			pkill "RacerPro"
 			RacerPro >/dev/null &
 			rpid=$!
 
@@ -122,7 +123,8 @@ do
 			fi
 
 			# kill racer
-			while kill -0 $rpid >/dev/null 2>/dev/null; do sleep 1; done
+			kill $rpid
+			wait $rpid >/dev/null 2>/dev/null
 
 			rm time.dat
 		echo -ne $output
