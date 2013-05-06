@@ -122,7 +122,7 @@ do
 			fi
 
 			# kill racer
-			kill $rpid
+			while kill -0 $rpid >/dev/null 2>/dev/null; do sleep 1; done
 
 			rm time.dat
 		echo -ne $output

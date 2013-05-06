@@ -70,7 +70,7 @@ do
 			fi
 
 			# kill racer
-			kill $rpid
+			while kill -0 $rpid >/dev/null 2>/dev/null; do sleep 1; done
 
 			echo -ne $output
 			let i=i+1
