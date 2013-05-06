@@ -122,7 +122,7 @@ do
 			fi
 
 			# kill racer
-			pkill $rpid
+			kill $rpid
 
 			rm time.dat
 		echo -ne $output

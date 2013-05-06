@@ -70,7 +70,7 @@ do
 			fi
 
 			# kill racer
-			pkill $rpid
+			kill $rpid
 
 			echo -ne $output
 			let i=i+1
