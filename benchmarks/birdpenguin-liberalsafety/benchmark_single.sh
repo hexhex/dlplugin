@@ -22,7 +22,7 @@ echo $header
 # for all domain sizes
 for (( size = 1; size <= $maxsize; size++ ))
 do
-	echo -ne "$size:"
+	echo -ne "$size"
 
 	# write HEX program
 	echo "
@@ -156,7 +156,7 @@ do
 		                groundertime="---"
                 		solvertime="---"
 		        fi
-		        echo -ne "$output $groundertime $solvertime "
+		        echo -ne "$output $groundertime $solvertime"
 
 			# kill racer
 			pkill $rpid
