@@ -17,7 +17,7 @@ fi
 		notification = never
 
 		# queue
-		request_cpus = 1 
+		request_cpus = 2
 		Arguments = $PATH $LD_LIBRARY_PATH 25 $to 
 		Queue 1
 	     " > p.job
