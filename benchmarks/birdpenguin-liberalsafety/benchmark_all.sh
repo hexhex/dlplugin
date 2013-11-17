@@ -6,14 +6,13 @@ else
 	to=$1
 fi
 
+	reqirements=$(cat req 2> /dev/null)
 	echo "
 		Executable = ./benchmark_single.sh
-		Universe = vanilla
 		output = birdpenguin.out
 		error = birdpenguin.error
 		Log = birdpenguin.log
-		Requirements = machine == \"node5.kr.tuwien.ac.at\"
-		request_memory = 8192 
+		$requirements
 		Initialdir = $PWD
 		notification = never
 

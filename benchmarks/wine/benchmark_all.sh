@@ -6,14 +6,13 @@ else
 	to=$1
 fi
 
+	reqirements=$(cat req 2> /dev/null)
 	echo "
 		Executable = ./benchmark_single.sh
-		Universe = vanilla
 		output = wine.out
 		error = wine.error
 		Log = wine.log
-		Requirements = machine == \"lion.kr.tuwien.ac.at\"
-		request_memory = 8192
+		$requirements
 		Initialdir = $PWD
 		notification = never
 
