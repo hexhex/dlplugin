@@ -18,7 +18,7 @@ fi
 
 		# queue
 		request_cpus = 1 
-		Arguments = $PATH $LD_LIBRARY_PATH 20 $to 
+		Arguments = $PATH $LD_LIBRARY_PATH 25 $to 
 		Queue 1
 	     " > p.job
 	condor_submit p.job
