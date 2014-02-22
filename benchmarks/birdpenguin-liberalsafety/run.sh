@@ -10,7 +10,7 @@ source $runheader
 # run instances
 if [[ $all -eq 1 ]]; then
 	# run all instances using the benchmark script run insts
-	$bmscripts/runinsts.sh "20" "$mydir/run.sh" "$mydir" "$to"	# Note: Here the condition "20" defines the maximum size
+	$bmscripts/runinsts.sh "20" "$mydir/run.sh" "$mydir" "$to" "" "" "$req"	# Note: Here the condition "20" defines the maximum size
 else
 
 	confstr="--extlearn --flpcheck=aufs prog.hex;--extlearn --flpcheck=aufs --liberalsafety prognd.hex"
