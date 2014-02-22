@@ -165,7 +165,7 @@ else
 				echo "RacerPro could not be found"
 				exit 1
 			fi
-			$racerpath/RacerPro >/dev/null &
+			$racerpath >/dev/null &
 			rpid=$!
 
 			# execute
@@ -192,7 +192,7 @@ else
 			fi
 
 			# kill racer
-			pkill $rpid
+			pkill -9 $rpid
 
 			let i=i+1
 		done

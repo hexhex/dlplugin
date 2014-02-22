@@ -7,6 +7,11 @@ if [[ $runheader == "" ]] || [ $(cat $runheader | grep "dlvhex_run_header.sh Ver
 fi
 source $runheader
 
+if [[ $(ps -a | grep "RacerPro" | wc -l) > 0 ]]; then
+	echo "RacerPro is already running; please stop it before executing this benchmark to guarantee exclusive port access"
+	exit 1
+fi
+
 # run instances
 if [[ $all -eq 1 ]]; then
 	# run all instances using the benchmark script run insts
@@ -129,7 +134,7 @@ else
 				echo "RacerPro could not be found"
 				exit 1
 			fi
-			$racerpath/RacerPro >/dev/null &
+			$racerpath >/dev/null &
 			rpid=$!
 
 			# execute
@@ -151,7 +156,7 @@ else
 			else
 				echo "Output builder for command \"$fullcommand\" failed" >&2
 				# kill racer and exit
-				pkill $rpid
+				pkill -9 $rpid
 				exit 1
 			fi
 

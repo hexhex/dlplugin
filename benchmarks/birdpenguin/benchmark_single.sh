@@ -9,7 +9,7 @@ export PATH=$1
 export LD_LIBRARY_PATH=$2
 maxize=$3
 to=$4
-maxsize=20
+maxsize=30
 
 # split configurations
 IFS=';' read -ra confs <<< "$confstr"
