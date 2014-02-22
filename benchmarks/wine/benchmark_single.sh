@@ -1,5 +1,5 @@
 # default parameters
-confstr="--flpcheck=explicit;--flpcheck=explicit --extlearn;--flpcheck=ufsm --noflpcriterion;--flpcheck=ufsm --extlearn --noflpcriterion;--flpcheck=ufsm --extlearn --ufslearn --noflpcriterion;--flpcheck=ufs;--flpcheck=ufs --extlearn;--flpcheck=ufs --extlearn --ufslearn;--flpcheck=aufs;--flpcheck=aufs --extlearn;--flpcheck=aufs --extlearn --ufslearn;--flpcheck=explicit -n=1;--flpcheck=explicit --extlearn -n=1;--flpcheck=ufsm -n=1;--flpcheck=ufsm --extlearn --noflpcriterion -n=1;--flpcheck=ufsm --extlearn --ufslearn --noflpcriterion -n=1;--flpcheck=ufs -n=1;--flpcheck=ufs --extlearn -n=1;--flpcheck=ufs --extlearn --ufslearn -n=1;--flpcheck=aufs -n=1;--flpcheck=aufs --extlearn -n=1;--flpcheck=aufs --extlearn --ufslearn -n=1"
+confstr="--flpcheck=explicit --noflpcriterion;--flpcheck=explicit --extlearn --noflpcriterion;--flpcheck=ufsm --noflpcriterion;--flpcheck=ufsm --extlearn --noflpcriterion;--flpcheck=ufsm --extlearn --ufslearn --noflpcriterion;--flpcheck=ufs;--flpcheck=ufs --extlearn;--flpcheck=ufs --extlearn --ufslearn;--flpcheck=aufs;--flpcheck=aufs --extlearn;--flpcheck=aufs --extlearn --ufslearn;--flpcheck=explicit --noflpcriterion -n=1;--flpcheck=explicit --extlearn --noflpcriterion -n=1;--flpcheck=ufsm -n=1;--flpcheck=ufsm --extlearn --noflpcriterion -n=1;--flpcheck=ufsm --extlearn --ufslearn --noflpcriterion -n=1;--flpcheck=ufs -n=1;--flpcheck=ufs --extlearn -n=1;--flpcheck=ufs --extlearn --ufslearn -n=1;--flpcheck=aufs -n=1;--flpcheck=aufs --extlearn -n=1;--flpcheck=aufs --extlearn --ufslearn -n=1"
 confstr2=$(cat conf)
 if [ $? == 0 ]; then
         confstr=$confstr2
@@ -8,7 +8,7 @@ fi
 export PATH=$1
 export LD_LIBRARY_PATH=$2
 to=$3
-echo "timeout -------------- $to"
+
 # split configurations
 IFS=';' read -ra confs <<< "$confstr"
 header="#size"
@@ -24,8 +24,6 @@ echo $header
 # for all ontologies
 for instance in ontologies/*.owl
 do
-	echo "Instance: $instance"
-
 	# write ontology
 	cp $instance wine.rdf
 
@@ -36,7 +34,7 @@ do
 	for category in ${categories[@]}
 	do
 
-		echo -ne "$category: "
+		echo -ne "$instance:$category"
 
 		# write HEX program
 		echo "
@@ -56,21 +54,30 @@ do
 		do
 			echo -ne -e " "
 			# run racer
+			pkill "RacerPro"
 			RacerPro >/dev/null &
 			rpid=$!
 
 			# run dlvhex
-			output=$(timeout $to time -f %e dlvhex2 $c --plugindir=../../src/ prog.hex 2>&1 >/dev/null)
-			if [[ $? == 124 ]]; then
+			$(timeout $to time --quiet -o time.dat -f %e dlvhex2 $c --plugindir=../../src/ prog.hex 2>/dev/null >/dev/null)
+			ret=$?
+			output=$(cat time.dat)
+			if [[ $ret != 0 ]]; then
+				output="xxx"
+			fi
+			if [[ $ret == 124 ]]; then
 				output="---"
 				timeout[$i]=1
 			fi
 
 			# kill racer
-			pkill $rpid
+			kill $rpid
+			wait $rpid >/dev/null 2>/dev/null
 
 			echo -ne $output
 			let i=i+1
+
+			rm time.dat
 		done
 		echo ""
 	done

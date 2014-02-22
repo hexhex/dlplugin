@@ -22,7 +22,7 @@ echo $header
 # for all domain sizes
 for (( size = 1; size <= $maxsize; size++ ))
 do
-	echo -ne "$size:"
+	echo -ne "$size"
 
 	# write HEX program
 	echo "
@@ -92,7 +92,7 @@ do
 
                 % Single out the non-fliers under default assumption:
                 pcflier(\"Flier\", X) :- flies(X).
-                neg_flies(X) :- birds(X), &dlC[\"b.owl\", pcflier, mcflier, prflier, mrflier, \"-Flier\"](X)<fullylinear>.
+                neg_flies(X) :- &dlC[\"b.owl\", pcflier, mcflier, prflier, mrflier, \"-Flier\"](X)<fullylinear>.
 
                 % Is the description logic KB inconsistent?
                 inconsistent :- not &dlConsistent[\"b.owl\", pcflier, mcflier, prflier, mrflier]()." > prognd.hex
@@ -156,7 +156,7 @@ do
 		                groundertime="---"
                 		solvertime="---"
 		        fi
-		        echo -ne "$output $groundertime $solvertime "
+		        echo -ne "$output $groundertime $solvertime"
 
 			# kill racer
 			pkill $rpid
@@ -169,6 +169,7 @@ do
 done
 
 rm prog.hex
+rm prognd.hex
 rm b.owl
 rm time.dat
 rm verbose.dat

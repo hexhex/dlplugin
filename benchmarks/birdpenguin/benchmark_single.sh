@@ -1,5 +1,5 @@
 # default parameters
-confstr="--flpcheck=explicit;--flpcheck=explicit --extlearn;--flpcheck=ufsm --noflpcriterion;--flpcheck=ufsm --extlearn --noflpcriterion;--flpcheck=ufsm --extlearn --ufslearn --noflpcriterion;--flpcheck=ufs;--flpcheck=ufs --extlearn;--flpcheck=ufs --extlearn --ufslearn;--flpcheck=aufs;--flpcheck=aufs --extlearn;--flpcheck=aufs --extlearn --ufslearn;--flpcheck=explicit -n=1;--flpcheck=explicit --extlearn -n=1;--flpcheck=ufsm -n=1;--flpcheck=ufsm --extlearn --noflpcriterion -n=1;--flpcheck=ufsm --extlearn --ufslearn --noflpcriterion -n=1;--flpcheck=ufs -n=1;--flpcheck=ufs --extlearn -n=1;--flpcheck=ufs --extlearn --ufslearn -n=1;--flpcheck=aufs -n=1;--flpcheck=aufs --extlearn -n=1;--flpcheck=aufs --extlearn --ufslearn -n=1"
+confstr="--flpcheck=explicit --noflpcriterion;--flpcheck=explicit --extlearn --noflpcriterion;--flpcheck=ufsm --noflpcriterion;--flpcheck=ufsm --extlearn --noflpcriterion;--flpcheck=ufsm --extlearn --ufslearn --noflpcriterion;--flpcheck=ufs;--flpcheck=ufs --extlearn;--flpcheck=ufs --extlearn --ufslearn;--flpcheck=aufs;--flpcheck=aufs --extlearn;--flpcheck=aufs --extlearn --ufslearn;--flpcheck=explicit --noflpcriterion -n=1;--flpcheck=explicit --extlearn --noflpcriterion -n=1;--flpcheck=ufsm -n=1;--flpcheck=ufsm --extlearn --noflpcriterion -n=1;--flpcheck=ufsm --extlearn --ufslearn --noflpcriterion -n=1;--flpcheck=ufs -n=1;--flpcheck=ufs --extlearn -n=1;--flpcheck=ufs --extlearn --ufslearn -n=1;--flpcheck=aufs -n=1;--flpcheck=aufs --extlearn -n=1;--flpcheck=aufs --extlearn --ufslearn -n=1"
 confstr2=$(cat conf)
 if [ $? == 0 ]; then
         confstr=$confstr2
@@ -26,7 +26,7 @@ echo $header
 # for all domain sizes
 for (( size = 1; size <= $maxsize; size++ ))
 do
-	echo -ne "$size:"
+	echo -ne "$size"
 
 	# write HEX program
 	echo "
@@ -107,17 +107,26 @@ do
 	do
 		echo -ne -e " "
 			# run racer
+			pkill "RacerPro"
 			RacerPro >/dev/null &
 			rpid=$!
 
 			# run dlvhex
-			output=$(timeout $to time -f %e dlvhex2 --verbose=0 $c --plugindir=../../src/ prog.hex 2>&1 >/dev/null)
-			if [[ $? == 124 ]]; then
+			$(timeout $to time --quiet -o time.dat -f %e dlvhex2 --verbose=0 $c --plugindir=../../src/ prog.hex 2>/dev/null >/dev/null)
+			ret=$?
+			output=$(cat time.dat)
+			if [[ $ret != 0 ]]; then
+				output="xxx"
+			fi
+			if [[ $ret == 124 ]]; then
 				output="---"
 			fi
 
 			# kill racer
-			pkill $rpid
+			kill $rpid
+			wait $rpid >/dev/null 2>/dev/null
+
+			rm time.dat
 		echo -ne $output
 		let i=i+1
 	done
