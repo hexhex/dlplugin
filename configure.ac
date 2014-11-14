@@ -1,5 +1,5 @@
 AC_PREREQ([2.68])
-AC_INIT([dlvhex-dlplugin],[2.0.0],[tkren@kr.tuwien.ac.at])
+AC_INIT([dlvhex2-dlplugin],[2.0.0],[tkren@kr.tuwien.ac.at])
 AC_CONFIG_SRCDIR([src/RacerInterface.cpp])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([src/config.h])
