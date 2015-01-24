@@ -13,7 +13,7 @@ if [[ $all -eq 1 ]]; then
 	$bmscripts/runinsts.sh "20" "$mydir/run.sh" "$mydir" "$to" "" "" "$req"	# Note: Here the condition "20" defines the maximum size
 else
 
-	confstr="--extlearn --flpcheck=aufs --ufslearn=none prog.hex;--extlearn --flpcheck=aufs --ufslearn=none --liberalsafety prognd.hex"
+	confstr="--extlearn --flpcheck=aufs --ufslearn=none --strongsafety prog.hex;--extlearn --flpcheck=aufs --ufslearn=none --liberalsafety prognd.hex"
 
 	# split configurations
 	IFS=';' read -ra confs <<< "$confstr;"
